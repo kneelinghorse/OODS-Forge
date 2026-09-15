@@ -228,7 +228,9 @@ describe('Sprint 184 m04 ported Subscription workflow', () => {
         const stylesSpecifier = '@oods/component-styles/css';
         expect(source).toContain(`import '${stylesSpecifier}';`);
         expect(rootRequire.resolve(stylesSpecifier)).toMatch(/\/dist\/components\.css$/);
-        expect(rootRequire.resolve('@oods/component-styles/css-ported')).toBe(rootRequire.resolve(stylesSpecifier));
+        // Sprint 200 m04 retired the css-ported alias; generated code never named it.
+        expect(() => rootRequire.resolve('@oods/component-styles/css-ported')).toThrow(/not defined by "exports"/);
+        expect(source).not.toContain('css-ported');
       }
     }
   });

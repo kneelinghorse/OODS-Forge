@@ -1,4 +1,5 @@
 import { readFileSync } from 'node:fs';
+import { createRequire } from 'node:module';
 import { resolve } from 'node:path';
 
 import {
@@ -14,6 +15,14 @@ import * as portedPackage from '../src/ported.js';
 
 const packageRoot = process.cwd();
 const repositoryRoot = resolve(packageRoot, '../..');
+const packageRequire = createRequire(`${packageRoot}/package.json`);
+// Sprint 200 m04 retired the compatibility subpaths with no migration window (#2062).
+const RETIRED_SUBPATHS = [
+  '@oods/components-react/ported',
+  '@oods/components-react/readiness-ported',
+  '@oods/component-styles/css-ported',
+  '@oods/component-styles/ported',
+];
 const expectedPortedIds = [
   'AuditTimeline',
   'CancellationSummary',
@@ -43,27 +52,22 @@ describe('@oods/components-react ported package contract', () => {
     }
   });
 
-  it('dependency-closure publishes only the coordinated additive subpaths', () => {
+  it('no longer publishes the retired compatibility subpaths', () => {
     const manifest = readJson(`${packageRoot}/package.json`) as {
-      exports?: Record<string, unknown>;
+      exports: Record<string, unknown>;
     };
-    expect(manifest.exports).toMatchObject({
-      './ported': {
-        types: './dist/index.d.ts',
-        import: './dist/index.js',
-        require: './dist/index.cjs',
-      },
-      './readiness-ported': {
-        default: './evidence/react-readiness.v1.json',
-      },
-    });
+    expect(Object.keys(manifest.exports)).toEqual(['.', './readiness', './status', './table', './package.json']);
 
     const stylesManifest = readJson(
       `${repositoryRoot}/packages/component-styles/package.json`
-    ) as { exports?: Record<string, unknown> };
-    expect(stylesManifest.exports).toMatchObject({
-      './css-ported': { default: './dist/components.css' },
-    });
+    ) as { exports: Record<string, unknown> };
+    expect(Object.keys(stylesManifest.exports)).toEqual(['.', './css', './package.json']);
+
+    for (const specifier of RETIRED_SUBPATHS) {
+      expect(() => packageRequire.resolve(specifier), specifier).toThrow(/not defined by "exports"/);
+    }
+    expect(packageRequire.resolve('@oods/components-react')).toMatch(/\/dist\/index\.cjs$/);
+    expect(packageRequire.resolve('@oods/component-styles/css')).toMatch(/\/dist\/components\.css$/);
   });
 
   it('publishes exactly eight historical ported readiness rows', () => {

@@ -7,6 +7,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath, pathToFileURL } from 'node:url';
+import { ensureConsumerRollup } from './consumer-rollup.mjs';
 
 const scriptDirectory = path.dirname(fileURLToPath(import.meta.url));
 export const REPOSITORY_ROOT = path.resolve(scriptDirectory, '../..');
@@ -1754,15 +1755,21 @@ async function runFrameworkConsumer({ framework, source, artifactRoot, tarballs 
     await writeConsumerFiles(sourceRoot, files);
 
     const environment = isolatedNpmEnvironment(consumerRoot, emptyNpmConfig);
+    const installArgs = ['install', '--ignore-scripts', '--no-audit', '--no-fund', '--package-lock=false', '--userconfig', emptyNpmConfig];
     const install = commandResult(
       'npm',
-      ['install', '--ignore-scripts', '--no-audit', '--no-fund', '--package-lock=false', '--userconfig', emptyNpmConfig],
+      installArgs,
       consumerRoot,
       { environment, scrubNpmCredentials: true },
     );
     commands.push({ name: 'install', result: install });
     await writeCommandLog(path.join(logRoot, 'install.log'), install, replacements);
     requireGreen(install, `${framework} clean install`);
+    await writeJson(path.join(logRoot, 'rollup.json'), await ensureConsumerRollup(consumerRoot, async extraArgs => {
+      const retry = commandResult('npm', [...installArgs, ...extraArgs], consumerRoot, { environment, scrubNpmCredentials: true });
+      await writeCommandLog(path.join(logRoot, 'install-optional-retry.log'), retry, replacements);
+      requireGreen(retry, `${framework} optional native package reinstall`);
+    }));
     assertInstalledPackagesAreIsolated(consumerRoot, framework);
 
     const typecheckArgs = framework === 'react'

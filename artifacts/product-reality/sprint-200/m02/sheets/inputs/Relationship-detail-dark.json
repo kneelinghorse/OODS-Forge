@@ -1,0 +1,719 @@
+{
+  "id": "Relationship-detail-dark",
+  "object": "Relationship",
+  "context": "detail",
+  "theme": "dark",
+  "request": {
+    "object": "Relationship",
+    "context": "detail",
+    "preferences": {
+      "theme": "dark"
+    }
+  },
+  "schema": {
+    "version": "2026.02",
+    "theme": "dark",
+    "screens": [
+      {
+        "id": "screen-detail-13",
+        "component": "Stack",
+        "layout": {
+          "type": "stack",
+          "gapToken": "cluster-default"
+        },
+        "children": [
+          {
+            "id": "detail-header-1",
+            "component": "Stack",
+            "layout": {
+              "type": "stack",
+              "align": "space-between",
+              "gapToken": "stack-default"
+            },
+            "style": {
+              "spacingToken": "inset-default"
+            },
+            "children": [
+              {
+                "id": "slot-header-2",
+                "component": "Stack",
+                "meta": {
+                  "intent": "slot:header",
+                  "label": "header"
+                },
+                "children": [
+                  {
+                    "id": "ve-header-22",
+                    "component": "DetailHeader",
+                    "props": {
+                      "titleField": "label",
+                      "subtitleField": "description",
+                      "headingLevel": 2
+                    }
+                  },
+                  {
+                    "id": "ve-header-23",
+                    "component": "VizGraphPreview",
+                    "props": {
+                      "title": "Example connected relationships",
+                      "description": "Synthetic neighborhood edges illustrating relationships that share an endpoint; these are examples, not live graph data."
+                    },
+                    "chart": {
+                      "chartType": "force_graph",
+                      "source": "edge-array",
+                      "dataField": "neighborhood",
+                      "edges": {
+                        "source": "source_id",
+                        "target": "target_id",
+                        "bidirectionalField": "is_bidirectional"
+                      },
+                      "sampleRows": [
+                        {
+                          "source_id": "example-team",
+                          "target_id": "example-project",
+                          "is_bidirectional": false
+                        },
+                        {
+                          "source_id": "example-project",
+                          "target_id": "example-document",
+                          "is_bidirectional": true
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "id": "ve-header-24",
+                    "component": "StatusTimeline",
+                    "props": {
+                      "field": "status",
+                      "historyField": "state_history",
+                      "statesParameter": "states",
+                      "showActorId": true,
+                      "showReason": true
+                    }
+                  },
+                  {
+                    "id": "ve-header-25",
+                    "component": "OwnershipSummary",
+                    "props": {
+                      "ownerIdField": "owner_id",
+                      "ownerTypeField": "owner_type",
+                      "roleField": "ownership_role",
+                      "transferredAtField": "ownership_transferred_at",
+                      "allowTransferParameter": "allowTransfer"
+                    }
+                  },
+                  {
+                    "id": "ve-header-26",
+                    "component": "TagSummary",
+                    "props": {
+                      "field": "tags",
+                      "countField": "tag_count",
+                      "label": "Tags"
+                    }
+                  }
+                ],
+                "layout": {
+                  "type": "stack",
+                  "gapToken": "cluster-default"
+                }
+              }
+            ]
+          },
+          {
+            "id": "detail-body-10",
+            "component": "Card",
+            "layout": {
+              "type": "stack",
+              "gapToken": "cluster-default"
+            },
+            "children": [
+              {
+                "id": "detail-tabs-9",
+                "component": "Tabs",
+                "children": [
+                  {
+                    "id": "detail-tabs-9-read-fields",
+                    "component": "Stack",
+                    "props": {
+                      "label": "Details"
+                    },
+                    "children": [
+                      {
+                        "id": "detail-tabs-9-updated_at-read-field",
+                        "component": "Stack",
+                        "children": [
+                          {
+                            "id": "detail-tabs-9-updated_at-label",
+                            "component": "Text",
+                            "props": {
+                              "as": "strong",
+                              "content": "Updated at"
+                            }
+                          },
+                          {
+                            "id": "detail-tabs-9-updated_at-value",
+                            "meta": {
+                              "intent": "read-only-field"
+                            },
+                            "component": "Text",
+                            "props": {
+                              "field": "updated_at"
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "id": "detail-tabs-9-last_event-read-field",
+                        "component": "Stack",
+                        "children": [
+                          {
+                            "id": "detail-tabs-9-last_event-label",
+                            "component": "Text",
+                            "props": {
+                              "as": "strong",
+                              "content": "Last event"
+                            }
+                          },
+                          {
+                            "id": "detail-tabs-9-last_event-value",
+                            "meta": {
+                              "intent": "read-only-field"
+                            },
+                            "component": "Text",
+                            "props": {
+                              "field": "last_event"
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "id": "detail-tabs-9-last_event_at-read-field",
+                        "component": "Stack",
+                        "children": [
+                          {
+                            "id": "detail-tabs-9-last_event_at-label",
+                            "component": "Text",
+                            "props": {
+                              "as": "strong",
+                              "content": "Last event at"
+                            }
+                          },
+                          {
+                            "id": "detail-tabs-9-last_event_at-value",
+                            "meta": {
+                              "intent": "read-only-field"
+                            },
+                            "component": "Text",
+                            "props": {
+                              "field": "last_event_at"
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "id": "detail-tabs-9-relationship_id-read-field",
+                        "component": "Stack",
+                        "children": [
+                          {
+                            "id": "detail-tabs-9-relationship_id-label",
+                            "component": "Text",
+                            "props": {
+                              "as": "strong",
+                              "content": "Relationship id"
+                            }
+                          },
+                          {
+                            "id": "detail-tabs-9-relationship_id-value",
+                            "meta": {
+                              "intent": "read-only-field"
+                            },
+                            "component": "Text",
+                            "props": {
+                              "field": "relationship_id"
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "id": "detail-tabs-9-source_id-read-field",
+                        "component": "Stack",
+                        "children": [
+                          {
+                            "id": "detail-tabs-9-source_id-label",
+                            "component": "Text",
+                            "props": {
+                              "as": "strong",
+                              "content": "Source id"
+                            }
+                          },
+                          {
+                            "id": "detail-tabs-9-source_id-value",
+                            "meta": {
+                              "intent": "read-only-field"
+                            },
+                            "component": "Text",
+                            "props": {
+                              "field": "source_id"
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "id": "detail-tabs-9-target_id-read-field",
+                        "component": "Stack",
+                        "children": [
+                          {
+                            "id": "detail-tabs-9-target_id-label",
+                            "component": "Text",
+                            "props": {
+                              "as": "strong",
+                              "content": "Target id"
+                            }
+                          },
+                          {
+                            "id": "detail-tabs-9-target_id-value",
+                            "meta": {
+                              "intent": "read-only-field"
+                            },
+                            "component": "Text",
+                            "props": {
+                              "field": "target_id"
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "id": "detail-tabs-9-relationship_type-read-field",
+                        "component": "Stack",
+                        "children": [
+                          {
+                            "id": "detail-tabs-9-relationship_type-label",
+                            "component": "Text",
+                            "props": {
+                              "as": "strong",
+                              "content": "Relationship type"
+                            }
+                          },
+                          {
+                            "id": "detail-tabs-9-relationship_type-value",
+                            "meta": {
+                              "intent": "read-only-field"
+                            },
+                            "component": "Text",
+                            "props": {
+                              "field": "relationship_type"
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "id": "detail-tabs-9-direction-read-field",
+                        "component": "Stack",
+                        "children": [
+                          {
+                            "id": "detail-tabs-9-direction-label",
+                            "component": "Text",
+                            "props": {
+                              "as": "strong",
+                              "content": "Direction"
+                            }
+                          },
+                          {
+                            "id": "detail-tabs-9-direction-value",
+                            "meta": {
+                              "intent": "read-only-field"
+                            },
+                            "component": "Text",
+                            "props": {
+                              "field": "direction"
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "id": "detail-tabs-9-strength-read-field",
+                        "component": "Stack",
+                        "children": [
+                          {
+                            "id": "detail-tabs-9-strength-label",
+                            "component": "Text",
+                            "props": {
+                              "as": "strong",
+                              "content": "Strength"
+                            }
+                          },
+                          {
+                            "id": "detail-tabs-9-strength-value",
+                            "meta": {
+                              "intent": "read-only-field"
+                            },
+                            "component": "Text",
+                            "props": {
+                              "field": "strength"
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "id": "detail-tabs-9-origin_source-read-field",
+                        "component": "Stack",
+                        "children": [
+                          {
+                            "id": "detail-tabs-9-origin_source-label",
+                            "component": "Text",
+                            "props": {
+                              "as": "strong",
+                              "content": "Origin source"
+                            }
+                          },
+                          {
+                            "id": "detail-tabs-9-origin_source-value",
+                            "meta": {
+                              "intent": "read-only-field"
+                            },
+                            "component": "Text",
+                            "props": {
+                              "field": "origin_source"
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "id": "detail-tabs-9-is_bidirectional-read-field",
+                        "component": "Stack",
+                        "children": [
+                          {
+                            "id": "detail-tabs-9-is_bidirectional-label",
+                            "component": "Text",
+                            "props": {
+                              "as": "strong",
+                              "content": "Is bidirectional"
+                            }
+                          },
+                          {
+                            "id": "detail-tabs-9-is_bidirectional-value",
+                            "meta": {
+                              "intent": "read-only-field"
+                            },
+                            "component": "Text",
+                            "props": {
+                              "field": "is_bidirectional"
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "id": "slot-tab-0-4",
+                        "component": "Stack",
+                        "meta": {
+                          "intent": "slot:tab-0",
+                          "label": "tab-0",
+                          "notes": "pattern-group:status-timeline"
+                        },
+                        "layout": {
+                          "type": "stack",
+                          "gapToken": "cluster-tight"
+                        },
+                        "children": [
+                          {
+                            "id": "pg-status-timeline-29-read-field",
+                            "component": "Stack",
+                            "children": [
+                              {
+                                "id": "pg-status-timeline-29-label",
+                                "component": "Text",
+                                "props": {
+                                  "as": "strong",
+                                  "content": "Allowed transitions"
+                                }
+                              },
+                              {
+                                "id": "pg-status-timeline-29-value",
+                                "meta": {
+                                  "intent": "read-only-field"
+                                },
+                                "component": "Text",
+                                "props": {
+                                  "field": "allowed_transitions"
+                                }
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "id": "slot-tab-2-8-read-field",
+                        "component": "Stack",
+                        "children": [
+                          {
+                            "id": "slot-tab-2-8-label",
+                            "component": "Text",
+                            "props": {
+                              "as": "strong",
+                              "content": "Created at"
+                            }
+                          },
+                          {
+                            "id": "slot-tab-2-8-value",
+                            "meta": {
+                              "intent": "read-only-field"
+                            },
+                            "component": "Text",
+                            "props": {
+                              "field": "created_at"
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ],
+                "props": {
+                  "ariaLabel": "Record details"
+                }
+              }
+            ]
+          }
+        ],
+        "bindings": {
+          "onEdit": "handleEdit",
+          "onDelete": "handleDelete",
+          "onViewTimeline": "handleViewTimeline"
+        }
+      }
+    ],
+    "objectSchema": {
+      "label": {
+        "type": "string",
+        "required": true,
+        "description": "Human-readable display name rendered in primary surfaces.",
+        "semanticType": "text.label"
+      },
+      "description": {
+        "type": "string",
+        "required": false,
+        "description": "Supporting description used in detail and card contexts.",
+        "semanticType": "text.description"
+      },
+      "placeholder": {
+        "type": "string",
+        "required": false,
+        "description": "Hint copy surfaced in form fields when the label is empty.",
+        "semanticType": "text.placeholder"
+      },
+      "status": {
+        "type": "string",
+        "required": true,
+        "description": "Canonical lifecycle state derived from the states parameter. This is the single source\nof truth for the entity's current lifecycle position. Consumed by Colorized to resolve\nvisual tokens, and by view extensions to render StatusBadge and StatusTimeline.\n",
+        "enum": [
+          "proposed",
+          "active",
+          "paused",
+          "completed",
+          "terminated"
+        ],
+        "semanticType": "status.state"
+      },
+      "state_history": {
+        "type": "StateTransition[]",
+        "required": false,
+        "default": [],
+        "description": "Chronological log of state transitions. Each entry records the before/after states,\ntimestamp, and (when governance is enabled) the actor, reason, and transition metadata.\nRendered by StatusTimeline in the detail and timeline views.\n\nEntry structure:\n  - from: string (previous state)\n  - to: string (new state)\n  - timestamp: ISO 8601 datetime\n  - actor_id: string (user/system who triggered the transition, optional)\n  - reason: string (human-readable justification, required when requireTransitionReason is true)\n  - transition_metadata: Record<string, unknown> (arbitrary context, optional)\n",
+        "semanticType": "timeline.state_transition"
+      },
+      "allowed_transitions": {
+        "type": "string[]",
+        "required": false,
+        "default": [],
+        "description": "Materialized list of valid next states from the current status, computed from the\ntransitionRules parameter. When transitionRules is null (open model), this contains\nall states except the current one. Used by StatusSelector to disable invalid options\nand by StatusBadge to indicate available paths.\n",
+        "semanticType": "status.navigation"
+      },
+      "created_at": {
+        "type": "datetime",
+        "required": true,
+        "description": "Timestamp recording when the entity was first created.",
+        "semanticType": "audit.created_at"
+      },
+      "updated_at": {
+        "type": "datetime",
+        "required": false,
+        "description": "Timestamp for the most recent modification, when available.",
+        "semanticType": "audit.updated_at"
+      },
+      "last_event": {
+        "type": "string",
+        "required": true,
+        "description": "Lifecycle event associated with the most recent timestamp mutation.",
+        "enum": [
+          "created",
+          "activated",
+          "paused",
+          "terminated",
+          "reactivated"
+        ],
+        "semanticType": "audit.event.type"
+      },
+      "last_event_at": {
+        "type": "datetime",
+        "required": false,
+        "description": "Timestamp for the lifecycle event captured in last_event.",
+        "semanticType": "audit.event.timestamp"
+      },
+      "owner_id": {
+        "type": "string",
+        "required": true,
+        "description": "Identifier of the owning principal scoped by owner_type.",
+        "semanticType": "ownership.owner.id"
+      },
+      "owner_type": {
+        "type": "string",
+        "required": true,
+        "description": "Categorical owner type sourced from the ownerTypes parameter.",
+        "enum": [
+          "organization",
+          "team",
+          "platform"
+        ],
+        "semanticType": "ownership.owner.type"
+      },
+      "ownership_role": {
+        "type": "string",
+        "required": false,
+        "description": "Optional role name describing how the owner governs the entity.",
+        "semanticType": "ownership.owner.role"
+      },
+      "ownership_transferred_at": {
+        "type": "datetime",
+        "required": false,
+        "description": "Timestamp recording when ownership was last transferred.",
+        "semanticType": "ownership.owner.transferred_at"
+      },
+      "tags": {
+        "type": "string[]",
+        "required": false,
+        "default": [],
+        "description": "Ordered list of tags assigned to the entity.",
+        "semanticType": "taxonomy.tag.collection"
+      },
+      "tag_count": {
+        "type": "number",
+        "required": true,
+        "default": 0,
+        "description": "Computed number of tags assigned to the entity.",
+        "semanticType": "metric.collection.count"
+      },
+      "tag_metadata": {
+        "type": "object[]",
+        "required": false,
+        "default": [],
+        "description": "Per-tag governance metadata. Each entry corresponds to a tag in the tags array and\ntracks provenance and usage for taxonomy health monitoring.\n\nEntry structure:\n  - tag: string (the tag value, matches entry in tags array)\n  - created_at: ISO 8601 datetime\n  - created_by: string (user ID or \"system\" for allow-list tags)\n  - usage_count: number (how many entities use this tag, computed)\n  - moderation_status: \"approved\" | \"pending\" | \"rejected\" (when allowTagModeration is true)\n  - canonical_form: string (resolved synonym target, when synonymResolution is enabled)\n",
+        "semanticType": "taxonomy.tag.governance"
+      },
+      "neighborhood": {
+        "type": "array",
+        "required": false,
+        "description": "Edge records sharing an endpoint with this relationship, each containing source_id and target_id strings and an is_bidirectional boolean. Generated sample rows are explicitly synthetic."
+      },
+      "relationship_id": {
+        "type": "uuid",
+        "required": true,
+        "description": "Primary identifier for the relationship edge.",
+        "semanticType": "graph.relationship.id"
+      },
+      "source_id": {
+        "type": "uuid",
+        "required": true,
+        "description": "Identifier of the source node in the relationship."
+      },
+      "target_id": {
+        "type": "uuid",
+        "required": true,
+        "description": "Identifier of the target node in the relationship."
+      },
+      "relationship_type": {
+        "type": "string",
+        "required": true,
+        "description": "Semantic type describing the edge between the source and target.",
+        "enum": [
+          "membership",
+          "ownership",
+          "follows",
+          "depends_on",
+          "references"
+        ],
+        "semanticType": "graph.relationship.type"
+      },
+      "direction": {
+        "type": "string",
+        "required": true,
+        "default": "bidirectional",
+        "description": "Directionality applied when traversing the relationship.",
+        "enum": [
+          "unidirectional",
+          "bidirectional"
+        ],
+        "semanticType": "graph.relationship.direction"
+      },
+      "strength": {
+        "type": "string",
+        "required": false,
+        "description": "Signal representing how strongly the entities are connected.",
+        "enum": [
+          "low",
+          "medium",
+          "high"
+        ],
+        "semanticType": "graph.relationship.strength"
+      },
+      "origin_source": {
+        "type": "string",
+        "required": false,
+        "description": "System that originated or inferred the relationship.",
+        "enum": [
+          "manual",
+          "ingestion",
+          "analytics",
+          "integration"
+        ],
+        "semanticType": "graph.relationship.origin"
+      },
+      "is_bidirectional": {
+        "type": "boolean",
+        "required": true,
+        "default": true,
+        "description": "Flag indicating whether the relationship is symmetric."
+      }
+    }
+  },
+  "seed": {
+    "allowedTransitions": [],
+    "createdAt": "2026-09-05T12:00:00.000Z",
+    "description": "Consumer description",
+    "direction": "unidirectional",
+    "isBidirectional": false,
+    "label": "Consumer label",
+    "lastEvent": "created",
+    "lastEventAt": "2026-09-05T12:00:00.000Z",
+    "neighborhood": [],
+    "originSource": "manual",
+    "ownerId": "consumer-owner-id",
+    "ownerType": "organization",
+    "ownershipRole": "Consumer ownership role",
+    "ownershipTransferredAt": "2026-09-05T12:00:00.000Z",
+    "placeholder": "Consumer placeholder",
+    "relationshipId": "consumer-relationship-id",
+    "relationshipType": "membership",
+    "sourceId": "consumer-source-id",
+    "stateHistory": [],
+    "status": "proposed",
+    "strength": "low",
+    "tagCount": 0,
+    "tagMetadata": [],
+    "tags": [
+      "Consumer tag"
+    ],
+    "targetId": "consumer-target-id",
+    "updatedAt": "2026-09-05T12:00:00.000Z"
+  }
+}

@@ -1,68 +1,63 @@
-name: Bug Report
-description: Report a bug in the OODS Foundry MCP server or tools
+name: Bug report
+description: Something behaved wrongly in the OODS Forge runtime or one of its tools
 title: "[Bug]: "
 labels: ["bug"]
 body:
   - type: markdown
     attributes:
       value: |
-        Thanks for reporting a bug. Please fill in the details below so we can reproduce and fix it.
-
-  - type: textarea
-    id: description
-    attributes:
-      label: Bug description
-      description: What happened? What did you expect to happen?
-      placeholder: "When I call `repl.validate` with..."
-    validations:
-      required: true
-
-  - type: textarea
-    id: reproduction
-    attributes:
-      label: Steps to reproduce
-      description: Minimal steps to reproduce the issue.
-      placeholder: |
-        1. Call `catalog.list` with `{ "category": "core" }`
-        2. Observe the output...
-    validations:
-      required: true
+        Thanks. The tool call and its output are what make a bug reproducible; FEEDBACK.md says what else helps.
 
   - type: dropdown
-    id: tool
+    id: client
     attributes:
-      label: Which MCP tool is affected?
+      label: Client
+      description: How you were talking to Forge.
       options:
-        - tokens.build
-        - structuredData.fetch
-        - repl.validate
-        - repl.render
-        - brand.apply
-        - catalog.list
-        - code.generate
-        - design.compose
-        - map.create
-        - map.list
-        - map.resolve
-        - a11y.scan
-        - diag.snapshot
-        - billing.reviewKit
-        - billing.switchFixtures
-        - release.tag
-        - Other / not tool-specific
-    validations:
-      required: true
-
-  - type: dropdown
-    id: transport
-    attributes:
-      label: How are you connecting?
-      options:
-        - stdio (direct)
-        - MCP bridge (HTTP)
-        - Cursor
+        - Claude Code
         - Claude Desktop
+        - Cursor
+        - The HTTP bridge
+        - Direct stdio (a script or another client)
         - Other
+    validations:
+      required: true
+
+  - type: input
+    id: runtime
+    attributes:
+      label: Runtime version
+      description: The release tag, or the `commit` field of `forge-runtime.manifest.json` inside the archive you extracted. Contributors working from a clone give the commit.
+      placeholder: "v0.1.0 or a 40-character commit"
+    validations:
+      required: true
+
+  - type: textarea
+    id: call
+    attributes:
+      label: Tool call
+      description: The tool name and the arguments as you (or your assistant) sent them.
+      placeholder: |
+        design.compose
+        {"object": "Subscription", "context": "detail"}
+      render: text
+    validations:
+      required: true
+
+  - type: textarea
+    id: output
+    attributes:
+      label: Output
+      description: What came back, or the part of it that matters. Paste the error text verbatim when the call failed.
+      render: text
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected instead
+      placeholder: One or two lines.
     validations:
       required: true
 
@@ -70,10 +65,9 @@ body:
     id: environment
     attributes:
       label: Environment
-      description: Node version, OS, pnpm version.
+      description: Operating system and Node version (`node --version`).
       placeholder: |
-        - Node: v20.x
         - OS: macOS 15
-        - pnpm: 9.12.2
+        - Node: v24.6.0
     validations:
       required: false

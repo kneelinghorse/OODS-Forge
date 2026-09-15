@@ -14,6 +14,15 @@ export const RUNTIME_SBOM_FILE = "runtime-sbom-lite.json";
 export const RUNTIME_ARCHIVE_FILE = "forge-runtime.tar.gz";
 export const RUNTIME_ARCHIVE_SHA256_FILE = `${RUNTIME_ARCHIVE_FILE}.sha256`;
 export const TREE_DIGEST_ALGORITHM = "sha256:path-type-mode-size-content-v1";
+// The terms travel with the archive at its root: the license, the commercial path and the
+// generated third-party notices. scripts/pkg/build.ts ships the same three beside dist/pkg.
+export const TERMS_FILES = Object.freeze([
+  "LICENSE",
+  "COMMERCIAL.md",
+  "THIRD-PARTY-NOTICES.md",
+]);
+// The only token source that ships: the per-brand DTCG documents brand.apply reads.
+export const BRAND_SOURCE_PATH = "packages/tokens/src/tokens/brands";
 
 export const RUNTIME_PACKAGES = Object.freeze([
   "mcp-server",
@@ -319,6 +328,23 @@ export async function buildRuntimeManifest({
   });
   const sourceTokens = await treeDigest(sourceTokensPath);
   const shippedTokens = await treeDigest(shippedTokensPath);
+  const brandSource = await treeDigest(path.join(runtimeRoot, BRAND_SOURCE_PATH));
+  const sourceBrandSource = await treeDigest(
+    path.join(sourceRoot, BRAND_SOURCE_PATH),
+  );
+  assert.deepEqual(
+    brandSource,
+    sourceBrandSource,
+    "shipped brand source differs from the repository brand source",
+  );
+  assert(brandSource.entryCount > 0, "shipped brand source tree is empty");
+  const terms = [];
+  for (const file of TERMS_FILES) {
+    terms.push({
+      path: file,
+      sha256: await sha256File(path.join(runtimeRoot, file)),
+    });
+  }
 
   return {
     schemaVersion: "forge-runtime-manifest/v1",
@@ -349,6 +375,11 @@ export async function buildRuntimeManifest({
       path: "packages/tokens/dist",
       ...shippedTokens,
     },
+    brandSourceTree: {
+      path: BRAND_SOURCE_PATH,
+      ...brandSource,
+    },
+    terms,
     structuredDataManifest: {
       path: "artifacts/structured-data/manifest.json",
       sha256: await sha256File(structuredDataManifestPath),
@@ -422,6 +453,35 @@ export async function verifyEmbeddedManifest(payloadRoot) {
     },
     "shipped token tree digest mismatch",
   );
+  assert.equal(
+    manifest.brandSourceTree?.path,
+    BRAND_SOURCE_PATH,
+    "brand source path drifted",
+  );
+  const brandSource = await treeDigest(
+    path.join(runtimeRoot, manifest.brandSourceTree.path),
+  );
+  assert.deepEqual(
+    brandSource,
+    {
+      algorithm: manifest.brandSourceTree.algorithm,
+      sha256: manifest.brandSourceTree.sha256,
+      entryCount: manifest.brandSourceTree.entryCount,
+    },
+    "shipped brand source digest mismatch",
+  );
+  assert.deepEqual(
+    (manifest.terms ?? []).map((entry) => entry.path),
+    [...TERMS_FILES],
+    "terms roster drifted",
+  );
+  for (const entry of manifest.terms) {
+    assert.equal(
+      await sha256File(path.join(runtimeRoot, entry.path)),
+      entry.sha256,
+      `${entry.path} digest mismatch`,
+    );
+  }
   return { manifest, manifestBytes, payload };
 }
 

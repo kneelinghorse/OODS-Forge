@@ -11,7 +11,7 @@ export type ComponentTone =
   | 'danger';
 export type ComponentEmphasis = 'subtle' | 'solid';
 export type ComponentSize = 'sm' | 'md' | 'lg';
-export type LayoutGap = 'xs' | 'sm' | 'md' | 'lg' | string;
+export type LayoutGap = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | string;
 
 export type ValidationMessage = {
   state: 'error' | 'warning' | 'success';

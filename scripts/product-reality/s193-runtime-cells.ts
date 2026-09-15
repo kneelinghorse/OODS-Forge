@@ -7,12 +7,13 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { chromium, type Browser, type Page } from 'playwright';
 import { handle as listObjects } from '../../packages/mcp-server/src/tools/object.list.js';
-import { edgeArrayToNetwork } from '../../packages/mcp-server/src/codegen/chart-assets.js';
+import { PLACED_CHART_SIZE, edgeArrayToNetwork } from '../../packages/mcp-server/src/codegen/chart-assets.js';
 import { workflowSampleRecords } from '../../packages/mcp-server/src/codegen/workflow-data-emitter.js';
 import { runVizThemeProof } from './component-theme-proof.mjs';
 import { validateGeneratedArtifact } from '../../packages/mcp-server/src/codegen/artifact-envelope.js';
 import type { UiSchema } from '../../packages/mcp-server/src/schemas/generated.js';
 import { packFoundationPackages } from './s182-m04-consumer-harness.mjs';
+import { ensureConsumerRollup } from './consumer-rollup.mjs';
 import { deriveConsumerModel, deriveMountObligations, observeMountObligations, schemaNodes } from './s185-m04-consumer-contract.js';
 import {
   REPOSITORY_ROOT, createConsumerFiles, prepareManifest, isolatedNpmEnvironment,
@@ -179,7 +180,10 @@ async function runCell(output: string, object: string, context: Context, framewo
       requireGreen(result, name); return { exitCode: result.exitCode, log: `${relative}/${name}.json` };
     };
     await gate('fresh-exact-tarball-install', async () => {
-      const installed = await command('install', ['install', '--ignore-scripts', '--no-audit', '--no-fund', '--package-lock=false', '--userconfig', userConfig]);
+      const installArgs = ['install', '--ignore-scripts', '--no-audit', '--no-fund', '--package-lock=false', '--userconfig', userConfig];
+      const installed = await command('install', installArgs);
+      await write(path.join(cellRoot, 'rollup.json'), await ensureConsumerRollup(consumer!,
+        extraArgs => command('install-optional-retry', [...installArgs, ...extraArgs])));
       const isolation = assertInstalledIsolation(consumer!, framework, localTarballs, files);
       return { ...installed, isolation, imports: resolveImports(consumer!, files), tarballs: localTarballs };
     });
@@ -236,7 +240,7 @@ async function runCell(output: string, object: string, context: Context, framewo
           const renderRequest = { chartType: chart.chartType, ...(chart.source === 'edge-array' ? { network: edgeArrayToNetwork(rows, chart.edges) } : { rows, encodings: chart.encodings }), brand, theme,
             name: String(chartNode.props?.title ?? `${chart.chartType} chart`),
             ...(typeof chartNode.props?.description === 'string' ? { description: chartNode.props.description } : {}),
-            output: { svg: true, width: 360, height: 200, includeNormalizedSpec: true } };
+            output: { svg: true, ...PLACED_CHART_SIZE, includeNormalizedSpec: true } };
           const rendered = await renderChart(renderRequest);
           assert.equal(rendered.status, 'ok', JSON.stringify(rendered.errors));
           assert.equal(generated.artifact!.files.find(file => file.path.endsWith('.svg'))?.contents, rendered.svg, 'The consumer must carry the actual public SVG');

@@ -36,7 +36,7 @@ describe('s196 portable claims at the public tool boundary', () => {
     expect(section).toBeDefined();
     const expected = {
       'tokens.build': ['five artifacts', 'OODS-N011', 'buildAttempted:false'],
-      'brand.apply': ['canonical brand source', 'OODS-N020', 'adapter wire'],
+      'brand.apply': ['ships the brand source', 'review kit', 'OODS-N020'],
       'code.generate': ['readiness attestation', 'shipped package bytes', 'OODS-N015'],
       pipeline: ['readiness attestation', 'shipped package bytes', 'OODS-N015'],
       'design.preview': ['OODS-N019', 'retryable', 'data'],

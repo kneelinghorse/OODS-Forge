@@ -18,6 +18,8 @@ const chicago = JSON.parse(read(path.join(ROOT, 'chicago/measurements.json'))) a
 const utc = JSON.parse(read(path.join(ROOT, 'utc/measurements.json'))) as Measurement;
 const paletteRoot = path.join(repositoryRoot, 'artifacts/product-reality/sprint-197/m05/consumers');
 const palette = JSON.parse(read(path.join(paletteRoot, 'migration.json')));
+const frameRoot = path.join(repositoryRoot, 'artifacts/product-reality/sprint-200/m02/placement');
+const frame = JSON.parse(read(path.join(frameRoot, 'migration.json')));
 const historicalSource = (relative: string): string => execFileSync('git', ['show', `${palette.beforeHead}:${relative}`], { cwd: repositoryRoot, encoding: 'utf8', maxBuffer: 16 * 1024 * 1024 });
 
 describe('temporal placement migration preserves operands and historical proof (s196)', () => {
@@ -97,7 +99,7 @@ describe('temporal placement migration preserves operands and historical proof (
     expect(samples.VizAreaPreview.input.encodings.x.type).toBe('nominal');
   });
 
-  it.each(chicago.rows.filter(row => row.id.startsWith('Usage-')))('fresh $id generation follows the qualified UTC and palette assets', async row => {
+  it.each(chicago.rows.filter(row => row.id.startsWith('Usage-')))('fresh $id generation follows the qualified UTC, palette and frame assets', async row => {
     const request = wire('code.generate', 'input', structuredClone(row.request));
     const result = wire('code.generate', 'output', await generate(request));
     expect(result.status, JSON.stringify(result.errors)).toBe('ok');
@@ -110,7 +112,12 @@ describe('temporal placement migration preserves operands and historical proof (
       expect(moved).toMatchObject({ beforeHash: asset.contentHash, sameOperand: true, source: row.source });
       const contents = read(path.join(paletteRoot, moved.raw));
       expect(hash(contents)).toBe(moved.afterHash);
-      return { ...asset, contents, contentHash: moved.afterHash };
+      // Sprint 200 m02: the placed frame grew to 720x400 once; that layer chains from the palette layer.
+      const grown = frame.placements.find((entry: any) => entry.case === row.id && entry.path === asset.path && entry.source === row.source);
+      expect(grown).toMatchObject({ beforeHash: moved.afterHash, sameOperand: true, source: row.source, changed: true, chainedFrom: 'artifacts/product-reality/sprint-197/m05/consumers/migration.json' });
+      const grownContents = read(path.join(frameRoot, grown.raw));
+      expect(hash(grownContents)).toBe(grown.afterHash);
+      return { ...asset, contents: grownContents, contentHash: grown.afterHash };
     });
     expect(assets(result.artifact!)).toEqual(expected);
   }, 60000);

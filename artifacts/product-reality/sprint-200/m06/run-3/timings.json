@@ -1,0 +1,54 @@
+{
+  "steps": [
+    {
+      "step": "1-download-and-verify",
+      "startedAt": "2026-09-15T00:26:06Z",
+      "endedAt": "2026-09-15T00:26:14Z",
+      "seconds": 8,
+      "outcome": "pass",
+      "note": "shasum -c printed 'forge-runtime.tar.gz: OK'; tar extracted; adapter entry point and LICENSE/COMMERCIAL/NOTICES/manifest at the root exactly as install.md section 1 describes. Verify+extract alone was 2s; the rest was looking at what landed."
+    },
+    {
+      "step": "2-install-into-client-and-health",
+      "startedAt": "2026-09-15T00:26:22Z",
+      "endedAt": "2026-09-15T00:26:48Z",
+      "seconds": 26,
+      "outcome": "pass",
+      "note": "claude mcp add + get returned 'Status: ✓ Connected' in 2s; health returned status ok, 18 objects / 46 traits / 110 components, uptime 479ms, ledger 24 entries (19 product-reality, 5 contract)."
+    },
+    {
+      "step": "3+5+6a-compose-generate-render (one conversation)",
+      "startedAt": "2026-09-15T00:27:21Z",
+      "endedAt": "2026-09-15T00:28:55Z",
+      "seconds": 94,
+      "outcome": "pass",
+      "note": "One invocation because a schemaRef lives for one conversation, as the README requires. design.compose -> schemaRef compose-ce8611e4, 10 slots; code.generate -> 2 files, sha256:eb92ea79...; repl render -> 215,664 bytes saved as subscription-detail.html. Cannot split the 94s across the three calls without inventing boundaries."
+    },
+    {
+      "step": "4-certify-a-chart",
+      "startedAt": "2026-09-15T00:29:22Z",
+      "endedAt": "2026-09-15T00:29:49Z",
+      "seconds": 27,
+      "outcome": "pass",
+      "note": "viz.render returned contentHash, a11y narrative and table, normalizedSpec; artifact.certify returned coverage certified, conformant true, all four pillars pass, findings [], and exactly the four accuracy rules the README predicts for a plain bar chart (OODS-V150..V153)."
+    },
+    {
+      "step": "6b-look-at-it (open and describe)",
+      "startedAt": "2026-09-15T00:30:00Z",
+      "endedAt": "2026-09-15T00:30:16Z",
+      "seconds": 16,
+      "outcome": "pass",
+      "note": "open succeeded; document is titled 'OODS Preview' with token CSS inline, 49 data-oods-component markers over 15 component types, headings Details / Status Timeline / Cancellation Summary / Archive Summary / Billing cycle / Payments, placeholder values throughout."
+    },
+    {
+      "step": "7-verification-re-ask (not a README step)",
+      "startedAt": "2026-09-15T00:30:26Z",
+      "endedAt": "2026-09-15T00:32:00Z",
+      "seconds": 94,
+      "outcome": "pass",
+      "note": "Print mode returns only the assistant's final message, so the step 3 and step 5 detail was lost. Re-ran design.compose + code.generate in a fresh conversation to see selections, warnings and the validationReceipt, and to settle the tool count (19, not the 28 the first assistant claimed). Harness artifact, not a Forge fault; excluded from installToSee."
+    }
+  ],
+  "totalSeconds": 354,
+  "installToSeeSeconds": 234
+}

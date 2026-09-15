@@ -1,0 +1,2037 @@
+{
+  "schemaVersion": "1.0.0",
+  "sprint": "sprint-200",
+  "baseHead": "8d37b175b76ec9eb0012d86c831499d3113da722",
+  "plannedAt": "2026-09-14T19:56:04.665Z",
+  "mustNotMove": [
+    {
+      "file": "packages/viz-core/src/registry/viz-recipes.v1.json",
+      "sha256": "d90c5cb7e266acdafdc4fa01840faaa4b41771bfa08fe70f63349df188d6f366"
+    },
+    {
+      "file": "packages/viz-core/src/registry/viz-patterns.v1.json",
+      "sha256": "29468598051cfd2303d2bbb1d9bfa107956bf4ec336902a6d5bea9aa61516bde"
+    },
+    {
+      "file": "packages/viz-render/certified-matrix.json",
+      "sha256": "92fdad2b300d22f0dd9aed0e534200b20957ebd468b87377ddbd87d68163e12a"
+    },
+    {
+      "file": "artifacts/product-reality/sprint-196/m06/package-shapes-baseline.json",
+      "sha256": "7ae915577a430c8bf9c87f93c97e4e58ead7511243b4ff488b3aca83c9565a36"
+    },
+    {
+      "file": "tests/utils/__snapshots__/format.test.ts.snap",
+      "sha256": "1b3a44f0484aa375c542fbb3ccedcdd973bde239fcafb988718a2f7e1c9e0f1a"
+    },
+    {
+      "file": "tests/components/__snapshots__/empty-state.spec.tsx.snap",
+      "sha256": "a0046d90aa8a138feaaf3a31e79a002ad38d49e0c3426f66c0114a06aaf05314"
+    },
+    {
+      "file": "tests/viz/adapters/spatial/__snapshots__/echarts-visual-regression.test.ts.snap",
+      "sha256": "94df1592a8969ff1d72a1fb688180f0449e0e70943f3c811ea865e1779d136c1"
+    },
+    {
+      "file": "packages/viz-core/test/__snapshots__/golden-profiles.spec.ts.snap",
+      "sha256": "29add82fcfcad873658d6342a9a5f81d7fc8ad5cfc73a99c5f12c8aacd2a5904"
+    },
+    {
+      "file": "packages/viz-core/test/__snapshots__/dashboard-layout.spec.ts.snap",
+      "sha256": "576ebeb58cd0da859393e22f58aaa39c298da200861d2666e6036b1232d96d2e"
+    },
+    {
+      "file": "packages/viz-core/test/__snapshots__/golden-echarts-options.spec.ts.snap",
+      "sha256": "852dbb31e0e68fbf2bddcb26eaaff202a3372eccacf94d5ad9d966e35d3d03d5"
+    },
+    {
+      "file": "packages/viz-render/test/__snapshots__/emitter.spec.ts.snap",
+      "sha256": "a822011ae1509a7bb8638778b14cf583a8782987d6709909754514ba9a018270"
+    },
+    {
+      "file": "packages/mcp-server/src/tools/__snapshots__/viz.render.network-fidelity.test.ts.snap",
+      "sha256": "bd090f56ec5eb51d83bcb2dfdd70341da41bbecafb773825e85663653f47fcbc"
+    },
+    {
+      "file": "packages/mcp-server/src/tools/__snapshots__/viz.render.geo-fidelity.test.ts.snap",
+      "sha256": "b5d6e4fe3107334ded30366914cd3f3c9fa3cedab7018601fe1d00457e43eca8"
+    },
+    {
+      "file": "packages/mcp-server/src/tools/__snapshots__/dashboard.render.fidelity.test.ts.snap",
+      "sha256": "987400046feebe1a1ea063f3f1a9c6631aa8522a7aa233e39ea60cdc23831c03"
+    },
+    {
+      "file": "packages/mcp-server/src/tools/__snapshots__/viz.render.fidelity.test.ts.snap",
+      "sha256": "1ff4f5e48ff441a0ad54eb0e770f1c4bf673f8062254f9a3d53e0707c153b6e1"
+    }
+  ],
+  "mayMoveOnce": [
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "baseSha256": "f2c469d01ceb86ef6e88617f3ebeecc6d74e1b69bc10ce651e9dbe24ba6007ed"
+    },
+    {
+      "file": "packages/mcp-server/registry/release-cells.v1.json",
+      "baseSha256": "e261e9063faaf2d4611832364eba67dae931b3597215a2b12dba6af7d43ae54b"
+    },
+    {
+      "file": "tests/contexts/__snapshots__/context-templates.test.tsx.snap",
+      "baseSha256": "85f06c3b4da26a86b1b10a6c5973be66709ef07a140841334075b013981e70e3"
+    },
+    {
+      "file": "tests/components/__snapshots__/user.render-object.test.tsx.snap",
+      "baseSha256": "0635aeed3b7553192e286f485cfa00bef9ec3188539a121df59776829bca5b6e"
+    },
+    {
+      "file": "tests/components/__snapshots__/subscription.render-object.test.tsx.snap",
+      "baseSha256": "fc8f9fe65b987fbad198da4e6042241b1e4c2aa6f9d2f2780ab52b85450e7913"
+    }
+  ],
+  "entries": [
+    {
+      "file": "tests/contexts/__snapshots__/context-templates.test.tsx.snap",
+      "pin": "snapshot",
+      "before": "85f06c3b4da26a86b1b10a6c5973be66709ef07a140841334075b013981e70e3",
+      "after": "a9797bb143a371e879461faff6c0d0490966ab3e09e28bfb0e1c4248fe33987f",
+      "mission": "s200-m02",
+      "reason": "The React Card and Text no longer carry raw Tailwind class strings; the root src/components/base re-exports render them, so their snapshots follow the class attribute."
+    },
+    {
+      "file": "tests/components/__snapshots__/user.render-object.test.tsx.snap",
+      "pin": "snapshot",
+      "before": "0635aeed3b7553192e286f485cfa00bef9ec3188539a121df59776829bca5b6e",
+      "after": "ffe5892334dd13b55b9eb18e8eb37fd7112ce2b67530ef0b1f5307b840a481ab",
+      "mission": "s200-m02",
+      "reason": "The React Card and Text no longer carry raw Tailwind class strings; the root src/components/base re-exports render them, so their snapshots follow the class attribute."
+    },
+    {
+      "file": "tests/components/__snapshots__/subscription.render-object.test.tsx.snap",
+      "pin": "snapshot",
+      "before": "fc8f9fe65b987fbad198da4e6042241b1e4c2aa6f9d2f2780ab52b85450e7913",
+      "after": "c1436a2f2f9ee2841245af5b18a11b9733f9788541f18bcac87979ba57b4a4fd",
+      "mission": "s200-m02",
+      "reason": "The React Card and Text no longer carry raw Tailwind class strings; the root src/components/base re-exports render them, so their snapshots follow the class attribute."
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Article/card/react artifactHash",
+      "before": "sha256:383faf9ef457b3a70a248ce60a631bc76b4d246eaf2a652812692fe6e0e75eef",
+      "after": "sha256:2985e3b8e1b31fcaeebab7c00afa221323706a045d8b2f6cfea0b10782a3d10d",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Article/card/vue artifactHash",
+      "before": "sha256:1fb9d6ae8dcd27da789fa75b56e13bc69bca9cfe45da8b7df2e6f2bef5e5d575",
+      "after": "sha256:84bb3cd481092f3614619ca2d04ad803fab7273cef727596c7df620650758856",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Article/detail/react artifactHash",
+      "before": "sha256:97141bd80243b7d8b3356152d285ac5491df602a9770e0aa746ebbc685e26f3f",
+      "after": "sha256:3ce9320b92c9170514f03d82c391a103f8846c7aaa158346272de64d5ced6996",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Article/detail/vue artifactHash",
+      "before": "sha256:70502c81982496fa9186a492aabe575e51797f69c6e95bffddeb55812cecb7e2",
+      "after": "sha256:145ff478790491000c3c774c54d6700a1dd40ca2e3f4119b24334b2e49282efe",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Article/form/react artifactHash",
+      "before": "sha256:156497ccebe517b1b7eaf3943ad734b2a8fd410b3495cf73cf93119f7f48416e",
+      "after": "sha256:544a48cf502f4f58c4d7b362f79fe8a2c163bd6ca4dba023defcc12f52c7d800",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Article/form/vue artifactHash",
+      "before": "sha256:6fdc76d8c10886bf5ac090b6a52dfce3110edfe6fdd5e86984788d6e4689d2c0",
+      "after": "sha256:025a3bc57f57f37ed18bfd8b239bf4dbfdca85a926ace5c38c238aa081f40566",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Article/inline/react artifactHash",
+      "before": "sha256:7811169c4752017ac81a321e067a58b6bd9803d90bb442f740da03d78f73c180",
+      "after": "sha256:4499eca177975515d44be0b43e35f4fb4925e6ac057a30410bd746083cf81e48",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Article/inline/vue artifactHash",
+      "before": "sha256:71748a33e7ca7297994f8e981e4580ab6a011eb5f81915bd442da20c959b8297",
+      "after": "sha256:b6791fb4330bd31aaadf338ff961b76c7737ffbad17b717dacd5f0d89efec5d8",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Article/list/react artifactHash",
+      "before": "sha256:1f9f92eeedd9fc88e8422bc6a762186e4c0cebce45855d0807d573797764efc3",
+      "after": "sha256:08fd5499adc44ec2eb3400437b2cabc35ff675d6c5b016c26f30404c6688a943",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Article/list/vue artifactHash",
+      "before": "sha256:d3c53ea7f5d41fe29217c32d023f76aaefc065d0c39cede263d84111663cf1be",
+      "after": "sha256:1510ab0d6d5a08b5d806adaf56390758a96d462537423fdd34b1614f78fe279f",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Article/timeline/react artifactHash",
+      "before": "sha256:2e0fcfdd5ca5754702d5ae15e7a876a91465fddd2ee5d9301b5ff6c676127f54",
+      "after": "sha256:14fbb9911249e0dd64bcc18657e331e1c005cc3c4cdc5e199e99ec24c9870e8a",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Article/timeline/vue artifactHash",
+      "before": "sha256:bc230fa3b233dc716d3b8bf23804dd70f5b63610735a785ff0543e800fc43ab1",
+      "after": "sha256:81e733e5fe67965a6de22f50ea5fe1c7f1da6a78b857b81c7997d1e061a76375",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Article/workflow/react artifactHash",
+      "before": "sha256:aebd85884028c404ce9023face1cb536fb740e12c81467e403e8be57237fc785",
+      "after": "sha256:9fccd86c81181e99dd6ae0a9579803958b41073112aeccfd7298348c0cde8bfa",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 sweep; sprint-199 s199-m01 moved this cell (artifacts/product-reality/sprint-199/m07/runtime-diff.json) without a full re-sweep | src/app.css: the generated shell moved onto the token font stack, type scale, spacing, radius, card shadow and the 2px/2px focus rule"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Article/workflow/vue artifactHash",
+      "before": "sha256:7095ac812c287b15a23c354e23145645bf1d72cbcc27692e5e61116fc9982e53",
+      "after": "sha256:022e70b175ef4c238bfa4da2ac41520899e5e850ae7a0600634ee8abf969ed88",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 sweep; sprint-199 s199-m01 moved this cell (artifacts/product-reality/sprint-199/m07/runtime-diff.json) without a full re-sweep | src/app.css: the generated shell moved onto the token font stack, type scale, spacing, radius, card shadow and the 2px/2px focus rule"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Collection/detail/react artifactHash",
+      "before": "sha256:d8dcaeafe37d9b2ac84c9b754d69be2e91c0d0e4d474d8822789c4b3a78749e2",
+      "after": "sha256:1df7b56d675499df02e7bfee7e8f19ac285414c5f40aa480769413ca9c701479",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Collection/detail/vue artifactHash",
+      "before": "sha256:97ecccb15d8bf2d631f583a1a78a41aca8d3fcd93f61020835c353b9c9259a3b",
+      "after": "sha256:f31623f9bf5cdb1185aa11c7eccc8e4e8dd396ba7ffe3c40b7dbcc5ea54520ea",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Collection/form/react artifactHash",
+      "before": "sha256:881f83c0dac10a50987f6591c34f68e4a783eab3c9f5950ff5253eabb003d5ee",
+      "after": "sha256:b7b0248a54e1f211a985c844e356f6693dea13c4b6a358547bf7ded2d393c226",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Collection/form/vue artifactHash",
+      "before": "sha256:4d8243de2d14f7bfb270a7c6d98e7f1dc541ee4fc8387698c974fa352d99ee20",
+      "after": "sha256:ad05e50654944d5eb665d50e11313d46c2ef09529d45c38d539b51ad5069e4aa",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Collection/list/react artifactHash",
+      "before": "sha256:82041765f49683ef8645ecdd3500eeba9da8464d796f9e2235efeff62062937c",
+      "after": "sha256:48dadc15c8db8941842a35a6fed63cbd850186c1ad8293eb437cee90dffd4dab",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 sweep; sprint-199 s199-m01 moved this cell (artifacts/product-reality/sprint-199/m07/runtime-diff.json) without a full re-sweep"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Collection/list/vue artifactHash",
+      "before": "sha256:50fc21050462273201049e9d21d4145e6d7070a22b85fec68c9eec1bcdbc42ba",
+      "after": "sha256:383caf0e8035a774feef22b360a1d079a0a9f56dd84bc910d28022e7a7004053",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 sweep; sprint-199 s199-m01 moved this cell (artifacts/product-reality/sprint-199/m07/runtime-diff.json) without a full re-sweep"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Collection/timeline/react artifactHash",
+      "before": "sha256:b1063c27d1b0e41209a92cc743b0e880097f44e2187605f50da928d09ea3bd4c",
+      "after": "sha256:81c48d170a37b45375b62e29925eb5764ec2b948e14b674b95c14e5fea5ff5c7",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 sweep; sprint-199 s199-m01 moved this cell (artifacts/product-reality/sprint-199/m07/runtime-diff.json) without a full re-sweep"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Collection/timeline/vue artifactHash",
+      "before": "sha256:ea817610db5a572f2cc975912a9ca87ab8d694052d9c43b9f1ee5a3e502b650d",
+      "after": "sha256:2e2421e35017593403414ae32378b64458f59783a7e6f0c510af87848f5d2fc8",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 sweep; sprint-199 s199-m01 moved this cell (artifacts/product-reality/sprint-199/m07/runtime-diff.json) without a full re-sweep"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Collection/workflow/react artifactHash",
+      "before": "sha256:895d61a18934b0a8a59c14eca46a45ebc0b993359ea37d6dae89d738a25ac418",
+      "after": "sha256:2a377531823cbfa0d5d0600d8cc47346c2f252e552add05b24b78e02ede32185",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 sweep; sprint-199 s199-m01 moved this cell (artifacts/product-reality/sprint-199/m07/runtime-diff.json) without a full re-sweep | src/app.css: the generated shell moved onto the token font stack, type scale, spacing, radius, card shadow and the 2px/2px focus rule"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Collection/workflow/vue artifactHash",
+      "before": "sha256:2bf29c19012723c0d13cb540bde29c956d16fa87c31ddc24efb2b04429c2c5d4",
+      "after": "sha256:3b463e6075920db89899673c4df32d02e7116a40dcec8f20194fa0922f67b590",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 sweep; sprint-199 s199-m01 moved this cell (artifacts/product-reality/sprint-199/m07/runtime-diff.json) without a full re-sweep | src/app.css: the generated shell moved onto the token font stack, type scale, spacing, radius, card shadow and the 2px/2px focus rule"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Document/detail/react artifactHash",
+      "before": "sha256:5d730431258d47cb6e08c5681126e36149180d440868c937b97e2e66131aa9f9",
+      "after": "sha256:3c97a63c15d28fed1daa3b1566d83a738edc466a48f7c71ab1c8bab366ed2da4",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Document/detail/vue artifactHash",
+      "before": "sha256:33f8f520ee866f5e0a529b781215ba1271038531f3dcd001b812e2f2f3a5ffeb",
+      "after": "sha256:3d87caaa3bb6b10cfa434c88e57d030555e6a9f834104ddfb82e66a45bfd5f4d",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Document/form/react artifactHash",
+      "before": "sha256:5329167342101861694b22c7be8087dfdbb6728ed408d5c2c916fc7e39f7e7a1",
+      "after": "sha256:2cd0ac4ae3d4767efb599a1e2b0b04bc05d2aa3e7966bdddfcc333489587d8d8",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Document/form/vue artifactHash",
+      "before": "sha256:382e6c8e0f36b04956fe5a74aaaa2960323cc29f63534f1d6429e08098b97363",
+      "after": "sha256:32af138268245bb059c7bade33ccc370e0673b228ea4da7cfeadb0c4a7faa783",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Document/timeline/react artifactHash",
+      "before": "sha256:1817ed30a761b7452dffc6ac01070a7435436c7337870fdf7db11e910812b30d",
+      "after": "sha256:b41dd8929d44559d9c41e132eb760850f60856f672b6f650e2751e5e508d9d38",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 sweep; sprint-199 s199-m01 moved this cell (artifacts/product-reality/sprint-199/m07/runtime-diff.json) without a full re-sweep"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Document/timeline/vue artifactHash",
+      "before": "sha256:875a0d320513db33172b0cbc0cf0353e79162543cd2b9b07dd6c4aa8481a33bb",
+      "after": "sha256:32da1b725bace314d9b7d7ad73c0c4b186f6bae7bdca50465fd6172a8a0db74b",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 sweep; sprint-199 s199-m01 moved this cell (artifacts/product-reality/sprint-199/m07/runtime-diff.json) without a full re-sweep"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Document/workflow/react artifactHash",
+      "before": "sha256:612d491d9ed058282dacd090c0c2b25a17d2c9379bafeb6649d9bd4ad69caf8b",
+      "after": "sha256:e77f7939d3bd3841ac000e4684ec6a11af6aad1911cc706c611180fad1157a82",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 sweep; sprint-199 s199-m01 moved this cell (artifacts/product-reality/sprint-199/m07/runtime-diff.json) without a full re-sweep | src/app.css: the generated shell moved onto the token font stack, type scale, spacing, radius, card shadow and the 2px/2px focus rule"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Document/workflow/vue artifactHash",
+      "before": "sha256:eb1407886c5d6c219be788a2f0105d112106baadae25a4dc979a3fb9ba90050f",
+      "after": "sha256:986ba3994c60fb90211700f11e32c933cee6ab268fab929e8764453aabe835d0",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 sweep; sprint-199 s199-m01 moved this cell (artifacts/product-reality/sprint-199/m07/runtime-diff.json) without a full re-sweep | src/app.css: the generated shell moved onto the token font stack, type scale, spacing, radius, card shadow and the 2px/2px focus rule"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Evidence/detail/react artifactHash",
+      "before": "sha256:8c57765890f485e8340755a3682767f2ebec9fd1816034723aaa49de0361b0f6",
+      "after": "sha256:3ac8ff7d79bfad4b1582515df67cab768803cf7f74c2482ddb6eed125773c26b",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Evidence/detail/vue artifactHash",
+      "before": "sha256:e082e447e4d59843e710f52fce07f2cd724feaab7cac8c73633a965566dbb11f",
+      "after": "sha256:fd6ff522bbbbdcfeae4338df8cfd666b5b0f0e469803bc7dc1597ac3c3bd86e8",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Evidence/form/react artifactHash",
+      "before": "sha256:3ed8c7836010d775fb3d9b131a115f6da981527509f31ab49cd7baa7ef999d02",
+      "after": "sha256:efb6ad1d5585c3f229d38fce00db7b12848b3f9d5ce7c9189aa62ca0441255af",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Evidence/form/vue artifactHash",
+      "before": "sha256:d39b9a7f6cb77efa7e1793ea1d681bca3ba5ba32317657cd7f14286f06dd79a9",
+      "after": "sha256:036b5d1c16309f375eb1c8f4a9f0b16423e4157c06728101effa3a7a296bc542",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Evidence/list/react artifactHash",
+      "before": "sha256:89aa2c8c9f89b90d889b7c43385d993a604338610406e88319b83be51c92f748",
+      "after": "sha256:d67c61b7abd017095d54047da694d6d334b9bd0dadf91075b8687576b1c50994",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 sweep; sprint-199 s199-m01 moved this cell (artifacts/product-reality/sprint-199/m07/runtime-diff.json) without a full re-sweep"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Evidence/list/vue artifactHash",
+      "before": "sha256:5bb1979660cbb0e939bd3140cd44b50e106a94fd40bcc0191e8301fe1be85af3",
+      "after": "sha256:6c51df0d182ddeb2213e69638a96f97399c5426cb7b407172a0bef3fff867a15",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 sweep; sprint-199 s199-m01 moved this cell (artifacts/product-reality/sprint-199/m07/runtime-diff.json) without a full re-sweep"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Evidence/timeline/react artifactHash",
+      "before": "sha256:35054fe2c58c874b29cf7ff7e8f00bf27a8d1343ad12d16e51a61126d77d508a",
+      "after": "sha256:e0f88b28a8ee3f5111763fdec627f47f9a19c077e6b473debf05c689a859b9fc",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Evidence/timeline/vue artifactHash",
+      "before": "sha256:fab4dcf980837e345648c00fef857b3954d4463dad81200bcf0d4f4e3100631d",
+      "after": "sha256:70b1351d2086d97f419f0a91ea3aa6889249598fbb6d03e274c66323f2351d31",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Evidence/workflow/react artifactHash",
+      "before": "sha256:673a37e55282afebbe91b15d0b731d4ccf32fd686197d25f36d78ac09c37299e",
+      "after": "sha256:f9684dc3730cb9c591aee681d080f31cb1595ac578d06464c26348e98c0031cf",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 sweep; sprint-199 s199-m01 moved this cell (artifacts/product-reality/sprint-199/m07/runtime-diff.json) without a full re-sweep | src/app.css: the generated shell moved onto the token font stack, type scale, spacing, radius, card shadow and the 2px/2px focus rule"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Evidence/workflow/vue artifactHash",
+      "before": "sha256:d6b12ac7e5ad7ec2945db5814ce2a67e68501484a6f8315a5b9e1af1b4e7d24a",
+      "after": "sha256:ed3e9241d9ab5e48b8d34964a3e3d63547566eaf5bef13ea3747151bdf44a0ce",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 sweep; sprint-199 s199-m01 moved this cell (artifacts/product-reality/sprint-199/m07/runtime-diff.json) without a full re-sweep | src/app.css: the generated shell moved onto the token font stack, type scale, spacing, radius, card shadow and the 2px/2px focus rule"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Invoice/card/react artifactHash",
+      "before": "sha256:18abd13d7d317bc300473b9050e12ce1ef892cb3a9ea909924e03df79ea9c02b",
+      "after": "sha256:4d8481ca929bcc14ca7fb8d0fa227e087fa448d0e271baea0847db38d2fced26",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Invoice/card/vue artifactHash",
+      "before": "sha256:11ae24187a41638550152519f6c6d7b8114a492afb88a571c4938ca53a64e54b",
+      "after": "sha256:bd204945ff29737c764fdf4339875b00d4fdad5a23c2922b853a47e3c3335ef5",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Invoice/detail/react artifactHash",
+      "before": "sha256:8c048ee594457c495ea1eff6f9e5d5e32fc1f872656f0abcc96026357c506b43",
+      "after": "sha256:6a354f5ecc3dfd958287efbefd9036f1a0464227e7e76c1db3ded64a9b44fc34",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry) | placed chart rendered at 720x400 (chart-assets PLACED_CHART_SIZE) and bound to the preview width"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Invoice/detail/vue artifactHash",
+      "before": "sha256:da4751a32bad49b12339f938a57785b6386f421757b11af57c873c90042b9894",
+      "after": "sha256:9a2227733db80b4a9a5154ebf62aa33d7b22694592a631ba8181d8fe7c792de9",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry) | placed chart rendered at 720x400 (chart-assets PLACED_CHART_SIZE) and bound to the preview width"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Invoice/form/react artifactHash",
+      "before": "sha256:92c3decc174390ac6719b146d7118ef0840407055d92c92daf7f68c1e4e84aa2",
+      "after": "sha256:331592189c0897ba8e1c3e76f0e872dc2f174540475b55e8190a409e3a329520",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Invoice/form/vue artifactHash",
+      "before": "sha256:5a33af5455bbd0eb38f7ddb4a57b6c7ee96e786baa9acefce034ccd4d0789714",
+      "after": "sha256:0e18c61a454fb0495ffd988bd08e1343777947fffcbed6ab11693d5d975b8850",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Invoice/inline/react artifactHash",
+      "before": "sha256:acd03ec228dd75c1c12753875fc53bd5583d585ee694a1d344afc75a4a06f7b6",
+      "after": "sha256:f3a3922f23de9a9eee4d9cb7417092a6bf9045bdc4438d3333fa966186da2397",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Invoice/inline/vue artifactHash",
+      "before": "sha256:272f8b1a71c64f4c280bd9f2fee7bc75ccc13ba0e146b4dfee1dace3888dc43d",
+      "after": "sha256:10b981d62f84da317aa087596723f798103a6359a4294d3fd7d03fb98bd1315c",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Invoice/list/react artifactHash",
+      "before": "sha256:3162bf7b9a79ddd6b56fcfb59f63e7d682094c78db2cc7a2017d40b0b39e764b",
+      "after": "sha256:6d6362eb35a0cf5be97008cb82169767a4422c2a6cdf38c7cff2ae468933c5c2",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Invoice/list/vue artifactHash",
+      "before": "sha256:2763f00a91aaaeac77d33001431743f4d8126db88b49d12a3143cc7dfc36c8fd",
+      "after": "sha256:40230763e75227964271c031a7aba0f118c6356dd41412521131f4eab37c50fa",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Invoice/timeline/react artifactHash",
+      "before": "sha256:705b0ec6f7b7a63011c1f7a4850086620d7bf1dc94176dccfc2c7a82d2ef0a48",
+      "after": "sha256:ce81f148e93651c9366759e1f343a3971b581194d09e7c1ae690540ceb33cd69",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Invoice/timeline/vue artifactHash",
+      "before": "sha256:cede49c7afc2d64dd05dba0dabbe10fffb53f3d21fb78a0ea8a9e46c1bbc7047",
+      "after": "sha256:a11010a4a91b7f6fe7166634286257f1bb7cd29aec75fead4d27e82e212b5ed3",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Invoice/workflow/react artifactHash",
+      "before": "sha256:6550e3707655d4068d10cee6029a0d38ec88f0b44e61a0090221163eb5938534",
+      "after": "sha256:5be3b2d938635de9e11a672e1eb47058d37efa305f8d390ebbb02f87b11ebd86",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry) | src/app.css: the generated shell moved onto the token font stack, type scale, spacing, radius, card shadow and the 2px/2px focus rule | placed chart rendered at 720x400 (chart-assets PLACED_CHART_SIZE) and bound to the preview width"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Invoice/workflow/vue artifactHash",
+      "before": "sha256:b7b1659ea77d1f6f5355578a4dbf7626cfaf9f99a19aa4a57d6abefe772068a3",
+      "after": "sha256:0af37e06609b9eae8855638784b84d1ac015dd4c731490c9301ac04621bbdbb5",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry) | src/app.css: the generated shell moved onto the token font stack, type scale, spacing, radius, card shadow and the 2px/2px focus rule | placed chart rendered at 720x400 (chart-assets PLACED_CHART_SIZE) and bound to the preview width"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Media/card/react artifactHash",
+      "before": "sha256:ba878ae7aa8aec423f17a6f0f2393ac71c0f7c1bc10095a2b504c794a3312a96",
+      "after": "sha256:4b420245a296057871cc5314d4e42dcf8a1802d25ac8ee0fecaed661f2c865e8",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Media/card/vue artifactHash",
+      "before": "sha256:02f656ee10bf3d3e890e35b56efd8e564d35bbd60c0a249b013fe379694fc696",
+      "after": "sha256:b2ab324026fa38cc583a738b4f242f2dd72943bb3191a5a89e6814ddb9a10307",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Media/detail/react artifactHash",
+      "before": "sha256:1861c959b6674a0aec891d9d4663055e4192ac21e83304f1ffc373b74b6a73e1",
+      "after": "sha256:eb588afd483a1f22f66fc62358d2e20c9231d059d3f3552dfcd914d45ce9e649",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Media/detail/vue artifactHash",
+      "before": "sha256:af33fee9b789b3bce8f13f5d4d3292b22522306163c46c1bcca27a4e30747218",
+      "after": "sha256:754223b956ca7669f31c7282dc7986b9c74bbcfca853f5b5a39a55cd64b8ec26",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Media/form/react artifactHash",
+      "before": "sha256:723982cd6868e0edecf25b2a752cfa6d5b4031461be2a7758f7c5159452f7be2",
+      "after": "sha256:34bba1cbc3fd5763d9cfe2b3fa1c6f687433e547f4a00fff839a5d67f927e4a7",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Media/form/vue artifactHash",
+      "before": "sha256:6ea48d1957462003bc8744239670c9bd28a26bb7848f0e8557fe92bb6d4a0a18",
+      "after": "sha256:2267c56d12991980b26a3be2a325bd653e6dbc20db40218901e4680740c0f376",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Media/inline/react artifactHash",
+      "before": "sha256:9e3372eeeda406bc0dcca81975148c64a0734b239972c0a4422a96f93579048f",
+      "after": "sha256:5d25f8354b7cd60c0d5e1e75e06bb2e39b35cfdb3875ac2bf6767c00bd0a9c16",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Media/inline/vue artifactHash",
+      "before": "sha256:b6f48c96de0f728d8d0b013a9e3e1e9a9aee2104985b1d6d76840d0de064d849",
+      "after": "sha256:d5a52598a11528a8515b0ad95b61f6c0bc09e53e1587d02cf1e770186fdea53b",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Media/list/react artifactHash",
+      "before": "sha256:36b30035f7ec25f08699e84841331ce2206946e11825a1c1ef68d28b22fdd6cc",
+      "after": "sha256:b1e15e689b8380bb121e27938e08371eb32c2663a6afcb2a46751262d7db5ec9",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Media/list/vue artifactHash",
+      "before": "sha256:72ebf63e4d3086c92621b7980c555d941bad0888b729128cf18fce87252e30c4",
+      "after": "sha256:209c7f29ef4f264572ef6dc260858dfad801acaad55a5d9a290db67ee975ab7c",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Media/timeline/react artifactHash",
+      "before": "sha256:4dac77deef2c5c8930779b809df065a165ef8e860823fd75a205f3d7c133c761",
+      "after": "sha256:3535f5a21bcca5acc277507d0137ae9f83fe8a23f726e2f16fd5e4273f06a141",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Media/timeline/vue artifactHash",
+      "before": "sha256:c8ef2ded2b6b72da46094947bccaa6d7c2cd10c03e9a55440e46947730b6f153",
+      "after": "sha256:0ad10914c31716ccffded0eab3408b4719bc98a6438139a44e3d1024e6cf5df9",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Media/workflow/react artifactHash",
+      "before": "sha256:df4d21d328b652ab2a00d526bf70884c3c2ea889653073370c1ed522f9133ad1",
+      "after": "sha256:875d144e09c7dd40ef213e2f9775b416ff2beb3ba54c2b07c282afd229ef1179",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 sweep; sprint-199 s199-m01 moved this cell (artifacts/product-reality/sprint-199/m07/runtime-diff.json) without a full re-sweep | src/app.css: the generated shell moved onto the token font stack, type scale, spacing, radius, card shadow and the 2px/2px focus rule"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Media/workflow/vue artifactHash",
+      "before": "sha256:05198d2b5909b7ccdab36095fbfa900965d309b6bd586c2a467650a7f79f71c6",
+      "after": "sha256:5bf12b325761bac00a2dee729704fa7eaa774c96a3ecda512e2e0a6421957942",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 sweep; sprint-199 s199-m01 moved this cell (artifacts/product-reality/sprint-199/m07/runtime-diff.json) without a full re-sweep | src/app.css: the generated shell moved onto the token font stack, type scale, spacing, radius, card shadow and the 2px/2px focus rule"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Mission/detail/react artifactHash",
+      "before": "sha256:2444db5bb1c32065b2a42a3aa770509079f5b4df554f689d07bfb49e4b16ee5c",
+      "after": "sha256:08b8b6d9fb2463a9ad5a41208ef913dd8269e38cc3c071549bfdf497bb7f9699",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Mission/detail/vue artifactHash",
+      "before": "sha256:59145ac456edb11020bc21913d4d478c640a3180968f5ded713332a6cde4b4f2",
+      "after": "sha256:2e6ee6cc4202f0c8d66e38d6039cf12b66b57be19e8690faae04ed1207baeda2",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Mission/form/react artifactHash",
+      "before": "sha256:1fedf6a452e83f97e826a2195ba0b8439c171117b7c2743f216cca8b2f82dd14",
+      "after": "sha256:d194dd322788bd6acf1eaf8cb885a894e1e2cbd11f522476ea7231e359be62a9",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Mission/form/vue artifactHash",
+      "before": "sha256:9662546036d56d44f91f1a3521f56a8d23253c0e5d728a0c2a83bd2cfc51e6ef",
+      "after": "sha256:181920b55295b38e6b975b47f25a8d410c20c69c44e75e29a4c1cece06b07f1e",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Mission/timeline/react artifactHash",
+      "before": "sha256:a7e73e6867af85da98d0114aa4ef769bf1870accbc743b717497d5af7578835f",
+      "after": "sha256:761a6a4715e300785a41ad8774ce0d30891760488fb897575d72d7513f797909",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 sweep; sprint-199 s199-m01 moved this cell (artifacts/product-reality/sprint-199/m07/runtime-diff.json) without a full re-sweep"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Mission/timeline/vue artifactHash",
+      "before": "sha256:efd659c03c5df6010dc23403aee42dc3176c7d6af86d4329878bf5871264027c",
+      "after": "sha256:9ade73b13b1f459aa55985b3b66aa92bd5646ac2dd08b1a841a6e2feaeb8e65c",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 sweep; sprint-199 s199-m01 moved this cell (artifacts/product-reality/sprint-199/m07/runtime-diff.json) without a full re-sweep"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Mission/workflow/react artifactHash",
+      "before": "sha256:71f30e6102b2e8d90e95dcfa2ed76ba4e694385dabe896a0b4d869a0da610b57",
+      "after": "sha256:62bed014b4ce6a0ba66f247e38bf251de10c7b6cc210e1ade8b7dd4d4d714301",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 sweep; sprint-199 s199-m01 moved this cell (artifacts/product-reality/sprint-199/m07/runtime-diff.json) without a full re-sweep | src/app.css: the generated shell moved onto the token font stack, type scale, spacing, radius, card shadow and the 2px/2px focus rule"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Mission/workflow/vue artifactHash",
+      "before": "sha256:7ca721536ad2f5bbc4bb16478ddca214590a38851b24eb4235b25ef7199ae54a",
+      "after": "sha256:6ef4cdb111903c16261892f1ccac75e0298c95f77bfa5f72029760da665ff3ce",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 sweep; sprint-199 s199-m01 moved this cell (artifacts/product-reality/sprint-199/m07/runtime-diff.json) without a full re-sweep | src/app.css: the generated shell moved onto the token font stack, type scale, spacing, radius, card shadow and the 2px/2px focus rule"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Organization/card/react artifactHash",
+      "before": "sha256:eeca6319ca5b60fe101c988bfe08029e77e38e3059fa0c4cc368689aa8eaeadf",
+      "after": "sha256:7c347e2a90446c9b3b74b56e3e821ca72404c4e4b84f0eeb1fffdf4dcaef4574",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Organization/card/vue artifactHash",
+      "before": "sha256:681558228203a55411236de52f41c37847407cba6755e2f0556e2997f25f7fc7",
+      "after": "sha256:9aa98118a66cd637586bb682338e08387a3ff6e2d199372b99b3e8eb8aac3105",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Organization/detail/react artifactHash",
+      "before": "sha256:23249d6c4e92b81298b30883114673be1428eaad2a24f64b4d03c96ee9e30508",
+      "after": "sha256:253a3ff6fbd32bd1ef791683fd20e50e242e635f4d92075d28c1172e8810248d",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Organization/detail/vue artifactHash",
+      "before": "sha256:6de394154e6dc80f63544e5ba783141f04c36f0f52d59a5787d7a29cf5e41665",
+      "after": "sha256:63c0502b23c5fd2770a8e19c85b237f953e77dcb4b20cbb4044b9a6c64b331b5",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Organization/form/react artifactHash",
+      "before": "sha256:c7906c48f8282362c6de699eead22a54dcbe79ae9f771ad8ad878d072d5a53f1",
+      "after": "sha256:bcd11ba200dafccfc65ab1ed66f14454c0e24d7c3ee9aa73608cd20a482b6be5",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Organization/form/vue artifactHash",
+      "before": "sha256:912c8698c38de9ca311b0bcc314094ea5a18083f8b1a3b5c5778695589ff568e",
+      "after": "sha256:5111172694c0f19af995f5989733703717822ef7737cf685f32456138046ed3e",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Organization/inline/react artifactHash",
+      "before": "sha256:65bd03db72da2b7612be197370ef52f5b664d4e0307a56ecf680fcbe120ca80f",
+      "after": "sha256:52008d42583d1eef856c8cb1fba091cefe36875628b98e7764035d1388f738ce",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Organization/inline/vue artifactHash",
+      "before": "sha256:317ca1e157312ec61769cd73cd78b844691705a2e31580c8e093c7a99fc6ce12",
+      "after": "sha256:91f3c6f337ad30e99210c8ecfc0e7d8dfa083e63738216b382b23c34dcd4c7a6",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Organization/list/react artifactHash",
+      "before": "sha256:16229f76e26112828831ce876fa14b0ad9839bc7acea43607cfd512143db8d40",
+      "after": "sha256:76dd58bcc3a928d2fe5095fd27343471f47a8a252bed6c21e758b31c047036c2",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Organization/list/vue artifactHash",
+      "before": "sha256:5c237b75131b6be708897d80d89d78406a6b1cf80e358cb02404bc65ca752031",
+      "after": "sha256:a204e0cf32b12cfb2a4fccaa4e40b538424be70f18ebac9241535f043f8035cd",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Organization/timeline/react artifactHash",
+      "before": "sha256:6be2389e1b766192fd58c5264febb590bb775cf8c73d467c0c7f15dd6bc18e1f",
+      "after": "sha256:a9cc3041e8e208aff5259ec6007b3c4fcc7b4d71d8319f7c4bd5bc1258106a08",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Organization/timeline/vue artifactHash",
+      "before": "sha256:9451b5bda83d25b513ddb2e8e19ba612b5573188bf6de4da5b66201850ac3cf9",
+      "after": "sha256:3029a544716e0a4fa92344c31f455231dfa10a7f06c0a01c8ac40276c71d496a",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Organization/workflow/react artifactHash",
+      "before": "sha256:705f67f1c2fad6a13b695d174cb54472a801a81f47210923bdf1cac6ddb2cf76",
+      "after": "sha256:3f9548033bfabd8844330e7740d3559c809463bfbb939ada2406172c8854ac66",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 sweep; sprint-199 s199-m01 moved this cell (artifacts/product-reality/sprint-199/m07/runtime-diff.json) without a full re-sweep | src/app.css: the generated shell moved onto the token font stack, type scale, spacing, radius, card shadow and the 2px/2px focus rule"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Organization/workflow/vue artifactHash",
+      "before": "sha256:ea0b4f7b57dd7440397f1b1e0566c7f704963f58b8b077e0fcd9f4f2bd454416",
+      "after": "sha256:c9468d5fc30ad6166980437e5ce4ccbc837ae955fe87a3dde3ecdd320a3108bf",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 sweep; sprint-199 s199-m01 moved this cell (artifacts/product-reality/sprint-199/m07/runtime-diff.json) without a full re-sweep | src/app.css: the generated shell moved onto the token font stack, type scale, spacing, radius, card shadow and the 2px/2px focus rule"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Plan/card/react artifactHash",
+      "before": "sha256:cdf9e84aaa8b7607b3654fd85f4ca018562439e22de56bd0a17d1cad5c627088",
+      "after": "sha256:c37e8b206380fe2e95f7f0fc7f1cb85827712c4d38e514399e932aa8149693fc",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Plan/card/vue artifactHash",
+      "before": "sha256:0e27315af04f067d3db25d43004d87202ed29df1c43a0d495d12ee1f9030b32c",
+      "after": "sha256:2072c9686908851f955c0fb2fbe716a6068ba726601ae2743b06e9246941d92b",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Plan/detail/react artifactHash",
+      "before": "sha256:ecb1279366787dd44f03162d3ad722cb832a5e09df1ec5acaa3da3101d812090",
+      "after": "sha256:0ee9c211310f2f463b1b91aa3fd9ba2bdecb52c53f9a78846f66f9ead4a1e0a1",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Plan/detail/vue artifactHash",
+      "before": "sha256:bfc8838500185198ed50eff77c9ed8c11178cb2acb25e6a0ef4b5dddf653a9d0",
+      "after": "sha256:97d6118c4f16cec7caa6d4f4835e2c784da370e758a75953078e912688b591c2",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Plan/form/react artifactHash",
+      "before": "sha256:5398e1e30b9288b64cbdbbc6a398abdf6a073f9d1e24abab54ba86b69dcba036",
+      "after": "sha256:05101c0e043f254c19cda0b5b6f1ce218cb766b29c9df8cc5fba6185dcd0a5a4",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Plan/form/vue artifactHash",
+      "before": "sha256:cf93aab1dd84bfc8ec47845ec740f82ef066a4e6d5605a127297112e37a052fd",
+      "after": "sha256:1e922603fcd6d72b046e93704f738e4c444cd874729e90f3c506c4164ab45ca6",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Plan/inline/react artifactHash",
+      "before": "sha256:ef0d7e5ec758a9316bbf54b5c485e15dd3c9b9032098b5336349b5af90a5637a",
+      "after": "sha256:f806cf3e11fef57874fa87603803247b9bb0563a22a594f2eb9659f15783d66c",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Plan/inline/vue artifactHash",
+      "before": "sha256:43de4692816745490675bac1941e018cee42a8622729bda428a878fa86fbe0a4",
+      "after": "sha256:d4c9b99c9ec39b286c8776272087dab5fc0b3c48f50abdd87b8a4fd22f479b43",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Plan/list/react artifactHash",
+      "before": "sha256:8ae9eaaff4f034cdc53415e7c4f0208bc3fc1c36e07ee942e5afd688ef8e4e2c",
+      "after": "sha256:67e16c8b1fd1dd2d6f46c3afce7adef56a8afc145ec21d57ff86c781439608ad",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Plan/list/vue artifactHash",
+      "before": "sha256:df75d973da8af7b8d1f1f7d706e8a4320e87f4aa918e80b035adb7e944649805",
+      "after": "sha256:27f61de1c85e56b3b1fff77d4091bed4287d1ddcac09cd2141319824b5af1112",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Plan/timeline/react artifactHash",
+      "before": "sha256:060ba6f8b6f7bff42f455cf6b5e0b2c54ec2d0ee7a73432a6c2e750080b96b36",
+      "after": "sha256:87a6918ef8f680b198a601168e60d641375f3db8d93a3113871de8e6ec724426",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Plan/timeline/vue artifactHash",
+      "before": "sha256:1dfb92f19d8c8a49df75b3aa198fbfbc330b650cc8a938d05135338652e785c7",
+      "after": "sha256:30379dccebe41fc8a24addbf417fbb739f789b35ccd8206112836e2c26ca3723",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Plan/workflow/react artifactHash",
+      "before": "sha256:b254ebf01c957672eb3182dd9939de96cefb8855349c0d1d98b7a19d7b8bced3",
+      "after": "sha256:af8dc67d093a816f27ff88b5047f6c766e3957ffe3861529fe18d1c7522d56bf",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry) | src/app.css: the generated shell moved onto the token font stack, type scale, spacing, radius, card shadow and the 2px/2px focus rule"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Plan/workflow/vue artifactHash",
+      "before": "sha256:4df793146ffb5e8ef27b6fd064cf159a3cc32c514ea85f65a602152bea249222",
+      "after": "sha256:6ee3635b99df56cb1878634ad4da8adb699eacf85187e0929734f89fc3cf3401",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry) | src/app.css: the generated shell moved onto the token font stack, type scale, spacing, radius, card shadow and the 2px/2px focus rule"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Product/card/react artifactHash",
+      "before": "sha256:39f415981f114cdf3140e11cf54053822822e7f33da07fd2f2174076b13a5e04",
+      "after": "sha256:eae312145cce558b48cf967863566b1bc8391f9536140fe1f5655c99499d9bb0",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Product/card/vue artifactHash",
+      "before": "sha256:c549b9f39d93cfeaea9a67aab139048daefac8c0df2abe8e495db3868b12024b",
+      "after": "sha256:36e5a514ce18273c5a47d1a910d9989068c92136132b6c95b66a4dd0789ca86e",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Product/detail/react artifactHash",
+      "before": "sha256:3c402f314876c57d0679922b1c23ab2edaccfbb536cce4e50a4bff2183a4fa1f",
+      "after": "sha256:b933d85c5b5eea300e67a6a6ba4d5b83703163372994777d4ff458d7f26adc19",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Product/detail/vue artifactHash",
+      "before": "sha256:e1ccc2f01cbb5d9cf92c24f11ef8afee4be95a9f24facfb1af46742c2589d0b4",
+      "after": "sha256:e933e97363ceaeeecc6dbee4e5a1b688756b938efdf13f4ebbd2d6eed9d84d26",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Product/form/react artifactHash",
+      "before": "sha256:de8f418959c9932eec61a7b13256af02e0babb4969b4bd1e75badc4906f732bc",
+      "after": "sha256:68d92896a2c5bc9dd746e18b52ef1376622c933b0d611c1230f900fdc7768db6",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Product/form/vue artifactHash",
+      "before": "sha256:bfff9353c9f1199aa6e7c4e4c67eee4d3c5978e5930ddc0ce1d919e45434878c",
+      "after": "sha256:5fcc12b2d024fa30b700dea854ef8be85750454c1a4ccb2dc9eaddc218c6cb80",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Product/inline/react artifactHash",
+      "before": "sha256:b2ed11064f48b2cef721c0f42d2a3734893768c18590df7567d8851311cc7218",
+      "after": "sha256:b22751e9caacf616de657143b79d1f14941674a141219db7f3493a9d2d65cdd7",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Product/inline/vue artifactHash",
+      "before": "sha256:cbf22b0c8932ae01177a71a117dc4988b74e7deeed65d061051f7eacd938439c",
+      "after": "sha256:d67b3276eb327c0cbfb96121fae992c6b1d4bcfe9da1971723dc5c8da9d5866e",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Product/list/react artifactHash",
+      "before": "sha256:51c47d47d5991b5a3594acd7c7342f07f1991f3e4345659417ded5ce2ff1d9e4",
+      "after": "sha256:fee23e13533b80230ffcb672cdeb6837748c96f70d0b3bd567f82f49febd9bcb",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Product/list/vue artifactHash",
+      "before": "sha256:aa04a6e738bca6cd8c27aff6b6c156e72ab1a5c05b8f67bb2114157f295e280a",
+      "after": "sha256:ea856e6811f9e67d6df203cf9d82b119e971b8596fe1638a43ec8ed4d82e1baf",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Product/timeline/react artifactHash",
+      "before": "sha256:0f36159ded9715bbc5d7e4b58922e48fea8dee0bbf36fd43cbba97d586152d0e",
+      "after": "sha256:07ea37209f2052814546098f24e25ebdf5475ce7c75f6984deb3f8afa2a656d5",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Product/timeline/vue artifactHash",
+      "before": "sha256:36035ea2d63608ef800d3a3cfced4b4df2b028e0c1bb365495a18c56011a5a4b",
+      "after": "sha256:76cb49616e1767fdce70c499227f49272680263186ae4f17d1c9fc0ce34243ef",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Product/workflow/react artifactHash",
+      "before": "sha256:5f82507b8e57f2305408b671ea4dac221e4c8bd28f2b85b49264f20f0b47594e",
+      "after": "sha256:d773c0f93860018cc70a221191b2a648dd524fec59208bd12cbb98919c3c7f23",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 sweep; sprint-199 s199-m01 moved this cell (artifacts/product-reality/sprint-199/m07/runtime-diff.json) without a full re-sweep | src/app.css: the generated shell moved onto the token font stack, type scale, spacing, radius, card shadow and the 2px/2px focus rule"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Product/workflow/vue artifactHash",
+      "before": "sha256:e57b0914080d71ad8b5eb761be91d8accb791b445af6041a67ec30bd57b9d4a9",
+      "after": "sha256:f0f75b63766317bdac8c52a4b8d611003508c6663439ac4de8cc179eae97cdfb",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 sweep; sprint-199 s199-m01 moved this cell (artifacts/product-reality/sprint-199/m07/runtime-diff.json) without a full re-sweep | src/app.css: the generated shell moved onto the token font stack, type scale, spacing, radius, card shadow and the 2px/2px focus rule"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Project/detail/react artifactHash",
+      "before": "sha256:daaa168c19b36539446c9aa0dfe4a2e1529aef3ade591e2e782ce51fbdc80398",
+      "after": "sha256:2e44cd05bf6e3f4d2fdf9320a0ca0c7d5135b6215c2bd46d7d463dd21b0ce183",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Project/detail/vue artifactHash",
+      "before": "sha256:ebae688c6095b81bc0bd07ff75a20cca10f0990ed953bf462c8abe33c8d7b070",
+      "after": "sha256:0dd519c1e967e6a11be08e10cf21d3b1c3bd7df2b7c5b20c966bd4d179fa4a61",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Project/form/react artifactHash",
+      "before": "sha256:384a8056608fd521671124768632664a707886b77c3a97a1cf7b46de7b0d5804",
+      "after": "sha256:9bc56a1113de49b9fbe020ed332263841f61900ad3cdc9d6e987d5d9067b6046",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Project/form/vue artifactHash",
+      "before": "sha256:ac03744152bbe5aff2185c66cff3381557d8ea5a8505551178ca1948f1fd2d19",
+      "after": "sha256:4623afcbad7a851767c5e859768a11e28bdc8a0e0fe28f55b681c93214532019",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Project/timeline/react artifactHash",
+      "before": "sha256:5563a254383480bebeb77cf1f5c0af394d7807d3a2a6884636927a32ccf9acb4",
+      "after": "sha256:915e839d14ad542b442c5feef54bbf62b00ca5829a1bddd5d3d18569bf242dfc",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 sweep; sprint-199 s199-m01 moved this cell (artifacts/product-reality/sprint-199/m07/runtime-diff.json) without a full re-sweep"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Project/timeline/vue artifactHash",
+      "before": "sha256:b768da3b87707def573b43a807d745edb98388e99c15f03d432504167f2fad43",
+      "after": "sha256:12d737872d344d134e4fac625d205756386b8b257deb7d34d11fb24b6f003acc",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 sweep; sprint-199 s199-m01 moved this cell (artifacts/product-reality/sprint-199/m07/runtime-diff.json) without a full re-sweep"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Project/workflow/react artifactHash",
+      "before": "sha256:c001ec69a8f2263e1f2f2444ef8b46deb86a58e0433c4265c2ca36d1745ba032",
+      "after": "sha256:c5f19920619140f3a7376a6bb5c2f6da34bbc072cac17813ce9dc8b2a218a10b",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 sweep; sprint-199 s199-m01 moved this cell (artifacts/product-reality/sprint-199/m07/runtime-diff.json) without a full re-sweep | src/app.css: the generated shell moved onto the token font stack, type scale, spacing, radius, card shadow and the 2px/2px focus rule"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Project/workflow/vue artifactHash",
+      "before": "sha256:193bb10c8a41d926e600dcf140fdfaba9fe2d09756945df429300c7d4ab2100f",
+      "after": "sha256:8e7cee0f50dcbb721b9bfc2d2a27e1641983594450725f32d66a0c0822114bfb",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 sweep; sprint-199 s199-m01 moved this cell (artifacts/product-reality/sprint-199/m07/runtime-diff.json) without a full re-sweep | src/app.css: the generated shell moved onto the token font stack, type scale, spacing, radius, card shadow and the 2px/2px focus rule"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Relationship/card/react artifactHash",
+      "before": "sha256:8f90cda0a644cb2bbdc1c282d10ac03cf7fe6eb7c2dadd191e413521445e4122",
+      "after": "sha256:24b857c44815550d58b7e228a303605e670d57e505322a59476e61e4372adf88",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 sweep; sprint-199 s199-m06 moved this cell (artifacts/product-reality/sprint-199/m07/runtime-diff.json) without a full re-sweep"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Relationship/card/vue artifactHash",
+      "before": "sha256:d28ad8cd3e64234c7d688fc4455c5a48c03e92962988c37f21bb7c5fdcbac482",
+      "after": "sha256:ee45e487471d5d853a442786724981dd66d1a1bad6237bc5af0e0684db805e0a",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 sweep; sprint-199 s199-m06 moved this cell (artifacts/product-reality/sprint-199/m07/runtime-diff.json) without a full re-sweep"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Relationship/detail/react artifactHash",
+      "before": "sha256:c230791546384dff3e6dab897935c0cdadd1017c599a814899ffc39e37778606",
+      "after": "sha256:4f54232a25d78e90def879f2017b68c328afad3b93d44a117fb0642cf091dfd6",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 sweep; sprint-199 s199-m06 moved this cell (artifacts/product-reality/sprint-199/m07/runtime-diff.json) without a full re-sweep | placed chart rendered at 720x400 (chart-assets PLACED_CHART_SIZE) and bound to the preview width"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Relationship/detail/vue artifactHash",
+      "before": "sha256:1addbd07291e9eef5ab25a955f9f438eb7ae19234bd2ad30bc649e53e633d3ee",
+      "after": "sha256:dd41979ea228accac5a2d5327bbf0a5e675caec234fc89cd1ab1c5f92d528d5d",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 sweep; sprint-199 s199-m06 moved this cell (artifacts/product-reality/sprint-199/m07/runtime-diff.json) without a full re-sweep | placed chart rendered at 720x400 (chart-assets PLACED_CHART_SIZE) and bound to the preview width"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Relationship/form/react artifactHash",
+      "before": "sha256:f90a93ff7396447fef90b65615eb8132634510371c450217eb95073f010e8c12",
+      "after": "sha256:0287e2ceed6d0a6cbe77e12c3907c4d76244065ce8a37886fd425135c505b8d5",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 sweep; sprint-199 s199-m06 moved this cell (artifacts/product-reality/sprint-199/m07/runtime-diff.json) without a full re-sweep"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Relationship/form/vue artifactHash",
+      "before": "sha256:a7c6ac85634df77a4ef99ac12992585d0e3d10515d6cc2fdefe8fba17e84aa3c",
+      "after": "sha256:87d3c16cc14c07ccb6f81988cd742d72253b83bff1139a38e4f90e4e4631e43a",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 sweep; sprint-199 s199-m06 moved this cell (artifacts/product-reality/sprint-199/m07/runtime-diff.json) without a full re-sweep"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Relationship/inline/react artifactHash",
+      "before": "sha256:3290ba58b8a2c57796f062a7bf42c0a33f1a679c36db483356ae91ddca439490",
+      "after": "sha256:5250d7b624289364cb5db9c59bfffae6d9d02a63047ea09b3339df050373190f",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 sweep; sprint-199 s199-m06 moved this cell (artifacts/product-reality/sprint-199/m07/runtime-diff.json) without a full re-sweep"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Relationship/inline/vue artifactHash",
+      "before": "sha256:89aaf470fb9884734024321c8a6fb2a4bd3d6df6eb125e121f8002b4a73a9a84",
+      "after": "sha256:65f2ff71751214816928aa126971cb892b8fd5d22b947ff9ce12a97247af57b1",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 sweep; sprint-199 s199-m06 moved this cell (artifacts/product-reality/sprint-199/m07/runtime-diff.json) without a full re-sweep"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Relationship/list/react artifactHash",
+      "before": "sha256:8125678405d264f701da8df89b64062b4a15a5b4f67ba49d1b349252bede1407",
+      "after": "sha256:52cec36048c58b9d305c2fa6c9425cb412a2fcfd2a5dd1fba33009e1f93aab8f",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 sweep; sprint-199 s199-m06 moved this cell (artifacts/product-reality/sprint-199/m07/runtime-diff.json) without a full re-sweep"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Relationship/list/vue artifactHash",
+      "before": "sha256:045455a6d30b2ac27de0b74057f6f3f1ce39061c73da3757f8501d35abc847d6",
+      "after": "sha256:ce06a456da1773c5b109e3835eb349339eb037628e56f28cb43810e0de996a9e",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 sweep; sprint-199 s199-m06 moved this cell (artifacts/product-reality/sprint-199/m07/runtime-diff.json) without a full re-sweep"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Relationship/timeline/react artifactHash",
+      "before": "sha256:a96769026b627f9a209bc9da07a4bb6cd16c23115450637dcecf811d92a0789a",
+      "after": "sha256:7cbcdfbab70e3872218a9fce27f324085af9eb70437318ecc85746fc996a7439",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 sweep; sprint-199 s199-m06 moved this cell (artifacts/product-reality/sprint-199/m07/runtime-diff.json) without a full re-sweep"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Relationship/timeline/vue artifactHash",
+      "before": "sha256:2f9b24e925b077c6dd0d8a54745e4bff5cd090339f2b4c0f84e6c101b3b7cc6d",
+      "after": "sha256:1096512409d3566b93ad976b9c48d3c889d9daaf7c062ad2b28d99e34ed59797",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 sweep; sprint-199 s199-m06 moved this cell (artifacts/product-reality/sprint-199/m07/runtime-diff.json) without a full re-sweep"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Relationship/workflow/react artifactHash",
+      "before": "sha256:ba925f7e0f608ff1e385ac952fd9122ef9b31daaca5c1cc466d00aec06886c83",
+      "after": "sha256:273d3d00160f6566c6028685de78b8a1a131ce13346729fee82b6db3651670e4",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 sweep; sprint-199 s199-m06 moved this cell (artifacts/product-reality/sprint-199/m07/runtime-diff.json) without a full re-sweep | src/app.css: the generated shell moved onto the token font stack, type scale, spacing, radius, card shadow and the 2px/2px focus rule | placed chart rendered at 720x400 (chart-assets PLACED_CHART_SIZE) and bound to the preview width"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Relationship/workflow/vue artifactHash",
+      "before": "sha256:9b599402f97c33850199439b1a4ddaae45e4d44889ddecc752410f68ec442a85",
+      "after": "sha256:1be0600ba47cd89457b70a1ebffdd5e642a7b91f33270f03f711cce3e803144a",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 sweep; sprint-199 s199-m06 moved this cell (artifacts/product-reality/sprint-199/m07/runtime-diff.json) without a full re-sweep | src/app.css: the generated shell moved onto the token font stack, type scale, spacing, radius, card shadow and the 2px/2px focus rule | placed chart rendered at 720x400 (chart-assets PLACED_CHART_SIZE) and bound to the preview width"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Report/detail/react artifactHash",
+      "before": "sha256:e2fd0afc85c77e070107ac2adbfccaa8d08ca3d298235401b0d0d34893a354bb",
+      "after": "sha256:afd5a0a03ed04d926f698a518e7e36d21d3177d8320881b6c70e82bc232492f9",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Report/detail/vue artifactHash",
+      "before": "sha256:61bd312e77b0d5b33702e958d782c42ec1fa62bba3c205d1732eb83ec23cfe26",
+      "after": "sha256:b4e7009643f9358bbd5abf3adde49cfcea794e1333cea92672651ebe7701c714",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Report/form/react artifactHash",
+      "before": "sha256:9dccc41316e10f4ee86e1a8c33917a7cd61c196099bfbdd60db1c641ccaad63c",
+      "after": "sha256:c1a500006dc8800d952026a3d954fc863034bb570df6fabd8851a434f6feb131",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Report/form/vue artifactHash",
+      "before": "sha256:723d6a9db4f0c5e351570be5d05a02a5d401d9061d51df89881881adc43c256c",
+      "after": "sha256:f7ea996b4a092440d9260009851b7ab42feef4371d0ef16e238c9a3715049170",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Report/timeline/react artifactHash",
+      "before": "sha256:672d3dd55a8c9d64c72c74247dfee57e8f4ec9c0750a94acda5552e3ee661aad",
+      "after": "sha256:609b69a2e89e27b06c3580e1509e5bc37b8bf51192d0e692f941efa83013f11a",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 sweep; sprint-199 s199-m01 moved this cell (artifacts/product-reality/sprint-199/m07/runtime-diff.json) without a full re-sweep"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Report/timeline/vue artifactHash",
+      "before": "sha256:f028c8ed5e553fd21deaf696cc99f83dcf6816d797b6b165f69f751709e38e14",
+      "after": "sha256:e9d8ec52db92bb3afccbedb1d1839f5daf636fa553f011699ed730ef2c47ed97",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 sweep; sprint-199 s199-m01 moved this cell (artifacts/product-reality/sprint-199/m07/runtime-diff.json) without a full re-sweep"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Report/workflow/react artifactHash",
+      "before": "sha256:afc1f20842e9adb91672c035ff3167b0a25ffc3f45599f90442945433a922af4",
+      "after": "sha256:abcaec5f008f41a7bd30b4e73e65b122f9b62f85f742d16bb2b50ee5ae976a5b",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 sweep; sprint-199 s199-m01 moved this cell (artifacts/product-reality/sprint-199/m07/runtime-diff.json) without a full re-sweep | src/app.css: the generated shell moved onto the token font stack, type scale, spacing, radius, card shadow and the 2px/2px focus rule"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Report/workflow/vue artifactHash",
+      "before": "sha256:88045b2fc0da2278229b34ec61f998bbd0b68a04078d50fe24bcde1a6fb1afef",
+      "after": "sha256:670fb9cee040c87eeb31bc7c674e01a26ae907aaf8397faec052a2c313420b6c",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 sweep; sprint-199 s199-m01 moved this cell (artifacts/product-reality/sprint-199/m07/runtime-diff.json) without a full re-sweep | src/app.css: the generated shell moved onto the token font stack, type scale, spacing, radius, card shadow and the 2px/2px focus rule"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Subscription/card/react artifactHash",
+      "before": "sha256:1099163b8e9cd64b8aa9451c5b54bee2250734bce44a5e2d7064cf5dd192ecf4",
+      "after": "sha256:a0d0320b8828db5b4a77f73e21303e3f8b1ba136e89ced8c8d976b1c6eb8d95a",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Subscription/card/vue artifactHash",
+      "before": "sha256:226729bc403920b1b4b1e4df9468931c2bb400294b0d1d3e453817cab71c478c",
+      "after": "sha256:c3f625d561b801057ce65e45a6dedbbf902be81fc760502079ad3350e87fac57",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Subscription/detail/react artifactHash",
+      "before": "sha256:b43a91c0b66748c95918a9c5eb4651fc81030b2bf7577536bf5dbdada82ef079",
+      "after": "sha256:eb92ea79759284a6f1e47f618e024e415b275d2bdefe7e0fb0c2659840a3ef35",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry) | placed chart rendered at 720x400 (chart-assets PLACED_CHART_SIZE) and bound to the preview width"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Subscription/detail/vue artifactHash",
+      "before": "sha256:abff556e7c40e5d02dd28f35e7e2edba728748853e4fbb5bebe710ec2f5b031a",
+      "after": "sha256:f1c6490814a63f482c11762a5a6003f09158b0c57f3554c7364fd553576e2857",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry) | placed chart rendered at 720x400 (chart-assets PLACED_CHART_SIZE) and bound to the preview width"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Subscription/form/react artifactHash",
+      "before": "sha256:38c95a6e4204db2b46da8d872740404005affd5a057197a70a8f5ebdc1e8b0a2",
+      "after": "sha256:1741ccf5093a48d964ebaf44d082be1ec7df33d7a9cb1690ba184b05b2d8ed95",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Subscription/form/vue artifactHash",
+      "before": "sha256:a8950d84401a3c8838bbbd1ae008d188fe928523d908a15c2df67ad20d372208",
+      "after": "sha256:3380ab76e5a026410ca9bd22d7736714dedc30189afc8f97c21c207ffefd0606",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Subscription/inline/react artifactHash",
+      "before": "sha256:b42dd3d542f10185fe918030e5aac2a9f99fe364935e1c2ba319d50f9f1b027e",
+      "after": "sha256:ffb4eed1d318ea528c2e54b561741ca99fc0e4ff1e29c48a10253c8edde7eb83",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Subscription/inline/vue artifactHash",
+      "before": "sha256:a6de49302b2797affffad974675c6cd350fd230ccbc3f1a47173306c9b04b71b",
+      "after": "sha256:f8426ec3672daa2e8d4b264e67e3dee1efc345a772fd6d32aa305dcb9f3de47d",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Subscription/list/react artifactHash",
+      "before": "sha256:9ea4f019948c5fca03a7b1d83c6ee898d68b2ebba4f67c440dc5bc6a21725c12",
+      "after": "sha256:fef104fa461bb87c26e3acbd676e365968cd9e10c1efd1e23ab45988e6325bee",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Subscription/list/vue artifactHash",
+      "before": "sha256:0f1447fc260d721fa3ba21302691e5a1135c1a58c524cd811c39ab4eaf6cf24d",
+      "after": "sha256:cbdcf45a2e5fd53694b59ba1de99db490355ddc5beb97a44b8204d27667c3217",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Subscription/timeline/react artifactHash",
+      "before": "sha256:9b41e8f0f6ec6a2d7f124d67bfea12827e244e54f4c379a95a4bd74bd7027fb1",
+      "after": "sha256:3e5125519af63a51a2058adc36ba2dcae3026ef690d1a2892e39d48a98218657",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Subscription/timeline/vue artifactHash",
+      "before": "sha256:5bcfbcc96d66d8d786102333a518ab2262cac57a6611176db6c9fa6cd364303c",
+      "after": "sha256:3ae98affbb304f95f54bc1234b807f66a4b8c7c3cf868fb873fc2c51dcf67c60",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Subscription/workflow/react artifactHash",
+      "before": "sha256:6f1c420c68a3c9feec043a157a614061a7e18a7dbb2577609ff4afc585d427fa",
+      "after": "sha256:5a25eb1e910acf48f06fe9eeabd8ac5ffb74f92292b0067d9e1084eea5b1e021",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry) | src/app.css: the generated shell moved onto the token font stack, type scale, spacing, radius, card shadow and the 2px/2px focus rule | placed chart rendered at 720x400 (chart-assets PLACED_CHART_SIZE) and bound to the preview width"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Subscription/workflow/vue artifactHash",
+      "before": "sha256:c3b1744a08bb4f564097fcc50ab0cee9dd3f7afa988be4b02008b8c9ed6b59f8",
+      "after": "sha256:6d2ac108d2047f6e89e42ac9ca02b52db872cbd27a1694e3de7c2d9839214cd0",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry) | src/app.css: the generated shell moved onto the token font stack, type scale, spacing, radius, card shadow and the 2px/2px focus rule | placed chart rendered at 720x400 (chart-assets PLACED_CHART_SIZE) and bound to the preview width"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Transaction/card/react artifactHash",
+      "before": "sha256:c90fae981e58a25451f92b181b20fb33e106400ee29aaa23de7c3fbdc4251953",
+      "after": "sha256:2ee4b9ec87a777179ec6617bc7d07595215bb25ec713b52c407ae4e305ca3695",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Transaction/card/vue artifactHash",
+      "before": "sha256:f86f7326fefb5f8687a4a9e7aaba4bc709d26230b0dde83b04fed12c049e442f",
+      "after": "sha256:9cc6228bf840c2877699c7cb10ab25f8e8efebb6c5c649477b68dae19274ebb9",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Transaction/detail/react artifactHash",
+      "before": "sha256:f9008bae860d5630520489340a9b4cd4426e9e0998f6945a72ff16677869621f",
+      "after": "sha256:68d1d50993ceb007209fb83a4d338aca2e5078969f682437da120b0495aaa9cd",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Transaction/detail/vue artifactHash",
+      "before": "sha256:b27454d6bd88e47d53dd29b9acaf924503061142e1f644140d0fea4baf52b7fc",
+      "after": "sha256:3410385a3def6956dc2165fe47fb8f85803d3715e412933594eba8ba9f5ce3fb",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Transaction/form/react artifactHash",
+      "before": "sha256:d73a6c535b079df28f5cd8234d88e4840d91bb3d84047c13ca4b7f17f2e9de4e",
+      "after": "sha256:e668f73318ecb432aa5e471345c544627512a9396cd45852e623995253aa3972",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Transaction/form/vue artifactHash",
+      "before": "sha256:3cbc65c21a875d668729824810ee6fa9f906dff6321107045b099fbf4b6e0292",
+      "after": "sha256:a435df964a7b00785ce242bd66ee655c59c9a144629149464198bfb6fafdefd9",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Transaction/inline/react artifactHash",
+      "before": "sha256:5ad7e9dc8beb4093f97e3f358af3f0858af79fb2318794e7edf344dc9dc92387",
+      "after": "sha256:d76559c247daf7b2b907174104fa673acb6669287f286cf99cc5211af2e64a31",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Transaction/inline/vue artifactHash",
+      "before": "sha256:636738e215b49b8238ae59dbf2937a750e8f2875143fa40faea7352c21da90c8",
+      "after": "sha256:10343514e2930a7288524f25378c4556cb60359623c6203e064fc5fc884cf391",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Transaction/list/react artifactHash",
+      "before": "sha256:f07ca3e9f2bd534f3f437cfd46cf7588f90c013ac7fbac6f3d3a3e038b3d6c0b",
+      "after": "sha256:df761f4967fbdf09d63605f63a3daef246b2e767085c14ff55fc682419143764",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Transaction/list/vue artifactHash",
+      "before": "sha256:78bfcfb18a72f34c0fb6c423a5e5c1a4eb857ec4a652686d5af67f73cb0e9cb1",
+      "after": "sha256:f0092981579a0dda04087ea09bafdb0473aa06c7489ab9e4c7a2e9740d631047",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Transaction/timeline/react artifactHash",
+      "before": "sha256:155237e0b58bb7467f43d422d8e189dd5cc138584ee17e2b87b3f7eb6e5de2c4",
+      "after": "sha256:fe33060a9eec9f8082584da145e49f9c5c53dd873900f2db20657db62353da44",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Transaction/timeline/vue artifactHash",
+      "before": "sha256:9ce647dbc4c0fbbc5d882926bf8b8488cea4690b3be19ca0fda02dd9f4a9ed83",
+      "after": "sha256:68a8f219b79f40c72433546a957e204a9aff5592d7b2f8eee208fe1eafd4b3be",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Transaction/workflow/react artifactHash",
+      "before": "sha256:fbb101acdb973c895afdba6c1f9213a14b60a43ecb1d913b2cf5f8dbbd4595ef",
+      "after": "sha256:45652743fbeeca551ce5afae1fbf9ca9f52325376bf86c872bef8ade1c66ab0f",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry) | src/app.css: the generated shell moved onto the token font stack, type scale, spacing, radius, card shadow and the 2px/2px focus rule"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Transaction/workflow/vue artifactHash",
+      "before": "sha256:018acdbdec04720eaa8852a968ea8cdaf5cbb29f73e9af3c7c11c78bf92103f8",
+      "after": "sha256:31c02d27833b8616c33511587f1d6fdf9c1d95e34dcb73588dac5f22d58c51d4",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry) | src/app.css: the generated shell moved onto the token font stack, type scale, spacing, radius, card shadow and the 2px/2px focus rule"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Usage/card/react artifactHash",
+      "before": "sha256:fbce61de046f3f29ec8f9c41a3eb8868180a13eebc61a311236413a9c324ba0e",
+      "after": "sha256:85f942b0b91f489508c1732990d0e2053e9cc1246b9f943bc9f7f7a6b38c97ff",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Usage/card/vue artifactHash",
+      "before": "sha256:74ecae94323a9d0ef81ed5b3cad5dcfbc88ecc8e6c371bb34a82d70abb47391a",
+      "after": "sha256:81d4990a6fb3a14737d4386131cd3a8ad614fb5f204fa4fd492d1ab00e345393",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Usage/detail/react artifactHash",
+      "before": "sha256:cdbab6c7b13bc2daeabbbc2af07bda2ccd704b061b2d4ffd4f45fb61506fa1c7",
+      "after": "sha256:3d98104656dd30e073c737fb52898b7e33b8f7bc51d8c6753ff7e7781e9fbcbf",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry) | placed chart rendered at 720x400 (chart-assets PLACED_CHART_SIZE) and bound to the preview width"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Usage/detail/vue artifactHash",
+      "before": "sha256:1d2bc9a2198b5404a622d8ebc2f5b0e414bc332116b933eea3b588897241db12",
+      "after": "sha256:123693c291c7755f82f81b5b68495bf5aceab317a8b679fef4f85be42eebf120",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry) | placed chart rendered at 720x400 (chart-assets PLACED_CHART_SIZE) and bound to the preview width"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Usage/form/react artifactHash",
+      "before": "sha256:b325491c00c333265012d5e1aee522d7bdc988a085fa1f0cc89242bb8b5fb038",
+      "after": "sha256:4e984b3d03dbfdf5efe201f1a2d606acd58edeacdfe087681a4625320832a2d4",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Usage/form/vue artifactHash",
+      "before": "sha256:1c077b78707be4f4127976316051f56d84f607ff6eb99b346b6bf355699d5a59",
+      "after": "sha256:2f7583e11e7e5954b936030b0355b3e9095ad1f05b2cbb39a1fba9127f0977b4",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Usage/inline/react artifactHash",
+      "before": "sha256:8b6aa08a0a1a3c953c1ae9ab4dce3caa593e1b8412196e9ca827535e6a7c614a",
+      "after": "sha256:ed4435d54c412a635c178457edb121cb6eed42a332caf8f28739ccba8584e665",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Usage/inline/vue artifactHash",
+      "before": "sha256:ddebaec573d0442c9132eece4fd3f0e29481df312bfdfd7197bcba8131db9138",
+      "after": "sha256:8c0b6147ec2adb24e1c44a0cbd57a99e301461dfa0b57799d21df8ad99bc1049",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Usage/list/react artifactHash",
+      "before": "sha256:8bb87ff64bb35ff8609771dbf7470e5be0fff2926793695717495106cc06d782",
+      "after": "sha256:5478a74b5ef5b6ab0141886936e5ba61e4010a3b7d45c524087a2d20188ce0dd",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Usage/list/vue artifactHash",
+      "before": "sha256:ca260172929b827c10b1dbb85f51529a96ddd0e0f93bea7e80d8c6e6a3c421c5",
+      "after": "sha256:aaee48881d2e35cf6e8877f29f01c5eac865da886c1424124b634a033fa073ed",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Usage/timeline/react artifactHash",
+      "before": "sha256:864aa335346b37295d57fad4fc852b90c997441c53201b38ec0ada3328ecf946",
+      "after": "sha256:55a0742a7d2d05b0a5b3bc197b92152952b533ea1acf2bbfc3497df8b8bab628",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Usage/timeline/vue artifactHash",
+      "before": "sha256:7225654fefdef995d1323abb5bccd07eed69e90f542f484b7e538e05df70a9c9",
+      "after": "sha256:3f8f8c0ff8ca253c90175203e6c01819356b6d3a6e2d90bab26cdd8153d01190",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Usage/workflow/react artifactHash",
+      "before": "sha256:14e3540267fb541ff4b144c6e0a759e8f4441f162702ee0125428f587c49e063",
+      "after": "sha256:a6101e3efa37e1834bf7b4db5b358f6bea881946f1d0d0682b7edd93d08382af",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry) | src/app.css: the generated shell moved onto the token font stack, type scale, spacing, radius, card shadow and the 2px/2px focus rule | placed chart rendered at 720x400 (chart-assets PLACED_CHART_SIZE) and bound to the preview width"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "Usage/workflow/vue artifactHash",
+      "before": "sha256:43c19304f0203a30b6720f9b7e6313f4c3fd58f9465a8b8816877abdec56b0ea",
+      "after": "sha256:c96a9709bdee4d9d558682dc7ca4f1829b28336025df3549ec91f8ff25089db2",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry) | src/app.css: the generated shell moved onto the token font stack, type scale, spacing, radius, card shadow and the 2px/2px focus rule | placed chart rendered at 720x400 (chart-assets PLACED_CHART_SIZE) and bound to the preview width"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "User/card/react artifactHash",
+      "before": "sha256:e70ef0e64c5be9a792e9f4c425c5473aac91a61b8872fab91d4d4aaf4eea51f5",
+      "after": "sha256:5a491d3146a0f19562a956d36bbe2f6aac7f6daaa5402bd289ff6a2b9e1f9c22",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "User/card/vue artifactHash",
+      "before": "sha256:3f3402df1d61ef25bbf78c9b8f299c4ff28af88112b33dcfab9b7ef527d258c0",
+      "after": "sha256:37f85d4c393aaf5317d437b4433a12bac7213a7599f73f961ab06d9e9ac21201",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "User/detail/react artifactHash",
+      "before": "sha256:5d7d31535666131de83bb78d54a0bb577599ea5faa3ba6260d82dc0685875fb8",
+      "after": "sha256:7f2d01826460136069cd2b69db9a92165b28f848da5e66552e52b2ea9cc9d57f",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "User/detail/vue artifactHash",
+      "before": "sha256:b2bbd7c644c39f990062d24d2fa821e1bbdca39f64f04ec4d7b0bc888d44bc46",
+      "after": "sha256:cc2b188df3268c3a79505fd9751fda4e99dc4ad406e20c9a4a9f1f894a593a2e",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "User/form/react artifactHash",
+      "before": "sha256:660d8ecd6b2f2625227348a19081163115a914a0e036dee2539c47c09f718e95",
+      "after": "sha256:edd6f13c3414a8bf996a10e6676f25fe3e23b99fab5903cb0edd4b7e8f22e592",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "User/form/vue artifactHash",
+      "before": "sha256:e1ab394e53a4672dd6d9fa26b40075da8e8ec697af4aaa3f76e358a5454da6c0",
+      "after": "sha256:2650bd252a0c770a7093af7d1fd16f21551ae436f9f6e1f2b331429fe015399d",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "User/inline/react artifactHash",
+      "before": "sha256:3cfa2ccf032391a574cf612f8360a89e61a3220c3aa2ed8ad0e569764da9d563",
+      "after": "sha256:26bd20b91adb5baed2b1f283db7722459cf50bd09bcee5774184bcc742316be3",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "User/inline/vue artifactHash",
+      "before": "sha256:03553009d1ca0d94d003ea469f2aa923e393f10335a8cd9141c5da5063d2cf1e",
+      "after": "sha256:38150635b7a3a62d9af560256e96dd4dcfd89e12240bde2654391df695d9e952",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "User/list/react artifactHash",
+      "before": "sha256:e7ae1a94dad1177bbee34ceb536e036e146d01e2a78c0e9b54891f1fc7b592b9",
+      "after": "sha256:89c914dc8e718e6403a9444660d71e7ae749df69247f06e127fdd317d612d418",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "User/list/vue artifactHash",
+      "before": "sha256:d3937990345b9bdf35d08330b147995686c2bfac4885c39018d8e77ba13a38a4",
+      "after": "sha256:da5b25befd7e23688f7cbf900879c40f8d76a6cd68a848266d177574e00e94de",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "User/timeline/react artifactHash",
+      "before": "sha256:b65afdcdd55b79cb8c17b92bd4eb0f2c26faac39e185d566ce304c61329fbb90",
+      "after": "sha256:cd3182c68914698dd8f7607aa63008f246b9534a1aff8ff87d82198a57e2a9ce",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "User/timeline/vue artifactHash",
+      "before": "sha256:49ec01a58c5b8056323279a4744b16ccf1562b1e3e0eb840217690153f74bc88",
+      "after": "sha256:fb6ccb2e2c65917fc09388df086955a6d5edd68ecb98511584545f869fe159ed",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 m02 sweep; later sprint-198 craft producers moved this cell without a full re-sweep (the sprint-199 runtime-diff base already differed from the registry)"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "User/workflow/react artifactHash",
+      "before": "sha256:7cdac3cf28b42b139b1cb7f5eea94a8cd9207b53e8933e519cfc588c7d8152e1",
+      "after": "sha256:ca72d1d534d07deb4dd8473ff7907eff86fc6f24f201fd6f318107b151f31898",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 sweep; sprint-199 s199-m01 moved this cell (artifacts/product-reality/sprint-199/m07/runtime-diff.json) without a full re-sweep | src/app.css: the generated shell moved onto the token font stack, type scale, spacing, radius, card shadow and the 2px/2px focus rule"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "User/workflow/vue artifactHash",
+      "before": "sha256:a166f068133f60012d5feeeddd0ab6ed23d0e079c428af05c2226c19298eb55f",
+      "after": "sha256:3b142648fa3fddb87e596b10856a7764f0ab893ad89ec9d7fa5fe086ae14364a",
+      "mission": "s200-m02",
+      "reason": "registry hash from the sprint-198 sweep; sprint-199 s199-m01 moved this cell (artifacts/product-reality/sprint-199/m07/runtime-diff.json) without a full re-sweep | src/app.css: the generated shell moved onto the token font stack, type scale, spacing, radius, card shadow and the 2px/2px focus rule"
+    },
+    {
+      "file": "packages/mcp-server/registry/runtime-cells.v1.json",
+      "pin": "ledger head",
+      "before": "e307810dd719c31c1ad21d7eacfaac085def9518",
+      "after": "8d37b175b76ec9eb0012d86c831499d3113da722",
+      "mission": "s200-m02",
+      "reason": "Full 240-cell re-sweep at the s200-m02 head (run 88effa9a-f2c1-4073-bf46-0b96e1d72597)."
+    },
+    {
+      "file": "artifacts/product-reality/sprint-200/m02/placement/migration.json",
+      "pin": "Subscription-detail-react/src/charts/payment-001.svg",
+      "before": "sha256:afe311641949c48211862a5752aab93dd12ddbef4258a9e971336fb174c254e6",
+      "after": "sha256:c248e98d3ed4c31ab27a8500e4d995b6f52765970ab6a9e35b185091c51ed5d8",
+      "mission": "s200-m02",
+      "reason": "chart-assets PLACED_CHART_SIZE 720x400; the preview caps the SVG at its rendered width"
+    },
+    {
+      "file": "artifacts/product-reality/sprint-200/m02/placement/migration.json",
+      "pin": "Subscription-detail-vue/src/charts/payment-001.svg",
+      "before": "sha256:afe311641949c48211862a5752aab93dd12ddbef4258a9e971336fb174c254e6",
+      "after": "sha256:c248e98d3ed4c31ab27a8500e4d995b6f52765970ab6a9e35b185091c51ed5d8",
+      "mission": "s200-m02",
+      "reason": "chart-assets PLACED_CHART_SIZE 720x400; the preview caps the SVG at its rendered width"
+    },
+    {
+      "file": "artifacts/product-reality/sprint-200/m02/placement/migration.json",
+      "pin": "Invoice-detail-react/src/charts/bar-001.svg",
+      "before": "sha256:5e1b95111199f297377696a171b27e79b68ed83a4cc9166ff5a499c899f7b048",
+      "after": "sha256:f4e7825a097d23a62acd2efac95d8dcb997ff9a14b084dad443957b41e8da83f",
+      "mission": "s200-m02",
+      "reason": "chart-assets PLACED_CHART_SIZE 720x400; the preview caps the SVG at its rendered width"
+    },
+    {
+      "file": "artifacts/product-reality/sprint-200/m02/placement/migration.json",
+      "pin": "Invoice-detail-vue/src/charts/bar-001.svg",
+      "before": "sha256:5e1b95111199f297377696a171b27e79b68ed83a4cc9166ff5a499c899f7b048",
+      "after": "sha256:f4e7825a097d23a62acd2efac95d8dcb997ff9a14b084dad443957b41e8da83f",
+      "mission": "s200-m02",
+      "reason": "chart-assets PLACED_CHART_SIZE 720x400; the preview caps the SVG at its rendered width"
+    },
+    {
+      "file": "artifacts/product-reality/sprint-200/m02/placement/migration.json",
+      "pin": "Usage-detail-react/src/charts/line-001.svg",
+      "before": "sha256:b4341b14b96f3788bc342a11bb787b5206fac313c8575d49066e3077c6455f76",
+      "after": "sha256:6c5d011e53796d5bbb921e7c9437dd67eede2a012970600afa9fee4cdd350639",
+      "mission": "s200-m02",
+      "reason": "chart-assets PLACED_CHART_SIZE 720x400; the preview caps the SVG at its rendered width"
+    },
+    {
+      "file": "artifacts/product-reality/sprint-200/m02/placement/migration.json",
+      "pin": "Usage-detail-vue/src/charts/line-001.svg",
+      "before": "sha256:b4341b14b96f3788bc342a11bb787b5206fac313c8575d49066e3077c6455f76",
+      "after": "sha256:6c5d011e53796d5bbb921e7c9437dd67eede2a012970600afa9fee4cdd350639",
+      "mission": "s200-m02",
+      "reason": "chart-assets PLACED_CHART_SIZE 720x400; the preview caps the SVG at its rendered width"
+    },
+    {
+      "file": "artifacts/product-reality/sprint-200/m02/placement/migration.json",
+      "pin": "Relationship-detail-react/src/charts/force_graph-001.svg",
+      "before": "sha256:2bf79eb932001b582d3aad510634a19b78d380746edcc56cce35ea55a7c9e607",
+      "after": "sha256:00f0e464257de156f8ffae4ee9cd68ea3d323c64a6d29c3639ad900a19972bd4",
+      "mission": "s200-m02",
+      "reason": "chart-assets PLACED_CHART_SIZE 720x400; the preview caps the SVG at its rendered width"
+    },
+    {
+      "file": "artifacts/product-reality/sprint-200/m02/placement/migration.json",
+      "pin": "Relationship-detail-vue/src/charts/force_graph-001.svg",
+      "before": "sha256:2bf79eb932001b582d3aad510634a19b78d380746edcc56cce35ea55a7c9e607",
+      "after": "sha256:00f0e464257de156f8ffae4ee9cd68ea3d323c64a6d29c3639ad900a19972bd4",
+      "mission": "s200-m02",
+      "reason": "chart-assets PLACED_CHART_SIZE 720x400; the preview caps the SVG at its rendered width"
+    },
+    {
+      "file": "artifacts/product-reality/sprint-200/m02/placement/migration.json",
+      "pin": "Subscription-detail-react-hc/src/charts/payment-001.svg",
+      "before": "sha256:9b0c75e81ddf754c96f57612f8cd4fd4bd5c24e3fc7bc254ddd649c9a44ff93d",
+      "after": "sha256:b481bfd3ecc2e93170f34eaf01bb35fb008dc6559bf11e548055c326c4d19562",
+      "mission": "s200-m02",
+      "reason": "chart-assets PLACED_CHART_SIZE 720x400; the preview caps the SVG at its rendered width"
+    },
+    {
+      "file": "artifacts/product-reality/sprint-200/m02/placement/migration.json",
+      "pin": "Subscription-detail-vue-hc/src/charts/payment-001.svg",
+      "before": "sha256:9b0c75e81ddf754c96f57612f8cd4fd4bd5c24e3fc7bc254ddd649c9a44ff93d",
+      "after": "sha256:b481bfd3ecc2e93170f34eaf01bb35fb008dc6559bf11e548055c326c4d19562",
+      "mission": "s200-m02",
+      "reason": "chart-assets PLACED_CHART_SIZE 720x400; the preview caps the SVG at its rendered width"
+    },
+    {
+      "file": "artifacts/product-reality/sprint-200/m02/placement/migration.json",
+      "pin": "Usage-detail-html/src/charts/line-001.svg (artifacts/product-reality/sprint-195/m06/codegen/boundary/Usage-html.json)",
+      "before": "sha256:6b50791e5f145c3fe5b0192ca4c7d8752e5ebab04b913c2afeb3c311defa0d46",
+      "after": "sha256:fbcbb8c55b5dc279849665172643f6a4af7d6d30c9e29e0c14b51c2e24c065c8",
+      "mission": "s200-m02",
+      "reason": "chart-assets PLACED_CHART_SIZE 720x400; the preview caps the SVG at its rendered width"
+    },
+    {
+      "file": "artifacts/product-reality/sprint-200/m02/placement/migration.json",
+      "pin": "Usage-detail-react/src/charts/line-001.svg (artifacts/product-reality/sprint-195/m06/codegen/boundary/Usage-react.json)",
+      "before": "sha256:6b50791e5f145c3fe5b0192ca4c7d8752e5ebab04b913c2afeb3c311defa0d46",
+      "after": "sha256:fbcbb8c55b5dc279849665172643f6a4af7d6d30c9e29e0c14b51c2e24c065c8",
+      "mission": "s200-m02",
+      "reason": "chart-assets PLACED_CHART_SIZE 720x400; the preview caps the SVG at its rendered width"
+    },
+    {
+      "file": "artifacts/product-reality/sprint-200/m02/placement/migration.json",
+      "pin": "Usage-detail-vue/src/charts/line-001.svg (artifacts/product-reality/sprint-195/m06/codegen/boundary/Usage-vue.json)",
+      "before": "sha256:6b50791e5f145c3fe5b0192ca4c7d8752e5ebab04b913c2afeb3c311defa0d46",
+      "after": "sha256:fbcbb8c55b5dc279849665172643f6a4af7d6d30c9e29e0c14b51c2e24c065c8",
+      "mission": "s200-m02",
+      "reason": "chart-assets PLACED_CHART_SIZE 720x400; the preview caps the SVG at its rendered width"
+    },
+    {
+      "file": "artifacts/product-reality/sprint-200/m02/placement/migration.json",
+      "pin": "Usage-workflow-react/src/charts/line-001.svg (artifacts/product-reality/sprint-195/m06/codegen/boundary/Usage-workflow-react.json)",
+      "before": "sha256:b4341b14b96f3788bc342a11bb787b5206fac313c8575d49066e3077c6455f76",
+      "after": "sha256:6c5d011e53796d5bbb921e7c9437dd67eede2a012970600afa9fee4cdd350639",
+      "mission": "s200-m02",
+      "reason": "chart-assets PLACED_CHART_SIZE 720x400; the preview caps the SVG at its rendered width"
+    },
+    {
+      "file": "artifacts/product-reality/sprint-200/m02/placement/migration.json",
+      "pin": "Usage-workflow-react/src/charts/line-002.svg (artifacts/product-reality/sprint-195/m06/codegen/boundary/Usage-workflow-react.json)",
+      "before": "sha256:b4341b14b96f3788bc342a11bb787b5206fac313c8575d49066e3077c6455f76",
+      "after": "sha256:6c5d011e53796d5bbb921e7c9437dd67eede2a012970600afa9fee4cdd350639",
+      "mission": "s200-m02",
+      "reason": "chart-assets PLACED_CHART_SIZE 720x400; the preview caps the SVG at its rendered width"
+    },
+    {
+      "file": "artifacts/product-reality/sprint-200/m02/placement/migration.json",
+      "pin": "Usage-workflow-react/src/charts/line-003.svg (artifacts/product-reality/sprint-195/m06/codegen/boundary/Usage-workflow-react.json)",
+      "before": "sha256:b4341b14b96f3788bc342a11bb787b5206fac313c8575d49066e3077c6455f76",
+      "after": "sha256:6c5d011e53796d5bbb921e7c9437dd67eede2a012970600afa9fee4cdd350639",
+      "mission": "s200-m02",
+      "reason": "chart-assets PLACED_CHART_SIZE 720x400; the preview caps the SVG at its rendered width"
+    },
+    {
+      "file": "artifacts/product-reality/sprint-200/m02/placement/migration.json",
+      "pin": "Usage-workflow-react/src/charts/line-004.svg (artifacts/product-reality/sprint-195/m06/codegen/boundary/Usage-workflow-react.json)",
+      "before": "sha256:b4341b14b96f3788bc342a11bb787b5206fac313c8575d49066e3077c6455f76",
+      "after": "sha256:6c5d011e53796d5bbb921e7c9437dd67eede2a012970600afa9fee4cdd350639",
+      "mission": "s200-m02",
+      "reason": "chart-assets PLACED_CHART_SIZE 720x400; the preview caps the SVG at its rendered width"
+    },
+    {
+      "file": "artifacts/product-reality/sprint-200/m02/placement/migration.json",
+      "pin": "Usage-workflow-react/src/charts/line-005.svg (artifacts/product-reality/sprint-195/m06/codegen/boundary/Usage-workflow-react.json)",
+      "before": "sha256:b4341b14b96f3788bc342a11bb787b5206fac313c8575d49066e3077c6455f76",
+      "after": "sha256:6c5d011e53796d5bbb921e7c9437dd67eede2a012970600afa9fee4cdd350639",
+      "mission": "s200-m02",
+      "reason": "chart-assets PLACED_CHART_SIZE 720x400; the preview caps the SVG at its rendered width"
+    },
+    {
+      "file": "artifacts/product-reality/sprint-200/m02/placement/migration.json",
+      "pin": "Usage-workflow-react/src/charts/line-006.svg (artifacts/product-reality/sprint-195/m06/codegen/boundary/Usage-workflow-react.json)",
+      "before": "sha256:b4341b14b96f3788bc342a11bb787b5206fac313c8575d49066e3077c6455f76",
+      "after": "sha256:6c5d011e53796d5bbb921e7c9437dd67eede2a012970600afa9fee4cdd350639",
+      "mission": "s200-m02",
+      "reason": "chart-assets PLACED_CHART_SIZE 720x400; the preview caps the SVG at its rendered width"
+    },
+    {
+      "file": "artifacts/product-reality/sprint-200/m02/placement/migration.json",
+      "pin": "Usage-workflow-react/src/charts/line-007.svg (artifacts/product-reality/sprint-195/m06/codegen/boundary/Usage-workflow-react.json)",
+      "before": "sha256:b4341b14b96f3788bc342a11bb787b5206fac313c8575d49066e3077c6455f76",
+      "after": "sha256:6c5d011e53796d5bbb921e7c9437dd67eede2a012970600afa9fee4cdd350639",
+      "mission": "s200-m02",
+      "reason": "chart-assets PLACED_CHART_SIZE 720x400; the preview caps the SVG at its rendered width"
+    },
+    {
+      "file": "artifacts/product-reality/sprint-200/m02/placement/migration.json",
+      "pin": "Usage-workflow-react/src/charts/line-008.svg (artifacts/product-reality/sprint-195/m06/codegen/boundary/Usage-workflow-react.json)",
+      "before": "sha256:b4341b14b96f3788bc342a11bb787b5206fac313c8575d49066e3077c6455f76",
+      "after": "sha256:6c5d011e53796d5bbb921e7c9437dd67eede2a012970600afa9fee4cdd350639",
+      "mission": "s200-m02",
+      "reason": "chart-assets PLACED_CHART_SIZE 720x400; the preview caps the SVG at its rendered width"
+    },
+    {
+      "file": "artifacts/product-reality/sprint-200/m02/placement/migration.json",
+      "pin": "Usage-workflow-react/src/charts/line-009.svg (artifacts/product-reality/sprint-195/m06/codegen/boundary/Usage-workflow-react.json)",
+      "before": "sha256:b4341b14b96f3788bc342a11bb787b5206fac313c8575d49066e3077c6455f76",
+      "after": "sha256:6c5d011e53796d5bbb921e7c9437dd67eede2a012970600afa9fee4cdd350639",
+      "mission": "s200-m02",
+      "reason": "chart-assets PLACED_CHART_SIZE 720x400; the preview caps the SVG at its rendered width"
+    },
+    {
+      "file": "artifacts/product-reality/sprint-200/m02/placement/migration.json",
+      "pin": "Usage-workflow-react/src/charts/line-010.svg (artifacts/product-reality/sprint-195/m06/codegen/boundary/Usage-workflow-react.json)",
+      "before": "sha256:b4341b14b96f3788bc342a11bb787b5206fac313c8575d49066e3077c6455f76",
+      "after": "sha256:6c5d011e53796d5bbb921e7c9437dd67eede2a012970600afa9fee4cdd350639",
+      "mission": "s200-m02",
+      "reason": "chart-assets PLACED_CHART_SIZE 720x400; the preview caps the SVG at its rendered width"
+    },
+    {
+      "file": "artifacts/product-reality/sprint-200/m02/placement/migration.json",
+      "pin": "Usage-workflow-vue/src/charts/line-001.svg (artifacts/product-reality/sprint-195/m06/codegen/boundary/Usage-workflow-vue.json)",
+      "before": "sha256:b4341b14b96f3788bc342a11bb787b5206fac313c8575d49066e3077c6455f76",
+      "after": "sha256:6c5d011e53796d5bbb921e7c9437dd67eede2a012970600afa9fee4cdd350639",
+      "mission": "s200-m02",
+      "reason": "chart-assets PLACED_CHART_SIZE 720x400; the preview caps the SVG at its rendered width"
+    },
+    {
+      "file": "artifacts/product-reality/sprint-200/m02/placement/migration.json",
+      "pin": "Usage-workflow-vue/src/charts/line-002.svg (artifacts/product-reality/sprint-195/m06/codegen/boundary/Usage-workflow-vue.json)",
+      "before": "sha256:b4341b14b96f3788bc342a11bb787b5206fac313c8575d49066e3077c6455f76",
+      "after": "sha256:6c5d011e53796d5bbb921e7c9437dd67eede2a012970600afa9fee4cdd350639",
+      "mission": "s200-m02",
+      "reason": "chart-assets PLACED_CHART_SIZE 720x400; the preview caps the SVG at its rendered width"
+    },
+    {
+      "file": "artifacts/product-reality/sprint-200/m02/placement/migration.json",
+      "pin": "Usage-workflow-vue/src/charts/line-003.svg (artifacts/product-reality/sprint-195/m06/codegen/boundary/Usage-workflow-vue.json)",
+      "before": "sha256:b4341b14b96f3788bc342a11bb787b5206fac313c8575d49066e3077c6455f76",
+      "after": "sha256:6c5d011e53796d5bbb921e7c9437dd67eede2a012970600afa9fee4cdd350639",
+      "mission": "s200-m02",
+      "reason": "chart-assets PLACED_CHART_SIZE 720x400; the preview caps the SVG at its rendered width"
+    },
+    {
+      "file": "artifacts/product-reality/sprint-200/m02/placement/migration.json",
+      "pin": "Usage-workflow-vue/src/charts/line-004.svg (artifacts/product-reality/sprint-195/m06/codegen/boundary/Usage-workflow-vue.json)",
+      "before": "sha256:b4341b14b96f3788bc342a11bb787b5206fac313c8575d49066e3077c6455f76",
+      "after": "sha256:6c5d011e53796d5bbb921e7c9437dd67eede2a012970600afa9fee4cdd350639",
+      "mission": "s200-m02",
+      "reason": "chart-assets PLACED_CHART_SIZE 720x400; the preview caps the SVG at its rendered width"
+    },
+    {
+      "file": "artifacts/product-reality/sprint-200/m02/placement/migration.json",
+      "pin": "Usage-workflow-vue/src/charts/line-005.svg (artifacts/product-reality/sprint-195/m06/codegen/boundary/Usage-workflow-vue.json)",
+      "before": "sha256:b4341b14b96f3788bc342a11bb787b5206fac313c8575d49066e3077c6455f76",
+      "after": "sha256:6c5d011e53796d5bbb921e7c9437dd67eede2a012970600afa9fee4cdd350639",
+      "mission": "s200-m02",
+      "reason": "chart-assets PLACED_CHART_SIZE 720x400; the preview caps the SVG at its rendered width"
+    },
+    {
+      "file": "artifacts/product-reality/sprint-200/m02/placement/migration.json",
+      "pin": "Usage-workflow-vue/src/charts/line-006.svg (artifacts/product-reality/sprint-195/m06/codegen/boundary/Usage-workflow-vue.json)",
+      "before": "sha256:b4341b14b96f3788bc342a11bb787b5206fac313c8575d49066e3077c6455f76",
+      "after": "sha256:6c5d011e53796d5bbb921e7c9437dd67eede2a012970600afa9fee4cdd350639",
+      "mission": "s200-m02",
+      "reason": "chart-assets PLACED_CHART_SIZE 720x400; the preview caps the SVG at its rendered width"
+    },
+    {
+      "file": "artifacts/product-reality/sprint-200/m02/placement/migration.json",
+      "pin": "Usage-workflow-vue/src/charts/line-007.svg (artifacts/product-reality/sprint-195/m06/codegen/boundary/Usage-workflow-vue.json)",
+      "before": "sha256:b4341b14b96f3788bc342a11bb787b5206fac313c8575d49066e3077c6455f76",
+      "after": "sha256:6c5d011e53796d5bbb921e7c9437dd67eede2a012970600afa9fee4cdd350639",
+      "mission": "s200-m02",
+      "reason": "chart-assets PLACED_CHART_SIZE 720x400; the preview caps the SVG at its rendered width"
+    },
+    {
+      "file": "artifacts/product-reality/sprint-200/m02/placement/migration.json",
+      "pin": "Usage-workflow-vue/src/charts/line-008.svg (artifacts/product-reality/sprint-195/m06/codegen/boundary/Usage-workflow-vue.json)",
+      "before": "sha256:b4341b14b96f3788bc342a11bb787b5206fac313c8575d49066e3077c6455f76",
+      "after": "sha256:6c5d011e53796d5bbb921e7c9437dd67eede2a012970600afa9fee4cdd350639",
+      "mission": "s200-m02",
+      "reason": "chart-assets PLACED_CHART_SIZE 720x400; the preview caps the SVG at its rendered width"
+    },
+    {
+      "file": "artifacts/product-reality/sprint-200/m02/placement/migration.json",
+      "pin": "Usage-workflow-vue/src/charts/line-009.svg (artifacts/product-reality/sprint-195/m06/codegen/boundary/Usage-workflow-vue.json)",
+      "before": "sha256:b4341b14b96f3788bc342a11bb787b5206fac313c8575d49066e3077c6455f76",
+      "after": "sha256:6c5d011e53796d5bbb921e7c9437dd67eede2a012970600afa9fee4cdd350639",
+      "mission": "s200-m02",
+      "reason": "chart-assets PLACED_CHART_SIZE 720x400; the preview caps the SVG at its rendered width"
+    },
+    {
+      "file": "artifacts/product-reality/sprint-200/m02/placement/migration.json",
+      "pin": "Usage-workflow-vue/src/charts/line-010.svg (artifacts/product-reality/sprint-195/m06/codegen/boundary/Usage-workflow-vue.json)",
+      "before": "sha256:b4341b14b96f3788bc342a11bb787b5206fac313c8575d49066e3077c6455f76",
+      "after": "sha256:6c5d011e53796d5bbb921e7c9437dd67eede2a012970600afa9fee4cdd350639",
+      "mission": "s200-m02",
+      "reason": "chart-assets PLACED_CHART_SIZE 720x400; the preview caps the SVG at its rendered width"
+    }
+  ],
+  "builderSelfCertified": false
+}

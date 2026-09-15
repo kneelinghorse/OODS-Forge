@@ -1,0 +1,649 @@
+{
+  "id": "Subscription-list-dark",
+  "object": "Subscription",
+  "context": "list",
+  "theme": "dark",
+  "request": {
+    "object": "Subscription",
+    "context": "list",
+    "preferences": {
+      "theme": "dark"
+    }
+  },
+  "schema": {
+    "version": "2026.02",
+    "theme": "dark",
+    "screens": [
+      {
+        "id": "screen-list-9",
+        "component": "Stack",
+        "layout": {
+          "type": "stack",
+          "gapToken": "cluster-default"
+        },
+        "children": [
+          {
+            "id": "screen-list-9-loading",
+            "component": "Banner",
+            "state": "loading",
+            "props": {
+              "title": "Loading",
+              "message": "Loading your records."
+            }
+          },
+          {
+            "id": "screen-list-9-empty",
+            "component": "Banner",
+            "state": "empty",
+            "props": {
+              "title": "No records found",
+              "message": "Change the filters or add a record."
+            }
+          },
+          {
+            "id": "screen-list-9-error",
+            "component": "Banner",
+            "state": "error",
+            "props": {
+              "title": "Unable to load records",
+              "message": "Try again or choose another record."
+            }
+          },
+          {
+            "id": "screen-list-9-success",
+            "component": "Stack",
+            "state": "success",
+            "layout": {
+              "type": "stack",
+              "gapToken": "cluster-default"
+            },
+            "children": [
+              {
+                "id": "list-toolbar-4",
+                "component": "Stack",
+                "layout": {
+                  "type": "inline",
+                  "align": "space-between"
+                },
+                "style": {
+                  "spacingToken": "inset-default"
+                },
+                "children": [
+                  {
+                    "id": "slot-search-1",
+                    "component": "SearchInput",
+                    "meta": {
+                      "intent": "slot:search",
+                      "label": "search",
+                      "confidence": 1,
+                      "confidenceLevel": "low"
+                    },
+                    "collectionControl": "search",
+                    "props": {
+                      "label": "Search",
+                      "placeholder": "Search records",
+                      "clearable": true
+                    }
+                  },
+                  {
+                    "id": "slot-filters-2",
+                    "component": "Select",
+                    "meta": {
+                      "intent": "slot:filters",
+                      "label": "filters",
+                      "confidence": 0.67,
+                      "confidenceLevel": "low"
+                    },
+                    "props": {
+                      "label": "Status",
+                      "options": [
+                        {
+                          "value": "",
+                          "label": "All states"
+                        },
+                        {
+                          "value": "future",
+                          "label": "future"
+                        },
+                        {
+                          "value": "trialing",
+                          "label": "trialing"
+                        },
+                        {
+                          "value": "active",
+                          "label": "active"
+                        },
+                        {
+                          "value": "paused",
+                          "label": "paused"
+                        },
+                        {
+                          "value": "pending_cancellation",
+                          "label": "pending cancellation"
+                        },
+                        {
+                          "value": "past_due",
+                          "label": "past due"
+                        },
+                        {
+                          "value": "unpaid",
+                          "label": "unpaid"
+                        },
+                        {
+                          "value": "terminated",
+                          "label": "terminated"
+                        }
+                      ]
+                    },
+                    "collectionControl": "filter"
+                  },
+                  {
+                    "id": "list-toolbar-4-sort",
+                    "component": "Select",
+                    "collectionControl": "sort",
+                    "props": {
+                      "field": "plan_name",
+                      "label": "Sort",
+                      "options": [
+                        {
+                          "value": "asc",
+                          "label": "Name A–Z"
+                        },
+                        {
+                          "value": "desc",
+                          "label": "Name Z–A"
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              {
+                "id": "list-items-5-archive-tabs",
+                "component": "Tabs",
+                "collectionControl": "archive",
+                "children": [
+                  {
+                    "id": "list-items-5",
+                    "component": "Stack",
+                    "layout": {
+                      "type": "stack",
+                      "gapToken": "cluster-tight"
+                    },
+                    "children": [
+                      {
+                        "id": "ve-items-13",
+                        "component": "ArchivedRowOverlay",
+                        "props": {
+                          "archivedField": "is_archived",
+                          "style": "grayed",
+                          "showBadge": true,
+                          "separateTab": true,
+                          "tabLabel": "Archived",
+                          "labelField": "plan_name"
+                        },
+                        "children": [
+                          {
+                            "id": "list-items-5-row",
+                            "component": "Button",
+                            "collectionControl": "open",
+                            "props": {
+                              "field": "subscription_id"
+                            },
+                            "layout": {
+                              "type": "inline",
+                              "gapToken": "cluster-default"
+                            },
+                            "children": [
+                              {
+                                "id": "list-items-5-title",
+                                "component": "Text",
+                                "props": {
+                                  "field": "plan_name"
+                                }
+                              },
+                              {
+                                "id": "ve-items-10",
+                                "component": "StatusBadge",
+                                "props": {
+                                  "tone": "lifecycle",
+                                  "statusField": "status"
+                                }
+                              },
+                              {
+                                "id": "ve-items-11",
+                                "component": "RelativeTimestamp",
+                                "props": {
+                                  "field": "updated_at",
+                                  "fallbackField": "created_at",
+                                  "timezoneParameter": "timezone"
+                                }
+                              },
+                              {
+                                "id": "slot-toolbar-actions-3",
+                                "component": "BillingSummaryBadge",
+                                "meta": {
+                                  "intent": "slot:toolbar-actions",
+                                  "label": "toolbar-actions"
+                                },
+                                "props": {
+                                  "amountField": "amount",
+                                  "currencyField": "currency",
+                                  "intervalField": "billing_interval",
+                                  "minorUnitsParameter": "minorUnits",
+                                  "minorUnits": 100
+                                }
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "id": "list-items-5-empty",
+                        "component": "Banner",
+                        "props": {
+                          "message": "No records found."
+                        },
+                        "collectionControl": "empty"
+                      }
+                    ],
+                    "collection": {
+                      "source": "rows",
+                      "keyField": "subscription_id",
+                      "labelField": "plan_name"
+                    }
+                  }
+                ],
+                "props": {
+                  "ariaLabel": "Archive views",
+                  "items": [
+                    {
+                      "id": "active",
+                      "label": "Active",
+                      "panel": ""
+                    },
+                    {
+                      "id": "archived",
+                      "label": "Archived",
+                      "panel": ""
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "list-pagination-7",
+                "component": "Stack",
+                "layout": {
+                  "type": "inline",
+                  "align": "center"
+                },
+                "style": {
+                  "spacingToken": "inset-default"
+                },
+                "children": [
+                  {
+                    "id": "slot-pagination-8",
+                    "component": "PaginationBar",
+                    "meta": {
+                      "intent": "slot:pagination",
+                      "label": "pagination",
+                      "confidence": 0.77,
+                      "confidenceLevel": "low"
+                    },
+                    "collectionControl": "page",
+                    "props": {
+                      "showItemRange": true
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "bindings": {
+          "onRowClick": "handleRowClick",
+          "onSort": "handleSort",
+          "onFilter": "handleFilter",
+          "onPageChange": "handlePageChange"
+        }
+      }
+    ],
+    "objectSchema": {
+      "status": {
+        "type": "string",
+        "required": true,
+        "description": "Current lifecycle status of the subscription.",
+        "enum": [
+          "future",
+          "trialing",
+          "active",
+          "paused",
+          "pending_cancellation",
+          "past_due",
+          "unpaid",
+          "terminated"
+        ],
+        "semanticType": "billing.subscription.status"
+      },
+      "state_history": {
+        "type": "StateTransition[]",
+        "required": false,
+        "default": [],
+        "description": "Chronological log of state transitions. Each entry records the before/after states,\ntimestamp, and (when governance is enabled) the actor, reason, and transition metadata.\nRendered by StatusTimeline in the detail and timeline views.\n\nEntry structure:\n  - from: string (previous state)\n  - to: string (new state)\n  - timestamp: ISO 8601 datetime\n  - actor_id: string (user/system who triggered the transition, optional)\n  - reason: string (human-readable justification, required when requireTransitionReason is true)\n  - transition_metadata: Record<string, unknown> (arbitrary context, optional)\n",
+        "semanticType": "timeline.state_transition"
+      },
+      "allowed_transitions": {
+        "type": "string[]",
+        "required": false,
+        "default": [],
+        "description": "Materialized list of valid next states from the current status, computed from the\ntransitionRules parameter. When transitionRules is null (open model), this contains\nall states except the current one. Used by StatusSelector to disable invalid options\nand by StatusBadge to indicate available paths.\n",
+        "semanticType": "status.navigation"
+      },
+      "cancel_at_period_end": {
+        "type": "boolean",
+        "required": true,
+        "description": "Whether the subscription will cancel at the natural billing period end.",
+        "semanticType": "billing.subscription.cancel_at_period_end"
+      },
+      "cancellation_reason": {
+        "type": "string",
+        "required": false,
+        "description": "Free-form explanation captured during cancellation workflows.",
+        "semanticType": "billing.subscription.cancellation_reason"
+      },
+      "cancellation_reason_code": {
+        "type": "string",
+        "required": false,
+        "description": "Structured reason code chosen from the allowedReasons parameter.",
+        "semanticType": "status.cancel.reason_code"
+      },
+      "cancellation_requested_at": {
+        "type": "datetime",
+        "required": false,
+        "description": "Timestamp when cancellation was initiated.",
+        "semanticType": "billing.subscription.cancellation_requested_at"
+      },
+      "created_at": {
+        "type": "datetime",
+        "required": true,
+        "description": "Timestamp recording when the entity was first created.",
+        "semanticType": "audit.created_at"
+      },
+      "updated_at": {
+        "type": "datetime",
+        "required": false,
+        "description": "Timestamp for the most recent modification, when available.",
+        "semanticType": "audit.updated_at"
+      },
+      "last_event": {
+        "type": "string",
+        "required": true,
+        "description": "Lifecycle event associated with the most recent timestamp mutation.",
+        "enum": [
+          "billing_cycle_started",
+          "billing_cycle_completed",
+          "payment_received",
+          "cancellation_requested"
+        ],
+        "semanticType": "audit.event.type"
+      },
+      "last_event_at": {
+        "type": "datetime",
+        "required": false,
+        "description": "Timestamp for the lifecycle event captured in last_event.",
+        "semanticType": "audit.event.timestamp"
+      },
+      "amount": {
+        "type": "integer",
+        "required": true,
+        "description": "Recurring price expressed in minor units (e.g., cents).",
+        "semanticType": "billing.plan.amount"
+      },
+      "currency": {
+        "type": "string",
+        "required": true,
+        "description": "ISO 4217 currency code used for billing.",
+        "semanticType": "billing.plan.currency"
+      },
+      "billing_interval": {
+        "type": "string",
+        "required": false,
+        "description": "Recurrence cadence (monthly, yearly, quarterly, etc.).",
+        "semanticType": "billing.subscription.interval"
+      },
+      "payment_status": {
+        "type": "string",
+        "required": false,
+        "default": "pending",
+        "description": "Outcome of the most recent collection attempt. Distinct from subscription\nlifecycle status — a subscription can be \"active\" with payment_status \"retrying\".\n",
+        "enum": [
+          "pending",
+          "succeeded",
+          "failed",
+          "retrying",
+          "refunded"
+        ],
+        "semanticType": "billing.cycle.payment_status"
+      },
+      "payment_method_type": {
+        "type": "string",
+        "required": false,
+        "description": "Payment instrument category used for collection.",
+        "enum": [
+          "card",
+          "ach",
+          "wire",
+          "invoice",
+          "other"
+        ],
+        "semanticType": "billing.cycle.payment_method"
+      },
+      "proration_amount": {
+        "type": "integer",
+        "required": false,
+        "default": 0,
+        "description": "Prorated credit or charge in minor currency units generated by a mid-cycle\nplan change. Positive values are charges; negative values are credits.\nOnly populated when the supportProration parameter is true.\n",
+        "semanticType": "billing.cycle.proration"
+      },
+      "proration_date": {
+        "type": "integer",
+        "required": false,
+        "description": "Unix timestamp (epoch SECONDS) at which proration is calculated. Pinned when an\nupcoming-invoice PREVIEW is requested and MUST be passed identically on commit so the\ncommitted charge equals the previewed amount. The preview is read-only and does NOT\nmutate the subscription. Stored as an integer (not a datetime) so the value round-trips\nbyte-identically between preview and commit — an ISO string normalization could shift it\nand desync the previewed vs charged amount. Only populated when supportProration is true.\nSource: docs.stripe.com/billing/subscriptions/prorations.\n",
+        "semanticType": "billing.cycle.proration_timestamp"
+      },
+      "last_payment_at": {
+        "type": "datetime",
+        "required": false,
+        "description": "Timestamp of the most recent successful payment.",
+        "semanticType": "billing.subscription.last_payment_at"
+      },
+      "next_payment_due_at": {
+        "type": "datetime",
+        "required": false,
+        "description": "Timestamp when the next payment attempt should occur.",
+        "semanticType": "billing.subscription.next_payment_due_at"
+      },
+      "current_period_start": {
+        "type": "datetime",
+        "required": true,
+        "description": "Start timestamp of the current billing cycle.",
+        "semanticType": "billing.subscription.current_period_start"
+      },
+      "current_period_end": {
+        "type": "datetime",
+        "required": true,
+        "description": "End timestamp of the current billing cycle.",
+        "semanticType": "billing.subscription.current_period_end"
+      },
+      "current_period_progress": {
+        "type": "number",
+        "required": false,
+        "description": "Decimal progress (0-1) through the active billing cycle.",
+        "semanticType": "billing.subscription.current_period_progress"
+      },
+      "is_archived": {
+        "type": "boolean",
+        "required": true,
+        "default": false,
+        "description": "Flag indicating whether the entity is currently archived (soft-deleted).",
+        "semanticType": "status.archive.state"
+      },
+      "archived_at": {
+        "type": "datetime?",
+        "required": false,
+        "description": "Timestamp for when the entity entered the archived state.",
+        "semanticType": "status.archive.timestamp"
+      },
+      "restored_at": {
+        "type": "datetime?",
+        "required": false,
+        "description": "Timestamp for when the entity was most recently restored from an archived state.",
+        "semanticType": "status.archive.restore_timestamp"
+      },
+      "archive_reason": {
+        "type": "string",
+        "required": false,
+        "description": "Human-readable narrative describing why the entity was archived.",
+        "semanticType": "status.archive.reason"
+      },
+      "archived_by": {
+        "type": "string",
+        "required": false,
+        "description": "User ID or system identifier of the actor who archived this entity.\nSet to \"system\" for automated/policy-driven archival. Supports audit trail queries\nlike \"show all entities archived by user X\" or \"show all auto-archived entities\".\n",
+        "semanticType": "status.archive.actor"
+      },
+      "archive_metadata": {
+        "type": "object",
+        "required": false,
+        "description": "Structured metadata about the archival action for compliance and audit purposes.\n\nProperties:\n  - method: \"manual\" | \"automated\" | \"policy\" — how the archive was triggered\n  - compliance_tags: string[] — regulatory labels (e.g., [\"GDPR\", \"SOX\", \"HIPAA\"])\n  - retention_policy_id: string — reference to the retention policy that triggered archival\n  - original_status: string — the Stateful status before archival\n  - related_entity_count: number — count of related entities also archived (cascade)\n",
+        "semanticType": "status.archive.compliance"
+      },
+      "restoration_metadata": {
+        "type": "object",
+        "required": false,
+        "description": "Metadata about the most recent restoration action.\n\nProperties:\n  - restored_by: string — user ID or \"system\"\n  - restored_fields: string[] — when partial restore, which fields were restored\n  - restoration_reason: string — why the entity was restored\n  - restored_from_snapshot: boolean — whether restored from a point-in-time snapshot\n",
+        "semanticType": "status.archive.restoration"
+      },
+      "subscription_id": {
+        "type": "string",
+        "required": true,
+        "description": "Primary identifier used across billing and lifecycle systems.",
+        "semanticType": "billing.subscription.id"
+      },
+      "plan_name": {
+        "type": "string",
+        "required": true,
+        "description": "Human-readable plan label shown in headers.",
+        "semanticType": "billing.plan.name"
+      },
+      "plan_code": {
+        "type": "string",
+        "required": false,
+        "description": "Internal plan code or price identifier.",
+        "semanticType": "billing.plan.code"
+      },
+      "plan_interval": {
+        "type": "string",
+        "required": false,
+        "description": "Billing interval descriptor (monthly, yearly, etc.).",
+        "semanticType": "billing.plan.interval"
+      },
+      "customer_name": {
+        "type": "string",
+        "required": false,
+        "description": "Customer or account name associated with the subscription.",
+        "semanticType": "customer.account.name"
+      },
+      "customer_email": {
+        "type": "email",
+        "required": false,
+        "description": "Billing contact email address.",
+        "semanticType": "customer.account.email"
+      }
+    }
+  },
+  "seed": {
+    "allowedTransitions": [],
+    "amount": 1999,
+    "archiveMetadata": {},
+    "archiveReason": "Consumer archive reason",
+    "archivedAt": "2026-09-05T12:00:00.000Z",
+    "archivedBy": "Consumer archived by",
+    "billingInterval": "monthly",
+    "cancelAtPeriodEnd": false,
+    "cancellationReason": "Consumer cancellation reason",
+    "cancellationReasonCode": "Consumer cancellation reason code",
+    "cancellationRequestedAt": "2026-09-05T12:00:00.000Z",
+    "createdAt": "2026-09-05T12:00:00.000Z",
+    "currency": "usd",
+    "currentPeriodEnd": "2026-09-05T12:00:00.000Z",
+    "currentPeriodProgress": 0,
+    "currentPeriodStart": "2026-09-05T12:00:00.000Z",
+    "customerEmail": "consumer@example.test",
+    "customerName": "Consumer customer name",
+    "isArchived": false,
+    "lastEvent": "billing_cycle_started",
+    "lastEventAt": "2026-09-05T12:00:00.000Z",
+    "lastPaymentAt": "2026-09-05T12:00:00.000Z",
+    "nextPaymentDueAt": "2026-09-05T12:00:00.000Z",
+    "paymentMethodType": "card",
+    "paymentStatus": "pending",
+    "planCode": "Consumer plan code",
+    "planInterval": "Consumer plan interval",
+    "planName": "Consumer plan name",
+    "prorationAmount": 0,
+    "prorationDate": 0,
+    "restorationMetadata": {},
+    "restoredAt": "2026-09-05T12:00:00.000Z",
+    "stateHistory": [],
+    "status": "future",
+    "subscriptionId": "consumer-subscription-id",
+    "updatedAt": "2026-09-05T12:00:00.000Z",
+    "rows": [
+      {
+        "allowedTransitions": [],
+        "amount": 1999,
+        "archiveMetadata": {},
+        "archiveReason": "Consumer archive reason",
+        "archivedAt": "2026-09-05T12:00:00.000Z",
+        "archivedBy": "Consumer archived by",
+        "billingInterval": "monthly",
+        "cancelAtPeriodEnd": false,
+        "cancellationReason": "Consumer cancellation reason",
+        "cancellationReasonCode": "Consumer cancellation reason code",
+        "cancellationRequestedAt": "2026-09-05T12:00:00.000Z",
+        "createdAt": "2026-09-05T12:00:00.000Z",
+        "currency": "usd",
+        "currentPeriodEnd": "2026-09-05T12:00:00.000Z",
+        "currentPeriodProgress": 0,
+        "currentPeriodStart": "2026-09-05T12:00:00.000Z",
+        "customerEmail": "consumer@example.test",
+        "customerName": "Consumer customer name",
+        "isArchived": false,
+        "lastEvent": "billing_cycle_started",
+        "lastEventAt": "2026-09-05T12:00:00.000Z",
+        "lastPaymentAt": "2026-09-05T12:00:00.000Z",
+        "nextPaymentDueAt": "2026-09-05T12:00:00.000Z",
+        "paymentMethodType": "card",
+        "paymentStatus": "pending",
+        "planCode": "Consumer plan code",
+        "planInterval": "Consumer plan interval",
+        "planName": "Consumer plan name",
+        "prorationAmount": 0,
+        "prorationDate": 0,
+        "restorationMetadata": {},
+        "restoredAt": "2026-09-05T12:00:00.000Z",
+        "stateHistory": [],
+        "status": "future",
+        "subscriptionId": "consumer-subscription-id",
+        "updatedAt": "2026-09-05T12:00:00.000Z"
+      }
+    ],
+    "collectionQuery": {
+      "page": 1,
+      "pageSize": 10,
+      "total": 20
+    },
+    "uiState": "success"
+  }
+}

@@ -121,8 +121,14 @@ function findTarball(tarballs, packageName) {
 
 function consumerSource(framework) {
   const config = TARGETS[framework];
-  const componentSpecifier = `${config.componentPackage}/ported`;
-  const readinessSpecifier = `${config.componentPackage}/readiness-ported`;
+  // Sprint 200 m04 retired the compatibility subpaths; the former eight families ship
+  // through the canonical roots only and the retired specifiers must fail to resolve.
+  const retiredSpecifiers = [
+    `${config.componentPackage}/ported`,
+    `${config.componentPackage}/readiness-ported`,
+    '@oods/component-styles/css-ported',
+    '@oods/component-styles/ported',
+  ];
   const frameworkImports = framework === 'react'
     ? `import React from 'react';\nimport { renderToString } from 'react-dom/server';`
     : `import { renderToString } from '@vue/server-renderer';\nimport { h } from 'vue';`;
@@ -138,9 +144,7 @@ import { fileURLToPath } from 'node:url';
 
 import { NUCLEUS_COMPONENT_IDS, PORTED_COMPONENT_IDS } from '@oods/component-contracts';
 import * as components from '${config.componentPackage}';
-import * as ported from '${componentSpecifier}';
 import readiness from '${config.componentPackage}/readiness' with { type: 'json' };
-import portedReadiness from '${readinessSpecifier}' with { type: 'json' };
 ${frameworkImports}
 
 const expectedIds = ${JSON.stringify(PORTED_COMPONENT_IDS)};
@@ -151,43 +155,46 @@ const require = createRequire(import.meta.url);
 if (JSON.stringify(PORTED_COMPONENT_IDS) !== JSON.stringify(expectedIds)) {
   throw new Error('Installed compatibility cohort differs from the historical eight.');
 }
-const runtimeIds = Object.keys(ported).sort();
 const rootRuntimeIds = Object.keys(components).sort();
+const runtimeIds = rootRuntimeIds;
 if (
-  JSON.stringify(runtimeIds) !== JSON.stringify(rootRuntimeIds)
-  || NUCLEUS_COMPONENT_IDS.some((id) => components[id] === undefined)
-  || runtimeIds.some((id) => ported[id] !== components[id])
+  NUCLEUS_COMPONENT_IDS.some((id) => components[id] === undefined)
+  || expectedIds.some((id) => components[id] === undefined)
 ) {
-  throw new Error('ESM compatibility alias differs from the canonical component root.');
+  throw new Error('The canonical component root omits a governed or former ported family.');
 }
-const commonJs = require('${componentSpecifier}');
 const rootCommonJs = require('${config.componentPackage}');
-const commonJsIds = Object.keys(commonJs).sort();
+const commonJsIds = Object.keys(rootCommonJs).sort();
 if (
-  JSON.stringify(commonJsIds) !== JSON.stringify(Object.keys(rootCommonJs).sort())
+  JSON.stringify(commonJsIds) !== JSON.stringify(rootRuntimeIds)
   || NUCLEUS_COMPONENT_IDS.some((id) => rootCommonJs[id] === undefined)
-  || commonJsIds.some((id) => commonJs[id] !== rootCommonJs[id])
 ) {
-  throw new Error('CJS compatibility alias differs from the canonical component root.');
+  throw new Error('CJS component root differs from the ESM component root.');
 }
 const readinessIds = readiness.rows.map((row) => row.componentId);
 if (
   readiness.target !== '${framework}'
   || JSON.stringify(readinessIds) !== JSON.stringify(NUCLEUS_COMPONENT_IDS)
   || readiness.rows.some((row) => row.emissionEligible !== true)
-  || JSON.stringify(portedReadiness) !== JSON.stringify(readiness)
 ) {
-  throw new Error('Canonical readiness is incomplete or its compatibility alias differs.');
+  throw new Error('Canonical readiness is incomplete.');
+}
+const retiredSubpaths = {};
+for (const specifier of ${JSON.stringify(retiredSpecifiers)}) {
+  try {
+    import.meta.resolve(specifier);
+    throw new Error('Retired subpath still resolves: ' + specifier);
+  } catch (error) {
+    if (error.code !== 'ERR_PACKAGE_PATH_NOT_EXPORTED') throw error;
+    retiredSubpaths[specifier] = error.code;
+  }
 }
 
 const specifiers = [
   '@oods/component-contracts',
   '${config.componentPackage}',
-  '${componentSpecifier}',
   '${config.componentPackage}/readiness',
-  '${readinessSpecifier}',
   '@oods/component-styles/css',
-  '@oods/component-styles/css-ported',
 ];
 const resolutions = specifiers.map((specifier) => {
   const resolved = realpathSync(fileURLToPath(import.meta.resolve(specifier)));
@@ -213,11 +220,7 @@ for (const packageName of ${JSON.stringify([...LOCAL_PACKAGE_NAMES, config.compo
   }
 }
 
-const cssPath = fileURLToPath(import.meta.resolve('@oods/component-styles/css-ported'));
-const rootCssPath = fileURLToPath(import.meta.resolve('@oods/component-styles/css'));
-if (realpathSync(cssPath) !== realpathSync(rootCssPath)) {
-  throw new Error('CSS compatibility alias differs from the canonical stylesheet.');
-}
+const cssPath = fileURLToPath(import.meta.resolve('@oods/component-styles/css'));
 const css = readFileSync(cssPath, 'utf8');
 for (const componentId of expectedIds) {
   if (!css.includes("[data-oods-component='" + componentId + "']")) {
@@ -247,7 +250,7 @@ process.stdout.write(JSON.stringify({
   readinessIds,
   cssBytes: Buffer.byteLength(css),
   cssComponentIds: expectedIds,
-  aliasEquivalence: { esm: true, cjs: true, readiness: true, css: true },
+  retiredSubpaths,
   resolutions,
   ssr: { componentId: 'PriceBadge', html },
 }));
@@ -414,7 +417,7 @@ export async function runS184M04PackedConsumers(artifactRoot = DEFAULT_ARTIFACT_
   const report = {
     schemaVersion: '1.0.0',
     mission: 's184-m04',
-    kind: 'ported-subpath-packed-consumer-proof',
+    kind: 'root-subpath-packed-consumer-proof',
     status: 'passed',
     selected: components.length * targetReports.length,
     passed: components.length * targetReports.length,
@@ -425,14 +428,28 @@ export async function runS184M04PackedConsumers(artifactRoot = DEFAULT_ARTIFACT_
     surfaceCellCount: components.length * targetReports.length,
     requiredSubpaths: {
       react: [
+        '@oods/components-react',
+        '@oods/components-react/readiness',
+        '@oods/component-styles/css',
+      ],
+      vue: [
+        '@oods/components-vue',
+        '@oods/components-vue/readiness',
+        '@oods/component-styles/css',
+      ],
+    },
+    retiredSubpaths: {
+      react: [
         '@oods/components-react/ported',
         '@oods/components-react/readiness-ported',
         '@oods/component-styles/css-ported',
+        '@oods/component-styles/ported',
       ],
       vue: [
         '@oods/components-vue/ported',
         '@oods/components-vue/readiness-ported',
         '@oods/component-styles/css-ported',
+        '@oods/component-styles/ported',
       ],
     },
     components,

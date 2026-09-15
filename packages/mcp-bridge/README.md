@@ -7,7 +7,7 @@ The default listener is `127.0.0.1:4466`; `MCP_BRIDGE_PORT` overrides the port. 
 
 The registry advertises 19 tools by default and 5 on demand (24 total). Enable on-demand entries with `MCP_TOOLSET=all` or select them with `MCP_EXTRA_TOOLS`.
 
-The retained portable adapter E2E exercises 19 advertised tools: 17 results and 2 typed dependency limits, brand.apply (OODS-N020) and design.preview (OODS-N019). Source evidence tiers below do not imply executed proof for every tool.
+The retained portable adapter E2E exercises 19 advertised tools: 18 results and 1 typed dependency limit, design.preview (OODS-N019). Source evidence tiers below do not imply executed proof for every tool.
 
 | Default tool / actions | Source evidence tier |
 | --- | --- |

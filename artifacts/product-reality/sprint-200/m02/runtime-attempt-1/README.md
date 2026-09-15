@@ -1,0 +1,5 @@
+# Runtime sweep attempt 1 — stopped, retained
+
+Started 2026-09-14T20:02Z on the pinned Linux browser (`ws://127.0.0.1:19730/`). Stopped by the builder after `Collection/workflow/react` failed its `interaction-evidence` gate: the composed Collection list declares no filter control (the object has no lifecycle field) and `observeCollectionControls` in `scripts/product-reality/s188-m03-app-consumers.ts` dereferenced the filter's options. The same crash reproduces at the base head (the composed schema is identical there), so it predates this mission; the last full sweep before it was Sprint 198 m02, before the Sprint 198 craft missions changed the list toolbar. The harness now follows the composed schema and records `filter-not-declared`. Every other cell that completed here passed. This attempt wrote no registry.
+
+Retained here: the execution log, the browser record, the package inventory and logs, and the receipts of the cells named above. Receipts of the other cells that had completed were removed to keep the retained attempt small; attempt 3 re-measured every cell.

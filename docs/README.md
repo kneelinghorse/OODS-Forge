@@ -258,7 +258,7 @@ OODS includes Model Context Protocol servers that enable AI agents to:
 
 ## License
 
-[MIT](../LICENSE)
+[PolyForm Noncommercial 1.0.0](../LICENSE); commercial use needs the license described in [COMMERCIAL.md](../COMMERCIAL.md).
 
 ---
 

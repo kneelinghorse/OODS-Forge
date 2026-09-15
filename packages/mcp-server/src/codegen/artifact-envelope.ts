@@ -43,9 +43,7 @@ const FRAMEWORK_IMPORTS: Record<CodegenFramework, ReadonlySet<string>> = {
   react: new Set([
     '@oods/component-contracts',
     '@oods/component-styles/css',
-    '@oods/component-styles/css-ported',
     '@oods/components-react',
-    '@oods/components-react/ported',
     'class-variance-authority',
     'react',
     'react-dom/client',
@@ -54,9 +52,7 @@ const FRAMEWORK_IMPORTS: Record<CodegenFramework, ReadonlySet<string>> = {
   vue: new Set([
     '@oods/component-contracts',
     '@oods/component-styles/css',
-    '@oods/component-styles/css-ported',
     '@oods/components-vue',
-    '@oods/components-vue/ported',
     'class-variance-authority',
     'vue',
     '@vitejs/plugin-vue',

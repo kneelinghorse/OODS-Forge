@@ -1,0 +1,94 @@
+{
+  "steps": [
+    {
+      "step": "1-verify-and-extract",
+      "startedAt": "2026-09-14T23:38:03Z",
+      "endedAt": "2026-09-14T23:38:06Z",
+      "seconds": 3,
+      "outcome": "pass",
+      "note": "shasum -c printed OK and tar extracted 13 top-level entries; both README commands worked verbatim."
+    },
+    {
+      "step": "2a-install-into-client",
+      "startedAt": "2026-09-14T23:38:15Z",
+      "endedAt": "2026-09-14T23:38:16Z",
+      "seconds": 1,
+      "outcome": "pass",
+      "note": "claude mcp add + claude mcp get returned 'Status: ✓ Connected' on the first try."
+    },
+    {
+      "step": "2b-health-attempt-1-hung",
+      "startedAt": "2026-09-14T23:38:24Z",
+      "endedAt": "2026-09-14T23:45:28Z",
+      "seconds": 424,
+      "outcome": "fail",
+      "note": "Stand-in CLI form only: --allowedTools is variadic and ate the prompt, so claude -p blocked on stdin; killed. Not a Forge failure."
+    },
+    {
+      "step": "2c-health-attempt-2",
+      "startedAt": "2026-09-14T23:45:28Z",
+      "endedAt": "2026-09-14T23:45:30Z",
+      "seconds": 2,
+      "outcome": "fail",
+      "note": "Error: Input must be provided either through stdin or as a prompt argument when using --print."
+    },
+    {
+      "step": "2d-health-attempt-3",
+      "startedAt": "2026-09-14T23:45:44Z",
+      "endedAt": "2026-09-14T23:45:56Z",
+      "seconds": 12,
+      "outcome": "pass",
+      "note": "status ok; 110 components, 46 traits, 18 objects (README says 19); 24 tools (19 product-reality, 5 contract)."
+    },
+    {
+      "step": "3-compose-one-screen",
+      "startedAt": "2026-09-14T23:46:06Z",
+      "endedAt": "2026-09-14T23:46:35Z",
+      "seconds": 29,
+      "outcome": "pass",
+      "note": "status ok, layout detail, schemaRef compose-b8fc9aa5, 10 slots; tab-0 CycleProgressCard 0.95 exactly as the README example."
+    },
+    {
+      "step": "4-certify-a-chart",
+      "startedAt": "2026-09-14T23:46:50Z",
+      "endedAt": "2026-09-14T23:47:12Z",
+      "seconds": 22,
+      "outcome": "pass",
+      "note": "viz.render then artifact.certify: coverage certified, conformant true, all four pillars pass, findings empty."
+    },
+    {
+      "step": "5-generate-the-app-attempt-1",
+      "startedAt": "2026-09-14T23:47:23Z",
+      "endedAt": "2026-09-14T23:47:36Z",
+      "seconds": 13,
+      "outcome": "fail",
+      "note": "OODS-N003: schemaRef compose-b8fc9aa5 missing 68s after it was created, with 29 minutes of its stated TTL left."
+    },
+    {
+      "step": "5+6-generate-and-render-attempt-2",
+      "startedAt": "2026-09-14T23:48:02Z",
+      "endedAt": "2026-09-14T23:50:09Z",
+      "seconds": 127,
+      "outcome": "partial",
+      "note": "Re-composed and ran both calls in one session; the stand-in assistant could not read the spilled tool results, so no fields and no saved HTML."
+    },
+    {
+      "step": "5+6-generate-and-render-attempt-3",
+      "startedAt": "2026-09-14T23:50:34Z",
+      "endedAt": "2026-09-14T23:51:52Z",
+      "seconds": 78,
+      "outcome": "pass",
+      "note": "code.generate returned both README file paths, sha256 hash, 5 pinned deps, 11 checks / 7 notChecked; repl render saved 215,664 bytes of HTML."
+    },
+    {
+      "step": "6-look-at-it",
+      "startedAt": "2026-09-14T23:52:01Z",
+      "endedAt": "2026-09-14T23:52:02Z",
+      "seconds": 1,
+      "outcome": "pass",
+      "note": "Opened in the browser; title 'OODS Preview', 6 headings, 49 data-oods-component markers, inline token CSS."
+    }
+  ],
+  "totalSeconds": 838,
+  "installToSeeSeconds": 826
+}

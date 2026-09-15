@@ -11,6 +11,9 @@ const ts = require('typescript');
 export const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 export const LEDGER_PATH = 'packages/mcp-server/registry/tool-capability-ledger.v1.json';
 export const PORTABLE_RECEIPT_PATH = 'artifacts/product-reality/sprint-196/m02/e2e-host.json';
+/** One retained extracted-runtime receipt per mode; s200 ships the brand source, so only design.preview stays typed. */
+export const PORTABLE_RECEIPT_PATHS = { s196: PORTABLE_RECEIPT_PATH, s200: 'artifacts/product-reality/sprint-200/m04/e2e-host.json' };
+export const PORTABLE_TYPED_CODES = { s196: { 'brand.apply': 'OODS-N020', 'design.preview': 'OODS-N019' }, s200: { 'design.preview': 'OODS-N019' } };
 export const TIERS = ['product-reality', 'contract', 'unit', 'none'];
 const families = new Set(['map', 'schema', 'object', 'repl']);
 const hash = bytes => `sha256:${createHash('sha256').update(bytes).digest('hex')}`;
@@ -47,7 +50,10 @@ export function handlerImports(file, source, root, names) {
 }
 
 /** Only an actual successful extracted-runtime receipt can retire a portable limit. */
-export function derivePortableExecution(bytes, advertised) {
+export function derivePortableExecution(bytes, advertised, mode = 's196') {
+  assert(Object.hasOwn(PORTABLE_RECEIPT_PATHS, mode), `Unknown portable mode ${mode}`);
+  const expectedCodes = PORTABLE_TYPED_CODES[mode];
+  const typedCount = Object.keys(expectedCodes).length;
   const receipt = JSON.parse(bytes);
   assert.equal(receipt.status, 'pass', 'Portable receipt must pass');
   assert.match(receipt.manifest?.commit ?? '', /^[0-9a-f]{40}$/);
@@ -56,9 +62,8 @@ export function derivePortableExecution(bytes, advertised) {
   assert.deepEqual([...receipt.tools.names].sort(), advertised.map(name => name.replaceAll('.', '_')).sort());
   const outcomes = receipt.calls?.outcomes;
   assert.deepEqual(Object.keys(outcomes ?? {}).sort(), [...advertised].sort(), 'Portable receipt must cover every advertised tool exactly');
-  assert.equal(Object.values(outcomes).filter(row => row.outcome === 'pass').length, 17);
-  assert.equal(Object.values(outcomes).filter(row => row.outcome === 'typed').length, 2);
-  const expectedCodes = { 'brand.apply': 'OODS-N020', 'design.preview': 'OODS-N019' };
+  assert.equal(Object.values(outcomes).filter(row => row.outcome === 'pass').length, 19 - typedCount);
+  assert.equal(Object.values(outcomes).filter(row => row.outcome === 'typed').length, typedCount);
   for (const [tool, outcome] of Object.entries(outcomes)) {
     if (expectedCodes[tool]) {
       assert.equal(outcome.outcome, 'typed', `${tool}: dependency gap must remain typed`);
@@ -73,7 +78,7 @@ export function derivePortableExecution(bytes, advertised) {
     } else assert.equal(outcome.outcome, 'pass', `${tool}: successful portable execution required`);
   }
   return {
-    proof: { path: PORTABLE_RECEIPT_PATH, sha256: hash(bytes), bundleHead: receipt.manifest.commit, dirty: receipt.manifest.dirty, tools: 19, pass: 17, typed: 2 },
+    proof: { path: PORTABLE_RECEIPT_PATHS[mode], sha256: hash(bytes), bundleHead: receipt.manifest.commit, dirty: receipt.manifest.dirty, tools: 19, pass: 19 - typedCount, typed: typedCount },
     outcomes,
   };
 }
@@ -84,7 +89,10 @@ export function deriveToolTruth({ root = ROOT, head, mode } = {}) {
   mode ??= JSON.parse(read(LEDGER_PATH)).mode ?? 's193';
   const registry = JSON.parse(read('packages/mcp-server/src/tools/registry.json'));
   const names = [...registry.auto, ...registry.onDemand];
-  assert(['s193', 's194', 's196'].includes(mode), 'Unknown tool-truth mode');
+  assert(['s193', 's194', 's196', 's200'].includes(mode), 'Unknown tool-truth mode');
+  const bound = mode === 's196' || mode === 's200';
+  // The active census never gains discovery references to its own changing closeout reports.
+  const closeoutReports = { s196: /\/sprint-196\/m07\//, s200: /\/sprint-(?:196|200)\/m07\// }[mode];
   const retired = mode !== 's193' ? JSON.parse(read('artifacts/product-reality/sprint-194/m04/retired-tools.json')).retired : [];
   assert.equal(names.length + retired.length, 27);
   assert.equal(new Set([...names, ...retired.map(row => row.name)]).size, 27);
@@ -99,13 +107,13 @@ export function deriveToolTruth({ root = ROOT, head, mode } = {}) {
       allImports.push(...handlerImports(file, read(file), root, names));
     }
   }
-  const readmes = walk(path.join(root, 'artifacts/product-reality')).filter(file => path.basename(file) === 'README.md' && !(/\/sprint-193\/m0[67]\/|\/sprint-19[45]\/m07\//.test(file)) && !(mode === 's196' && /\/sprint-196\/m07\//.test(file))).map(full => ({ path: path.relative(root, full).replaceAll(path.sep, '/'), text: fs.readFileSync(full, 'utf8') })).filter(file => /\b(browser|packed|runtime|SVG|screenshot)\b/i.test(file.text));
+  const readmes = walk(path.join(root, 'artifacts/product-reality')).filter(file => path.basename(file) === 'README.md' && !(/\/sprint-193\/m0[67]\/|\/sprint-19[45]\/m07\//.test(file)) && !(bound && closeoutReports.test(file))).map(full => ({ path: path.relative(root, full).replaceAll(path.sep, '/'), text: fs.readFileSync(full, 'utf8') })).filter(file => /\b(browser|packed|runtime|SVG|screenshot)\b/i.test(file.text));
   const e2ePath = 'scripts/runtime/e2e.mjs';
   const e2eSource = read(e2ePath);
   const e2eCalls = [...e2eSource.matchAll(/\.callTool\(\s*["']([^"']+)["']/g)].map(match => ({ name: match[1], path: e2ePath, line: e2eSource.slice(0, match.index).split('\n').length }));
   const caveats = JSON.parse(read('scripts/product-reality/s193-tool-caveats.json'));
   const portableGaps = mode === 's194' ? JSON.parse(read('artifacts/product-reality/sprint-194/m06/portable-gaps.json')).gaps : [];
-  const execution = mode === 's196' ? derivePortableExecution(read(PORTABLE_RECEIPT_PATH), registry.auto) : undefined;
+  const execution = bound ? derivePortableExecution(read(PORTABLE_RECEIPT_PATHS[mode]), registry.auto, mode) : undefined;
   const rows = names.map(name => {
     const spec = toolSpecs.get(name); assert(spec, `No ToolSpec for ${name}`); assert.equal(typeof descriptions[name], 'string');
     const inputSchemaPath = path.posix.join('packages/mcp-server/src', spec.schema);

@@ -15,6 +15,7 @@ import { validateGeneratedArtifact } from '../../packages/mcp-server/src/codegen
 import { workflowSampleRecords } from '../../packages/mcp-server/src/codegen/workflow-data-emitter.js';
 import type { GeneratedArtifact } from '../../packages/mcp-server/src/codegen/types.js';
 import { packFoundationPackages } from './s182-m04-consumer-harness.mjs';
+import { ensureConsumerRollup } from './consumer-rollup.mjs';
 import {
   GATE_NAMES, REPOSITORY_ROOT, commandResult, requireGreen, prepareManifest,
   isolatedNpmEnvironment, assertInstalledIsolation, resolveImports, withStaticServer, cssProof, launchProofBrowser,
@@ -370,17 +371,20 @@ export async function observeCollectionControls(page: Page, url: string, object 
   const expectedOrder = schema ? expectedCollectionOrder(schema) : undefined;
   const filter = schema ? schemaNodes(schema).find(node => node.collectionControl === 'filter') : undefined;
   const filterField = String(filter?.props?.field ?? 'status');
+  // A composed list may declare no filter control at all (Collection has no lifecycle field): then search,
+  // sort and pagination are the controls under proof and the status filter is recorded as not declared.
+  const filterDeclared = !schema || Boolean(filter);
   const statusControl = page.getByRole('combobox', { name: String(filter?.props?.label ?? 'Status'), exact: true });
-  const options = await statusControl.locator('option').evaluateAll(nodes => nodes.map(node => (node as HTMLOptionElement).value));
+  const options = filterDeclared ? await statusControl.locator('option').evaluateAll(nodes => nodes.map(node => (node as HTMLOptionElement).value)) : [];
   const selectedStatus = options.includes('active') ? 'active' : options.find(value => value !== '');
-  if (schema) {
-    const declaredOptions = (filter?.props?.options as Array<{ value: string }>).map(option => option.value);
+  if (schema && filterDeclared) {
+    const declaredOptions = ((filter?.props?.options as Array<{ value: string }> | undefined) ?? []).map(option => option.value);
     const states = schema.workflow!.data.lifecycleStates;
     const observedStates = [...new Set(workflowSampleRecords(schema).filter(record => !record.is_archived).map(record => String(record[filterField] ?? '')).filter(Boolean))].sort();
     const expectedOptions = declaredOptions.length > 1 ? declaredOptions
       : schema.objectSchema!.status && states.length ? ['', ...states] : ['', ...observedStates];
     assert.deepEqual(options, expectedOptions, 'Filter choices must match the declared enum, workflow lifecycle states, or actual loaded records');
-  } else assert.ok(selectedStatus, 'The declared status filter must offer an actual lifecycle state');
+  } else if (!schema) assert.ok(selectedStatus, 'The declared status filter must offer an actual lifecycle state');
   const expectedIds = schema ? expectedCollectionOrder(schema, selectedStatus)
     : await records.evaluateAll((nodes, status) => nodes.filter(node => node.querySelector('[data-oods-component="StatusBadge"]')?.getAttribute('data-status') === status).map(node => node.getAttribute('data-record-id')), selectedStatus);
   const search = page.getByRole('searchbox', { name: 'Search', exact: true });
@@ -404,7 +408,12 @@ export async function observeCollectionControls(page: Page, url: string, object 
     assert.equal(await search.inputValue(), ''); assert.equal(await records.count(), total);
     return { typed: 'not-a-record', retainedFocus: true, emptyCount: 0, restoredCount: total };
   });
-  if (selectedStatus) await observe(rows, 'filter-composed-rows', async () => {
+  if (!filterDeclared) await observe(rows, 'filter-not-declared', async () => {
+    assert.equal(await statusControl.count(), 0, 'A list composed without a filter control must not render one');
+    assert.equal(await records.count(), total);
+    return { reason: 'The composed list declares no filter control; the object has no lifecycle field. Search, sort and pagination are proven; filtering by a status is not claimed.' };
+  });
+  else if (selectedStatus) await observe(rows, 'filter-composed-rows', async () => {
     await statusControl.selectOption(selectedStatus);
     assert.equal(await records.count(), expectedIds.length);
     assert.deepEqual(await records.evaluateAll(nodes => nodes.map(node => node.getAttribute('data-record-id'))), expectedIds);
@@ -539,7 +548,10 @@ export async function runAppConsumers(output: string, mission = 's188-m03', obje
         await json(path.join(consumer, 'package.json'), manifest);
         await json(path.join(cellRoot, 'installed-manifest.json'), manifest);
         await Promise.all([fs.writeFile(userConfig, ''), fs.writeFile(globalConfig, ''), fs.writeFile(path.join(consumer, '.npmrc'), '')]);
-        await command('install', ['install', '--ignore-scripts', '--no-audit', '--no-fund', '--package-lock=false', '--userconfig', userConfig]);
+        const installArgs = ['install', '--ignore-scripts', '--no-audit', '--no-fund', '--package-lock=false', '--userconfig', userConfig];
+        await command('install', installArgs);
+        await json(path.join(cellRoot, 'logs', 'rollup.json'), await ensureConsumerRollup(consumer,
+          extraArgs => command('install-optional-retry', [...installArgs, ...extraArgs])));
         const isolation = assertInstalledIsolation(consumer, framework, prepared.localTarballs, sourceFiles);
         const resolutions = resolveImports(consumer, sourceFiles);
         await json(path.join(cellRoot, 'isolation.json'), { isolation, resolutions, localTarballs: prepared.localTarballs });

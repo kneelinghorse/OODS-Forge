@@ -4,8 +4,11 @@
 /* Legacy unprefixed geometry used by billing recipes. Values come from the
  * semantic layer; preserve these names until their authored callers migrate. */
 :root {
+  --space-1: var(--sys-control-gap-compact);
   --space-2: var(--sys-control-gap);
   --space-3: var(--sys-field-padding-inline);
+  --space-4: var(--sys-inset-md);
+  --radius-sm: var(--sys-radius-control);
   --radius-md: var(--sys-radius-control);
 }
 
@@ -52,22 +55,25 @@
 }
 
 :where(.oods-button, [data-oods-component='Button']) {
+  --oods-button-min-block-size: var(--cmp-button-height, 2.5rem);
+  --oods-button-padding-block: var(--cmp-button-padding-block, 0.625rem);
+  --oods-button-padding-inline: var(--cmp-button-padding-inline, 1rem);
+  --oods-button-font-size: var(--sys-text-size-md, 1rem);
   display: inline-flex;
-  min-block-size: var(--oods-button-min-block-size, 2.5rem);
+  min-block-size: var(--oods-button-min-block-size);
   box-sizing: border-box;
   align-items: center;
   justify-content: center;
   gap: var(--cmp-button-gap, 0.5rem);
-  padding: var(--oods-button-padding-block, var(--cmp-button-padding-block, 0.625rem))
-    var(--oods-button-padding-inline, var(--cmp-button-padding-inline, 1rem));
+  padding: var(--oods-button-padding-block) var(--oods-button-padding-inline);
   border: 1px solid var(--oods-button-border, var(--cmp-button-border, transparent));
   border-radius: var(--cmp-button-radius, 0.5rem);
   background: var(--oods-button-background, var(--cmp-button-background, var(--cmp-surface-action, CanvasText)));
   color: var(--oods-button-text, var(--cmp-button-text, var(--cmp-text-on-action, Canvas)));
   font: inherit;
-  font-size: var(--oods-button-font-size, var(--sys-text-size-md, 1rem));
+  font-size: var(--oods-button-font-size);
   font-weight: var(--cmp-button-font-weight, 600);
-  line-height: 1;
+  line-height: var(--sys-text-line-height-tight, 1.2);
   cursor: pointer;
 }
 
@@ -114,25 +120,25 @@
 }
 
 :where(.oods-button, [data-oods-component='Button'])[data-size='sm'] {
-  --oods-button-min-block-size: 2rem;
-  --oods-button-padding-block: 0.375rem;
-  --oods-button-padding-inline: 0.75rem;
+  --oods-button-min-block-size: var(--cmp-button-height-sm, 2rem);
+  --oods-button-padding-block: var(--cmp-button-padding-block-sm, 0.375rem);
+  --oods-button-padding-inline: var(--cmp-button-padding-inline-sm, 0.75rem);
   --oods-button-font-size: var(--sys-text-size-sm, 0.875rem);
   font-size: var(--oods-button-font-size);
 }
 
 :where(.oods-button, [data-oods-component='Button'])[data-size='md'] {
-  --oods-button-min-block-size: 2.5rem;
-  --oods-button-padding-block: 0.625rem;
-  --oods-button-padding-inline: 1rem;
+  --oods-button-min-block-size: var(--cmp-button-height, 2.5rem);
+  --oods-button-padding-block: var(--cmp-button-padding-block, 0.625rem);
+  --oods-button-padding-inline: var(--cmp-button-padding-inline, 1rem);
   --oods-button-font-size: var(--sys-text-size-md, 1rem);
   font-size: var(--oods-button-font-size);
 }
 
 :where(.oods-button, [data-oods-component='Button'])[data-size='lg'] {
-  --oods-button-min-block-size: 3rem;
-  --oods-button-padding-block: 0.75rem;
-  --oods-button-padding-inline: 1.5rem;
+  --oods-button-min-block-size: var(--cmp-button-height-lg, 3rem);
+  --oods-button-padding-block: var(--cmp-button-padding-block-lg, 0.75rem);
+  --oods-button-padding-inline: var(--cmp-button-padding-inline-lg, 1.5rem);
   --oods-button-font-size: var(--sys-text-size-lg, 1.25rem);
   font-size: var(--oods-button-font-size);
 }
@@ -158,24 +164,42 @@
   cursor: not-allowed;
 }
 
-/* Native controls in governed forms need the same semantic ring on every OS. */
-:where(.oods-button, [data-oods-component='Button'], .oods-field-control, .oods-tab, .oods-table-row-action,
+/* One focus treatment for every interactive element, native controls included:
+ * token width, colour and offset. Nothing else in this stylesheet paints focus. */
+:where(.oods-button, [data-oods-component='Button'], .oods-field-control, .oods-tab, .oods-table-row-action, .oods-collection-row,
+  .oods-banner-dismiss, .tabs__overflow-trigger, .oods-tabs-overflow-trigger,
   [data-oods-component] input, [data-oods-component] textarea, [data-oods-component] select,
-  [data-oods-component] button, [data-oods-component='Checkbox']):focus-visible {
-  outline: var(--cmp-button-focus-width, 2px) solid var(--cmp-button-focus-outer, Highlight);
-  outline-offset: 2px;
+  [data-oods-component] button, [data-oods-component] a[href], [data-oods-component] [role='menuitem'],
+  [data-oods-component='Checkbox']):focus-visible {
+  outline: var(--cmp-focus-width, 2px) solid var(--cmp-focus-outer, Highlight);
+  outline-offset: var(--cmp-focus-offset, 2px);
 }
 
 :where(.oods-card, [data-oods-component='Card']) {
   padding: var(--cmp-spacing-inset-default, 1rem);
   border: 1px solid var(--cmp-border-default, var(--sys-border-subtle));
-  border-radius: var(--cmp-input-radius, 0.5rem);
+  border-radius: var(--cmp-card-radius, 0.75rem);
   background: var(--cmp-surface-panel, var(--sys-surface-raised));
   color: var(--cmp-text-body, var(--sys-text-primary));
 }
 
 :where(.oods-card[data-elevated='true'], [data-oods-component='Card'][data-elevated='true']) {
-  box-shadow: var(--cmp-shadow-panel, 0 0.25rem 1rem rgb(0 0 0 / 12%));
+  box-shadow: var(--cmp-card-shadow-offset-x, 0px) var(--cmp-card-shadow-offset-y, 16px) var(--cmp-card-shadow-blur, 40px) var(--cmp-card-shadow-spread, -12px) var(--cmp-card-shadow-color, rgba(15, 23, 42, 0.12));
+}
+
+/* The tokens build scopes colour per brand and theme; the dark elevation tokens are
+ * emitted at :root, so the dark scope takes its shadow roles from them here. */
+[data-theme='dark'] {
+  --cmp-card-shadow-offset-x: var(--theme-dark-shadow-elevation-card-offset-x);
+  --cmp-card-shadow-offset-y: var(--theme-dark-shadow-elevation-card-offset-y);
+  --cmp-card-shadow-blur: var(--theme-dark-shadow-elevation-card-blur);
+  --cmp-card-shadow-spread: var(--theme-dark-shadow-elevation-card-spread);
+  --cmp-card-shadow-color: var(--theme-dark-shadow-elevation-card-color);
+  --cmp-shadow-overlay-offset-x: var(--theme-dark-shadow-elevation-overlay-offset-x);
+  --cmp-shadow-overlay-offset-y: var(--theme-dark-shadow-elevation-overlay-offset-y);
+  --cmp-shadow-overlay-blur: var(--theme-dark-shadow-elevation-overlay-blur);
+  --cmp-shadow-overlay-spread: var(--theme-dark-shadow-elevation-overlay-spread);
+  --cmp-shadow-overlay-color: var(--theme-dark-shadow-elevation-overlay-color);
 }
 
 :where([data-oods-component='DetailHeader'], [data-oods-component='CardHeader']) {
@@ -183,7 +207,7 @@
   --cmp-header-subtitle: var(--sys-text-secondary);
   --cmp-header-metadata: var(--sys-text-muted);
   display: grid;
-  gap: var(--sys-spacing-stack-compact, 0.5rem);
+  gap: var(--sys-spacing-stack-compact, 0.75rem);
 }
 
 :where([data-oods-component='DetailHeader'], [data-oods-component='CardHeader']) > :is(h1, h2, h3, h4, h5, h6) {
@@ -194,7 +218,8 @@
 }
 
 :where([data-oods-component='DetailHeader']) > :is(h1, h2, h3, h4, h5, h6) {
-  font-size: var(--ref-typography-sizes-xl, 1.5rem);
+  font-size: var(--sys-text-scale-heading-lg-font-size, 1.5rem);
+  line-height: var(--sys-text-scale-heading-lg-line-height, 1.2);
 }
 
 :where([data-oods-component='CardHeader']) > :is(h1, h2, h3, h4, h5, h6) {
@@ -226,7 +251,7 @@
   inline-size: 1.25rem;
   block-size: 1.25rem;
   border: 1px solid var(--cmp-swatch-border, CanvasText);
-  border-radius: var(--cmp-input-radius, 0.375rem);
+  border-radius: var(--cmp-input-radius, 0.5rem);
   background: var(--oods-swatch-color, var(--cmp-swatch-chip, CanvasText));
 }
 
@@ -302,11 +327,11 @@
 }
 :where([data-viz-rendered='true']) > figcaption {
   font-size: var(--sys-text-scale-heading-md-font-size, 1.25rem);
-  font-weight: 600;
+  font-weight: var(--ref-typography-weights-semibold, 600);
 }
 :where([data-viz-svg]) { min-inline-size: 0; }
-:where([data-viz-svg]) > svg { display: block; inline-size: 100%; block-size: auto; }
-:where([data-viz-description]) { color: var(--sys-text-neutral); font-size: 0.875rem; }
+:where([data-viz-svg]) > svg { display: block; inline-size: 100%; max-inline-size: var(--oods-viz-width, 100%); block-size: auto; }
+:where([data-viz-description]) { color: var(--sys-text-neutral); font-size: var(--sys-text-size-sm, 0.875rem); }
 
 /* Timeline-family logs and the audit event article mirror renderTimelineContainer and renderEventArticle. */
 :where([data-oods-component='AddressValidationTimeline'], [data-oods-component='MembershipAuditTimeline'], [data-oods-component='MessageEventTimeline'], [data-oods-component='PreferenceTimeline']) {
@@ -334,11 +359,11 @@
   display: grid;
   gap: var(--cmp-spacing-stack-sm, 0.75rem);
   margin: 0;
-  padding-inline-start: 1.5rem;
+  padding-inline-start: var(--cmp-spacing-stack-lg, 1.5rem);
 }
 
 :where([data-oods-component='AddressValidationTimeline'], [data-oods-component='MembershipAuditTimeline'], [data-oods-component='MessageEventTimeline'], [data-oods-component='PreferenceTimeline']) > [data-timeline-events] > li {
-  border-inline-start: 2px solid var(--cmp-timeline-marker, CanvasText);
+  border-inline-start: var(--ref-border-width-bold, 2px) solid var(--cmp-timeline-marker, CanvasText);
   padding-inline-start: var(--cmp-spacing-inline-sm, 0.75rem);
 }
 
@@ -359,7 +384,7 @@
   --cmp-event-border: var(--sys-border-subtle);
   --cmp-event-text: var(--sys-text-primary);
   display: grid;
-  gap: var(--sys-spacing-stack-compact, 0.25rem);
+  gap: var(--sys-spacing-stack-compact, 0.75rem);
   padding: var(--cmp-spacing-inset-sm, 0.75rem);
   border: 1px solid var(--cmp-event-border, CanvasText);
   border-radius: var(--cmp-input-radius, 0.5rem);
@@ -453,7 +478,7 @@
 
 :where([data-oods-component='AddressCollectionPanel'], [data-oods-component='ClassificationPanel'], [data-oods-component='MembershipPanel'], [data-oods-component='PreferencePanel']) > [data-panel-header] {
   display: grid;
-  gap: var(--sys-spacing-stack-compact, 0.25rem);
+  gap: var(--sys-spacing-stack-compact, 0.75rem);
 }
 
 :where([data-oods-component='AddressCollectionPanel'], [data-oods-component='ClassificationPanel'], [data-oods-component='MembershipPanel'], [data-oods-component='PreferencePanel']) > [data-panel-header] > h3 {
@@ -495,7 +520,7 @@
 }
 
 :where([data-oods-component='FilterPanel']) > [data-filter-section] > legend {
-  padding-inline: 0.25rem;
+  padding-inline: var(--sys-control-gap-compact, 0.25rem);
   color: var(--cmp-filter-legend, CanvasText);
   font-weight: var(--ref-typography-weights-semibold, 600);
 }
@@ -507,7 +532,7 @@
 }
 
 :where([data-oods-component='FilterPanel']) button {
-  padding: 0.25rem 0.75rem;
+  padding: var(--cmp-button-padding-block-sm, 0.375rem) var(--cmp-button-padding-inline-sm, 0.75rem);
   border: 1px solid var(--cmp-filter-border, CanvasText);
   border-radius: var(--cmp-input-radius, 0.5rem);
   background: transparent;
@@ -532,7 +557,7 @@
 
 :where([data-oods-component='AddressEditor'], [data-oods-component='CancellationForm'], [data-oods-component='ClassificationEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='TagInput'], [data-oods-component='TagManager'], [data-oods-component='TemplatePicker']) > [data-form-header] {
   display: grid;
-  gap: var(--sys-spacing-stack-compact, 0.25rem);
+  gap: var(--sys-spacing-stack-compact, 0.75rem);
 }
 
 :where([data-oods-component='AddressEditor'], [data-oods-component='CancellationForm'], [data-oods-component='ClassificationEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='TagInput'], [data-oods-component='TagManager'], [data-oods-component='TemplatePicker']) > [data-form-header] > h3 {
@@ -555,14 +580,14 @@
 }
 
 :where([data-oods-component='AddressEditor'], [data-oods-component='CancellationForm'], [data-oods-component='ClassificationEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='TagInput'], [data-oods-component='TagManager'], [data-oods-component='TemplatePicker']) [data-tag-item] {
-  padding: 0.125rem 0.5rem;
+  padding: var(--cmp-badge-padding-block, 0.125rem) var(--cmp-badge-padding-inline, 0.5rem);
   border: 1px solid var(--cmp-form-border, CanvasText);
-  border-radius: 999px;
+  border-radius: var(--cmp-badge-radius, 999px);
 }
 
 :where([data-oods-component='AddressEditor'], [data-oods-component='CancellationForm'], [data-oods-component='ClassificationEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='TagInput'], [data-oods-component='TagManager'], [data-oods-component='TemplatePicker']) [data-form-control='input'] {
   display: grid;
-  gap: 0.25rem;
+  gap: var(--sys-control-gap-compact, 0.25rem);
 }
 
 :where([data-oods-component='AddressEditor'], [data-oods-component='CancellationForm'], [data-oods-component='ClassificationEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='TagInput'], [data-oods-component='TagManager'], [data-oods-component='TemplatePicker']) [data-form-control='input'] > span {
@@ -571,16 +596,16 @@
 }
 
 :where([data-oods-component='AddressEditor'], [data-oods-component='CancellationForm'], [data-oods-component='ClassificationEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='TagInput'], [data-oods-component='TagManager'], [data-oods-component='TemplatePicker']) input {
-  padding: 0.375rem 0.5rem;
+  padding: var(--cmp-input-padding-block-compact, 0.375rem) var(--cmp-input-padding-inline-compact, 0.5rem);
   border: 1px solid var(--cmp-form-border, CanvasText);
-  border-radius: var(--cmp-input-radius, 0.375rem);
+  border-radius: var(--cmp-input-radius, 0.5rem);
   background: transparent;
   color: inherit;
   font: inherit;
 }
 
 :where([data-oods-component='AddressEditor'], [data-oods-component='CancellationForm'], [data-oods-component='ClassificationEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='TagInput'], [data-oods-component='TagManager'], [data-oods-component='TemplatePicker']) > legend {
-  padding-inline: 0.25rem;
+  padding-inline: var(--sys-control-gap-compact, 0.25rem);
   font-size: var(--sys-text-size-lg, 1.25rem);
   font-weight: var(--ref-typography-weights-semibold, 600);
 }
@@ -597,7 +622,7 @@
 
 :where([data-oods-component='AddressEditor'], [data-oods-component='CancellationForm'], [data-oods-component='ClassificationEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='TagInput'], [data-oods-component='TagManager'], [data-oods-component='TemplatePicker']) [data-form-control] {
   display: grid;
-  gap: 0.25rem;
+  gap: var(--sys-control-gap-compact, 0.25rem);
 }
 
 :where([data-oods-component='AddressEditor'], [data-oods-component='CancellationForm'], [data-oods-component='ClassificationEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='TagInput'], [data-oods-component='TagManager'], [data-oods-component='TemplatePicker']) [data-form-control] > span {
@@ -607,9 +632,9 @@
 
 :where([data-oods-component='AddressEditor'], [data-oods-component='CancellationForm'], [data-oods-component='ClassificationEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='TagInput'], [data-oods-component='TagManager'], [data-oods-component='TemplatePicker']) select,
 :where([data-oods-component='AddressEditor'], [data-oods-component='CancellationForm'], [data-oods-component='ClassificationEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='TagInput'], [data-oods-component='TagManager'], [data-oods-component='TemplatePicker']) textarea {
-  padding: 0.375rem 0.5rem;
+  padding: var(--cmp-input-padding-block-compact, 0.375rem) var(--cmp-input-padding-inline-compact, 0.5rem);
   border: 1px solid var(--cmp-form-border, CanvasText);
-  border-radius: var(--cmp-input-radius, 0.375rem);
+  border-radius: var(--cmp-input-radius, 0.5rem);
   background: transparent;
   color: inherit;
   font: inherit;
@@ -621,28 +646,29 @@
   --cmp-input-text: var(--sys-text-primary);
   --cmp-input-focus: var(--sys-border-strong);
   display: grid;
-  gap: 0.25rem;
+  gap: var(--sys-control-gap-compact, 0.25rem);
   color: var(--cmp-input-text, CanvasText);
 }
 
 :where([data-oods-component='StatusSelector']) [data-form-control='select'] {
   display: grid;
-  gap: 0.25rem;
+  gap: var(--sys-control-gap-compact, 0.25rem);
 }
 
 :where([data-oods-component='StatusSelector']) select {
-  padding: 0.375rem 0.5rem;
+  padding: var(--cmp-input-padding-block-compact, 0.375rem) var(--cmp-input-padding-inline-compact, 0.5rem);
   border: 1px solid var(--cmp-input-border, CanvasText);
-  border-radius: var(--cmp-input-radius, 0.375rem);
+  border-radius: var(--cmp-input-radius, 0.5rem);
   background: var(--cmp-input-background, Canvas);
   color: var(--cmp-input-text, CanvasText);
   font: inherit;
 }
 
+/* The focus ring is the shared rule above; the focused field also takes the input focus colour on its border. */
 :where([data-oods-component='StatusSelector']) select:focus-visible {
-  outline: 2px solid var(--cmp-input-focus, Highlight);
-  outline-offset: 2px;
+  border-color: var(--cmp-input-focus, Highlight);
 }
+
 
 :where([data-oods-component='ArchiveSummary'], [data-oods-component='OwnershipSummary'], [data-oods-component='TagSummary'], [data-oods-component='PriceSummary']) {
   --cmp-summary-background: var(--sys-surface-raised);
@@ -696,7 +722,7 @@
   color: var(--cmp-text-body, CanvasText);
 }
 
-.oods-field-label { font-weight: 600; }
+.oods-field-label { font-weight: var(--ref-typography-weights-semibold, 600); }
 
 .oods-field-control,
 :where(
@@ -709,7 +735,7 @@
   box-sizing: border-box;
   padding: var(--cmp-input-padding-block, 0.625rem) var(--cmp-input-padding-inline, 0.75rem);
   border: 1px solid var(--cmp-input-border, var(--cmp-border-default, currentColor));
-  border-radius: var(--cmp-input-radius, 0.375rem);
+  border-radius: var(--cmp-input-radius, 0.5rem);
   background: var(--cmp-input-background, Canvas);
   color: var(--cmp-input-text, CanvasText);
   font: inherit;
@@ -722,8 +748,8 @@
 
 .oods-banner-dismiss {
   display: inline-flex;
-  inline-size: 2.5rem;
-  block-size: 2.5rem;
+  inline-size: var(--cmp-button-height, 2.5rem);
+  block-size: var(--cmp-button-height, 2.5rem);
   align-items: center;
   justify-content: center;
   align-self: start;
@@ -780,7 +806,7 @@
 
 :where(.oods-table, [data-oods-component='Table'])[data-density='default'],
 :where(.oods-table, [data-oods-component='Table'])[data-density='comfortable'] {
-  --oods-table-cell-padding-block: 0.75rem;
+  --oods-table-cell-padding-block: var(--cmp-spacing-inset-sm, 0.75rem);
   --oods-table-cell-padding-inline: var(--sys-space-inset-default, 1.5rem);
   font-size: var(--sys-text-size-md, 1rem);
 }
@@ -794,31 +820,41 @@
 
 :where(.oods-tabs, [data-oods-component='Tabs']) {
   --oods-tabs-font-size: var(--sys-text-size-md, 1rem);
-  --oods-tabs-padding-block: 0.625rem;
-  --oods-tabs-padding-inline: 0.75rem;
+  --oods-tabs-padding-block: var(--cmp-tabs-padding-block, 0.625rem);
+  --oods-tabs-padding-inline: var(--cmp-tabs-padding-inline, 0.75rem);
   color: var(--cmp-text-body, CanvasText);
 }
 
 :where(.oods-tabs, [data-oods-component='Tabs'])[data-size='sm'] {
   --oods-tabs-font-size: var(--sys-text-size-sm, 0.875rem);
-  --oods-tabs-padding-block: 0.5rem;
-  --oods-tabs-padding-inline: 0.625rem;
+  --oods-tabs-padding-block: var(--cmp-tabs-padding-block-sm, 0.5rem);
+  --oods-tabs-padding-inline: var(--cmp-tabs-padding-inline-sm, 0.625rem);
 }
 
 :where(.oods-tabs, [data-oods-component='Tabs'])[data-size='md'] {
   --oods-tabs-font-size: var(--sys-text-size-md, 1rem);
-  --oods-tabs-padding-block: 0.625rem;
-  --oods-tabs-padding-inline: 0.75rem;
+  --oods-tabs-padding-block: var(--cmp-tabs-padding-block, 0.625rem);
+  --oods-tabs-padding-inline: var(--cmp-tabs-padding-inline, 0.75rem);
 }
 
 :where(.oods-tabs, [data-oods-component='Tabs'])[data-size='lg'] {
   --oods-tabs-font-size: var(--sys-text-size-lg, 1.25rem);
-  --oods-tabs-padding-block: 0.75rem;
-  --oods-tabs-padding-inline: 1rem;
+  --oods-tabs-padding-block: var(--cmp-tabs-padding-block-lg, 0.75rem);
+  --oods-tabs-padding-inline: var(--cmp-tabs-padding-inline-lg, 1rem);
+}
+
+:where(.oods-tabs, [data-oods-component='Tabs']) [role='menu'] {
+  display: grid;
+  gap: var(--sys-control-gap-compact, 0.25rem);
+  padding: var(--sys-control-gap-compact, 0.25rem);
+  border: 1px solid var(--cmp-border-default, currentColor);
+  border-radius: var(--cmp-button-radius, 0.5rem);
+  background: var(--cmp-surface-panel, Canvas);
+  box-shadow: var(--cmp-shadow-overlay-offset-x, 0px) var(--cmp-shadow-overlay-offset-y, 24px) var(--cmp-shadow-overlay-blur, 56px) var(--cmp-shadow-overlay-spread, -16px) var(--cmp-shadow-overlay-color, rgba(15, 23, 42, 0.24));
 }
 
 .oods-tab-list { display: flex; gap: var(--cmp-spacing-inline-xs, 0.5rem); overflow-x: auto; border-block-end: 1px solid var(--cmp-border-default, currentColor); }
-.oods-tab { padding: var(--oods-tabs-padding-block) var(--oods-tabs-padding-inline); border: 0; border-block-end: 0.1875rem solid transparent; background: transparent; color: inherit; font: inherit; font-size: var(--oods-tabs-font-size); line-height: var(--sys-text-line-height-standard, 1.4); }
+.oods-tab { padding: var(--oods-tabs-padding-block) var(--oods-tabs-padding-inline); border: 0; border-block-end: var(--cmp-tabs-indicator-width, 0.1875rem) solid transparent; background: transparent; color: inherit; font: inherit; font-size: var(--oods-tabs-font-size); line-height: var(--sys-text-line-height-standard, 1.4); }
 :where(.oods-tabs-overflow-trigger, .tabs__overflow-trigger) { padding: var(--oods-tabs-padding-block) var(--oods-tabs-padding-inline); font: inherit; font-size: var(--oods-tabs-font-size); line-height: var(--sys-text-line-height-standard, 1.4); }
 .oods-tab[aria-selected='true'] { border-block-end-color: var(--cmp-text-accent, Highlight); font-weight: var(--ref-typography-weights-semibold, 600); }
 .oods-tab-panel { padding-block: var(--cmp-spacing-stack-default, 1rem); }
@@ -860,7 +896,7 @@
   /* Generated single-screen layouts also need the workflow's phone reflow. */
   [data-layout='sidebar'] { grid-template-columns: minmax(0, 1fr) !important; }
   :where(.oods-banner, [data-oods-component='Banner']) { grid-template-columns: 1fr; }
-  :where(.oods-table, [data-oods-component='Table']):not([data-density]) { font-size: 0.875rem; }
+  :where(.oods-table, [data-oods-component='Table']):not([data-density]) { font-size: var(--sys-text-size-sm, 0.875rem); }
 }
 
 @media (forced-colors: active) {
@@ -949,7 +985,7 @@
   display: inline-flex;
   align-items: center;
   gap: var(--cmp-badge-gap, 0.25rem);
-  min-block-size: 1.5rem;
+  min-block-size: var(--cmp-badge-height, 1.5rem);
   box-sizing: border-box;
   padding: var(--cmp-badge-padding-block, 0.125rem) var(--cmp-badge-padding-inline, 0.5rem);
   border: 1px solid var(--cmp-badge-border, var(--cmp-border-default, currentColor));
@@ -958,7 +994,7 @@
   color: var(--cmp-badge-text, var(--cmp-text-body, currentColor));
   font-size: var(--cmp-badge-font-size, 0.875rem);
   font-weight: var(--cmp-badge-font-weight, 600);
-  line-height: 1.25;
+  line-height: var(--sys-text-line-height-tight, 1.2);
 }
 
 :where([data-oods-component='StatusBadge'])[data-status='active'],
@@ -998,14 +1034,14 @@
   display: grid;
   gap: var(--cmp-spacing-stack-sm, 0.75rem);
   margin: 0;
-  padding-inline-start: 1.5rem;
+  padding-inline-start: var(--cmp-spacing-stack-lg, 1.5rem);
 }
 
 :where(
   [data-oods-component='StatusTimeline'],
   [data-oods-component='AuditTimeline']
 ) :where(article, li) {
-  border-inline-start: 2px solid var(--cmp-border-subtle, currentColor);
+  border-inline-start: var(--ref-border-width-bold, 2px) solid var(--cmp-border-subtle, currentColor);
   padding-inline-start: var(--cmp-spacing-inline-sm, 0.75rem);
 }
 
@@ -1027,7 +1063,7 @@
 }
 
 :where([data-oods-component='CancellationSummary']) :where(dt, [data-summary-term]) {
-  font-weight: 600;
+  font-weight: var(--ref-typography-weights-semibold, 600);
 }
 
 :where([data-oods-component='CancellationSummary']) :where(dd, [data-summary-value]) {
@@ -1045,7 +1081,7 @@
   box-sizing: border-box;
   padding: var(--cmp-input-padding-block, 0.625rem) var(--cmp-input-padding-inline, 0.75rem);
   border: 1px solid var(--cmp-input-border, var(--cmp-border-default, currentColor));
-  border-radius: var(--cmp-input-radius, 0.375rem);
+  border-radius: var(--cmp-input-radius, 0.5rem);
   background: var(--cmp-input-background, Canvas);
   color: var(--cmp-input-text, CanvasText);
   font: inherit;
@@ -1054,12 +1090,12 @@
 :where([data-oods-component='SearchInput']) button,
 :where([data-oods-component='PaginationBar']) button {
   display: inline-flex;
-  min-inline-size: 2.5rem;
-  min-block-size: 2.5rem;
+  min-inline-size: var(--cmp-button-height, 2.5rem);
+  min-block-size: var(--cmp-button-height, 2.5rem);
   align-items: center;
   justify-content: center;
   border: 1px solid var(--cmp-button-border, var(--cmp-border-default, currentColor));
-  border-radius: var(--cmp-button-radius, 0.375rem);
+  border-radius: var(--cmp-button-radius, 0.5rem);
   background: var(--cmp-button-background, Canvas);
   color: var(--cmp-button-text, CanvasText);
   font: inherit;
@@ -1083,14 +1119,6 @@
   font-size: var(--sys-text-size-sm, 0.875rem);
 }
 
-:where(
-  [data-oods-component='SearchInput'] input,
-  [data-oods-component='SearchInput'] button,
-  [data-oods-component='PaginationBar'] button
-):focus-visible {
-  outline: var(--cmp-focus-width, 2px) solid var(--cmp-focus-outer, Highlight);
-  outline-offset: 2px;
-}
 
 @media (forced-colors: active) {
   :where(
@@ -1116,7 +1144,7 @@
 :where([data-oods-component='LabelCell'], [data-oods-component='FormLabelGroup']) {
   display: inline-flex;
   flex-direction: column;
-  gap: var(--sys-spacing-stack-compact, 0.25rem);
+  gap: var(--sys-spacing-stack-compact, 0.75rem);
 }
 :where([data-oods-component='LabelCell']) [data-oods-label-cell-description],
 :where([data-oods-component='FormLabelGroup']) [data-oods-form-hint] {
@@ -1174,10 +1202,6 @@
 :where([data-oods-component='BillingAmountInput'], [data-oods-component='BillingIntervalSelector']) > select {
   color: var(--cmp-billing-interval-text, var(--sys-text-subtle));
 }
-:where([data-oods-component='BillingAmountInput'], [data-oods-component='BillingIntervalSelector']) > :focus-visible {
-  outline: 2px solid var(--sys-focus-ring);
-  outline-offset: 2px;
-}
 :where([data-oods-component='BillingAmountInput'], [data-oods-component='BillingIntervalSelector']) > [aria-invalid='true'] {
   border-color: var(--sys-status-critical-border);
 }
@@ -1202,7 +1226,7 @@
 :where([data-oods-component='PaymentTimeline'], [data-oods-component='PaymentEventTimeline']) p { margin: var(--space-2, 0.5rem) 0; }
 [data-oods-component='CycleProgressCard'] progress {
   width: 100%;
-  height: var(--cmp-billing-cycle-progress-height, var(--space-2, 0.5rem));
+  height: var(--cmp-billing-cycle-progress-height, 0.5rem);
   accent-color: var(--cmp-billing-cycle-progress-fill, var(--sys-surface-accent, Highlight));
 }
 .oods-billing-muted { color: var(--sys-text-subtle, GrayText); }
@@ -1237,7 +1261,7 @@
   white-space: nowrap;
   flex-shrink: 0;
   padding: var(--space-1, 0.25rem) var(--space-2, 0.5rem);
-  border-radius: var(--radius-sm, 0.25rem);
+  border-radius: var(--radius-sm, 0.5rem);
   color: var(--status-archive-text, var(--sys-text-primary));
   background: var(--status-archive-bg, var(--sys-surface-raised));
 }
@@ -1249,13 +1273,13 @@
 }
 [data-oods-component='CancellationSummary'] [data-summary-item] { min-width: 0; }
 [data-oods-component='CancellationSummary'] dd { margin: 0; overflow-wrap: break-word; }
-.oods-field-help { display: block; margin: 0.4rem 0 1rem; font-size: 0.875rem; color: var(--sys-text-subtle, GrayText); }
+.oods-field-help { display: block; margin: var(--cmp-input-gap, 0.375rem) 0 var(--cmp-spacing-stack-md, 1rem); font-size: var(--sys-text-size-sm, 0.875rem); color: var(--sys-text-subtle, GrayText); }
 .oods-cancellation-form { margin: 0; min-width: 0; }
 .oods-field:has(input[type='checkbox']) { display: block; }
-.oods-field label:has(input[type='checkbox']) { display: flex; flex-direction: row; align-items: center; gap: 0.5rem; }
+.oods-field label:has(input[type='checkbox']) { display: flex; flex-direction: row; align-items: center; gap: var(--cmp-checkbox-gap, 0.5rem); }
 
 /* Generated collection screens share one row/event presentation in both frameworks. */
-.oods-collection { list-style: none; margin: 16px 0; padding: 0; display: grid; gap: 8px; }
+.oods-collection { list-style: none; margin: var(--cmp-spacing-stack-md, 1rem) 0; padding: 0; display: grid; gap: var(--cmp-spacing-stack-xs, 0.5rem); }
 [data-oods-collection-toolbar] { flex-wrap: wrap; min-width: 0; }
 [data-oods-collection-toolbar] > [data-oods-component='SearchInput'],
 [data-oods-collection-toolbar] > [data-oods-component='Select'],
@@ -1264,13 +1288,13 @@
 .workflow-content [data-oods-collection-toolbar] > [data-oods-component='Select'],
 .workflow-content [data-oods-collection-toolbar] > .oods-field:has(select) { flex: 1 1 180px; min-width: min(180px, 100%); }
 [data-oods-collection-toolbar] select { width: 100%; box-sizing: border-box; }
-[data-oods-component='Stack']:has(> [data-oods-collection-toolbar]) { font-family: system-ui, sans-serif; }
-.oods-collection-row { --oods-button-background: var(--sys-surface-raised); --oods-button-background-hover: var(--sys-surface-subtle); --oods-button-border: var(--sys-border-subtle); --oods-button-text: var(--sys-text-primary); width: 100%; display: flex; flex-wrap: wrap; align-items: center; gap: 12px; text-align: left; padding: 16px; }
+[data-oods-component='Stack']:has(> [data-oods-collection-toolbar]) { font-family: var(--ref-typography-families-sans, system-ui, sans-serif); }
+.oods-collection-row { --oods-button-background: var(--sys-surface-raised); --oods-button-background-hover: var(--sys-surface-subtle); --oods-button-border: var(--sys-border-subtle); --oods-button-text: var(--sys-text-primary); width: 100%; display: flex; flex-wrap: wrap; align-items: center; gap: var(--cmp-spacing-inline-sm, 0.75rem); text-align: left; padding: var(--cmp-spacing-inset-default, 1rem); }
 [data-theme='hc'] .oods-collection-row:not(:disabled) { background: var(--sys-surface-raised); color: var(--sys-text-primary); }
-.oods-collection-row > :first-child { min-width: 0; flex: 1 1 140px; font-weight: 600; }
+.oods-collection-row > :first-child { min-width: 0; flex: 1 1 140px; font-weight: var(--ref-typography-weights-semibold, 600); }
 .oods-collection-row .oods-badge { max-width: 100%; width: fit-content; flex: 0 0 auto; text-transform: none; letter-spacing: normal; }
-[data-oods-collection="events"] time { display: block; margin-top: 8px; font-size: 13px; }
-.oods-pagination-bar__pages { display: flex; gap: 6px; list-style: none; margin: 0; padding: 0; }
+[data-oods-collection="events"] time { display: block; margin-top: var(--cmp-spacing-stack-xs, 0.5rem); font-size: var(--sys-text-size-sm, 0.875rem); }
+.oods-pagination-bar__pages { display: flex; gap: var(--sys-control-gap-tight, 0.375rem); list-style: none; margin: 0; padding: 0; }
 @media (max-width: 600px) { .oods-collection-row { flex-direction: column; align-items: flex-start; } .oods-collection-row > :first-child { flex-basis: auto; width: 100%; } }
 
 :where(.oods-audit-summary, [data-oods-component='AuditSummaryCard']) { padding: var(--cmp-spacing-inset-default); border: 1px solid var(--cmp-border-default); border-radius: var(--cmp-input-radius); background: var(--cmp-surface-panel); color: var(--cmp-text-body); }
@@ -1284,15 +1308,15 @@
 .oods-trait-recipe, :where([data-oods-component='ArchiveEvent'], [data-oods-component='CancellationEvent'], [data-oods-component='ColorStatePicker'], [data-oods-component='CommunicationDetailPanel'], [data-oods-component='GeoFieldMappingForm'], [data-oods-component='GeocodablePreview'], [data-oods-component='StateTransitionEvent'], [data-oods-component='StatusColorLegend'], [data-oods-component='VizAreaControls'], [data-oods-component='VizAxisControls'], [data-oods-component='VizAxisSummary'], [data-oods-component='VizColorControls'], [data-oods-component='VizColorLegendConfig'], [data-oods-component='VizHeatmapControls'], [data-oods-component='VizLineControls'], [data-oods-component='VizMarkControls'], [data-oods-component='VizOpacityControls'], [data-oods-component='VizOpacitySummary'], [data-oods-component='VizPointControls'], [data-oods-component='VizScaleControls'], [data-oods-component='VizScaleSummary'], [data-oods-component='VizScatterControls'], [data-oods-component='VizShapeControls'], [data-oods-component='VizShapeLegend'], [data-oods-component='VizSizeControls'], [data-oods-component='VizSizeSummary']) { min-width: 0; margin: 0; padding: var(--cmp-spacing-inset-default); border: 1px solid var(--cmp-border-default); border-radius: var(--cmp-input-radius); background: var(--cmp-surface-panel); color: var(--cmp-text-body); overflow-wrap: anywhere; }
 .oods-trait-recipe h3 { margin-top: 0; }
 .oods-trait-recipe dd { margin: 0 0 var(--cmp-spacing-inline-sm); }
-.oods-trait-recipe dt { font-weight: 600; }
+.oods-trait-recipe dt { font-weight: var(--ref-typography-weights-semibold, 600); }
 .oods-trait-recipe .oods-field { margin-block: var(--cmp-spacing-inline-sm); }
 .oods-geo-resolution, :where([data-oods-component='GeoResolutionBadge'], [data-oods-component='VizEncodingBadge'], [data-oods-component='VizRoleBadge']) { color: var(--cmp-text-body); }
 
 .oods-viz-swatches { display: flex; flex-wrap: wrap; gap: var(--cmp-spacing-inline-sm) var(--cmp-spacing-inset-default); }
 
 /* Producer-owned read fields stay labelled and readable in every context. */
-[data-oods-component='Stack'][id$='-read-field'] { gap: 0.25rem; min-width: 0; }
-[data-oods-component='Stack'][id$='-read-fields'] { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); gap: 1.25rem; }
+[data-oods-component='Stack'][id$='-read-field'] { gap: var(--sys-control-gap-compact, 0.25rem); min-width: 0; }
+[data-oods-component='Stack'][id$='-read-fields'] { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); gap: var(--sys-space-scale-lg, 1.25rem); }
 [data-oods-component='Stack'][id$='-read-fields'] > :not([id$='-read-field']) { grid-column: 1 / -1; }
 [data-oods-component='Stack'][id$='-read-field'] > :first-child { color: var(--sys-text-secondary); }
 [data-oods-component='Stack'][id$='-read-field'] > :last-child { overflow-wrap: anywhere; }
@@ -1314,12 +1338,12 @@
 .oods-field > .oods-field-label {
   display: flex;
   align-items: baseline;
-  gap: 0.25rem;
+  gap: var(--sys-control-gap-compact, 0.25rem);
 }
 .oods-field.oods-checkbox,
 div.oods-field[data-oods-component='Checkbox'] { display: grid; grid-template-columns: minmax(0, 1fr); }
 .oods-field.oods-checkbox > label,
-.oods-field > label.oods-checkbox { display: flex; align-items: center; gap: 0.5rem; }
+.oods-field > label.oods-checkbox { display: flex; align-items: center; gap: var(--cmp-checkbox-gap, 0.5rem); }
 .oods-field :is(input[type='checkbox'], .form-field__checkbox) { margin: 0; flex: 0 0 auto; }
 .workflow-field > input { width: 100%; min-width: 0; box-sizing: border-box; font: inherit; }
 

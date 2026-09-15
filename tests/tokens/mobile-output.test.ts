@@ -106,14 +106,14 @@ const bytesToHex = (bytes: number[]) =>
 const swiftChannels = (bytes: number[]) => bytes.map((byte) => (byte / 255).toFixed(3));
 
 describe('mobile output — census and shape', () => {
-  // S197: +48 reference/dark colors; s192 m02: +134 component/system aliases; s178 m02: +6 exactly — three base focus colours for each brand. The 18 authored cells
+  // S200 m02: +78 geometry tokens (the rem ramp, linked sys roles, expanded panel/overlay shadows, cmp roles). S197: +48 reference/dark colors; s192 m02: +134 component/system aliases; s178 m02: +6 exactly — three base focus colours for each brand. The 18 authored cells
   // collapse to the two base brand namespaces in the flat/mobile artifact; dark and hc stay
-  // scoped web output. The dimension manifest counts (27/24/18/105/174) and the deferral
+  // scoped web output. The dimension manifest counts (27/24/18/130/47) and the deferral
   // subtraction (54 easings + 14 font stacks) remain unmoved.
-  it('emits exactly 896 constants per file (964 − 54 easing − 14 font stacks), identical name sets', () => {
-    expect(flatEntries.length).toBe(964);
-    expect(swiftConstants.size).toBe(896);
-    expect(kotlinConstants.size).toBe(896);
+  it('emits exactly 974 constants per file (1042 − 54 easing − 14 font stacks), identical name sets', () => {
+    expect(flatEntries.length).toBe(1042);
+    expect(swiftConstants.size).toBe(974);
+    expect(kotlinConstants.size).toBe(974);
     expect([...swiftConstants.keys()].sort()).toEqual([...kotlinConstants.keys()].sort());
   });
 
@@ -158,12 +158,12 @@ describe('mobile output — census and shape', () => {
 });
 
 describe('mobile output — the path manifest binding', () => {
-  it('pins the manifest class counts to the memo census 27/24/18/105', () => {
+  it('pins the manifest class counts to the census 27/24/18/130 and the 47 rem-authored roles', () => {
     expect(MOBILE_DIMENSION_CLASSES.fontSize.length).toBe(27);
     expect(MOBILE_DIMENSION_CLASSES.lineHeight.length).toBe(24);
     expect(MOBILE_DIMENSION_CLASSES.letterSpacing.length).toBe(18);
-    expect(MOBILE_DIMENSION_CLASSES.spacing.length).toBe(105);
-    expect(MOBILE_DIMENSION_CLASSES.spacingRem.length).toBe(18);
+    expect(MOBILE_DIMENSION_CLASSES.spacing.length).toBe(130);
+    expect(MOBILE_DIMENSION_CLASSES.spacingRem.length).toBe(47);
   });
 
   it('pins one literal member per class, named OUTSIDE the manifest', () => {
@@ -175,7 +175,7 @@ describe('mobile output — the path manifest binding', () => {
 
   it('every manifest path resolves to an emitted constant in both files', () => {
     const allPaths = Object.values(MOBILE_DIMENSION_CLASSES).flat();
-    expect(allPaths.length).toBe(192);
+    expect(allPaths.length).toBe(246);
     for (const tokenPath of allPaths) {
       const name = camelName(tokenPath.split('.'));
       expect(swiftConstants.has(name), `Swift missing ${tokenPath} → ${name}`).toBe(true);
@@ -243,10 +243,16 @@ describe('mobile output — magnitude pins, one per value class', () => {
       expect(swiftNumber).toBe(sourcePx);
       expect(kotlinNumber).toBe(sourcePx);
     }
-    // Exactly the four 0px shadow offsets are the zero-source exclusions.
+    // Exactly the 0px shadow offsets are the zero-source exclusions: the reference and theme
+    // elevations plus, since Sprint 200 m02, the sys and cmp roles that resolve to them.
     expect(zeroSources.sort()).toEqual([
+      'cmp.card-shadow.offsetX',
+      'cmp.shadow-overlay.offsetX',
+      'cmp.shadow-panel.offsetX',
       'shadow.elevation.card.offsetX',
       'shadow.elevation.overlay.offsetX',
+      'sys.shadow-overlay.offsetX',
+      'sys.shadow-panel.offsetX',
       'theme-dark.shadow.elevation.card.offsetX',
       'theme-dark.shadow.elevation.overlay.offsetX',
       'theme.shadow.elevation.card.offsetX',
@@ -265,7 +271,7 @@ describe('mobile output — anti-gaming, value-position anchored', () => {
 
   it('emits zero quoted-string values for colour-class or duration-class tokens', () => {
     const guarded = [...(byClass.get('color') ?? []), ...(byClass.get('duration') ?? [])];
-    expect(guarded.length).toBe(524 + 108); // S197 adds 48 reference/dark colors; 108 durations stay fixed.
+    expect(guarded.length).toBe(524 + 5 + 108); // S197 adds 48 reference/dark colors; S200 m02 adds the five expanded shadow colours; 108 durations stay fixed.
     for (const entry of guarded) {
       const name = camelName(entry.path);
       expect(swiftConstants.get(name)?.startsWith('"'), `Swift ${name} is a quoted string`).toBe(false);

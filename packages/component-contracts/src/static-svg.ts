@@ -65,3 +65,19 @@ export function assertStaticSvg(svg: string): string {
   if (markup.slice(end).includes('<')) unsafe();
   return svg;
 }
+
+/**
+ * True when the SVG already paints its title, so a wrapper must not repeat it as
+ * visible text: Vega marks the title group with role-title-text; ECharts paints
+ * the title as a text element whose whole content is the title.
+ */
+export function svgCarriesTitle(svg: string, title: string | undefined): boolean {
+  if (!title) return false;
+  if (svg.includes('role-title-text')) return true;
+  const escaped = title.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  for (const match of svg.matchAll(/<text\b[^>]*>([\s\S]*?)<\/text>/g)) {
+    const content = match[1]!.replace(/<\/?tspan\b[^>]*>/g, '').trim();
+    if (content === title || content === escaped) return true;
+  }
+  return false;
+}

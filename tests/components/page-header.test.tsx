@@ -25,7 +25,7 @@ describe('<PageHeader>', () => {
     expect(markup).toContain('data-tone="success"'); // success badge tone
     expect(markup).toContain('data-tone="critical"'); // critical badge tone
     expect(markup).toContain('--statusable-badge-background'); // CSS variables applied
-    expect(markup).toContain('bg-emerald-600'); // success button
-    expect(markup).toContain('bg-rose-600'); // danger button
+    expect(markup).toContain('data-intent="success"'); // success button, painted by the shared stylesheet
+    expect(markup).toContain('data-intent="danger"'); // danger button
   });
 });

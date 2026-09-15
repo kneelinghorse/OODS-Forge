@@ -49,9 +49,10 @@ describe('s196 release readiness derives facts without making Gate 2 decisions',
     expect(baseline.packages.map((row: any) => row.path).sort()).toEqual(rows.map(row => row.path).sort());
     expect(baseline.packages.find((row: any) => row.path === 'package.json').shape).not.toHaveProperty('private');
     expect(rows[0].fields.private).toBe(true);
-    expect(rows.find(row => row.name === '@oods/mcp-server')!.fields).not.toHaveProperty('license');
-    expect(rows.find(row => row.name === '@oods/tokens')!.fields).not.toHaveProperty('private');
-    expect(facts.packageSummary).toEqual({ workspaces: 21, workspacePrivate: 16, workspaceWithoutLicenseField: 12, workspacePublishConfig: 5, workspaceLicenseFiles: 5, rootLicenseFiles: 1 });
+    // s200-m03 (#2061): every manifest declares the SPDX id; the field is present, never absent.
+    expect(rows.find(row => row.name === '@oods/mcp-server')!.fields.license).toBe('PolyForm-Noncommercial-1.0.0');
+    expect(rows.find(row => row.name === '@oods/tokens')!.fields.private).toBe(true);
+    expect(facts.packageSummary).toEqual({ workspaces: 21, workspacePrivate: 21, workspaceWithoutLicenseField: 0, workspacePublishConfig: 0, workspaceLicenseFiles: 5, rootLicenseFiles: 1 });
   });
 
   it('checks generated JSON and the marked facts block while preserving authored prose', () => {
@@ -67,15 +68,15 @@ describe('s196 release readiness derives facts without making Gate 2 decisions',
     expect(collectReleaseReadiness(directory)).toEqual(facts);
   });
 
-  it('writes selectable current facts while refusing every sealed Sprint 195–198 output', () => {
+  it('writes selectable current facts while refusing every sealed Sprint 195–199 output', () => {
     const directory = fixture();
-    const output = 'artifacts/product-reality/sprint-199/m01/readiness-test.json';
+    const output = 'artifacts/product-reality/sprint-200/m01/readiness-test.json';
     expect(generateReleaseReadiness(directory, false, output)).toEqual(facts);
     expect(() => generateReleaseReadiness(directory, true, output)).not.toThrow();
     expect(fs.readFileSync(path.join(directory, PACKET_PATH), 'utf8')).toContain(output);
-    for (const sprint of [195, 196, 197, 198]) {
+    for (const sprint of [195, 196, 197, 198, 199]) {
       const sealed = `artifacts/product-reality/sprint-${sprint}/m06/release-readiness-facts.json`;
-      expect(() => generateReleaseReadiness(directory, false, sealed)).toThrow('sealed Sprint 195–198 receipts');
+      expect(() => generateReleaseReadiness(directory, false, sealed)).toThrow('sealed Sprint 195–199 receipts');
       expect(fs.existsSync(path.join(directory, sealed))).toBe(false);
     }
     expect(parseReadinessArgs(['--facts', output, '--check'])).toMatchObject({ factsPath: output, check: true });

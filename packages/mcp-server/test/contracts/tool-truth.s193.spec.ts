@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { derivePortableExecution, deriveToolTruth, handlerImports, PORTABLE_RECEIPT_PATH, serialize } from '../../../../scripts/product-reality/s193-tool-truth.mjs';
+import { derivePortableExecution, deriveToolTruth, handlerImports, PORTABLE_RECEIPT_PATH, PORTABLE_RECEIPT_PATHS, serialize } from '../../../../scripts/product-reality/s193-tool-truth.mjs';
 import { projectToolSummary } from '../../src/lib/tool-ledger.js';
 import { handle as health } from '../../src/tools/health.js';
 import { getAjv } from '../../src/lib/ajv.js';
@@ -25,6 +25,7 @@ describe('tool truth derives claims without upgrading source references to runti
       // The active census cannot gain discovery references to its own changing closeout reports.
       expect(row.receiptRefs.some((ref: any) => ref.path.includes('/sprint-195/m07/'))).toBe(false);
       if (ledger.mode === 's196') expect(row.receiptRefs.some((ref: any) => ref.path.includes('/sprint-196/m07/'))).toBe(false);
+      if (ledger.mode === 's200') expect(row.receiptRefs.some((ref: any) => /\/sprint-(?:196|200)\/m07\//.test(ref.path))).toBe(false);
     }
     if (ledger.mode === 's196') {
       const execution = derivePortableExecution(fs.readFileSync(path.join(root, PORTABLE_RECEIPT_PATH), 'utf8'), ledger.rows.filter((row: any) => row.registration === 'auto').map((row: any) => row.name));
@@ -32,6 +33,15 @@ describe('tool truth derives claims without upgrading source references to runti
       expect(ledger.rows.flatMap((row: any) => row.portableLimits).map((limit: any) => [limit.tool, limit.code])).toEqual([
         ['brand.apply', 'OODS-N020'], ['design.preview', 'OODS-N019'],
       ]);
+    }
+    if (ledger.mode === 's200') {
+      // s200-m04 ships the brand source in the bundle: brand.apply executes from the archive and only design.preview stays typed.
+      const execution = derivePortableExecution(fs.readFileSync(path.join(root, PORTABLE_RECEIPT_PATHS.s200), 'utf8'), ledger.rows.filter((row: any) => row.registration === 'auto').map((row: any) => row.name), 's200');
+      expect(ledger.portableExecution).toEqual(execution.proof);
+      expect(ledger.portableExecution).toMatchObject({ path: 'artifacts/product-reality/sprint-200/m04/e2e-host.json', tools: 19, pass: 18, typed: 1 });
+      expect(ledger.rows.flatMap((row: any) => row.portableLimits).map((limit: any) => [limit.tool, limit.code])).toEqual([['design.preview', 'OODS-N019']]);
+      expect(ledger.rows.find((row: any) => row.name === 'brand.apply').portableOutcome).toEqual({ outcome: 'pass', receiptSha256: execution.proof.sha256 });
+      expect(execution.outcomes['brand.apply']).toMatchObject({ outcome: 'pass', applied: { sourceWritten: false, build: null, brandSourceUnchanged: true } });
     }
   });
   it('ignores comments, type-only and schema-only imports but resolves nested and sibling handlers', () => {

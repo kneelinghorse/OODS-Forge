@@ -202,10 +202,14 @@ describe("how Forge works narrative truth", () => {
     const receipt = JSON.parse(read(ledger.portableExecution.path));
     expect(portable).toContain(`${receipt.calls.primarySequenceCount} calls across all ${receipt.tools.count} advertised tools`);
     expect(portable).toContain(`${receipt.calls.totalAcrossProcesses} adapter calls across two processes`);
-    for (const tool of ["brand.apply", "design.preview"]) {
-      expect(receipt.calls.outcomes[tool].outcome).toBe("typed");
-      expect(portable).toContain(receipt.calls.outcomes[tool].code);
+    // s200-m04 ships the brand source: brand.apply executes from the archive; design.preview stays typed.
+    expect(receipt.calls.outcomes["brand.apply"].outcome).toBe("pass");
+    expect(receipt.calls.outcomes["design.preview"].outcome).toBe("typed");
+    for (const [tool, outcome] of Object.entries(receipt.calls.outcomes) as Array<[string, { outcome: string; code?: string }]>) {
+      if (outcome.outcome !== "typed") continue;
+      expect(portable, tool).toContain(outcome.code);
     }
+    expect(portable).toContain("brand.apply");
     expect(portable).toContain("the native code is preserved at `tools/call`");
   });
 
@@ -274,13 +278,13 @@ describe("how Forge works narrative truth", () => {
     const bridge = read("packages/tokens/scripts/brand-bridge.mjs");
     const bridgedSlots = [...bridge.matchAll(/tokenPath:\s*'([^']+)'/g)];
 
-    expect(uniqueCssVariables.size).toBe(964);
+    expect(uniqueCssVariables.size).toBe(1042);
     expect(countTokenLeaves(brandBase)).toBe(45);
     expect(bridgedSlots).toHaveLength(41);
     expect(BRAND_CONTRAST_PAIRS).toHaveLength(57);
     expect(BRAND_CONTRAST_RULES).toHaveLength(228);
 
-    expect(html).toContain("CSS custom properties (964 variables)");
+    expect(html).toContain("CSS custom properties (1042 variables)");
     expect(html).toContain("45 leaves each");
     expect(html).toContain("re-assigns 41 shared theme slots");
     expect(html).toContain(

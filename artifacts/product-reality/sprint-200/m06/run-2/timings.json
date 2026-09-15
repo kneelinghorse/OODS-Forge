@@ -1,0 +1,70 @@
+{
+  "steps": [
+    {
+      "step": "1-download-verify-extract",
+      "startedAt": "2026-09-15T00:02:40Z",
+      "endedAt": "2026-09-15T00:02:44Z",
+      "seconds": 4,
+      "outcome": "pass",
+      "note": "shasum -a 256 -c printed 'forge-runtime.tar.gz: OK'; tar extracted cleanly; archive root holds LICENSE, COMMERCIAL.md, THIRD-PARTY-NOTICES.md and the manifest as install.md says."
+    },
+    {
+      "step": "2-install-into-client-and-health",
+      "startedAt": "2026-09-15T00:02:51Z",
+      "endedAt": "2026-09-15T00:03:17Z",
+      "seconds": 26,
+      "outcome": "pass",
+      "note": "claude mcp add + get gave 'Status: ✓ Connected' verbatim; health returned status ok, 110 components / 46 traits / 18 objects, 24 tools (19 product-reality, 5 contract)."
+    },
+    {
+      "step": "3+5+6-one-conversation-attempt-1",
+      "startedAt": "2026-09-15T00:04:00Z",
+      "endedAt": "2026-09-15T00:07:13Z",
+      "seconds": 193,
+      "outcome": "fail",
+      "note": "Print-mode assistant returned an empty reply (1 byte) after 193s and wrote no HTML file; no Forge error surfaced."
+    },
+    {
+      "step": "3+5+6-one-conversation-attempt-2",
+      "startedAt": "2026-09-15T00:07:38Z",
+      "endedAt": "2026-09-15T00:10:34Z",
+      "seconds": 176,
+      "outcome": "fail",
+      "note": "code.generate (~97KB) and repl render (~250KB) results were spilled to files the assistant could not read, so it reported invented file names and deps and wrote no HTML."
+    },
+    {
+      "step": "6-render-delivered (3+5+6 attempt 3)",
+      "startedAt": "2026-09-15T00:11:23Z",
+      "endedAt": "2026-09-15T00:12:43Z",
+      "seconds": 80,
+      "outcome": "partial",
+      "note": "repl render saved subscription-detail.html (215,664 bytes, <title>OODS Preview</title>); compose and code.generate fields were not reported back because my extra --add-dir was mis-quoted."
+    },
+    {
+      "step": "4-certify-chart (viz.render + artifact.certify)",
+      "startedAt": "2026-09-15T00:11:23Z",
+      "endedAt": "2026-09-15T00:11:44Z",
+      "seconds": 21,
+      "outcome": "pass",
+      "note": "coverage certified, conformant true, all four pillars pass, accuracyRules OODS-V150..V153 - exactly the four the README predicts for a plain bar chart."
+    },
+    {
+      "step": "3+5-compose-and-generate-fields",
+      "startedAt": "2026-09-15T00:13:12Z",
+      "endedAt": "2026-09-15T00:13:56Z",
+      "seconds": 44,
+      "outcome": "pass",
+      "note": "design.compose ok/detail/compose-ce3d84f9 with 10 selections and the 3 warning classes the README predicts; code.generate returned src/GeneratedUI.tsx + src/charts/payment-001.svg, a sha256 hash, pinned deps and an 11-check receipt with 7 notChecked."
+    },
+    {
+      "step": "6-see-open-and-describe",
+      "startedAt": "2026-09-15T00:13:12Z",
+      "endedAt": "2026-09-15T00:13:16Z",
+      "seconds": 4,
+      "outcome": "pass",
+      "note": "open succeeded; document titled OODS Preview, headings Details / Status Timeline / Cancellation Summary / Archive Summary / Billing cycle / Payments, 49 data-oods-component markers across 15 component types."
+    }
+  ],
+  "totalSeconds": 683,
+  "installToSeeSeconds": 665
+}

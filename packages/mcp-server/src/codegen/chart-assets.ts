@@ -6,6 +6,9 @@ import { canonicalize } from '@oods/artifacts';
 import type { UiElement, UiSchema, VizRenderInput } from '../schemas/generated.js';
 import { workflowSampleRecords } from './workflow-data-emitter.js';
 
+/** Placed charts render at twice the former 360×200 so the detail card shows them at design size; the preview never scales an SVG above this width. */
+export const PLACED_CHART_SIZE = { width: 720, height: 400 } as const;
+
 /** Render once at generation time; emitted consumers need no chart runtime. */
 export async function prepareChartAssets(input: UiSchema, options: Pick<CodegenOptions, 'theme' | 'brand'> = {}): Promise<{
   schema: UiSchema;
@@ -54,14 +57,14 @@ export async function prepareChartAssets(input: UiSchema, options: Pick<CodegenO
         brand: options.brand ?? chart.brand ?? 'A',
         rows: [rows[0]!, ...rows.slice(1)],
         encodings: { x: { field: 'date', scale: 'temporal' }, y: { field: 'amount', aggregate: 'sum' } },
-        output: { svg: true, width: 360, height: 200 },
+        output: { svg: true, ...PLACED_CHART_SIZE },
       };
     } else if (chart.source === 'edge-array') {
       request = {
         chartType: 'force_graph', network: edgeArrayToNetwork(record[chart.dataField], chart.edges),
         name: String(node.props?.title ?? 'Connected relationships'),
         ...(typeof node.props?.description === 'string' ? { description: node.props.description } : {}),
-        theme, brand: options.brand ?? chart.brand ?? 'A', output: { svg: true, width: 360, height: 200 },
+        theme, brand: options.brand ?? chart.brand ?? 'A', output: { svg: true, ...PLACED_CHART_SIZE },
       };
     } else {
       const rows = record[chart.dataField];
@@ -80,13 +83,13 @@ export async function prepareChartAssets(input: UiSchema, options: Pick<CodegenO
         brand: options.brand ?? chart.brand ?? 'A',
         rows: [rows[0]!, ...rows.slice(1)],
         encodings: chart.encodings,
-        output: { svg: true, width: 360, height: 200 },
+        output: { svg: true, ...PLACED_CHART_SIZE },
       };
     }
     const result = await render(request);
     if (result.status !== 'ok' || !result.svg) throw new Error(`${chart.source === 'payment-events' ? 'Payment chart' : 'Chart'} render failed: ${JSON.stringify(result.errors)}`);
     const svg = assertStaticSvg(result.svg);
-    if (index === 0) for (const candidate of nodes) candidate.props = { ...candidate.props, svg, width: 360, height: 200 };
+    if (index === 0) for (const candidate of nodes) candidate.props = { ...candidate.props, svg, ...PLACED_CHART_SIZE };
     const id = schema.workflow ? String(record[schema.workflow.data.idField]) : 'seed';
     byRecord[id] = svg;
     files.push({ path: `src/charts/${chart.source === 'payment-events' ? 'payment' : chart.chartType}-${String(index + 1).padStart(3, '0')}.svg`, contents: svg });

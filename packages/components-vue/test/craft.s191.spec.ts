@@ -30,8 +30,8 @@ describe('s191 producer craft preserves native behavior', () => {
     const wrapper = mount(ArchivedRowOverlay, { props: { isArchived: true }, attrs: { style: { minWidth: '0px' } }, slots: { default: () => h(Button, { class: 'oods-collection-row' }, () => 'Team') } });
     expect((wrapper.element as HTMLElement).style.minWidth).toBe('0px');
     expect(wrapper.attributes('aria-hidden')).toBe('false');
-    expect(wrapper.get('button').classes()).toContain('inline-flex');
-    expect(wrapper.get('button').classes()).toContain('h-10');
+    expect(wrapper.get('button').classes()).toEqual(['oods-button', 'oods-collection-row']);
+    expect(wrapper.get('button').attributes('data-size')).toBe('md');
     expect(wrapper.get('button').text()).toBe('Team');
     wrapper.unmount();
   });

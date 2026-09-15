@@ -1,0 +1,58 @@
+name: This did not read right
+description: A screen, a chart, a document or a message that did not make sense or did not match what you expected
+title: "[Reads wrong]: "
+labels: ["reads-wrong"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this when nothing crashed but something is off: a composed screen, a certification result, a chart, a README or install sentence, an error message. One line on what you expected is enough.
+
+  - type: dropdown
+    id: what
+    attributes:
+      label: What did not read right
+      options:
+        - A composed or generated screen
+        - A chart or dashboard
+        - A certification result (artifact.certify)
+        - A document (README, install.md, another page)
+        - A tool description or an error message
+        - Something else
+    validations:
+      required: true
+
+  - type: input
+    id: where
+    attributes:
+      label: Which screen or document
+      description: The object and context, the chart, the file name, or the tool name.
+      placeholder: 'Subscription detail screen, or docs/runtime/install.md step 3'
+    validations:
+      required: true
+
+  - type: textarea
+    id: saw
+    attributes:
+      label: What you saw
+      description: The sentence, the output, or a screenshot. Paste the tool call and its output when a tool produced it.
+      render: text
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected instead
+      placeholder: One or two lines.
+    validations:
+      required: true
+
+  - type: input
+    id: runtime
+    attributes:
+      label: Runtime version
+      description: The release tag or the `commit` field of `forge-runtime.manifest.json`; the client you used is welcome here too.
+      placeholder: "v0.1.0, Claude Code"
+    validations:
+      required: false

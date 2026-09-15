@@ -19,13 +19,13 @@ Bridge-exposed tools require both [agent policy](../../configs/agent/policy.json
 
 ## Evidence and portable outcomes
 
-Tool ledger: [packages/mcp-server/registry/tool-capability-ledger.v1.json](../../packages/mcp-server/registry/tool-capability-ledger.v1.json), recorded source head `"49005987e329d54933fa16f744ef52989cbffed8"`.
+Tool ledger: [packages/mcp-server/registry/tool-capability-ledger.v1.json](../../packages/mcp-server/registry/tool-capability-ledger.v1.json), recorded source head `"723bc2195cb99fa3482cad3fbd5700d8713e9a7e"`.
 
 Proof tier methodology: Highest location tier of a literal runtime import of a handler-bearing module in mcp-server test/spec sources. Grouped action imports roll up to their registered family. Imports are source evidence, not proof of invocation, passing execution or browser certification. Transitive imports and constructed imports/dispatch are not followed; type-only and schema-only imports do not promote a tier.
 
 README references in product-reality directories containing browser/packed/runtime/SVG/screenshot prose. Current census reports are excluded. References are discovery pointers, never verified receipts or tier promotions.
 
-Recorded portable execution: 17 pass and 2 typed dependency outcomes across 19 tools. Receipt: [artifacts/product-reality/sprint-196/m02/e2e-host.json](../../artifacts/product-reality/sprint-196/m02/e2e-host.json); SHA-256 `"sha256:01cb72b23977e96fa0014d925ab450dc04450899e9c504baa436fa3133eb84fd"`; bundle head `"d0ae4bdf684cdc290b2e8a8f9a81d16136812a7e"`; dirty=`true`. This records the measured development bundle, not a later clean release.
+Recorded portable execution: 18 pass and 1 typed dependency outcomes across 19 tools. Receipt: [artifacts/product-reality/sprint-200/m04/e2e-host.json](../../artifacts/product-reality/sprint-200/m04/e2e-host.json); SHA-256 `"sha256:0ec3551038a9d61557066b8d0e2e28c514704976a3d28179bb05eb3b2350d099"`; bundle head `"723bc2195cb99fa3482cad3fbd5700d8713e9a7e"`; dirty=`false`. This records the measured development bundle, not a later clean release.
 
 ## Current component capability counts
 
@@ -185,19 +185,17 @@ Additional properties: `false`.
 
 ### `brand.apply`
 
-Apply brand token overlays to canonical A/B source using alias strategy or the supported add/remove/replace subset of RFC 6902. Requires a delta object. apply=true writes source, runs both real token-build stages, and returns before/after SHA256, byte counts and captured build results. Build failure returns OODS-S019 with the last 40 output lines; source writes remain in place. Default dry-run changes no source. Portable bundle limit: canonical brand source is omitted, so even apply:false returns dependency-specific OODS-N020 at the adapter wire; source writes/builds require the host repository.
+Apply brand token overlays to canonical A/B source using alias strategy or the supported add/remove/replace subset of RFC 6902. Requires a delta object. apply=true writes source, runs both real token-build stages, and returns before/after SHA256, byte counts and captured build results. Build failure returns OODS-S019 with the last 40 output lines; source writes remain in place. Default dry-run changes no source. The runtime bundle ships the brand source, so apply:false previews from the bundle; there apply:true emits the review kit (snapshots, specimens, variables.css) without writing source or rebuilding, and the receipt records both steps as skipped. OODS-N020 is returned only when the brand source directory is missing.
 
 [Complete input/output reference](../api/brand-apply.md). The tables below follow the actual dispatch schema paths; those paths control when the legacy API page selects a different schema.
 
-Proof tier: `"product-reality"` (source-import classification under the methodology above). Portable outcome: `"typed"` (`"OODS-N020"`).
+Proof tier: `"product-reality"` (source-import classification under the methodology above). Portable outcome: `"pass"`.
 
 Server policy: roles `"designer"`, `"maintainer"`; writes `"${BASE}/${DATE}/**"`; timeout 120000 ms; rate 12/minute; concurrency 1.
 
-Portable limit `"portable-brand-source-absent"`: brand.apply: canonical brand source is not shipped in this runtime. Code `"OODS-N020"`; retryable=`false`. tools/call returned isError with OODS-N020, retryable and data preserved.
-
 Documented limit (documented-limit): A failed real token build returns OODS-S019 with captured output and receipts. Source writes are deliberately left in place for inspection and repair; no automatic rollback is claimed. Source: [packages/mcp-server/src/tools/brand.apply.ts](../../packages/mcp-server/src/tools/brand.apply.ts).
 
-Documented limit (documented-limit): Portable bundle omits canonical brand source; even dry-run returns dependency-specific OODS-N020 at the adapter wire. Host mutation remains separately proven. Source: [packages/mcp-server/src/tools/brand.apply.ts](../../packages/mcp-server/src/tools/brand.apply.ts).
+Documented limit (documented-limit): The runtime bundle ships the brand source, so previews execute from the archive; apply:true there emits the review kit without writing source or running the token build, and the receipt records both steps as skipped. OODS-N020 is returned only when the brand source directory is missing. Source: [packages/mcp-server/src/tools/brand.apply.ts](../../packages/mcp-server/src/tools/brand.apply.ts).
 
 #### Input contract
 
@@ -452,7 +450,7 @@ Must not match: `{"required":["artifact"]}`.
 
 ### `design.compose`
 
-Compose a complete UiSchema from a natural-language intent description. Returns schemaRef for reuse in validate/render/code.generate. schemaRef includes createdAt/expiresAt timestamps (default TTL: 30 minutes). Use schema.save to persist beyond TTL.
+Compose a complete UiSchema from a natural-language intent description. Returns schemaRef for reuse in validate/render/code.generate. schemaRef includes createdAt/expiresAt timestamps (default TTL: 30 minutes) and lives in the server process that issued it: a restarted client starts a new server that does not know earlier refs and returns OODS-N003 for them. Use schema.save to persist beyond TTL or across sessions.
 
 [Complete input/output reference](../api/design-compose.md). The tables below follow the actual dispatch schema paths; those paths control when the legacy API page selects a different schema.
 
@@ -640,7 +638,7 @@ If `{"required":["code"]}`:
 
 ### `health`
 
-Read server readiness, live registry/store counts and retained proof summaries. tokens lists brands, themes and scopes from the built css-variables-by-scope.json, plus defaultScope {brand, theme, source: env|default}; this is configured default metadata, never an observed consumer scope. Missing built scopes are reported as unavailable. includeChangelog and sinceVersion select the reported DSL changelog; request-level DSL version selection is not supported. productReality.viz reports the generated taxonomy counts: types, patterns, families, classified, coreCells, coreSurfaceComplete, typedGaps and retiredCells. A surface-complete cell has public pixels from an identity assigned to that cell; Retired Core Analytics cells retain explicit reasons in the taxonomy; missing or invalid taxonomy yields null and degraded health.
+Read server readiness, live registry/store counts and retained proof summaries. tokens lists brands, themes and scopes from the built css-variables-by-scope.json, plus defaultScope {brand, theme, source: env|default}; this is configured default metadata, never an observed consumer scope. Missing built scopes are reported as unavailable. includeChangelog and sinceVersion select the reported DSL changelog; request-level DSL version selection is not supported. productReality.viz reports the generated taxonomy counts: types, patterns, families, classified, coreCells, coreSurfaceComplete, typedGaps and retiredCells. A surface-complete cell has public pixels from an identity assigned to that cell; Retired Core Analytics cells retain explicit reasons in the taxonomy; missing or invalid taxonomy yields null and degraded health. server.uptime is milliseconds since the native server process started.
 
 [Complete input/output reference](../api/health.md). The tables below follow the actual dispatch schema paths; those paths control when the legacy API page selects a different schema.
 

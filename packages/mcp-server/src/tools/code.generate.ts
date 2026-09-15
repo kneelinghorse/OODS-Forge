@@ -107,7 +107,7 @@ export async function handle(
             code: resolved.reason === 'expired' ? 'OODS-N004' : 'OODS-N003',
             message:
               `schemaRef '${input.schemaRef}' is ${resolved.reason}. ` +
-              'Run design.compose again to obtain a fresh schemaRef, or pass schema inline via the schema field.',
+              'schemaRefs live in the server process that issued them, so a restarted client does not know earlier refs. Run design.compose again in this session for a fresh schemaRef, pass the schema inline via the schema field, or keep one across sessions with schema.save and schema.load.',
           },
         ],
       };

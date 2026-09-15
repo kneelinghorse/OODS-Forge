@@ -168,21 +168,8 @@ export const Banner = React.forwardRef<HTMLDivElement, BannerProps>(
 );
 Banner.displayName = 'OODS.Banner';
 
-const BUTTON_INTENT_CLASSES: Record<NonNullable<ButtonProps['intent']>, string> = {
-  neutral: 'bg-slate-900 text-white hover:bg-slate-800 focus-visible:outline-slate-900 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-white',
-  primary: 'bg-slate-900 text-white hover:bg-slate-800 focus-visible:outline-slate-900',
-  secondary: 'bg-slate-100 text-slate-950 hover:bg-slate-200 focus-visible:outline-slate-900',
-  success: 'bg-emerald-600 text-white hover:bg-emerald-500 focus-visible:outline-emerald-600',
-  warning: 'bg-amber-500 text-slate-900 hover:bg-amber-400 focus-visible:outline-amber-500',
-  danger: 'bg-rose-600 text-white hover:bg-rose-500 focus-visible:outline-rose-600',
-};
-
-const BUTTON_SIZE_CLASSES: Record<NonNullable<ButtonProps['size']>, string> = {
-  sm: 'h-8 px-3 text-sm',
-  md: 'h-10 px-4 text-sm',
-  lg: 'h-12 px-6 text-base',
-};
-
+// Intent, size, radius and focus are painted by @oods/component-styles from the
+// cmp roles through data-intent and data-size; no utility class carries chrome.
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   (
     {
@@ -210,13 +197,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     return (
       <Component
         ref={ref}
-        className={classes(
-          'oods-button',
-          'inline-flex items-center justify-center gap-2 rounded-md font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 disabled:pointer-events-none disabled:opacity-50',
-          BUTTON_INTENT_CLASSES[intent],
-          BUTTON_SIZE_CLASSES[size],
-          className
-        )}
+        className={classes('oods-button', className)}
         data-oods-component="Button"
         data-intent={intent}
         data-size={size}
@@ -227,8 +208,6 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           '--cmp-button-border': 'var(--sys-border-subtle)',
           '--cmp-button-text': 'var(--sys-text-on-interactive)',
           '--cmp-button-text-disabled': 'var(--sys-text-disabled)',
-          '--cmp-button-focus-width': 'var(--sys-focus-width, 2px)',
-          '--cmp-button-focus-outer': 'var(--sys-focus-ring-outer, Highlight)',
           ...style,
         } as React.CSSProperties}
         onClick={handleClick}
@@ -248,12 +227,7 @@ export const Card = React.forwardRef<HTMLElement, CardProps>(
     return (
       <Element
         ref={ref as React.Ref<HTMLDivElement>}
-        className={classes(
-          'oods-card',
-          'rounded-xl border border-slate-200 bg-white p-6 shadow-sm transition-shadow dark:border-slate-800 dark:bg-slate-950',
-          elevated && 'shadow-lg shadow-slate-200/50 dark:shadow-none',
-          className
-        )}
+        className={classes('oods-card', className)}
         data-oods-component="Card"
         data-elevated={elevated ? 'true' : 'false'}
         {...rest}
@@ -262,18 +236,6 @@ export const Card = React.forwardRef<HTMLElement, CardProps>(
   }
 );
 Card.displayName = 'OODS.Card';
-
-const TEXT_SIZE_CLASSES: Record<NonNullable<TextProps['size']>, string> = {
-  sm: 'text-sm leading-5',
-  md: 'text-base leading-6',
-  lg: 'text-lg leading-7',
-};
-
-const TEXT_WEIGHT_CLASSES: Record<NonNullable<TextProps['weight']>, string> = {
-  regular: 'font-normal',
-  medium: 'font-medium',
-  semibold: 'font-semibold',
-};
 
 export const Text = React.forwardRef<HTMLElement, TextProps>(
   (
@@ -294,7 +256,7 @@ export const Text = React.forwardRef<HTMLElement, TextProps>(
     return (
       <Element
         ref={ref as React.Ref<never>}
-        className={classes('oods-text', TEXT_SIZE_CLASSES[size], TEXT_WEIGHT_CLASSES[weight], className)}
+        className={classes('oods-text', className)}
         data-oods-component="Text"
         data-size={size}
         data-weight={weight}

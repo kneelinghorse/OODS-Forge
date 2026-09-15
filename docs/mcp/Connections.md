@@ -1,24 +1,40 @@
-# OODS MCP Connections
+# Connecting to Forge from a clone
 
-Local developers can connect agent clients to OODS MCP tools via two transports: **stdio adapter** (recommended) or **HTTP bridge**. This guide covers both approaches with connection profiles for Claude Desktop, Cursor, and the OpenAI Responses/Agents API.
+This page is the contributor path: you have cloned the repository and want an
+agent client talking to the tools you are changing. If you downloaded the
+runtime release instead, follow [docs/runtime/install.md](../runtime/install.md);
+it needs no build and no package manager.
+
+Two transports exist: the **stdio adapter** (the entry point every client
+uses) and the **HTTP bridge** (for clients that only speak HTTP).
 
 ## Prerequisites
 
 ```bash
-# Install dependencies
-pnpm install
-
-# Build the native MCP server (required for both transports)
+pnpm install --frozen-lockfile
+pnpm run build:tokens
+pnpm run build:packages
 pnpm --filter @oods/mcp-server run build
 ```
 
-## Stdio Adapter (Recommended)
+The adapter starts the native server from `packages/mcp-server/dist/`, so the
+server build is required for both transports; the token and package builds are
+what code generation and the health tool read.
 
-The stdio adapter (`packages/mcp-adapter/`) wraps the native MCP server with a spec-compliant MCP interface that communicates via stdin/stdout. No HTTP bridge, port, or token configuration required.
+## Stdio Adapter
+
+`packages/mcp-adapter/index.js` wraps the native server with a spec-compliant
+MCP interface over stdin/stdout. No port, token or CORS configuration is
+involved. The three client configurations below are the generated snippets in
+`configs/agents/` (rendered by `scripts/runtime/client-configs.mjs`); in a
+clone, replace the `/path/to/forge-runtime` placeholder with the absolute path
+of your checkout, because the adapter entry point is the same
+`packages/mcp-adapter/index.js` in both.
 
 ### Claude Desktop (stdio)
 
-Copy the config from `configs/agents/claude-desktop.stdio-mcp.json` into your Claude Desktop settings:
+`configs/agents/claude-desktop.stdio-mcp.json` carries the block. Put it under
+`mcpServers` in the Claude Desktop configuration file:
 
 - **macOS:** `~/Library/Application Support/Claude/claude_desktop_config.json`
 - **Windows:** `%APPDATA%\Claude\claude_desktop_config.json`
@@ -26,31 +42,42 @@ Copy the config from `configs/agents/claude-desktop.stdio-mcp.json` into your Cl
 ```json
 {
   "mcpServers": {
-    "oods-foundry": {
+    "forge": {
       "command": "node",
-      "args": ["/absolute/path/to/OODS-Foundry-mcp/packages/mcp-adapter/index.js"],
-      "env": {
-        "MCP_TOOLSET": "all",
-        "MCP_ROLE": "designer"
-      }
+      "args": ["/absolute/path/to/OODS-Forge/packages/mcp-adapter/index.js"],
+      "env": { "MCP_TOOLSET": "all" }
     }
   }
 }
 ```
 
-Replace `/absolute/path/to/OODS-Foundry-mcp` with your actual repo path.
+`MCP_TOOLSET=all` is the contributor default here so the on-demand diagnostic
+tools are visible; users of the release get the default surface.
+
+### Claude Code (stdio)
+
+`configs/agents/claude-code.stdio-mcp.json` carries the equivalent block. From
+the directory you work in:
+
+```bash
+claude mcp add forge -- node /absolute/path/to/OODS-Forge/packages/mcp-adapter/index.js
+claude mcp get forge
+```
+
+Add `-s user` to register the server for every project and `-e MCP_TOOLSET=all`
+for the full surface.
 
 ### Cursor (stdio)
 
-Copy the config from `configs/agents/cursor.stdio-mcp.json` into `.cursor/mcp.json` at the project root:
+`configs/agents/cursor.stdio-mcp.json` carries the block for `.cursor/mcp.json`
+at the project root:
 
 ```json
 {
   "mcpServers": {
-    "oods-foundry": {
+    "forge": {
       "command": "node",
-      "args": ["packages/mcp-adapter/index.js"],
-      "cwd": "${workspaceFolder}"
+      "args": ["/absolute/path/to/OODS-Forge/packages/mcp-adapter/index.js"]
     }
   }
 }
@@ -131,7 +158,7 @@ The bridge exposes `GET /health`, `GET /tools`, `POST /run`, and `/artifacts/*`.
 
 Key points:
 
-- The bridge serves diagnostics/read tools plus apply-gated tools. `repl.render` supports both `dry-run` and `apply` modes, while write-gated tools still require an approval header when `apply:true`.
+- The bridge serves diagnostics/read tools plus apply-gated tools. `repl.render` supports both `dry-run` and `apply` modes, while write-gated tools still require an approval header when `apply: true`.
 - Because Claude Desktop omits custom headers for remote servers, keep token enforcement disabled when using this profile.
 - If the default port is busy, start the bridge with `MCP_BRIDGE_PORT=<port>` and update the `url` accordingly.
 
@@ -150,7 +177,7 @@ Because `diag.snapshot` is on-demand, start the bridge with `MCP_EXTRA_TOOLS=dia
 Integrate it by:
 
 1. Loading the JSON and registering the function schema with the Responses/Agents API.
-2. Supplying a tool-calling callback that issues the documented `POST /run` request. Forward `X-Bridge-Token` when the bridge enforces tokens, and only pass `X-Bridge-Approval` when escalating to write tools.
+2. Supplying a tool-calling callback that issues the documented `POST /run` request. Forward `X-Bridge-Token` when the bridge enforces tokens, and only pass `X-Bridge-Approval` when escalating to `apply: true`.
 3. Keeping `apply` set to `false` for diagnostics-only runs.
 
 Before each session, call `GET /tools` to refresh the allowlisted names; the harness logs them for reference.
@@ -170,7 +197,7 @@ Recommendation for Synthesis Workbench:
 
 ## Smoke Harness
 
-The mission ships `tools/agents-smoke`, a minimal TypeScript CLI that exercises the bridge end-to-end:
+`tools/agents-smoke` is a minimal TypeScript CLI that exercises the bridge end-to-end:
 
 ```bash
 pnpm --filter @oods/agents-smoke run

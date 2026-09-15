@@ -3,7 +3,7 @@ import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
-import { commands } from '../../../../scripts/product-reality/s199-chart-gate.mjs';
+import { commands, verify } from '../../../../scripts/product-reality/s199-chart-gate.mjs';
 import { ROOT, PATTERN_REGISTRY_PATH, writePatternOutputs } from '../../../../scripts/product-reality/s195-pattern-census.js';
 import { cpSync, mkdirSync } from 'node:fs';
 import { dirname } from 'node:path';
@@ -14,6 +14,14 @@ const directories: string[] = [];
 afterEach(() => directories.splice(0).forEach(directory => rmSync(directory, { recursive: true, force: true })));
 
 describe('s199 local chart gate and receipt boundaries', () => {
+  it.each([195, 196, 197, 198, 199])('rejects new chart-gate receipts in sealed Sprint %s before executing commands', sprint => {
+    expect(() => verify(`artifacts/product-reality/sprint-${sprint}/gate`)).toThrow('under unsealed sprint-200');
+  });
+
+  it.each(['artifacts/product-reality/sprint-200/../sprint-199/gate', 'artifacts/product-reality/sprint-200-other/gate'])('rejects a path escaping the current receipt boundary: %s', output => {
+    expect(() => verify(output)).toThrow('under unsealed sprint-200');
+  });
+
   it('loads the named golden command from the workflow and keeps the gate narrow', () => {
     const plan = commands(ROOT);
     const golden = read('.github/workflows/ci.yml').match(/name: Run colocated viz\.render \+ dashboard\.render goldens\s+run: ([^\n]+)/)![1]!.trim().split(/\s+/);
