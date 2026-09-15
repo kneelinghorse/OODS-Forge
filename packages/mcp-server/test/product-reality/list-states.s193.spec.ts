@@ -14,12 +14,15 @@ describe('public single-screen list state contract', () => {
     const form = await compose({ object, context: 'form' });
     expect(schemaNodes(form.schema).some(node => node.component === 'TagInput')).toBe(true);
   });
-  it.each(OBJECTS.filter(object => contextsForObject(object).includes('list')))('%s declares all four states and emits the public state prop in both frameworks', async object => {
+  it.each(OBJECTS.filter(object => contextsForObject(object).includes('list')))('%s declares three screen states plus the collection empty banner and emits the public state prop in both frameworks', async object => {
     const composed = await compose({ object, context: 'list' });
     expect(composed.status).toBe('ok');
     const nodes = schemaNodes(composed.schema);
-    expect(nodes.flatMap(node => node.state ? [node.state] : [])).toEqual(['loading', 'empty', 'error', 'success']);
+    // Sprint 201 m06 (#2046 doubled empty states): the rows collection owns the empty banner, so the screen carries no empty branch.
+    expect(nodes.flatMap(node => node.state ? [node.state] : [])).toEqual(['loading', 'error', 'success', 'empty']);
+    expect(nodes.find(node => node.state === 'empty')?.collectionControl).toBe('empty');
     expect(nodes.some(node => node.collection?.source === 'rows')).toBe(true);
+    expect(nodes.some(node => node.collectionControl === 'empty')).toBe(true);
     const before = JSON.stringify(composed.schema);
     for (const framework of ['react', 'vue'] as const) {
       const generated = await generate({ schema: composed.schema, framework, profile: 'build' });

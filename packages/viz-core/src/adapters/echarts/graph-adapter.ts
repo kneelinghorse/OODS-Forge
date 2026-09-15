@@ -36,6 +36,18 @@ const DEFAULT_REPULSION = 100;
 const DEFAULT_GRAVITY = 0.1;
 const DEFAULT_EDGE_LENGTH = 30;
 const DEFAULT_FRICTION = 0.6;
+// Title band shared with the sankey adapter: centred 14px/600 (Sprint 201 m06, the placed graph's oversized title from #2060).
+const TITLE_TOP = 8;
+const TITLE_FONT_SIZE = 14;
+const TITLE_FONT_WEIGHT = 600;
+// Sparse graphs spread to the canvas: the edge length grows with the room each node has, so
+// labels at the researched 30px default no longer collide on a few nodes.
+const DEFAULT_CANVAS: { readonly width: number; readonly height: number } = { width: 600, height: 400 };
+export function sparseForceDefaults(nodeCount: number, width = DEFAULT_CANVAS.width, height = DEFAULT_CANVAS.height): { repulsion: number; edgeLength: number } {
+  const room = Math.min(width, height) / (2 * Math.sqrt(Math.max(1, nodeCount)));
+  const edgeLength = Math.max(DEFAULT_EDGE_LENGTH, Math.min(160, Math.round(room)));
+  return { edgeLength, repulsion: Math.max(DEFAULT_REPULSION, Math.round(edgeLength * 2.5)) };
+}
 
 // Node sizing defaults
 const DEFAULT_NODE_SIZE = 10;
@@ -126,6 +138,7 @@ export function adaptGraphToECharts(spec: NormalizedVizSpec, input: NetworkInput
   // Build categories for legend
   const categories = buildCategories(categoryNames, palette);
 
+  const sparseForce = sparseForceDefaults(nodes.length, dimensions.width ?? DEFAULT_CANVAS.width, dimensions.height ?? DEFAULT_CANVAS.height);
   const series = pruneUndefined({
     type: 'graph' as const,
     name: graphSpec.name ?? 'Graph',
@@ -151,9 +164,9 @@ export function adaptGraphToECharts(spec: NormalizedVizSpec, input: NetworkInput
 
     // Force layout parameters (ECharts defaults from R33.0)
     force: {
-      repulsion: graphSpec.layout?.force?.repulsion ?? DEFAULT_REPULSION,
+      repulsion: graphSpec.layout?.force?.repulsion ?? sparseForce.repulsion,
       gravity: graphSpec.layout?.force?.gravity ?? DEFAULT_GRAVITY,
-      edgeLength: graphSpec.layout?.force?.edgeLength ?? DEFAULT_EDGE_LENGTH,
+      edgeLength: graphSpec.layout?.force?.edgeLength ?? sparseForce.edgeLength,
       friction: graphSpec.layout?.force?.friction ?? DEFAULT_FRICTION,
       layoutAnimation: true,
     },
@@ -191,7 +204,7 @@ export function adaptGraphToECharts(spec: NormalizedVizSpec, input: NetworkInput
     tooltip: generateGraphTooltip(),
     legend: scope.theme !== 'hc' && categories.length > 0 ? generateGraphLegend(categories, graphSpec, chrome.visualMapLabel) : undefined,
     aria: { enabled: true, description: graphSpec.a11y?.description },
-    title: graphSpec.name ? { text: graphSpec.name, textStyle: { color: chrome.title } } : undefined,
+    title: graphSpec.name ? { text: graphSpec.name, left: 'center', top: TITLE_TOP, textStyle: { color: chrome.title, fontSize: TITLE_FONT_SIZE, fontWeight: TITLE_FONT_WEIGHT } } : undefined,
     usermeta: {
       oods: pruneUndefined({
         specId: graphSpec.id,

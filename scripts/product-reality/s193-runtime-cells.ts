@@ -154,6 +154,7 @@ async function runCell(output: string, object: string, context: Context, framewo
       return row;
     }
     assert.equal(result.status, 'ok', JSON.stringify(result.errors));
+    assert(result.artifact, 'inline generation carries the artifact');
     assert.deepEqual(validateGeneratedArtifact(result.artifact), []);
     row.artifactHash = result.artifact.contentHash;
     row.gates.push({ name: active, status: 'pass', detail: { schemaHash: hash(schemaBefore), artifactHash: row.artifactHash } });

@@ -71,8 +71,10 @@ describe('design.compose — form field differentiation', () => {
     const result = await handle({ object: 'User', context: 'form' });
     expect(result.status).toBe('ok');
     const nodes = collectNodes(result.schema, () => true);
-    const editors = ['AddressEditor', 'PreferenceEditor', 'RoleAssignmentForm', 'StatusSelector', 'TagInput', 'TemplatePicker'];
+    // Sprint 201 m06 (#2046 duplicate Role fields): User's own scalar role select is the role editor; the membership Role Assignment stays off its form.
+    const editors = ['AddressEditor', 'PreferenceEditor', 'StatusSelector', 'TagInput', 'TemplatePicker'];
     expect(nodes.map(node => node.component)).toEqual(expect.arrayContaining(editors));
+    expect(nodes.map(node => node.component)).not.toContain('RoleAssignmentForm');
 
     // Planning generic inputs must leave the full object available to trait
     // editors; deleting collection fields would conceal the binding defect.

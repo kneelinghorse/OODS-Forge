@@ -413,7 +413,7 @@ function validateArtifact(
   schema: S184M06SchemaName,
   framework: S184M06Framework,
 ): { artifact: GeneratedArtifact; source: string } {
-  if (result.status !== 'ok') {
+  if (result.status !== 'ok' || !result.artifact) {
     throw new Error(`${schema}/${framework}: live code.generate failed: ${JSON.stringify(result.errors ?? [])}`);
   }
   const artifact = result.artifact;

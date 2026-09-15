@@ -19,7 +19,7 @@ Bridge-exposed tools require both [agent policy](../../configs/agent/policy.json
 
 ## Evidence and portable outcomes
 
-Tool ledger: [packages/mcp-server/registry/tool-capability-ledger.v1.json](../../packages/mcp-server/registry/tool-capability-ledger.v1.json), recorded source head `"1613ad0ed9abf44e8c0a7d3ff6ae4d73130e2497"`.
+Tool ledger: [packages/mcp-server/registry/tool-capability-ledger.v1.json](../../packages/mcp-server/registry/tool-capability-ledger.v1.json), recorded source head `"315dcf118fcb9ceab8221754c20b2bbf382b297c"`.
 
 Proof tier methodology: Highest location tier of a literal runtime import of a handler-bearing module in mcp-server test/spec sources. Grouped action imports roll up to their registered family. Imports are source evidence, not proof of invocation, passing execution or browser certification. Transitive imports and constructed imports/dispatch are not followed; type-only and schema-only imports do not promote a tier.
 
@@ -358,7 +358,7 @@ Additional properties: `false`.
 
 ### `code.generate`
 
-Generate a versioned, content-addressed React, Vue, or HTML file-set artifact from a validated UiSchema tree. Select draft, build, or release validation; build is the default runnable-artifact gate, and every response includes a validationReceipt naming applied policy, checks, omissions, and evidence disposition. Receipts produced after artifact construction also name that artifact's content hash. Release receipts retain accepted caller-supplied evidence references without claiming independent execution. The artifact includes exact dependencies and required consumer-supplied domain actions. Legacy code/fileExtension/imports aliases remain for compatibility. Accepts schemaRef from design.compose; save it before the 30-minute reference expires. Release receipts explicitly report evidenceVerification:hash-bound-not-re-executed. References are format-checked and hash-bound, not re-executed. OODS-V162 reports missing evidence; OODS-V163 reports an artifact hash mismatch. Portable React/Vue generation uses an assembly-time readiness attestation bound to shipped package bytes and emits real artifacts without source or test files. Missing or tampered readiness evidence returns OODS-N015 without an artifact. Host repository generation retains direct readiness checks. Application options.theme accepts light, dark and hc, with options.brand A or B, for both the shell and embedded chart assets. Subscription/detail HC area SVG assets pass through the same public viz.render boundary and remain verbatim in React and Vue. Bound record-array charts support bar, line, area, scatter and heatmap with explicit sampleRows; trait titles, descriptions and units accompany generated static SVG. Invoice bar and Usage line are authored in detail and dashboard layouts. Relationship detail and workflow declare an edge-array force_graph over optional neighborhood rows, explicitly labelled synthetic. Source and target IDs produce sorted distinct nodes and row-ordered directed links; a true bidirectional flag adds the reverse link, with directed-pair deduplication and no invented values or groups. Missing or malformed edge fields fail closed. VizGraphPreview embeds the exact public SVG inside a named wrapper. React/Vue application output is supported. Static HTML tab panel trees preserve nested content and layout. Full Invoice/Usage detail HTML remains a typed OODS-V007 static-action limit: HTML has no runtime for domain actions such as Edit/Delete/View timeline. Owner: Forge code-generation maintainers, enforced by target-contracts.ts.
+Generate a versioned, content-addressed React, Vue, or HTML file-set artifact from a validated UiSchema tree. Select draft, build, or release validation; build is the default runnable-artifact gate, and every response includes a validationReceipt naming applied policy, checks, omissions, and evidence disposition. Receipts produced after artifact construction also name that artifact's content hash. Release receipts retain accepted caller-supplied evidence references without claiming independent execution. The artifact includes exact dependencies and required consumer-supplied domain actions. Legacy code/fileExtension/imports aliases remain for compatibility. Accepts schemaRef from design.compose; save it before the 30-minute reference expires. Release receipts explicitly report evidenceVerification:hash-bound-not-re-executed. References are format-checked and hash-bound, not re-executed. OODS-V162 reports missing evidence; OODS-V163 reports an artifact hash mismatch. Portable React/Vue generation uses an assembly-time readiness attestation bound to shipped package bytes and emits real artifacts without source or test files. Missing or tampered readiness evidence returns OODS-N015 without an artifact. Host repository generation retains direct readiness checks. Application options.theme accepts light, dark and hc, with options.brand A or B, for both the shell and embedded chart assets. Subscription/detail HC area SVG assets pass through the same public viz.render boundary and remain verbatim in React and Vue. Bound record-array charts support bar, line, area, scatter and heatmap with explicit sampleRows; trait titles, descriptions and units accompany generated static SVG. Invoice bar and Usage line are authored in detail and dashboard layouts. Relationship detail and workflow declare an edge-array force_graph over optional neighborhood rows, explicitly labelled synthetic. Source and target IDs produce sorted distinct nodes and row-ordered directed links; a true bidirectional flag adds the reverse link, with directed-pair deduplication and no invented values or groups. Missing or malformed edge fields fail closed. VizGraphPreview embeds the exact public SVG inside a named wrapper. React/Vue application output is supported. Static HTML tab panel trees preserve nested content and layout. Full Invoice/Usage detail HTML remains a typed OODS-V007 static-action limit: HTML has no runtime for domain actions such as Edit/Delete/View timeline. Owner: Forge code-generation maintainers, enforced by target-contracts.ts. options.payloadMode file writes every artifact file plus artifact.json beside the saved-schema store (<store>/../payloads/code.generate-<content hash prefix>/) and returns a payload block of file references instead of the artifact, for clients with a result-size cap; a directory that cannot be written is OODS-S020 with no payload.
 
 [Complete input/output reference](../api/code-generate.md). The tables below follow the actual dispatch schema paths; those paths control when the legacy API page selects a different schema.
 
@@ -417,7 +417,8 @@ Versioned generated artifact from a UiSchema. Legacy single-source fields remain
 |---|---|---|---|---|
 | `status` | `"ok"` or `"error"` | Yes | — | Whether code generation succeeded. |
 | `framework` | `"react"` or `"vue"` or `"html"` | Yes | — | The target framework that was used. |
-| `artifact` | ref `"#/$defs/generatedArtifact"` | No | — | Primary versioned, content-addressed file-set payload. Required when status is ok. |
+| `artifact` | ref `"#/$defs/generatedArtifact"` | No | — | Primary versioned, content-addressed file-set payload. Present when status is ok and options.payloadMode is inline (the default); with payloadMode file it is written to payload.directory as artifact.json instead. |
+| `payload` | object | No | — | payloadMode file: where the large output was written instead of being returned inline; the directory is beside the saved-schema store (<store>/../payloads/<tool>-<digest>).; additionalProperties: `false` |
 | `code` | string | Yes | — | Deprecated v0 compatibility alias for artifact.files[0].contents. Empty string on error. |
 | `fileExtension` | string | Yes | — | Deprecated v0 compatibility alias for the primary generated file extension. |
 | `imports` | array of string | Yes | — | Deprecated v0 compatibility alias. Use artifact.dependencies for exact versions and dependency kinds. |
@@ -440,13 +441,25 @@ If `{"properties":{"status":{"const":"ok"}},"required":["status"]}`:
 |---|---|---|---|---|
 | `validationReceipt` | any | Yes | — | — |
 
+anyOf: at least one branch must match.
+
+##### Output allOf[0] then anyOf[0]
+
+Shape: any.
+
 Required keys in this branch: `"artifact"`.
+
+##### Output allOf[0] then anyOf[1]
+
+Shape: any.
+
+Required keys in this branch: `"payload"`.
 
 Otherwise:
 
 Shape: any.
 
-Must not match: `{"required":["artifact"]}`.
+Must not match: `{"anyOf":[{"required":["artifact"]},{"required":["payload"]}]}`.
 
 ### `design.compose`
 
@@ -1737,7 +1750,7 @@ Additional properties: `false`.
 
 ### `repl`
 
-Grouped Design Lab REPL tool. Set `action` to validate (check a UiSchema/patch against the DSL+registry) or render (produce HTML/CSS preview; apply=true to emit). Consolidates the former repl.* tools with identical per-action behavior. BRAND (s169 m04): pass brand:'A'|'B' to render a specific brand's palette; omit it for the previous behaviour, byte-identical. On dashboard.render the brand drives both the tokens inlined into the output.html export and the palette output.contrastScan grades, so what is painted and what is checked are always the same brand. Fragment output diagnoses ignored brand/output.tokenOverlay/output.skinOverlay with OODS-W001. Non-strict fragments expose OODS-W002 when OODS-V006 is reclassified per node. Document output applies scope options. validate.apply is an ignored bridge-parity key. Fragment depth and request-level dslVersion are not supported.
+Grouped Design Lab REPL tool. Set `action` to validate (check a UiSchema/patch against the DSL+registry) or render (produce HTML/CSS preview; apply=true to emit). Consolidates the former repl.* tools with identical per-action behavior. BRAND (s169 m04): pass brand:'A'|'B' to render a specific brand's palette; omit it for the previous behaviour, byte-identical. On dashboard.render the brand drives both the tokens inlined into the output.html export and the palette output.contrastScan grades, so what is painted and what is checked are always the same brand. Fragment output diagnoses ignored brand/output.tokenOverlay/output.skinOverlay with OODS-W001. Non-strict fragments expose OODS-W002 when OODS-V006 is reclassified per node. Document output applies scope options. validate.apply is an ignored bridge-parity key. Fragment depth and request-level dslVersion are not supported. output.payloadMode file writes the rendered document as index.html (or fragments.json and css.json) beside the saved-schema store (<store>/../payloads/repl.render-<digest>/) and returns a payload block of file references instead of html, fragments and css; a directory that cannot be written is OODS-S020.
 
 [Complete input/output reference](../api/repl.md). The tables below follow the actual dispatch schema paths; those paths control when the legacy API page selects a different schema.
 
@@ -1916,6 +1929,7 @@ anyOf: at least one branch must match.
 | `tokenCssRef` | string | No | — | Reference to the token CSS artifact when compact mode is enabled. Use tokens.build to obtain the full CSS. |
 | `fragments` | object | No | — | Fragment payload keyed by canonical node id when output.format=fragments.; additionalProperties: `{"type":"object","required":["nodeId","component","html","cssRefs"],"properties":{"nodeId":{"type":"string"},"component":{"type":"string"},"html":{"type":"string"},"cssRefs":{"type":"array","items":{"type":"string"}}},"additionalProperties":false}` |
 | `css` | object | No | — | Resolved CSS map keyed by cssRef identifier.; additionalProperties: `{"type":"string"}` |
+| `payload` | object | No | — | payloadMode file: where the large output was written instead of being returned inline; the directory is beside the saved-schema store (<store>/../payloads/<tool>-<digest>).; additionalProperties: `false` |
 | `output` | object | No | — | Echoes normalized output controls used by the renderer.; additionalProperties: `false` |
 | `meta` | object | No | — | additionalProperties: `false` |
 

@@ -33,15 +33,20 @@ const CHROME_SNAPSHOTS = [
   'tests/components/__snapshots__/user.render-object.test.tsx.snap',
   'tests/components/__snapshots__/subscription.render-object.test.tsx.snap',
 ];
-/** The pattern registry, the certified matrix and the package-shape baseline never move in this sprint. */
+/** The pattern registry and the package-shape baseline never move in this sprint. */
 const MUST_NOT_MOVE = [
-  'packages/viz-core/src/registry/viz-patterns.v1.json', 'packages/viz-render/certified-matrix.json',
+  'packages/viz-core/src/registry/viz-patterns.v1.json',
   'artifacts/product-reality/sprint-196/m06/package-shapes-baseline.json',
 ];
-/** m06 may move the runtime cells once (the craft list) and a chart recipe's pins once (the two chart titles); each move is attributed here. */
+/**
+ * m06 may move the runtime cells once (the craft list) and a chart recipe's pins once (the two chart titles); each move is attributed here.
+ * The certified matrix hashes the sankey and force_graph operands' normalized SVG, so the two chart-title fixes move it once too;
+ * s195-qualify-viz-matrix.ts --mode s201 re-qualifies it and writes the attribution receipt under m06/certified-matrix.
+ */
 const MAY_MOVE_ONCE = [
   'packages/mcp-server/registry/runtime-cells.v1.json', 'packages/mcp-server/registry/release-cells.v1.json',
-  'packages/viz-core/src/registry/viz-recipes.v1.json', ...CHART_SNAPSHOTS, ...CHROME_SNAPSHOTS,
+  'packages/viz-core/src/registry/viz-recipes.v1.json', 'packages/viz-render/certified-matrix.json',
+  'packages/component-contracts/fixtures/viz-preview-samples.v1.json', ...CHART_SNAPSHOTS, ...CHROME_SNAPSHOTS,
 ];
 
 type Entry = { file: string; pin: string; before: string; after: string; mission: string; reason: string };

@@ -236,7 +236,9 @@ describe("Sprint 184 m07 B2 legacy-input compatibility disclosure", () => {
         "render",
         "codegen",
       ]);
-      expect(await fs.readdir(tempRoot)).toEqual([]);
+      // Since Sprint 201 m02 every composition is a durable version beside the schema store; the schema store itself stays empty without save.
+      expect(await fs.readdir(tempRoot)).toEqual(['.oods']);
+      expect(await fs.readdir(path.join(tempRoot, '.oods'))).toEqual(['compositions']);
     } finally {
       if (previousRoot === undefined) delete process.env.MCP_SCHEMA_STORE_ROOT;
       else process.env.MCP_SCHEMA_STORE_ROOT = previousRoot;
@@ -452,7 +454,9 @@ describe("Sprint 184 m07 B2 legacy-input compatibility disclosure", () => {
         expect(expected.codePresent, outcome.id).toBe(false);
         expect(expected.savedPresent, outcome.id).toBe(false);
       }
-      expect(await fs.readdir(tempRoot)).toEqual([]);
+      // Since Sprint 201 m02 every composition is a durable version beside the schema store; the schema store itself stays empty.
+      expect(await fs.readdir(tempRoot)).toEqual(['.oods']);
+      expect(await fs.readdir(path.join(tempRoot, '.oods'))).toEqual(['compositions']);
     } finally {
       if (previousRoot === undefined) delete process.env.MCP_SCHEMA_STORE_ROOT;
       else process.env.MCP_SCHEMA_STORE_ROOT = previousRoot;

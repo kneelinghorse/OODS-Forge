@@ -2,6 +2,7 @@ import type { UiElement, UiSchema } from '../schemas/generated.js';
 import type { CodegenOptions, CodegenResult, Emitter, GeneratedArtifactAction } from './types.js';
 import { generatedActionContractDigest, generatedActionSourceDigest, generatedActionTypeSignature } from './artifact-envelope.js';
 import { fieldLabel, fieldHelp } from '../compose/label-generator.js';
+import { enumOptionLabel, isInternalField } from '../compose/internal-fields.js';
 import { workflowDataFiles } from './workflow-data-emitter.js';
 
 const CONTEXTS = ['list', 'detail', 'form', 'timeline'] as const;
@@ -31,7 +32,7 @@ export function emitWorkflow(schema: UiSchema, options: CodegenOptions, framewor
     // their resolved lifecycle values; ordinary single-screen output is unchanged.
     const states = schema.workflow!.data.lifecycleStates;
     if (node.component === 'StatusSelector' && node.props?.optionsParameter === 'states' && node.props.options === undefined && !schema.objectSchema![String(node.props.field)]?.enum?.length) node.props.options = states;
-    if (node.collectionControl === 'filter' && schema.objectSchema!.status && Array.isArray(node.props?.options) && node.props.options.length === 1 && states.length) node.props.options = [{ value: '', label: 'All states' }, ...states.map(value => ({ value, label: value.replaceAll('_', ' ') }))];
+    if (node.collectionControl === 'filter' && schema.objectSchema!.status && Array.isArray(node.props?.options) && node.props.options.length === 1 && states.length) node.props.options = [{ value: '', label: 'All states' }, ...states.map(value => ({ value, label: enumOptionLabel(value) }))];
     if (context === 'list' && node.component === 'ArchivedRowOverlay') archiveOverlay = node;
     if (context === 'form' && node.component === 'CancellationForm') cancellationForm = node;
     const field = node.props?.field
@@ -76,7 +77,7 @@ export function emitWorkflow(schema: UiSchema, options: CodegenOptions, framewor
   const implementations: Record<string, string> = {
     handleRowClick: '(id) => { void navigate("detail", id); }',
     handleEdit: '() => { void navigate("form"); }',
-    handleSubmit: '() => { void change(() => store.save(state.draft), "detail"); }',
+    handleSubmit: '() => { void change(() => store.update(state.draft), "detail"); }',
     handleCancel: '() => { publish({ cancelOpen: true }); }',
     handleViewTimeline: '() => { void navigate("timeline"); }',
     handleDelete: '() => { void change(() => store.archive(state.id), "list"); }',
@@ -112,7 +113,7 @@ export function emitWorkflow(schema: UiSchema, options: CodegenOptions, framewor
   ].join('\n')).join('\n')}\n}\n` });
   files.push(...workflowDataFiles(schema));
   const titleField = ['plan_name', 'name', 'title', 'display_name', 'label'].find((name) => schema.objectSchema![name]) ?? schema.workflow.data.idField;
-  const supplemental = Object.entries(schema.objectSchema).filter(([name, field]) => name !== schema.workflow!.data.idField && !formFields.has(name) && field.required && field.type === 'string' && !field.enum);
+  const supplemental = Object.entries(schema.objectSchema).filter(([name, field]) => name !== schema.workflow!.data.idField && !formFields.has(name) && !isInternalField(name, schema.objectSchema!) && field.required && field.type === 'string' && !field.enum);
   files.push({ path: 'src/application.ts', contents: `import { parseBillingAmount } from '@oods/component-contracts';
 import { ${Object.values(schema.objectSchema).some(field => field.type === 'AddressableEntry[]') ? 'collectionAddressIndex, ' : ''}createStore, idField, titleField, fieldTypes, screenProps, history, collectionEvents, type DomainRecord, type ListQuery, type StoreOptions } from './store';
 import { sampleData } from './sample-data';
@@ -307,7 +308,7 @@ body { margin: 0; background: var(--sys-surface-canvas); color: var(--sys-text-p
 .workflow-eyebrow { margin: 0; color: var(--sys-text-secondary); font-family: var(--sys-text-scale-caption-font-family); font-size: var(--sys-text-scale-caption-font-size); font-weight: var(--sys-text-scale-caption-font-weight); line-height: var(--sys-text-scale-caption-line-height); letter-spacing: var(--sys-text-scale-caption-letter-spacing); text-transform: var(--sys-text-scale-caption-text-case); }
 .workflow-heading h1 { margin: var(--cmp-spacing-stack-xs) 0 var(--cmp-spacing-stack-lg); font-family: var(--sys-text-scale-heading-xl-font-family); font-size: var(--sys-text-scale-heading-xl-font-size); font-weight: var(--sys-text-scale-heading-xl-font-weight); line-height: var(--sys-text-scale-heading-xl-line-height); letter-spacing: var(--sys-text-scale-heading-xl-letter-spacing); }
 .workflow-mode { color: var(--sys-text-secondary); font-size: var(--sys-text-scale-caption-font-size); }
-.workflow-app nav { display: flex; gap: var(--sys-control-gap-tight); padding-bottom: var(--cmp-spacing-stack-lg); flex-wrap: wrap; }
+.workflow-app > nav { display: flex; gap: var(--sys-control-gap-tight); padding-bottom: var(--cmp-spacing-stack-lg); flex-wrap: wrap; }
 .workflow-app button { cursor: pointer; font: inherit; border: 1px solid var(--sys-border-strong); padding: var(--cmp-button-padding-block-sm) var(--cmp-button-padding-inline-sm); background: var(--sys-surface-raised); border-radius: var(--cmp-button-radius); color: inherit; }
 .workflow-app button:disabled { opacity: .5; cursor: default; }
 .workflow-app button[aria-current="page"] { background: var(--sys-surface-interactive-primary-default); color: var(--sys-text-on-interactive); border-color: var(--sys-surface-interactive-primary-default); }

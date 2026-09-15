@@ -1570,6 +1570,10 @@ export namespace CodeGenerateInputSchema {
        * React/Vue styling strategy: inline style objects, design-token CSS variables, or Tailwind utility classes. HTML uses document CSS; requesting Tailwind reports OODS-N018 as a draft warning or a build/release error.
        */
       styling?: 'inline' | 'tokens' | 'tailwind';
+      /**
+       * inline (default) returns the artifact in the response. file writes every artifact file plus artifact.json beside the saved-schema store (<store>/../payloads/code.generate-<digest>/) and returns a payload block of file references; the artifact is then omitted from the response and code is empty.
+       */
+      payloadMode?: 'inline' | 'file';
     };
   }
   /**
@@ -1865,6 +1869,28 @@ export namespace CodeGenerateOutputSchema {
     framework: 'react' | 'vue' | 'html';
     artifact?: GeneratedArtifact;
     /**
+     * payloadMode file: where the large output was written instead of being returned inline; the directory is beside the saved-schema store (<store>/../payloads/<tool>-<digest>).
+     */
+    payload?: {
+      mode: 'file';
+      /**
+       * Absolute directory holding the written files.
+       */
+      directory: string;
+      /**
+       * Total bytes written.
+       */
+      bytes: number;
+      files: {
+        /**
+         * Relative POSIX path inside the directory.
+         */
+        path: string;
+        bytes: number;
+        sha256: string;
+      }[];
+    };
+    /**
      * @deprecated
      * Deprecated v0 compatibility alias for artifact.files[0].contents. Empty string on error.
      */
@@ -1895,7 +1921,7 @@ export namespace CodeGenerateOutputSchema {
     };
   }
   /**
-   * Primary versioned, content-addressed file-set payload. Required when status is ok.
+   * Primary versioned, content-addressed file-set payload. Present when status is ok and options.payloadMode is inline (the default); with payloadMode file it is written to payload.directory as artifact.json instead.
    */
   export interface GeneratedArtifact {
     /**
@@ -6570,6 +6596,28 @@ export namespace ReplOutputSchema {
       [k: string]: string;
     };
     /**
+     * payloadMode file: where the large output was written instead of being returned inline; the directory is beside the saved-schema store (<store>/../payloads/<tool>-<digest>).
+     */
+    payload?: {
+      mode: 'file';
+      /**
+       * Absolute directory holding the written files.
+       */
+      directory: string;
+      /**
+       * Total bytes written.
+       */
+      bytes: number;
+      files: {
+        /**
+         * Relative POSIX path inside the directory.
+         */
+        path: string;
+        bytes: number;
+        sha256: string;
+      }[];
+    };
+    /**
      * Echoes normalized output controls used by the renderer.
      */
     output?: {
@@ -7022,6 +7070,10 @@ export namespace ReplRenderInputSchema {
       skinOverlay?: {
         [k: string]: any;
       };
+      /**
+       * inline (default) returns html (or fragments and css) in the response. file writes index.html (or fragments.json and css.json) beside the saved-schema store (<store>/../payloads/repl.render-<digest>/) and returns a payload block of file references instead; html, fragments and css are then omitted.
+       */
+      payloadMode?: 'inline' | 'file';
     };
     apply?: boolean;
   }
@@ -7394,6 +7446,28 @@ export namespace ReplRenderOutputSchema {
      */
     css?: {
       [k: string]: string;
+    };
+    /**
+     * payloadMode file: where the large output was written instead of being returned inline; the directory is beside the saved-schema store (<store>/../payloads/<tool>-<digest>).
+     */
+    payload?: {
+      mode: 'file';
+      /**
+       * Absolute directory holding the written files.
+       */
+      directory: string;
+      /**
+       * Total bytes written.
+       */
+      bytes: number;
+      files: {
+        /**
+         * Relative POSIX path inside the directory.
+         */
+        path: string;
+        bytes: number;
+        sha256: string;
+      }[];
     };
     /**
      * Echoes normalized output controls used by the renderer.

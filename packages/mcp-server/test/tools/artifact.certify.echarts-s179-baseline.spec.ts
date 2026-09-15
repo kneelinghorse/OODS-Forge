@@ -101,7 +101,8 @@ const baseline = JSON.parse(baselineBytes.toString("utf8")) as Record<
 
 // s199-m05: exact current hashes come from the real legacy operand matrix; the
 // migration receipt retains every superseded s191 hash and the pristine fixture.
-const currentMatrix = JSON.parse(readFileSync(new URL('../../../../artifacts/product-reality/sprint-199/m05/matrix/matrix.json', import.meta.url), 'utf8'));
+// s201-m06: the chart title band moved the sankey and force_graph rows once more; the s201 matrix records every operand after it (golden-ledger.json attributes the move).
+const currentMatrix = JSON.parse(readFileSync(new URL('../../../../artifacts/product-reality/sprint-201/m06/golden-migration/matrix/matrix.json', import.meta.url), 'utf8'));
 const scopedHash = (chartType: string): string => currentMatrix.table.find((row: any) => row.chartType === chartType && row.brand === 'A' && row.theme === 'light').svgHash;
 // s195 m04 declared movers over the immutable historical fixture: coverage/fold,
 // a11y pillar, newly offered rule counts, actual bubble V169, and path-specific prose.

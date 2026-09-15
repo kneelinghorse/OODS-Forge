@@ -29,8 +29,11 @@ type ProjectedOption = Record<string, unknown>;
 // palette change therefore changed geometry, even though that color is unused
 // by this operand. This exact replacement hash is retained in the qualified m05
 // force_graph/A/light matrix; keep the convergence and intervening-RNG assertions.
+// s201-m06 moved it once more: sparse graphs spread to the canvas (edge length and
+// repulsion follow the room each node has) and the title band is centred at 14px/600;
+// the certified matrix was re-qualified (artifacts/product-reality/sprint-201/m06/certified-matrix).
 const CONVERGED_CANONICAL_FORCE_HASH =
-  "13a10edd4ff86a0e17bb7a1fa4bc2203bcdee2beacb643bc6b0efb8704ddd092";
+  "8f3d0d20af4083695c90990dea648cd96063b2f5f23c4e5a19211fe3f1a4f5ab";
 
 const optionFor = (chartType: string): ProjectedOption => {
   const operand = ECHARTS_OPERAND_CASES.find(

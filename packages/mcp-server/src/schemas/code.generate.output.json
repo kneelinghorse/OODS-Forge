@@ -12,7 +12,7 @@
         "required": ["status"]
       },
       "then": {
-        "required": ["artifact"],
+        "anyOf": [{ "required": ["artifact"] }, { "required": ["payload"] }],
         "properties": {
           "validationReceipt": {
             "allOf": [
@@ -28,7 +28,7 @@
           }
         }
       },
-      "else": { "not": { "required": ["artifact"] } }
+      "else": { "not": { "anyOf": [{ "required": ["artifact"] }, { "required": ["payload"] }] } }
     }
   ],
   "properties": {
@@ -44,7 +44,31 @@
     },
     "artifact": {
       "$ref": "#/$defs/generatedArtifact",
-      "description": "Primary versioned, content-addressed file-set payload. Required when status is ok."
+      "description": "Primary versioned, content-addressed file-set payload. Present when status is ok and options.payloadMode is inline (the default); with payloadMode file it is written to payload.directory as artifact.json instead."
+    },
+    "payload": {
+      "type": "object",
+      "description": "payloadMode file: where the large output was written instead of being returned inline; the directory is beside the saved-schema store (<store>/../payloads/<tool>-<digest>).",
+      "required": ["mode", "directory", "bytes", "files"],
+      "properties": {
+        "mode": { "const": "file" },
+        "directory": { "type": "string", "description": "Absolute directory holding the written files." },
+        "bytes": { "type": "integer", "minimum": 0, "description": "Total bytes written." },
+        "files": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["path", "bytes", "sha256"],
+            "properties": {
+              "path": { "type": "string", "description": "Relative POSIX path inside the directory." },
+              "bytes": { "type": "integer", "minimum": 0 },
+              "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
     },
     "code": {
       "type": "string",

@@ -29,10 +29,13 @@ describe('slot vocabulary unification', () => {
     expect(result.selections.find((selection) => selection.slotName === 'toolbar-actions')?.selectedComponent).toBe('AddressSummaryBadge');
 
     const components = collectComponents(result.schema);
-    expect(components).toContain('MessageStatusBadge');
-    expect(components).toContain('AddressSummaryBadge');
-    expect(components).toContain('PreferenceSummaryBadge');
-    expect(components).toContain('RoleBadgeList');
+    // Sprint 201 m06 (#2046 field-name chips): the slots resolve to the summary badges, but the list row
+    // keeps only recipes that print a record value, so the four label-printing badges stay off the schema.
+    expect(components).not.toContain('MessageStatusBadge');
+    expect(components).not.toContain('AddressSummaryBadge');
+    expect(components).not.toContain('PreferenceSummaryBadge');
+    expect(components).not.toContain('RoleBadgeList');
+    expect(components).toContain('StatusBadge');
     expect(components).toContain('SearchInput');
     // The one row action is bound to its collection; surplus toolbar actions stay absent.
     const visit = (node: UiElement): UiElement[] => [node, ...(node.children ?? []).flatMap(visit)];

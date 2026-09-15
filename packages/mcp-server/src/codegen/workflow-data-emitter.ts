@@ -1,6 +1,7 @@
 import { chartNodes } from './chart-declaration.js';
 import type { UiSchema, UiElement, FieldSchemaEntry } from '../schemas/generated.js';
 import { mapFieldType, snakeToCamel } from './binding-utils.js';
+import { fieldLabel } from '../compose/label-generator.js';
 
 /** One deterministic preview policy. Authored examples/defaults and enums own domain values. */
 /** A stable rotation for a seed string: the same seed always rotates the sample lists the same way; no seed leaves them as authored. */
@@ -50,7 +51,7 @@ export function workflowSampleData(schema: UiSchema): { records: Array<Record<st
       if (name === 'billing_interval' && billingIntervals.length) return value(billingIntervals[index % billingIntervals.length], 'declared billing interval');
       if (name === 'currency') return value(currency, 'declared billing currency');
       if (name === 'is_archived') return value(index === sampleCount - 1, 'last record exercises archive view');
-      if (name === titleField || /^(?:name|display_name|billing_contact_name)$/.test(name)) return value(/name/.test(name) && name !== 'plan_name' ? names[index % names.length] : `${label} ${/plan/.test(name) ? 'Plan' : 'Workspace'}`, 'deterministic display name');
+      if (name === titleField || /^(?:name|display_name|billing_contact_name|customer_name)$/.test(name)) return value(/name/.test(name) && name !== 'plan_name' ? names[index % names.length] : `${label} ${/plan/.test(name) ? 'Plan' : 'Workspace'}`, 'deterministic display name');
       if (name === 'amount' || name.endsWith('_minor')) return value([19, 49, 99, 149, 249][index % 5]! * (workflow.data.minorUnits ?? 100), 'tier price in declared minor units');
       if (field.default !== undefined) return value(field.default, 'declared field or trait parameter default');
       if (type === 'uuid') return value(`00000000-0000-4000-8000-${String(index + 1).padStart(12, '0')}`, 'deterministic UUID reference');
@@ -97,6 +98,15 @@ export function workflowSampleData(schema: UiSchema): { records: Array<Record<st
     assign('current_period_progress', ended ? 1 : (Date.parse(seedAt) - start.getTime()) / (end.getTime() - start.getTime()));
     assign('state_history', [{ from: null, to: record.status ?? lifecycleStates[0] ?? 'created', at: startAt, event: creationEvent, title: humanize(creationEvent), reason: 'Record created' }]);
     assign('cancel_at_period_end', record.status === 'pending_cancellation');
+    // One record tells one story: the plan's interval is the billing interval, and the last
+    // collection outcome agrees with the lifecycle state (`#2046` billing-cycle contradiction).
+    if (fields.plan_interval && fields.billing_interval) assign('plan_interval', record.billing_interval, 'mirrors the billing interval');
+    if (fields.payment_status?.enum?.length) {
+      const outcomes = fields.payment_status.enum.map(String);
+      const pick = (...wanted: string[]) => wanted.find(candidate => outcomes.includes(candidate));
+      const outcome = ['past_due', 'unpaid'].includes(String(record.status)) ? pick('failed', 'retrying') : ['future', 'trialing'].includes(String(record.status)) ? pick('pending') : pick('succeeded', 'paid', 'pending');
+      if (outcome) assign('payment_status', outcome, 'collection outcome consistent with the lifecycle state');
+    }
     for (const name of Object.keys(fields).filter(name => name.startsWith('cancellation_'))) delete record[name];
     if (cancelling) {
       assign('cancellation_reason', 'Service no longer needed');
@@ -156,6 +166,7 @@ export function workflowDataFiles(schema: UiSchema): Array<{ path: string; conte
   const nodes = (elements: UiElement[]): UiElement[] => elements.flatMap(node => [node, ...nodes(node.children ?? [])]);
   const declaredFilter = nodes(schema.screens).find(node => node.collectionControl === 'filter')?.props?.field;
   const filterField = typeof declaredFilter === 'string' && Object.hasOwn(fields, declaredFilter) ? declaredFilter : 'status';
+  const eventNames = workflow.data.recordedEvents?.length ? workflow.data.recordedEvents : fields.last_event?.enum?.map(String) ?? [];
   const timeline = schema.screens.find(node => node.id === workflow.screens.find(screen => screen.context === 'timeline')?.id);
   const timelineNodes = nodes(timeline ? [timeline] : []);
   const eventCollection = timelineNodes.find(node => node.collection?.source === 'events')?.collection;
@@ -192,6 +203,7 @@ export function collectionSummary(entries: unknown[] | undefined): string {
 ` : ''}
 export const idField = ${JSON.stringify(idField)} as const;
 export const titleField = ${JSON.stringify(titleField)} as const;
+export const fieldLabels: Record<string, string> = ${JSON.stringify(Object.fromEntries(Object.keys(fields).map(name => [name, fieldLabel(name)])))};
 export const fieldTypes: Record<string, string> = ${JSON.stringify(Object.fromEntries(Object.entries(fields).map(([key, value]) => [key, value.type])))};
 export const traits: readonly string[] = ${JSON.stringify(workflow.data.traits.map((name) => name.split('/').pop()))};
 export interface StoreOptions { empty?: boolean; fail?: boolean; latency?: number; now?: () => string; seed?: DomainRecord[] }
@@ -226,6 +238,29 @@ export function createStore(options: StoreOptions = {}) {
     records[index] = structuredClone(record);
     return get(String(record[idField]));
   };
+  // A saved edit is history: the record's state history gains an entry naming the changed fields.
+  const update = (record: DomainRecord) => {
+    const previous = records.find((entry) => entry[idField] === record[idField]);
+    if (!previous) throw new Error('Cannot save a missing record');
+    const values = record as Record<string, unknown>;
+    const before = previous as Record<string, unknown>;
+    const changed = Object.keys(values).filter((name) => Object.hasOwn(fieldTypes, name) && name !== 'state_history' && name !== 'updated_at' && JSON.stringify(values[name]) !== JSON.stringify(before[name]));
+    if (changed.length === 0) return save(record);
+    const at = now();
+    const next = structuredClone(record);
+    const target = next as Record<string, unknown>;
+    if (Object.hasOwn(fieldTypes, 'updated_at')) target.updated_at = at;
+    if (Object.hasOwn(fieldTypes, 'state_history')) {
+      const status = String(target.status ?? before.status ?? '');
+      const moved = changed.includes('status');
+      const entry: HistoryEntry = { title: moved ? String(status).split(/[_-]/).filter(Boolean).map((part) => part.charAt(0).toUpperCase() + part.slice(1)).join(' ') : 'Updated', from: moved ? String(before.status ?? '') : null, to: status, at, reason: 'Edited ' + changed.map((name) => fieldLabels[name] ?? name).join(', ') };
+      target.state_history = [...history(next), entry];
+    }
+    const events: readonly string[] = ${JSON.stringify(eventNames)};
+    const updateEvent = events.find((event) => /updat|edit|profile|chang/.test(event));
+    if (updateEvent && Object.hasOwn(fieldTypes, 'last_event')) { target.last_event = updateEvent; if (Object.hasOwn(fieldTypes, 'last_event_at')) target.last_event_at = at; }
+    return save(next);
+  };
   const setArchived = (id: string, archived: boolean) => {
     requireTrait('Archivable');
     const record = get(id);
@@ -233,7 +268,7 @@ export function createStore(options: StoreOptions = {}) {
     return save(record);
   };
   return {
-    get, save,
+    get, save, update,
     async ready() {
       await new Promise<void>((resolve) => setTimeout(resolve, Math.max(0, options.latency ?? 180)));
       if (fail) throw new Error('Simulated data service failure');

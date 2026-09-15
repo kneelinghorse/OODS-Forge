@@ -16,8 +16,10 @@ describe('s198 application proof follows object declarations and real record tit
     const generated = await generate({ schema: workflow.schema, framework: 'react' });
     expect(generated.status).toBe('ok');
     const application = generated.artifact!.files.find(file => file.path === 'src/application.ts')!.contents;
-    expect(application).toContain('Version of this record’s preferences.');
+    // Sprint 201 m06 (#2046 internal fields): the preference version counter is no longer a form field, so its help leaves the application with it.
+    expect(application).not.toContain('"name":"preference_version"');
     expect(application).not.toContain('SemVer mirror');
+    expect(fieldHelp('preference_version', 'SemVer mirror of the preference document.')).toBe('Version of this record’s preferences.');
     expect(nodes.find(node => node.props?.field === 'owner_type')?.props?.help).toBe('Choose the kind of owner.');
     expect(fieldHelp('domain', 'Verified email domain.')).toBe('Verified email domain.');
   });

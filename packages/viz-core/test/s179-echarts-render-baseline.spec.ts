@@ -24,7 +24,8 @@ type StableChartType = (typeof STABLE_CHART_TYPES)[number];
 const EXPECTED_NORMALIZED_HASHES: Readonly<Record<StableChartType, string>> = {
   treemap: "ce9f3f02228255ff2b0428b4163de10d798ceb9ae1b893c2077b58af422f3251",
   sunburst: "fcb9366be6cb54e1fa63f4ca95226232c303708f09d59fff3231e2284c644db0",
-  sankey: "dddc8d9aed8968ebe31c46d3550393fcd2ff1e288bd3a029f1f7db7cc7539d03",
+  // s201-m06: the sankey title band insets the flow below its title, so the named operand's normalized SVG moved once (sprint-201/golden-ledger.json, m06/certified-matrix).
+  sankey: "f67ce528f75d9ef60832672af896ed8d26aecad38e17fdab899869d71a123c1e",
   chord: "25f997cc68917e985ca39eef3499b4c119d13bf6dbeacd6481401d22f471a2ec",
   choropleth: "17cd8a698349f0942badc4484473c378235de48299a15ef096079c6474dbc8a9",
   bubble_map: "40d0c96e3e92f15263f14cb4de74d63842de50550e265569ea0294a636482c67",

@@ -18,6 +18,7 @@ import { buildGeneratedArtifact } from '../codegen/artifact-envelope.js';
 import { preflightTargetContracts } from '../codegen/target-contracts.js';
 import { preflightNormalizationSafety } from '../codegen/normalization-safety.js';
 import { preflightStateContract } from '../codegen/state-contract.js';
+import { writePayload } from '../lib/payload-store.js';
 import { hasMappedRenderer } from '../render/component-map.js';
 import {
   bindReleaseEvidence,
@@ -457,6 +458,40 @@ export async function handle(
       errors: evidenceResult.errors,
       meta,
     };
+  }
+
+  if (input.options?.payloadMode === 'file') {
+    // The artifact and its files go to disk beside the saved-schema store; the response keeps the receipt and the references.
+    try {
+      const payload = writePayload(`code.generate-${artifact.contentHash.replace(/^sha256:/, '').slice(0, 12)}`, [
+        ...artifact.files.map(file => ({ path: file.path, contents: file.contents })),
+        { path: 'artifact.json', contents: JSON.stringify(artifact, null, 2) + '\n' },
+      ]);
+      return {
+        status: result.status,
+        framework: result.framework,
+        payload,
+        code: '',
+        fileExtension: result.fileExtension,
+        imports: result.imports,
+        warnings: allWarnings,
+        validationReceipt,
+        ...(result.errors?.length ? { errors: result.errors } : {}),
+        meta,
+      };
+    } catch (error) {
+      return {
+        status: 'error',
+        framework: result.framework,
+        code: '',
+        fileExtension: '',
+        imports: [],
+        warnings: allWarnings,
+        validationReceipt,
+        errors: [{ code: 'OODS-S020', message: `Payload directory is not writable: ${error instanceof Error ? error.message : String(error)}` }],
+        meta,
+      };
+    }
   }
 
   return {

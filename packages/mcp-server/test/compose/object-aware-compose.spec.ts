@@ -189,8 +189,8 @@ describe('object-aware compose — pipeline tab label wiring (s86-m01)', () => {
       expect(label.length).toBeGreaterThan(0);
     }
 
-    // The s198 read-only record summary precedes the populated Billing recipes.
-    expect(labels).toEqual(['Details', 'Billing']);
+    // Sprint 201 m06 (`#2046` tab order): the populated Billing recipes lead; the read-only record summary follows.
+    expect(labels).toEqual(['Billing', 'Details']);
     expect(new Set(labels).size).toBe(labels.length);
   });
 

@@ -1110,9 +1110,11 @@ export function emit(schema: UiSchema, options: CodegenOptions): CodegenResult {
   const typeAnnotations = options.typescript ? generatePropTypes(components) : '';
   const hasObjectSchema = normalizedSchema.objectSchema && Object.keys(normalizedSchema.objectSchema).length > 0;
   const hasDomainActions = bindingAnalysis.handlers.some((handler) => handler.kind === 'domain');
-  const stateNames = Array.from(new Set(
-    collectUiStateBranches(ctx.tree).map(({ state }) => state),
-  ));
+  // A rows collection keeps its controls mounted through the empty state, so the union names it even without an empty branch.
+  const stateNames = Array.from(new Set([
+    ...collectUiStateBranches(ctx.tree).map(({ state }) => state),
+    ...(collectionSources(ctx.tree).has('rows') && collectUiStateBranches(ctx.tree).length ? ['empty'] : []),
+  ]));
   const hasStateBranches = stateNames.length > 0;
   const stateTypes = generateReactStateTypes(
     stateNames,

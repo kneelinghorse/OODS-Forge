@@ -4,6 +4,7 @@ import {
   type NetworkInput,
   type NormalizedVizSpec,
 } from '@oods/viz-core';
+import { sparseForceDefaults } from '../src/adapters/echarts/graph-adapter.js';
 
 // sprint-111 m04 — force-graph beachhead. The mission-start audit's determinism
 // boundary is the point of these tests: the emitted OPTION is deterministic (the
@@ -53,7 +54,11 @@ describe('adaptGraphToECharts', () => {
   it('emits the deterministic force PARAMS (the renderable config we golden), not coordinates', () => {
     const option = adaptGraphToECharts(graphSpec(), NET);
     const force = (option.series as Record<string, any>[])[0].force;
-    expect(force).toMatchObject({ repulsion: 100, gravity: 0.1, edgeLength: 30, friction: 0.6 });
+    // Sparse graphs spread to the canvas (Sprint 201 m06): four nodes on the default 600×400 canvas get
+    // 100px edges and 250 repulsion; dense graphs fall back to the researched 30/100 defaults.
+    expect(force).toMatchObject({ ...sparseForceDefaults(4), gravity: 0.1, friction: 0.6 });
+    expect(sparseForceDefaults(4)).toEqual({ edgeLength: 100, repulsion: 250 });
+    expect(sparseForceDefaults(400)).toEqual({ edgeLength: 30, repulsion: 100 });
   });
 
   it('derives node categories from the group field as a SORTED set (the determinism anchor)', () => {

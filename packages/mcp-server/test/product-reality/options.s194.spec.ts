@@ -70,6 +70,23 @@ function currentChartHash(identity: string, beforeHash: string): string {
   expect(lookup(currentPaletteRoot), `${identity}: retained palette epoch`).toBe(beforeHash);
   return lookup(currentChartRoot);
 }
+// Sprint 201 m06: the sankey and force_graph title band moved those two families once more (#2060);
+// the s201 matrix records every operand after that change and every other row stays at its s199 hash.
+const currentTitleRoot = 'artifacts/product-reality/sprint-201/m06/golden-migration';
+function currentTitleHash(identity: string, beforeHash: string): string {
+  const [chartType, theme, brand] = identity.split('/');
+  const lookup = (root: string) => {
+    const matrix = read(`${root}/matrix/matrix.json`);
+    const rows = chartType === 'dashboard' ? matrix.dashboards : matrix.table;
+    const matches = rows.filter((row: any) => row.theme === theme && row.brand === brand && (chartType === 'dashboard' || row.chartType === chartType));
+    expect(matches, `${identity}: one recorded operand per epoch`).toHaveLength(1);
+    return chartType === 'dashboard' ? matches[0].outputHtmlHash : matches[0].svgHash;
+  };
+  expect(lookup(currentChartRoot), `${identity}: retained chart epoch`).toBe(beforeHash);
+  const next = lookup(currentTitleRoot);
+  if (!['sankey', 'force_graph', 'dashboard'].includes(chartType)) expect(next, `${identity}: only the two titled families move`).toBe(beforeHash);
+  return next;
+}
 function retain(name: string, value: unknown) {
   if (!process.env.S194_OPTION_RECEIPTS) return;
   fs.mkdirSync(process.env.S194_OPTION_RECEIPTS, { recursive: true });
@@ -159,7 +176,7 @@ describe('remaining options do what their public wire says (s194-m05)', () => {
       const expected = ['line', 'area'].includes(input.chartType)
         ? migratedTemporalHash('artifacts/product-reality/sprint-191/m05/matrix/matrix.json', `${input.chartType}/light/A`, beforeHash)
         : input.chartType === 'force_graph' ? migratedGraphHash(beforeHash, 'A', 'light') : beforeHash;
-      expect(output.svgHash).toBe(currentChartHash(`${input.chartType}/light/A`, currentPaletteHash(`${input.chartType}/light/A`, expected)));
+      expect(output.svgHash).toBe(currentTitleHash(`${input.chartType}/light/A`, currentChartHash(`${input.chartType}/light/A`, currentPaletteHash(`${input.chartType}/light/A`, expected))));
       rows.push({ chartType: input.chartType, svgHash: output.svgHash });
     }
     const input = wire('dashboard.render', 'input', {
@@ -176,8 +193,10 @@ describe('remaining options do what their public wire says (s194-m05)', () => {
     expect(migration.matrixRows).toContainEqual(expect.objectContaining({ source: 'artifacts/product-reality/sprint-191/m05/matrix/matrix.json', identity: 'dashboard/light/A', beforeHash: prior.dashboard.outputHtmlHash, afterHash: sha(paletteHtml), status: 'superseded' }));
     const afterHtml = fs.readFileSync(path.join(repositoryRoot, `${temporalMigrationRoot}/matrix/dashboard-A-light.html`), 'utf8');
     expect(sha(afterHtml)).toBe(migratedTemporalHash('artifacts/product-reality/sprint-195/m05/golden-migration/matrix/matrix.json', 'dashboard/light/A', sha(paletteHtml)));
-    const currentHtml = fs.readFileSync(path.join(repositoryRoot, `${currentChartRoot}/matrix/dashboard-A-light.html`), 'utf8');
-    expect(sha(currentHtml)).toBe(currentChartHash('dashboard/light/A', currentPaletteHash('dashboard/light/A', sha(afterHtml))));
+    const chartHtml = fs.readFileSync(path.join(repositoryRoot, `${currentChartRoot}/matrix/dashboard-A-light.html`), 'utf8');
+    expect(sha(chartHtml)).toBe(currentChartHash('dashboard/light/A', currentPaletteHash('dashboard/light/A', sha(afterHtml))));
+    const currentHtml = fs.readFileSync(path.join(repositoryRoot, `${currentTitleRoot}/matrix/dashboard-A-light.html`), 'utf8');
+    expect(sha(currentHtml)).toBe(currentTitleHash('dashboard/light/A', sha(chartHtml)));
     expect(output.outputHtmlHash).toBe(sha(currentHtml));
     expect(output.html).toBe(currentHtml);
     retain('delivered-render-identities', { rows, dashboard: { outputHtmlHash: output.outputHtmlHash } });
@@ -192,7 +211,7 @@ describe('remaining options do what their public wire says (s194-m05)', () => {
       const expected = ['line', 'area'].includes(input.chartType)
         ? migratedTemporalHash('artifacts/product-reality/sprint-193/m07/proof-attempt-1/viz-observations.json', `${input.chartType}/${scope.theme}/${scope.brand}`, scope.svgHash)
         : input.chartType === 'force_graph' ? migratedGraphHash(scope.svgHash, scope.brand, scope.theme) : scope.svgHash;
-      expect(output.svgHash, `${input.chartType}/${scope.brand}/${scope.theme}`).toBe(currentChartHash(`${input.chartType}/${scope.theme}/${scope.brand}`, currentPaletteHash(`${input.chartType}/${scope.theme}/${scope.brand}`, expected)));
+      expect(output.svgHash, `${input.chartType}/${scope.brand}/${scope.theme}`).toBe(currentTitleHash(`${input.chartType}/${scope.theme}/${scope.brand}`, currentChartHash(`${input.chartType}/${scope.theme}/${scope.brand}`, currentPaletteHash(`${input.chartType}/${scope.theme}/${scope.brand}`, expected))));
       rows.push({ chartType: input.chartType, brand: scope.brand, theme: scope.theme, svgHash: output.svgHash });
     }
     expect(rows).toHaveLength(52);
@@ -240,7 +259,8 @@ describe('remaining options do what their public wire says (s194-m05)', () => {
     });
     expect(running, 'This negative dependency contract requires no design-loop server; it never stops an operator server.').toBe(false);
     const input = wire('design.preview', 'input', { object: 'Subscription', context: 'card' });
-    await expect(preview(input as any)).rejects.toMatchObject({ opiCode: 'OODS-N019', message: expect.stringContaining('pnpm design:loop serve') });
-    retain('design-preview-unavailable', { input, code: 'OODS-N019', localServerRunning: false });
+    // Sprint 201 m01 retired OODS-N019 with the local design loop: a native server run on its own has no preview host and reports OODS-N021.
+    await expect(preview(input as any)).rejects.toMatchObject({ opiCode: 'OODS-N021', message: expect.stringContaining('design.preview: ') });
+    retain('design-preview-unavailable', { input, code: 'OODS-N021', localServerRunning: false });
   });
 });

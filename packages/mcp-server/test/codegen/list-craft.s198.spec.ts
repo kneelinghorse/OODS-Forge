@@ -14,7 +14,9 @@ describe('s198 standalone list craft stays at the producer boundary', () => {
     const nodes = walk(composition.schema.screens);
     for (const control of ['search', 'page', 'open']) expect(nodes.filter(node => node.collectionControl === control), `${object}/${control}`).toHaveLength(1);
     expect(nodes.filter(node => node.component === 'SearchInput')).toHaveLength(1);
+    // Sprint 201 m06 (#2046 doubled empty states): the rows collection's own banner is the empty branch.
     expect(nodes.filter(node => node.state).map(node => node.state).sort()).toEqual(['empty', 'error', 'loading', 'success']);
+    expect(nodes.find(node => node.state === 'empty')?.collectionControl).toBe('empty');
     const before = JSON.stringify(composition.schema);
     populateListStates(composition.schema);
     expect(JSON.stringify(composition.schema)).toBe(before);

@@ -93,6 +93,12 @@
           ],
           "default": "tokens",
           "description": "React/Vue styling strategy: inline style objects, design-token CSS variables, or Tailwind utility classes. HTML uses document CSS; requesting Tailwind reports OODS-N018 as a draft warning or a build/release error."
+        },
+        "payloadMode": {
+          "type": "string",
+          "enum": ["inline", "file"],
+          "default": "inline",
+          "description": "inline (default) returns the artifact in the response. file writes every artifact file plus artifact.json beside the saved-schema store (<store>/../payloads/code.generate-<digest>/) and returns a payload block of file references; the artifact is then omitted from the response and code is empty."
         }
       },
       "additionalProperties": false,

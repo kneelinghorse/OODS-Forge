@@ -371,6 +371,7 @@ const registry: ReadonlyMap<string, ErrorDefinition> = new Map<string, ErrorDefi
   ['OODS-S018', { code: 'OODS-S018', category: 'server_error', message: 'Fixture provider mismatch', retryable: false }],
 
   ['OODS-S019', { code: 'OODS-S019', category: 'server_error', message: 'Token build failed; source writes remain in place', retryable: true }],
+  ['OODS-S020', { code: 'OODS-S020', category: 'server_error', message: 'Payload directory is not writable; the response carries no payload', retryable: true }],
 
   // ── Rate Limit ──────────────────────────────────────────────────────────
   ['OODS-R001', { code: 'OODS-R001', category: 'rate_limit', message: 'Rate limit exceeded', retryable: true }],

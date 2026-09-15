@@ -23,6 +23,7 @@ import type {
   UiSchema,
 } from '../schemas/generated.js';
 import { resolveSchemaRef } from './schema-ref.js';
+import { payloadDigest, writePayload } from '../lib/payload-store.js';
 
 function asWarnings(issues: ReplIssue[]): ReplIssue[] {
   return issues.map((entry) => ({ ...entry, severity: entry.severity ?? 'warning' }));
@@ -344,6 +345,19 @@ export async function handle(input: ReplRenderInput): Promise<ReplRenderOutput> 
     }
 
     output.output = { format, strict, ...(compact ? { compact } : {}) };
+    if (input.output?.payloadMode === 'file' && (output.html !== undefined || output.fragments !== undefined)) {
+      // The rendered document (or the fragment set) goes to disk beside the saved-schema store; the response keeps the references.
+      const files = output.html !== undefined
+        ? [{ path: 'index.html', contents: output.html }]
+        : [{ path: 'fragments.json', contents: JSON.stringify(output.fragments, null, 2) + '\n' }, ...(output.css !== undefined ? [{ path: 'css.json', contents: JSON.stringify(output.css, null, 2) + '\n' }] : [])];
+      try {
+        output.payload = writePayload(`repl.render-${payloadDigest(files.map(file => file.contents).join('\u0000'))}`, files);
+        delete output.html; delete output.fragments; delete output.css;
+      } catch (error) {
+        errors.push({ code: 'OODS-S020', message: `Payload directory is not writable: ${error instanceof Error ? error.message : String(error)}` });
+        status = 'error';
+      }
+    }
   }
 
   output.status = status;

@@ -1,18 +1,55 @@
-import type { UiElement, UiSchema } from '../schemas/generated.js';
+import type { FieldSchemaEntry, UiElement, UiSchema } from '../schemas/generated.js';
+import { enumOptionLabel } from './internal-fields.js';
 
 const walk = (nodes: UiElement[]): UiElement[] => nodes.flatMap(node => [node, ...walk(node.children ?? [])]);
 const shortName = (name: string) => name.replaceAll('_', ' ').replace(/^./, letter => letter.toUpperCase());
 
+/** Row recipes whose visible text is always a record value. */
+const ROW_VALUE_COMPONENTS = new Set(['Text', 'LabelCell', 'StatusBadge', 'RelativeTimestamp', 'TagPills', 'PriceBadge', 'BillingSummaryBadge', 'ArchivePill', 'CancellationBadge', 'ArchivedRowOverlay', 'OwnerBadge', 'InlineLabel', 'ColorizedBadge']);
+/** Summary badges print one of these props as their text; without one bound to a value-bearing field they print their own name. */
+const ROW_TEXT_PROPS: Record<string, readonly string[]> = {
+  AddressSummaryBadge: ['label', 'text', 'role', 'value'],
+  MessageStatusBadge: ['label', 'text', 'status', 'delivery', 'value'],
+  PreferenceSummaryBadge: ['label', 'text', 'namespace', 'value'],
+  ClassificationBadge: ['label', 'text', 'category', 'value'],
+  GeoResolutionBadge: ['resolution'],
+  RoleBadgeList: ['roles', 'badges', 'roleLabels', 'value'],
+};
+const scalarType = (type: string) => /^(?:string|uuid|email|url|integer|number|boolean|date|datetime)\??$/.test(type);
+const valueBearingField = (entry: FieldSchemaEntry | undefined): boolean => {
+  if (!entry) return false;
+  if (scalarType(entry.type)) return Boolean(entry.required || entry.examples?.length || entry.default !== undefined || entry.enum?.length);
+  return Boolean(entry.examples?.length || (Array.isArray(entry.default) && entry.default.length));
+};
+/**
+ * List rows show record values. A summary recipe that would print its own label (a literal
+ * label, or no text prop bound to a field that carries a value) is a field-name chip and stays
+ * off the row (Sprint 198 craft carry, `#2046`).
+ */
+export function rowShowsRecordValue(node: UiElement, fields: Record<string, FieldSchemaEntry>): boolean {
+  if (ROW_VALUE_COMPONENTS.has(node.component)) return true;
+  const textProps = ROW_TEXT_PROPS[node.component];
+  if (!textProps) return true;
+  const props = node.props ?? {};
+  if (typeof props.label === 'string' && !fields[props.label]) return false;
+  return Object.entries(props).some(([key, value]) => {
+    const prop = key === 'field' ? textProps[2] ?? textProps[0]! : key.endsWith('Field') ? key.slice(0, -'Field'.length) : key;
+    return textProps.includes(prop) && typeof value === 'string' && valueBearingField(fields[value]);
+  });
+}
+
 /** Standalone lists expose the same public state operand as workflow screens. */
 export function populateListStates(schema: UiSchema): void {
   for (const screen of schema.screens) {
-    if (!walk([screen]).some(node => node.collection?.source === 'rows') || walk([screen]).some(node => node.state)) continue;
+    // The rows collection's own empty banner carries the empty state; it does not mean the screen already owns its branches.
+    if (!walk([screen]).some(node => node.collection?.source === 'rows') || walk([screen]).some(node => node.state && node.collectionControl !== 'empty')) continue;
+    // The rows collection prints its own empty banner inside the list, so the screen carries no second one.
     screen.children = [
-      ...(['loading', 'empty', 'error'] as const).map(state => ({
+      ...(['loading', 'error'] as const).map(state => ({
         id: `${screen.id}-${state}`, component: 'Banner', state,
         props: {
-          title: state === 'loading' ? 'Loading' : state === 'empty' ? 'No records found' : 'Unable to load records',
-          message: state === 'error' ? 'Try again or choose another record.' : state === 'empty' ? 'Change the filters or add a record.' : 'Loading your records.',
+          title: state === 'loading' ? 'Loading' : 'Unable to load records',
+          message: state === 'error' ? 'Try again or choose another record.' : 'Loading your records.',
         },
       })),
       { id: `${screen.id}-success`, component: 'Stack', state: 'success', layout: screen.layout, children: screen.children },
@@ -43,7 +80,7 @@ export function populateCollections(schema: UiSchema, context: string, objectNam
       const billing = nodes.find(node => node.component === 'BillingSummaryBadge');
       const content: UiElement[] = [
         ...(rowNodes.some(node => node.component === 'LabelCell' && node.props?.field === labelField) ? [] : [{ id: `${items.id}-title`, component: 'Text', props: { field: labelField } }]),
-        ...rowNodes.filter(node => node !== overlay),
+        ...rowNodes.filter(node => node !== overlay && rowShowsRecordValue(node, fields)),
         ...(billing && !rowNodes.includes(billing) ? [billing] : []),
       ];
       for (const node of content) {
@@ -53,7 +90,8 @@ export function populateCollections(schema: UiSchema, context: string, objectNam
       const row: UiElement = { id: `${items.id}-row`, component: 'Button', collectionControl: 'open', props: { field: keyField }, layout: { type: 'inline', gapToken: 'cluster-default' }, children: content };
       if (overlay) { overlay.children = [row]; overlay.props = { ...overlay.props, labelField }; }
       items.collection = { source: 'rows', keyField, labelField };
-      items.children = [overlay ?? row, { id: `${items.id}-empty`, component: 'Banner', props: { message: 'No records found.' }, collectionControl: 'empty' }];
+      // The collection's own banner is the screen's empty branch: it renders inside the list, under the toolbar, when the store has no rows.
+      items.children = [overlay ?? row, { id: `${items.id}-empty`, component: 'Banner', state: 'empty', props: { message: 'No records found.' }, collectionControl: 'empty' }];
       const searchSlot = toolbar.children?.find(node => node.meta?.intent === 'slot:search');
       const search = (searchSlot ? walk([searchSlot]).find(node => node.component === 'SearchInput') : undefined)
         ?? { id: `${toolbar.id}-search`, component: 'SearchInput' };
@@ -67,7 +105,7 @@ export function populateCollections(schema: UiSchema, context: string, objectNam
       if (search) { search.bindings = undefined; search.collectionControl = 'search'; search.props = { label: 'Search', placeholder: 'Search records', clearable: true }; }
       if (filter && filterField) {
         filter.component = 'Select'; filter.children = undefined; filter.bindings = undefined; filter.collectionControl = 'filter';
-        filter.props = { ...(filterField !== 'status' ? { field: filterField } : {}), label: shortName(filterField), options: [{ value: '', label: 'All states' }, ...(fields[filterField]!.enum ?? []).map(value => ({ value: String(value), label: String(value).replaceAll('_', ' ') }))] };
+        filter.props = { ...(filterField !== 'status' ? { field: filterField } : {}), label: shortName(filterField), options: [{ value: '', label: 'All states' }, ...(fields[filterField]!.enum ?? []).map(value => ({ value: String(value), label: enumOptionLabel(String(value)) }))] };
       }
       if (sortIndicator) {
         sortIndicator.bindings = { ...sortIndicator.bindings, onChange: 'handleSortChange' };

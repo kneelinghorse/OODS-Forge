@@ -34,6 +34,11 @@ const DEFAULT_NODE_GAP = 8;
 const DEFAULT_NODE_ALIGN = 'justify' as const;
 const DEFAULT_CURVENESS = 0.5;
 const DEFAULT_LINK_OPACITY = 0.5;
+// Title band: a centred 14px/600 title with the flow inset below it (Sprint 201 m06, the sankey title overlap from #2060).
+const TITLE_TOP = 8;
+const TITLE_FONT_SIZE = 14;
+const TITLE_FONT_WEIGHT = 600;
+const TITLED_SERIES_TOP = 40;
 
 interface SankeySpecExtensions {
   readonly layout?: {
@@ -128,6 +133,9 @@ export function adaptSankeyToECharts(spec: NormalizedVizSpec, input: SankeyInput
       borderColor: chrome.tileBorder,
     },
 
+    // A titled chart insets the flow below its title band so the title never covers the first node column.
+    top: sankeySpec.name ? TITLED_SERIES_TOP : undefined,
+
     // Dimensions
     width: dimensions.width,
     height: dimensions.height,
@@ -139,7 +147,7 @@ export function adaptSankeyToECharts(spec: NormalizedVizSpec, input: SankeyInput
     series: [series],
     tooltip: generateSankeyTooltip(),
     aria: { enabled: true, description: sankeySpec.a11y?.description },
-    title: sankeySpec.name ? { text: sankeySpec.name, textStyle: { color: chrome.title } } : undefined,
+    title: sankeySpec.name ? { text: sankeySpec.name, left: 'center', top: TITLE_TOP, textStyle: { color: chrome.title, fontSize: TITLE_FONT_SIZE, fontWeight: TITLE_FONT_WEIGHT } } : undefined,
     usermeta: {
       oods: pruneUndefined({
         specId: sankeySpec.id,

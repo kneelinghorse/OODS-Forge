@@ -53,12 +53,14 @@ export async function assembleWorkflow(
     prefix(source);
     // A public list already owns the four branches. Reuse them so the workflow
     // does not nest loading/error checks inside its success branch.
-    const ownsStates = UI_WORKFLOW_STATES.every(state => source.children?.some(child => child.state === state));
+    // A rows collection prints its own empty banner, so a list screen owns its states without an empty branch.
+    const rowsCollection = context === 'list';
+    const ownsStates = UI_WORKFLOW_STATES.every(state => (rowsCollection && state === 'empty') || source.children?.some(child => child.state === state));
     const screen: UiElement = {
       id: `${context}-screen`, component: 'Stack', route: ROUTES[context],
       ...(source.bindings ? { bindings: source.bindings } : {}),
       children: ownsStates ? source.children : [
-        ...(['loading', 'empty', 'error'] as const).map((state): UiElement => ({
+        ...(['loading', 'empty', 'error'] as const).filter(state => !(rowsCollection && state === 'empty')).map((state): UiElement => ({
           id: `${context}-${state}`, component: 'Banner', state,
           props: { title: state === 'loading' ? 'Loading' : state === 'empty' ? 'No records found' : 'Unable to load records', message: state === 'error' ? 'Try again or choose another record.' : state === 'empty' ? 'Change the filters or add a record.' : 'Loading your records.' },
         })),

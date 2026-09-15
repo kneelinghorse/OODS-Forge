@@ -91,7 +91,9 @@ export function workflowEditProbe(schema: UiSchema) {
   const kind = selectable.includes(field) ? 'select' as const : 'text' as const;
   const saved = kind === 'select' ? String(fields[field]!.enum!.find(value => value !== samples[2]![field])) : field === 'currency' ? 'EUR' : 'Team annual';
   const archivable = schema.workflow!.data.traits.some(name => name.split('/').pop() === 'Archivable');
-  return { field, titleField, kind, archivable, immediateCancellation, seeded: String(samples[2]![field] ?? ''), saved, timelineEmpty, archivedLabel: `Archived: ${samples[9]![titleField]}` };
+  // The control's accessible name is the composed label (a Labelled object's `label` field is called Name since s201-m06), else the generated field label.
+  const declaredLabel = nodes.find(node => ['Input', 'Textarea', 'Select'].includes(node.component) && node.bindings?.onChange && node.props?.field === field && typeof node.props?.label === 'string')?.props?.label as string | undefined;
+  return { field, label: declaredLabel ?? fieldLabel(field), titleField, kind, archivable, immediateCancellation, seeded: String(samples[2]![field] ?? ''), saved, timelineEmpty, archivedLabel: `Archived: ${samples[9]![titleField]}` };
 }
 
 export function expectedWorkflowFlow(schema: UiSchema): string[] {
@@ -117,9 +119,9 @@ export async function observeFlow(page: Page, url: string, requireBillingViews =
     await observeCheckpoint(rows, name, action, checkpoint);
   };
   const selectedId = `${object.toLowerCase()}-003`;
-  const edit = editProbe ?? { field: titleField, titleField, seeded: `${object} 03`, saved: 'Team annual' };
+  const edit = editProbe ?? { field: titleField, label: fieldLabel(titleField), titleField, seeded: `${object} 03`, saved: 'Team annual' };
   const cancellationStatus = editProbe?.immediateCancellation ? /cancelled/i : /pending[ _]cancellation/i;
-  const titleInput = () => page.getByRole(editProbe?.kind === 'select' ? 'combobox' : 'textbox', { name: fieldLabel(edit.field), exact: true });
+  const titleInput = () => page.getByRole(editProbe?.kind === 'select' ? 'combobox' : 'textbox', { name: edit.label, exact: true });
   try {
     await page.goto(`${url}/?latency=60`, { waitUntil: 'domcontentloaded' });
     await ready(page, 'list');
