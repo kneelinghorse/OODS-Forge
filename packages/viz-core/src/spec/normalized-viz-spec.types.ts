@@ -339,6 +339,12 @@ export interface VizConfig {
     padding?: number;
   };
   /**
+   * Where the chart's name is painted. chart (the default) paints it inside the SVG as the renderer's title; figure leaves the SVG without a painted title so the figure that places the chart shows the name as its heading. The accessible name is unaffected.
+   */
+  title?: {
+    placement?: 'chart' | 'figure';
+  };
+  /**
    * Mark-level defaults applied before traits.
    */
   mark?: {};

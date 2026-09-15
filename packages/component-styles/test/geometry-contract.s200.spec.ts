@@ -170,6 +170,7 @@ describe('s200-m02 geometry contract: one scale, consumed', () => {
       [/inline-size: 100%|max-inline-size: 100%|width: 100%|flex-basis: auto; width: 100%/, 'fluid widths'],
       [/minmax\(min\(100%, (?:14rem|240px)\), 1fr\)|flex: 1 1 (?:180|140)px|min-width: min\(180px, 100%\)/, 'layout minimum widths'],
       [/@media \(max-width: (?:40rem|600px)\)/, 'phone breakpoints'],
+      [/@container \(max-width: 600px\)/, "a placed chart's narrow-render breakpoint, measured on the figure (Sprint 202 m01)"],
       [/grid-template-columns: repeat\(var\(--oods-grid-columns, auto-fit\), minmax\(min\(100%, var\(--oods-grid-min-column, 16rem\)\), 1fr\)\)/, 'grid column minimum from the component prop'],
     ];
     const strip = (line: string) => { let out = '', i = 0; while (i < line.length) { if (line.startsWith('var(', i)) { let depth = 1, j = i + 4; while (j < line.length && depth) { if (line[j] === '(') depth++; else if (line[j] === ')') depth--; j++; } out += 'VAR'; i = j; } else out += line[i++]; } return out; };

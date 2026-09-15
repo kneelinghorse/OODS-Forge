@@ -14,6 +14,14 @@ export type CompositionOperation = 'compose' | 'recompose' | 'reorder-region' | 
 export type PreviewFramework = 'react' | 'vue';
 export type PreviewTheme = 'light' | 'dark' | 'hc';
 export type PreviewBrand = 'A' | 'B';
+export type PreviewScope = `${PreviewBrand}/${PreviewTheme}`;
+
+/** Artifacts and placed-chart certifications generated for a brand and theme other than the version's own (Sprint 202 m01). */
+export interface ScopedGeneration {
+  artifacts: Partial<Record<PreviewFramework, { artifact: GeneratedArtifact; generatedAt: string }>>;
+  /** certifyPlacedCharts for this scope, stored once. */
+  charts?: unknown[];
+}
 
 export interface CompositionVersion {
   recordVersion: typeof COMPOSITION_RECORD_VERSION;
@@ -40,6 +48,8 @@ export interface CompositionVersion {
   artifacts: Partial<Record<PreviewFramework, { artifact: GeneratedArtifact; generatedAt: string }>>;
   /** Attached by measurement (m04). */
   measurements: Record<string, unknown>;
+  /** Attached when a brand or theme switch needs the placed charts rendered for that scope, keyed brand/theme. */
+  scopes?: Partial<Record<PreviewScope, ScopedGeneration>>;
 }
 
 export interface CompositionVersionSummary { version: number; parentVersion: number | null; operation: CompositionOperation; createdAt: string; schemaHash: string; head: string | null; artifacts: PreviewFramework[] }
@@ -116,9 +126,14 @@ export async function nextVersion(directory: string, compositionId: string, pare
  * Attach derived, deterministic data (artifacts, model, measurements) to an existing version. The
  * schema is asserted unchanged; the file is replaced atomically.
  */
-export async function attachToVersion(directory: string, compositionId: string, version: number, patch: Partial<Pick<CompositionVersion, 'artifacts' | 'model' | 'measurements'>>): Promise<CompositionVersion> {
+export async function attachToVersion(directory: string, compositionId: string, version: number, patch: Partial<Pick<CompositionVersion, 'artifacts' | 'model' | 'measurements' | 'scopes'>>): Promise<CompositionVersion> {
   const record = await readVersion(directory, compositionId, version);
-  const updated: CompositionVersion = { ...record, ...(patch.model ? { model: patch.model } : {}), artifacts: { ...record.artifacts, ...(patch.artifacts ?? {}) }, measurements: { ...record.measurements, ...(patch.measurements ?? {}) } };
+  const scopes = { ...(record.scopes ?? {}) } as NonNullable<CompositionVersion['scopes']>;
+  for (const [key, generation] of Object.entries(patch.scopes ?? {}) as Array<[PreviewScope, ScopedGeneration]>) {
+    const existing = scopes[key];
+    scopes[key] = { artifacts: { ...(existing?.artifacts ?? {}), ...generation.artifacts }, ...(generation.charts ?? existing?.charts ? { charts: generation.charts ?? existing?.charts } : {}) };
+  }
+  const updated: CompositionVersion = { ...record, ...(patch.model ? { model: patch.model } : {}), artifacts: { ...record.artifacts, ...(patch.artifacts ?? {}) }, measurements: { ...record.measurements, ...(patch.measurements ?? {}) }, ...(Object.keys(scopes).length ? { scopes } : {}) };
   const file = versionPath(directory, compositionId, version);
   const temporary = `${file}.${process.pid}.tmp`;
   await fsp.writeFile(temporary, JSON.stringify(updated, null, 2) + '\n');

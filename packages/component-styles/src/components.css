@@ -331,6 +331,14 @@
 }
 :where([data-viz-svg]) { min-inline-size: 0; }
 :where([data-viz-svg]) > svg { display: block; inline-size: 100%; max-inline-size: var(--oods-viz-width, 100%); block-size: auto; }
+/* A placed chart carries a narrow render beside the design-size one; the figure measures its own inline size and shows the narrow render at 600px or less, so axis text keeps its size on a phone column instead of scaling with the SVG (Sprint 202 m01). */
+:where([data-viz-rendered='true'][data-viz-narrow='true']) { container-type: inline-size; }
+:where([data-viz-svg-narrow]) { display: none; min-inline-size: 0; }
+:where([data-viz-svg-narrow]) > svg { display: block; inline-size: 100%; block-size: auto; }
+@container (max-width: 600px) {
+  :where([data-viz-narrow='true']) > [data-viz-svg] { display: none; }
+  :where([data-viz-narrow='true']) > [data-viz-svg-narrow] { display: block; }
+}
 :where([data-viz-description]) { color: var(--sys-text-neutral); font-size: var(--sys-text-size-sm, 0.875rem); }
 
 /* Timeline-family logs and the audit event article mirror renderTimelineContainer and renderEventArticle. */

@@ -19,7 +19,9 @@ const utc = JSON.parse(read(path.join(ROOT, 'utc/measurements.json'))) as Measur
 const paletteRoot = path.join(repositoryRoot, 'artifacts/product-reality/sprint-197/m05/consumers');
 const palette = JSON.parse(read(path.join(paletteRoot, 'migration.json')));
 const frameRoot = path.join(repositoryRoot, 'artifacts/product-reality/sprint-200/m02/placement');
+const figureRoot = path.join(repositoryRoot, 'artifacts/product-reality/sprint-202/m01/placement');
 const frame = JSON.parse(read(path.join(frameRoot, 'migration.json')));
+const figure = JSON.parse(read(path.join(figureRoot, 'migration.json'))) as { placements: any[] };
 const historicalSource = (relative: string): string => execFileSync('git', ['show', `${palette.beforeHead}:${relative}`], { cwd: repositoryRoot, encoding: 'utf8', maxBuffer: 16 * 1024 * 1024 });
 
 describe('temporal placement migration preserves operands and historical proof (s196)', () => {
@@ -117,8 +119,16 @@ describe('temporal placement migration preserves operands and historical proof (
       expect(grown).toMatchObject({ beforeHash: moved.afterHash, sameOperand: true, source: row.source, changed: true, chainedFrom: 'artifacts/product-reality/sprint-197/m05/consumers/migration.json' });
       const grownContents = read(path.join(frameRoot, grown.raw));
       expect(hash(grownContents)).toBe(grown.afterHash);
-      return { ...asset, contents: grownContents, contentHash: grown.afterHash };
-    });
-    expect(assets(result.artifact!)).toEqual(expected);
+      // Sprint 202 m01: the title band left the SVG for the figure heading and a narrow render joined it; that layer chains from the frame layer.
+      const untitled = figure.placements.find((entry: any) => entry.case === row.id && entry.path === asset.path && entry.source === row.source);
+      expect(untitled).toMatchObject({ beforeHash: grown.afterHash, sameOperand: true, source: row.source, changed: true, titleInSvgBefore: true, titleInSvgAfter: false, chainedFrom: 'artifacts/product-reality/sprint-200/m02/placement/migration.json' });
+      const untitledContents = read(path.join(figureRoot, untitled.raw));
+      expect(hash(untitledContents)).toBe(untitled.afterHash);
+      const narrowContents = read(path.join(figureRoot, untitled.narrow.raw));
+      expect(hash(narrowContents)).toBe(untitled.narrow.afterHash);
+      return [{ ...asset, contents: untitledContents, contentHash: untitled.afterHash }, { path: untitled.narrow.path, contents: narrowContents, contentHash: untitled.narrow.afterHash }];
+    }).flat();
+    const byPath = (files: Array<{ path: string }>) => [...files].sort((a, b) => a.path.localeCompare(b.path));
+    expect(byPath(assets(result.artifact!))).toEqual(byPath(expected));
   }, 60000);
 });

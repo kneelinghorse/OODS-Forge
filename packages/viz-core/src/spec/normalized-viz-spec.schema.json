@@ -458,7 +458,19 @@
           },
           "additionalProperties": false
         },
-        "mark": {
+        "title": {
+        "type": "object",
+        "description": "Where the chart's name is painted. chart (the default) paints it inside the SVG as the renderer's title; figure leaves the SVG without a painted title so the figure that places the chart shows the name as its heading. The accessible name is unaffected.",
+        "properties": {
+          "placement": {
+            "type": "string",
+            "enum": ["chart", "figure"],
+            "default": "chart"
+          }
+        },
+        "additionalProperties": false
+      },
+      "mark": {
           "type": "object",
           "description": "Mark-level defaults applied before traits."
         }

@@ -13,6 +13,7 @@ import { getVizScaleTokens } from '../../tokens/scale-token-mapper.js';
 
 import { convertToEChartsTreeData, generateHierarchyTooltip } from './hierarchy-utils.js';
 import { resolveTokenToColor, type TokenScope } from './token-resolver.js';
+import { paintedTitle } from '../../spec/title-placement.js';
 
 const START_ANGLE = 90;
 
@@ -70,7 +71,7 @@ export function adaptSunburstToECharts(spec: NormalizedVizSpec, input: Hierarchy
     series: [series],
     tooltip: generateHierarchyTooltip(spec, 'sunburst'),
     aria: { enabled: true, description: spec.a11y?.description },
-    title: spec.name ? { text: spec.name, textStyle: { color: chrome.title } } : undefined,
+    title: paintedTitle(spec) ? { text: paintedTitle(spec), textStyle: { color: chrome.title } } : undefined,
     usermeta: {
       oods: pruneUndefined({
         specId: spec.id,

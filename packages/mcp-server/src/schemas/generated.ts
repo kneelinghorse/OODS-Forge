@@ -3949,6 +3949,14 @@ export namespace DesignPreviewOutputSchema {
                  */
                 moduleUrl: string;
                 artifactContentHash: string;
+                /**
+                 * The brand and theme the served artifact was generated for. A version that places a chart renders its SVG per scope: asking for another brand or theme generates and certifies for that scope (chartScoped true), so generatedFor equals the mounted scope; a version without a placed chart mounts the same artifact in every scope.
+                 */
+                generatedFor: {
+                  brand: 'A' | 'B';
+                  theme: 'light' | 'dark' | 'hc';
+                  chartScoped: boolean;
+                };
                 compiled: {
                   bytes: number;
                   sha256: string;
@@ -3971,6 +3979,14 @@ export namespace DesignPreviewOutputSchema {
                  */
                 moduleUrl: string;
                 artifactContentHash: string;
+                /**
+                 * The brand and theme the served artifact was generated for. A version that places a chart renders its SVG per scope: asking for another brand or theme generates and certifies for that scope (chartScoped true), so generatedFor equals the mounted scope; a version without a placed chart mounts the same artifact in every scope.
+                 */
+                generatedFor: {
+                  brand: 'A' | 'B';
+                  theme: 'light' | 'dark' | 'hc';
+                  chartScoped: boolean;
+                };
                 compiled: {
                   bytes: number;
                   sha256: string;
@@ -3991,6 +4007,14 @@ export namespace DesignPreviewOutputSchema {
                  */
                 moduleUrl: string;
                 artifactContentHash: string;
+                /**
+                 * The brand and theme the served artifact was generated for. A version that places a chart renders its SVG per scope: asking for another brand or theme generates and certifies for that scope (chartScoped true), so generatedFor equals the mounted scope; a version without a placed chart mounts the same artifact in every scope.
+                 */
+                generatedFor: {
+                  brand: 'A' | 'B';
+                  theme: 'light' | 'dark' | 'hc';
+                  chartScoped: boolean;
+                };
                 compiled: {
                   bytes: number;
                   sha256: string;
@@ -4019,6 +4043,10 @@ export namespace DesignPreviewOutputSchema {
           validation: ('react' | 'vue')[];
           charts: {
             placed: number;
+            /**
+             * brand/theme scopes the placed charts are certified for: the version's own first, then every scope a brand or theme switch generated (empty until the charts are certified).
+             */
+            scopes: string[];
             conformant: number;
             notConformant: number;
             uncertified: number;
@@ -9782,6 +9810,10 @@ export namespace VizRenderInputSchema {
        * When true, also return the intermediate NormalizedVizSpec IR alongside the compiled renderer spec (useful for debugging and round-trip).
        */
       includeNormalizedSpec?: boolean;
+      /**
+       * Where the chart's name is painted. chart (the default) paints it inside the SVG as today. figure records config.title.placement=figure on the normalized spec so the SVG carries no painted title and the figure that places the chart shows the name as its heading; the accessible name (spec.name) is unchanged and artifact.certify replays the same placement from the normalized spec. Placed charts in generated screens use figure (Sprint 202 m01).
+       */
+      titlePlacement?: 'chart' | 'figure';
       /**
        * When true, also return a STRUCTURED two-part text alternative (accessible data table + narrative summary) derived from the SAME data source the chart renders from — for every chart type, cartesian and non-cartesian alike (Forge-Demos FD#10). For a heatmap (MarkRect grid, where X and Y are both dimensions) the accessible narrative describes the COLOR-channel measure — its maxima/minima/total — when color is a real quantitative measure; when color is categorical or absent the narrative falls back to the Y measure (sprint-150). DEFAULT false keeps the wire byte-identical (only a11yDescription).
        */

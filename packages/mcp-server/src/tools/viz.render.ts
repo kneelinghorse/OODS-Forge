@@ -425,6 +425,9 @@ async function renderSpec(input: VizRenderInput, presentation?: PatternPresentat
     // The source presentation is applied to fresh builder IR and validated by
     // viz-core before adapters, a11y gates, hashes and certification observe it.
     const built = presentation ? { ...rawBuilt, spec: applyPatternPresentation(rawBuilt.spec, presentation) } : rawBuilt;
+    // A placed chart's name belongs to the figure heading: the IR records the placement so the SVG carries no
+    // painted title and artifact.certify, replaying the normalized spec, renders the same bytes.
+    if (input.output?.titlePlacement === 'figure') built.spec.config = { ...(built.spec.config ?? {}), title: { placement: 'figure' } };
 
     // Public heatmap defaults are explicit in the normalized IR so certify replays
     // the same sequential palette. Authored pattern presentation remains authoritative.
@@ -711,6 +714,8 @@ function renderEChartsPrimary(
 
   try {
     const spec = buildEChartsPrimarySpec(input, chartType, config);
+    // The placed-chart placement applies to the ECharts-primary families too: the figure heading names the chart.
+    if (input.output?.titlePlacement === 'figure') spec.config = { ...(spec.config ?? {}), title: { placement: 'figure' } };
 
     let option: ReturnType<typeof adaptTreemapToECharts>;
     let nodeCount: number;

@@ -12,7 +12,7 @@ Source: [packages/component-contracts/src/contracts.ts#VizAreaPreview](../../pac
 
 | Field | Declared names |
 | --- | --- |
-| `props` | `svg`, `title`, `description`, `width`, `height` |
+| `props` | `svg`, `svgNarrow`, `title`, `description`, `width`, `height` |
 | `slots` | `default` |
 | `events` | None declared |
 | `states` | `placeholder`, `content` |
@@ -23,6 +23,7 @@ Source: [packages/component-contracts/src/contracts.ts#VizAreaPreview](../../pac
 - The empty frame has a visible text placeholder
 - Authored default-slot content preserves its own semantics
 - Static SVG renders in a labelled figure with role img and preserves SVG IDs and ARIA
+- A title the SVG does not paint is the figure heading (figcaption), so a placed chart names itself outside its pixels
 
 Role: `none`.
 
@@ -34,7 +35,7 @@ Accessible name: `none` strategy targeting `:root`.
 
 ### Compatibility
 
-Mirrors renderVizAreaPreview through renderVizPreview with data-viz-preview-type=area and default dimensions 640x360; the placeholder appears only without authored content. With svg, renders a labelled figure preserving static SVG IDs and ARIA; without svg, the placeholder remains unchanged.
+Mirrors renderVizAreaPreview through renderVizPreview with data-viz-preview-type=area and default dimensions 640x360; the placeholder appears only without authored content. With svg, renders a labelled figure preserving static SVG IDs and ARIA; without svg, the placeholder remains unchanged. svgNarrow is the same chart at the narrow size: the figure shows it instead of svg when its own inline size is at most 600px (a container query), so axis text keeps its size on a phone column.
 
 ## Capability evidence
 

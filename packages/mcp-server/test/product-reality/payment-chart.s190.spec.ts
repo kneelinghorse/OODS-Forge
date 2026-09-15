@@ -36,8 +36,9 @@ describe('Subscription payment chart is an actual public render', () => {
     expect(chartNodes(schema.screens)).toHaveLength(1);
     const first = await generate({ schema, framework, profile: 'build', options: { theme: 'dark', brand: 'B' } });
     expect(first.status, JSON.stringify(first.errors)).toBe('ok');
-    expect(rendered).toHaveBeenCalledTimes(schema.workflow!.data.sampleCount);
-    const requests = rendered.mock.calls.map(([input]) => input);
+    // Every placed chart renders twice per record: the design size and the narrow size (Sprint 202 m01).
+    expect(rendered).toHaveBeenCalledTimes(schema.workflow!.data.sampleCount * 2);
+    const requests = rendered.mock.calls.map(([input]) => input).filter((_, index) => index % 2 === 0);
     // The s198 $99 price retains the recorded 0.8/1.1/0.9/1 payment series and minor-unit conversion.
     expect(requests[2]).toMatchObject({ chartType: 'area', name: 'Payment amounts', theme: 'dark', brand: 'B', rows: [{ date: '2026-06-01T12:00:00.000Z', amount: 79.2 }, { date: '2026-07-01T12:00:00.000Z', amount: 108.9 }, { date: '2026-08-01T12:00:00.000Z', amount: 89.1 }, { date: '2026-09-01T12:00:00.000Z', amount: 99 }] });
     for (const request of requests) {
@@ -46,7 +47,7 @@ describe('Subscription payment chart is an actual public render', () => {
     }
     const files = first.artifact!.files;
     const assets = files.filter(file => file.path.endsWith('.svg'));
-    expect(assets).toHaveLength(schema.workflow!.data.sampleCount);
+    expect(assets).toHaveLength(schema.workflow!.data.sampleCount * 2);
     const canvas = toHex(resolveTokenToColor('--sys-surface-canvas', { theme: 'dark', brand: 'B' })!);
     for (const asset of assets) {
       expect(asset.contentHash).toBe(`sha256:${sha256(asset.contents)}`);
@@ -72,9 +73,9 @@ describe('Subscription payment chart is an actual public render', () => {
     if (framework === 'html') { const charts = chartNodes(schema.screens); schema.screens = [charts[0]!, ...charts.slice(1)]; }
     const result = await generate({ schema, framework, profile: 'build' });
     expect(result.status, JSON.stringify(result.errors)).toBe('ok');
-    expect(rendered).toHaveBeenCalledTimes(1);
+    expect(rendered).toHaveBeenCalledTimes(2);
     const publicOutput = await rendered.mock.results[0]!.value;
-    const asset = result.artifact!.files.find(file => file.path.endsWith('.svg'))!;
+    const asset = result.artifact!.files.find(file => file.path.endsWith('.svg') && !file.path.endsWith('.narrow.svg'))!;
     expect(asset.contents).toBe(publicOutput.svg);
     if (framework === 'html') expect(result.code).toContain(asset.contents);
     else {

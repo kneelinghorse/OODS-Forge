@@ -98,6 +98,7 @@
               "appUrl",
               "moduleUrl",
               "artifactContentHash",
+              "generatedFor",
               "compiled"
             ],
             "additionalProperties": false,
@@ -127,6 +128,17 @@
               "artifactContentHash": {
                 "type": "string",
                 "pattern": "^sha256:[a-f0-9]{64}$"
+              },
+              "generatedFor": {
+                "type": "object",
+                "required": ["brand", "theme", "chartScoped"],
+                "additionalProperties": false,
+                "description": "The brand and theme the served artifact was generated for. A version that places a chart renders its SVG per scope: asking for another brand or theme generates and certifies for that scope (chartScoped true), so generatedFor equals the mounted scope; a version without a placed chart mounts the same artifact in every scope.",
+                "properties": {
+                  "brand": { "type": "string", "enum": ["A", "B"] },
+                  "theme": { "type": "string", "enum": ["light", "dark", "hc"] },
+                  "chartScoped": { "type": "boolean" }
+                }
               },
               "compiled": {
                 "type": "object",
@@ -223,12 +235,18 @@
                 "placed",
                 "conformant",
                 "notConformant",
-                "uncertified"
+                "uncertified",
+                "scopes"
               ],
               "additionalProperties": false,
               "properties": {
                 "placed": {
                   "type": "integer"
+                },
+                "scopes": {
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "description": "brand/theme scopes the placed charts are certified for: the version's own first, then every scope a brand or theme switch generated (empty until the charts are certified)."
                 },
                 "conformant": {
                   "type": "integer"

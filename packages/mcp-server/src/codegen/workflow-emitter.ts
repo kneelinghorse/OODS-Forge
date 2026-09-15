@@ -33,6 +33,8 @@ export function emitWorkflow(schema: UiSchema, options: CodegenOptions, framewor
     const states = schema.workflow!.data.lifecycleStates;
     if (node.component === 'StatusSelector' && node.props?.optionsParameter === 'states' && node.props.options === undefined && !schema.objectSchema![String(node.props.field)]?.enum?.length) node.props.options = states;
     if (node.collectionControl === 'filter' && schema.objectSchema!.status && Array.isArray(node.props?.options) && node.props.options.length === 1 && states.length) node.props.options = [{ value: '', label: 'All states' }, ...states.map(value => ({ value, label: enumOptionLabel(value) }))];
+    // The app's header names the record; a screen's own level-one record title becomes level two inside it.
+    if (node.component === 'DetailHeader' && node.props?.headingLevel === 1) node.props = { ...node.props, headingLevel: 2 };
     if (context === 'list' && node.component === 'ArchivedRowOverlay') archiveOverlay = node;
     if (context === 'form' && node.component === 'CancellationForm') cancellationForm = node;
     const field = node.props?.field

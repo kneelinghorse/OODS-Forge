@@ -19,7 +19,8 @@ export interface AxeResult {
 }
 
 type Validation = { profile?: string; checks?: Array<{ name?: string; status?: string } | string>; notChecked?: string[]; axes?: unknown };
-type Chart = { path: string; chartType: string; name: string; theme: string; brand: string; certification: { status: string; coverage: string | null; conformant: boolean | null; pillars: Record<string, { status?: string } | string | boolean> | null; findings: unknown[] } };
+type Certification = { status: string; coverage: string | null; conformant: boolean | null; pillars: Record<string, { status?: string } | string | boolean> | null; findings: unknown[] };
+type Chart = { path: string; chartType: string; name: string; theme: string; brand: string; certification: Certification; narrow?: { path: string; certification: Certification } };
 
 const checkName = (check: { name?: string } | string) => typeof check === 'string' ? check : check.name ?? '?';
 
@@ -65,13 +66,23 @@ export function renderMeasurementPanel(record: CompositionVersion): string {
   });
   sections.push(`<h4>Generation receipt (code.generate)</h4><ul>${validationRows.join('') || '<li data-oods-not-measured="validation">No framework generated yet (not run).</li>'}</ul>`);
 
+  const verdictOf = (certification: Certification) => certification.conformant === true ? 'conformant' : certification.conformant === false ? 'not conformant' : 'not on the certified path (conformant null)';
+  const chartRow = (chart: Chart, scope?: string) => {
+    const pillars = chart.certification.pillars ? Object.entries(chart.certification.pillars).map(([pillar, value]) => `${escapeHtml(pillar)}=${escapeHtml(typeof value === 'object' && value ? String(value.status ?? JSON.stringify(value)) : String(value))}`).join(' ') : 'no pillars';
+    const narrow = chart.narrow ? ` · narrow render <code>${escapeHtml(chart.narrow.path)}</code> <strong>${verdictOf(chart.narrow.certification)}</strong> (${chart.narrow.certification.findings.length} findings)` : '';
+    return `<li data-oods-measured="chart:${escapeHtml(chart.path)}${scope ? `@${escapeHtml(scope)}` : ''}"><code>${escapeHtml(chart.path)}</code> · ${escapeHtml(chart.chartType)} · ${escapeHtml(chart.brand)}/${escapeHtml(chart.theme)} · <strong>${verdictOf(chart.certification)}</strong> · coverage ${escapeHtml(String(chart.certification.coverage ?? 'null'))} · ${pillars} · ${chart.certification.findings.length} findings${narrow}.</li>`;
+  };
   if (charts === undefined) sections.push('<h4>Placed charts (artifact.certify)</h4><ul><li data-oods-not-measured="charts">Placed charts not certified (not run).</li></ul>');
   else if (charts.length === 0) sections.push('<h4>Placed charts (artifact.certify)</h4><ul><li data-oods-measured="charts:none">No chart is placed on this version; nothing to certify.</li></ul>');
-  else sections.push(`<h4>Placed charts (artifact.certify) <span class="count">${charts.length}</span></h4><ul>${charts.map(chart => {
-    const pillars = chart.certification.pillars ? Object.entries(chart.certification.pillars).map(([pillar, value]) => `${escapeHtml(pillar)}=${escapeHtml(typeof value === 'object' && value ? String(value.status ?? JSON.stringify(value)) : String(value))}`).join(' ') : 'no pillars';
-    const verdict = chart.certification.conformant === true ? 'conformant' : chart.certification.conformant === false ? 'not conformant' : 'not on the certified path (conformant null)';
-    return `<li data-oods-measured="chart:${escapeHtml(chart.path)}"><code>${escapeHtml(chart.path)}</code> · ${escapeHtml(chart.chartType)} · ${escapeHtml(chart.brand)}/${escapeHtml(chart.theme)} · <strong>${verdict}</strong> · coverage ${escapeHtml(String(chart.certification.coverage ?? 'null'))} · ${pillars} · ${chart.certification.findings.length} findings.</li>`;
-  }).join('')}</ul>`);
+  else {
+    sections.push(`<h4>Placed charts (artifact.certify) <span class="count">${charts.length}</span></h4><ul>${charts.map(chart => chartRow(chart)).join('')}</ul>`);
+    // A brand or theme switch renders and certifies the placed charts for that scope; each stored scope is listed as measured.
+    for (const [scope, generation] of Object.entries(record.scopes ?? {})) {
+      const scoped = generation?.charts as Chart[] | undefined;
+      if (!scoped?.length) continue;
+      sections.push(`<h4>Placed charts rendered for ${escapeHtml(scope)} (artifact.certify, on a brand or theme switch) <span class="count">${scoped.length}</span></h4><ul data-oods-chart-scope="${escapeHtml(scope)}">${scoped.map(chart => chartRow(chart, scope)).join('')}</ul>`);
+    }
+  }
 
   const axeRows: string[] = [];
   for (const framework of frameworks) for (const scope of SCOPES) {

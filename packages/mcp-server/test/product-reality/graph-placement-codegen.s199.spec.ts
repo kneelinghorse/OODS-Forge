@@ -86,12 +86,14 @@ describe('Relationship graph at the public generated-app boundary', () => {
       const request = wire<CodeGenerateInput>('code.generate', 'input', { schema: composition.schema, framework, profile: 'build', options: { theme: 'hc', brand: 'B' } });
       const result = wire('code.generate', 'output', await generate(request));
       expect(result.status, JSON.stringify(result.errors)).toBe('ok');
-      expect(rendered).toHaveBeenCalledTimes(records.length);
-      const assets = result.artifact!.files.filter(file => file.path.endsWith('.svg'));
+      // Every placed chart renders twice: the design size and the narrow size (Sprint 202 m01); the public asset is the design-size one.
+      expect(rendered).toHaveBeenCalledTimes(records.length * 2);
+      expect(result.artifact!.files.filter(file => file.path.endsWith('.narrow.svg'))).toHaveLength(records.length);
+      const assets = result.artifact!.files.filter(file => file.path.endsWith('.svg') && !file.path.endsWith('.narrow.svg'));
       expect(assets).toHaveLength(records.length);
       for (const [index, record] of records.entries()) {
-        const input = rendered.mock.calls[index]![0];
-        const output = await rendered.mock.results[index]!.value;
+        const input = rendered.mock.calls[index * 2]![0];
+        const output = await rendered.mock.results[index * 2]!.value;
         expect(input.network).toEqual(edgeArrayToNetwork(record.neighborhood, chart.edges));
         expect(input).toMatchObject({ chartType: 'force_graph', theme: 'hc', brand: 'B', name: node.props!.title });
         expect(input).not.toHaveProperty('rows');
@@ -107,7 +109,7 @@ describe('Relationship graph at the public generated-app boundary', () => {
       const checked = typecheckWorkflow(context === 'workflow' ? result.artifact! : { ...result.artifact!, files: [...result.artifact!.files, { path: 'tsconfig.json', contents: config, contentHash: `sha256:${sha256(config)}` }] });
       expect(checked.status, checked.stdout + checked.stderr).toBe(0);
       expect((await generate(request)).artifact).toEqual(result.artifact);
-      retain(`${context}-${framework}`, { composition, request, result, records, renderRequests: rendered.mock.calls.slice(0, records.length).map(call => call[0]), checked });
+      retain(`${context}-${framework}`, { composition, request, result, records, renderRequests: rendered.mock.calls.slice(0, records.length * 2).filter((_, index) => index % 2 === 0).map(call => call[0]), checked });
     });
   }
 });

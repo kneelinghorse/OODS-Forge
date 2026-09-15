@@ -88,9 +88,12 @@ describe('HC scope at the public wire (s195-m05)', () => {
     const result = wire('code.generate', 'output', await generate(request));
     expect(result.status, JSON.stringify(result.errors)).toBe('ok');
     const assets = result.artifact!.files.filter(file => file.path.endsWith('.svg'));
-    expect(assets).toHaveLength(1);
-    expect(assets[0]!.contents).toContain('CanvasText');
-    expect(assets[0]!.contents).toContain(tokens.cssVariablesByScope.A.hc['--oods-viz-scale-categorical-01']);
+    // The design-size render and its narrow render (Sprint 202 m01), both on the HC paints.
+    expect(assets.map(asset => asset.path).sort()).toEqual(['src/charts/payment-001.narrow.svg', 'src/charts/payment-001.svg']);
+    for (const asset of assets) {
+      expect(asset.contents).toContain('CanvasText');
+      expect(asset.contents).toContain(tokens.cssVariablesByScope.A.hc['--oods-viz-scale-categorical-01']);
+    }
     retain(`codegen-${framework}`, { request, result });
   });
 

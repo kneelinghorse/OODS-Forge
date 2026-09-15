@@ -8,6 +8,7 @@ import { resolveOodsVegaConfig } from '../tokens/oods-vega-config.js';
 import { getVizScaleTokens } from '../tokens/scale-token-mapper.js';
 import { resolveTokenToColor, type TokenScope } from './echarts/token-resolver.js';
 import { buildVegaLiteSpec } from './vega-lite-layout-mapper.js';
+import { paintedTitle } from '../spec/title-placement.js';
 
 const VEGA_LITE_SCHEMA_URL = 'https://vega.github.io/schema/vega-lite/v6.json';
 const CHANNEL_ORDER = ['x', 'x2', 'y', 'y2', 'color', 'size', 'shape', 'detail'] as const;
@@ -146,7 +147,7 @@ export function toVegaLiteSpec(spec: NormalizedVizSpec, scope: TokenScope = {}):
 
   const baseSpec = removeUndefined({
     $schema: VEGA_LITE_SCHEMA_URL,
-    title: spec.name,
+    title: paintedTitle(spec),
     description: spec.a11y.description,
     data,
     // Item #16 (s151 m03): thread the named-datasets map onto Vega-Lite's NATIVE top-level

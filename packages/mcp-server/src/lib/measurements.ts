@@ -14,9 +14,12 @@ export interface PlacedChartCertification {
   brand: string;
   contentHash: string;
   svgHash: string;
-  certification: { status: string; coverage: string | null; conformant: boolean | null; pillars: unknown; findings: unknown[]; determinism: unknown; accuracySummary: unknown; notes: unknown[]; contrastNote: string | null };
+  certification: ChartCertification;
+  /** The same chart certified at the narrow size the figure shows below the breakpoint (Sprint 202 m01). */
+  narrow: { path: string; contentHash: string; svgHash: string; certification: ChartCertification };
   certifiedAt: string;
 }
+export interface ChartCertification { status: string; coverage: string | null; conformant: boolean | null; pillars: unknown; findings: unknown[]; determinism: unknown; accuracySummary: unknown; notes: unknown[]; contrastNote: string | null }
 
 /**
  * Certify every placed chart of a schema: re-render each generation request with its normalized
@@ -25,16 +28,22 @@ export interface PlacedChartCertification {
  */
 export async function certifyPlacedCharts(schema: UiSchema, options: Pick<CodegenOptions, 'theme' | 'brand'> = {}): Promise<PlacedChartCertification[]> {
   const results: PlacedChartCertification[] = [];
-  for (const placed of placedChartRequests(schema, options)) {
-    const request: VizRenderInput = { ...placed.request, output: { ...placed.request.output, svg: true, includeNormalizedSpec: true } };
+  const certifyRender = async (path: string, input: VizRenderInput) => {
+    const request: VizRenderInput = { ...input, output: { ...input.output, svg: true, includeNormalizedSpec: true } };
     const rendered = await render(request);
-    if (rendered.status !== 'ok' || !rendered.normalizedSpec) throw new Error(`Placed chart render failed for ${placed.path}: ${JSON.stringify(rendered.errors)}`);
-    const data = 'network' in placed.request && placed.request.network ? { network: placed.request.network } : undefined;
+    if (rendered.status !== 'ok' || !rendered.normalizedSpec) throw new Error(`Placed chart render failed for ${path}: ${JSON.stringify(rendered.errors)}`);
+    const data = 'network' in input && input.network ? { network: input.network } : undefined;
     const certified = await certify({ spec: rendered.normalizedSpec as never, theme: request.theme as never, brand: request.brand as never, ...(data ? { data: data as never } : {}) });
+    const certification: ChartCertification = { status: String(certified.status), coverage: (certified.coverage as string | undefined) ?? null, conformant: (certified.conformant as boolean | null | undefined) ?? null, pillars: certified.pillars ?? null, findings: (certified.findings as unknown[] | undefined) ?? [], determinism: certified.determinism ?? null, accuracySummary: certified.accuracySummary ?? null, notes: (certified.notes as unknown[] | undefined) ?? [], contrastNote: (certified.contrastNote as string | undefined) ?? null };
+    return { request, contentHash: String(rendered.contentHash ?? ''), svgHash: String(rendered.svgHash ?? ''), certification };
+  };
+  for (const placed of placedChartRequests(schema, options)) {
+    const wide = await certifyRender(placed.path, placed.request);
+    const narrow = await certifyRender(placed.narrow.path, placed.narrow.request);
     results.push({
-      path: placed.path, chartType: String(request.chartType), source: placed.source, name: String(request.name ?? ''), theme: String(request.theme), brand: String(request.brand),
-      contentHash: String(rendered.contentHash ?? ''), svgHash: String(rendered.svgHash ?? ''),
-      certification: { status: String(certified.status), coverage: (certified.coverage as string | undefined) ?? null, conformant: (certified.conformant as boolean | null | undefined) ?? null, pillars: certified.pillars ?? null, findings: (certified.findings as unknown[] | undefined) ?? [], determinism: certified.determinism ?? null, accuracySummary: certified.accuracySummary ?? null, notes: (certified.notes as unknown[] | undefined) ?? [], contrastNote: (certified.contrastNote as string | undefined) ?? null },
+      path: placed.path, chartType: String(wide.request.chartType), source: placed.source, name: String(wide.request.name ?? ''), theme: String(wide.request.theme), brand: String(wide.request.brand),
+      contentHash: wide.contentHash, svgHash: wide.svgHash, certification: wide.certification,
+      narrow: { path: placed.narrow.path, contentHash: narrow.contentHash, svgHash: narrow.svgHash, certification: narrow.certification },
       certifiedAt: new Date().toISOString(),
     });
   }
