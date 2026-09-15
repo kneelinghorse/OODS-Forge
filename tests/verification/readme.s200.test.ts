@@ -86,6 +86,9 @@ describe('s200-m05 README for a newcomer', () => {
     expect(readme).toContain('a restarted client starts a new one that does not know earlier refs (`OODS-N003`)');
     expect(run).toContain('OODS-N019');
     expect(run).toContain('[FEEDBACK.md](FEEDBACK.md)');
+    // Run 3 (#115): the overrides example names the slot that carries the hint on the sample call and one of its candidates.
+    expect(readme).toContain('{"componentOverrides": {"metadata": "TagSummary"}}');
+    expect(readme).not.toContain('{"header": "DetailHeader"}');
   });
 
   it('keeps LICENSING, the feedback path, the clone path and the deep explanation, and never calls Forge open source', () => {

@@ -1,0 +1,243 @@
+<h1 dir="auto">OODS Forge</h1>
+
+<p dir="auto">OODS Forge is a design-system engine that an AI assistant drives over MCP. You name a screen by its object and its context; Forge composes the screen from governed components and tokens, generates it as React, Vue or HTML, renders charts and dashboards from your data, and certifies what it produced against accuracy, accessibility, contrast and determinism rules. It ships as a runtime bundle you extract and connect to Claude Desktop, Claude Code or Cursor.</p>
+<p dir="auto">Today it knows 18 objects, 46 traits and 110 governed components, renders 13 chart types under a taxonomy of 23 named patterns, and advertises 19 tools by default (24 in all).</p>
+
+<h2 dir="auto">Three words</h2>
+
+<ul dir="auto">
+<li><strong>Object</strong>: a thing your product has, described once with its fields and behaviours. <code class="notranslate">Subscription</code> is an object: a plan, a status, a billing interval and a payment history. Forge ships 18 objects, each defined in YAML; you add your own the same way.</li>
+<li><strong>Trait</strong>: a capability an object composes in, bringing its fields, states and screen contributions with it. <code class="notranslate">Subscription</code> composes <code class="notranslate">Stateful</code> (a status with allowed transitions) and <code class="notranslate">Billable</code>; <code class="notranslate">User</code> and <code class="notranslate">Organization</code> compose <code class="notranslate">Addressable</code>. There are 46 traits, 21 of them chart traits.</li>
+<li><strong>Context</strong>: the kind of screen an object is shown in. The same <code class="notranslate">Subscription</code> produces a different but consistent screen for each of detail, list, form, timeline, card, inline, workflow; a trait's view extension says what it contributes to which context.</li>
+</ul>
+
+<h2 dir="auto">What Forge generates, and what "certify" means</h2>
+
+<p dir="auto">Forge generates React, Vue and HTML screens and whole workflow applications from composed screens, with every component drawn from the 110 governed components and every colour, space and type value from the token system. Two brands ship today, each with light, dark and high-contrast themes. It renders 13 chart types from your data (bar, line, area, scatter, heatmap from tabular rows; treemap, sunburst, sankey, chord, force graph, choropleth, bubble map, flow map from node, link and geometry inputs) and composes dashboards of KPI tiles, trend, breakdown and map panels over 11 admitted chart types, as tokened SVG and specs.</p>
+<p dir="auto">"Certify" is a measurement, not a promise. <code class="notranslate">artifact.certify</code> takes a chart specification Forge rendered and runs its four pillars on it: accuracy (16 structural-distortion rules about baselines, hidden aggregation, mis-scaled encodings and inconsistent structure; a chart is graded on the ones that apply to its type, and the result names them), accessibility equivalence (the narrative and the data table say what the chart says), contrast (the drawn paints against the tokens) and determinism (two independent renders hash the same). Each pillar reports pass or fail with findings, and <code class="notranslate">coverage</code> says whether the chart type is on the certified path. Generated screens carry a <code class="notranslate">validationReceipt</code> from <code class="notranslate">code.generate</code> naming the checks that ran (schema structure, component registry, state contract, target readiness, dependency closure and more) and, under <code class="notranslate">notChecked</code>, the ones that did not. No receipt claims a check it did not run.</p>
+
+<h2 dir="auto">Four capability pillars</h2>
+<p dir="auto">Every claim Forge makes about its output sits on one of four pillars, and each is reported per call rather than promised in general.</p>
+<h3 dir="auto">1) Accuracy</h3>
+<ul dir="auto">
+<li><code class="notranslate">artifact.certify</code> runs the structural-distortion rules on a chart specification and reports which rules were evaluated and which failed.</li>
+</ul>
+<h3 dir="auto">2) Fidelity</h3>
+<ul dir="auto">
+<li><code class="notranslate">viz.render</code>, <code class="notranslate">dashboard.render</code> and generated screens use the governed tokens and components; <code class="notranslate">fidelity.preview</code> shows an object at four fidelities from boxes to branded mockup; <code class="notranslate">tokens.build</code> and <code class="notranslate">brand.apply</code> keep output tied to brand inputs.</li>
+</ul>
+<h3 dir="auto">3) Contract-determinism</h3>
+<ul dir="auto">
+<li>Rendered charts, dashboards and generated file-sets carry canonical content hashes; the same inputs give the same bytes, and <code class="notranslate">artifact.certify</code> checks that two independent renders agree.</li>
+</ul>
+<h3 dir="auto">4) Accessibility-by-construction</h3>
+<ul dir="auto">
+<li><code class="notranslate">viz.render</code> synthesizes a narrative and a data table from the same rows it draws; <code class="notranslate">artifact.certify</code> checks that they say what the chart says; <code class="notranslate">repl</code> (<code class="notranslate">action: validate</code>) and the on-demand <code class="notranslate">a11y.scan</code> cover screen contracts and token contrast.</li>
+</ul>
+<h2 dir="auto">The first run, in ten minutes</h2>
+<p dir="auto">You need Node.js 20.11.1 or newer and one of Claude Desktop, Claude Code or Cursor. The steps are the release's install page, <a href="docs/runtime/install.md">docs/runtime/install.md</a>, plus a handful of tool calls your assistant makes for you. Nothing is installed from npm. One rule shapes the run: a <code class="notranslate">schemaRef</code> lives in the server your client started, for 30 minutes and for that conversation, so make steps 3, 5 and 6 in one conversation.</p>
+<ol dir="auto">
+<li><strong>Download and verify.</strong> From the <a href="https://github.com/kneelinghorse/OODS-Forge/releases">release page</a> take <code class="notranslate">forge-runtime.tar.gz</code> and <code class="notranslate">forge-runtime.tar.gz.sha256</code>, check the digest and extract:
+<div class="highlight highlight-source-shell" dir="auto"><pre class="notranslate">shasum -a 256 -c forge-runtime.tar.gz.sha256      <span class="pl-c"><span class="pl-c">#</span> sha256sum --check on Linux</span>
+mkdir -p <span class="pl-k">~</span>/forge-runtime <span class="pl-k">&amp;&amp;</span> tar -xzf forge-runtime.tar.gz -C <span class="pl-k">~</span>/forge-runtime</pre></div>
+</li>
+<li><strong>Install into your client.</strong> Claude Code, from any project directory, with the absolute path of the directory you extracted into:
+<div class="highlight highlight-source-shell" dir="auto"><pre class="notranslate">claude mcp add forge -- node /path/to/forge-runtime/packages/mcp-adapter/index.js
+claude mcp get forge          <span class="pl-c"><span class="pl-c">#</span> Status: ✓ Connected</span></pre></div>
+Claude Desktop and Cursor take the same command in a JSON block; install.md has both. Ask the assistant to run <code class="notranslate">health</code>: it answers <code class="notranslate">status: "ok"</code> with the registry counts (objects, traits, components), <code class="notranslate">server.uptime</code> in milliseconds and, under <code class="notranslate">productReality.tools</code>, the tool ledger by evidence tier; the tools your client lists are the default surface, which <code class="notranslate">health</code> does not count.</li>
+<li><strong>Compose one screen.</strong> Ask for <code class="notranslate">design.compose</code> with <code class="notranslate">{"object": "Subscription", "context": "detail"}</code>. The answer has <code class="notranslate">status: "ok"</code>, <code class="notranslate">layout: "detail"</code>, a <code class="notranslate">schemaRef</code> such as <code class="notranslate">compose-dae744a8</code> (the rule above; <code class="notranslate">schema.save</code> keeps a ref across sessions), <code class="notranslate">objectUsed</code> (the object, its version, the traits and the fields it composed) and <code class="notranslate">selections</code>: one entry per slot naming the component chosen, its confidence and the reason, for example <code class="notranslate">CycleProgressCard</code> for <code class="notranslate">tab-0</code> at <code class="notranslate">0.95</code>. <code class="notranslate">warnings</code> are normal on this call: the shipped <code class="notranslate">Subscription</code> is beta, some of its fields override trait defaults, and one contribution has no slot in the detail layout; a low-confidence slot carries a <code class="notranslate">reviewHint</code> (see Overrides below).</li>
+<li><strong>Certify a chart.</strong> Certification runs on chart specifications. The screen's own chart (<code class="notranslate">src/charts/payment-001.svg</code> in step 5) is rendered inside code generation, so this step makes a small chart of its own with <code class="notranslate">viz.render</code> and certifies that. Ask for <code class="notranslate">viz.render</code> with
+<div class="highlight highlight-source-json" dir="auto"><pre class="notranslate">{<span class="pl-ent">"chartType"</span>: <span class="pl-s"><span class="pl-pds">"</span>bar<span class="pl-pds">"</span></span>, <span class="pl-ent">"rows"</span>: [{<span class="pl-ent">"status"</span>: <span class="pl-s"><span class="pl-pds">"</span>active<span class="pl-pds">"</span></span>, <span class="pl-ent">"count"</span>: <span class="pl-c1">17</span>}, {<span class="pl-ent">"status"</span>: <span class="pl-s"><span class="pl-pds">"</span>draft<span class="pl-pds">"</span></span>, <span class="pl-ent">"count"</span>: <span class="pl-c1">5</span>}, {<span class="pl-ent">"status"</span>: <span class="pl-s"><span class="pl-pds">"</span>archived<span class="pl-pds">"</span></span>, <span class="pl-ent">"count"</span>: <span class="pl-c1">3</span>}],
+ <span class="pl-ent">"encodings"</span>: {<span class="pl-ent">"x"</span>: {<span class="pl-ent">"field"</span>: <span class="pl-s"><span class="pl-pds">"</span>status<span class="pl-pds">"</span></span>, <span class="pl-ent">"type"</span>: <span class="pl-s"><span class="pl-pds">"</span>nominal<span class="pl-pds">"</span></span>}, <span class="pl-ent">"y"</span>: {<span class="pl-ent">"field"</span>: <span class="pl-s"><span class="pl-pds">"</span>count<span class="pl-pds">"</span></span>, <span class="pl-ent">"type"</span>: <span class="pl-s"><span class="pl-pds">"</span>quantitative<span class="pl-pds">"</span></span>, <span class="pl-ent">"aggregate"</span>: <span class="pl-s"><span class="pl-pds">"</span>sum<span class="pl-pds">"</span></span>}},
+ <span class="pl-ent">"output"</span>: {<span class="pl-ent">"includeNormalizedSpec"</span>: <span class="pl-c1">true</span>, <span class="pl-ent">"includeA11y"</span>: <span class="pl-c1">true</span>}}</pre></div>
+It returns the spec, a <code class="notranslate">contentHash</code>, an <code class="notranslate">a11y</code> narrative and table, and <code class="notranslate">normalizedSpec</code>. Then <code class="notranslate">artifact.certify</code> with <code class="notranslate">{"spec": &lt;that normalizedSpec&gt;}</code> returns <code class="notranslate">coverage: "certified"</code>, <code class="notranslate">conformant: true</code> and <code class="notranslate">pillars: {"a11yEquivalence": "pass", "determinism": "pass", "contrast": "pass", "accuracy": "pass"}</code>, with <code class="notranslate">findings</code> for anything that failed and <code class="notranslate">accuracyRules</code> naming the rules that applied to this chart (four of the set apply to a plain bar chart).</li>
+<li><strong>Generate the app.</strong> <code class="notranslate">code.generate</code> with <code class="notranslate">{"schemaRef": "&lt;from step 3&gt;", "framework": "react", "profile": "build"}</code> returns <code class="notranslate">artifact.files</code> (<code class="notranslate">src/GeneratedUI.tsx</code> and the screen's chart, <code class="notranslate">src/charts/payment-001.svg</code>), <code class="notranslate">artifact.contentHash</code> (<code class="notranslate">sha256:…</code>; the same inputs give the same hash), <code class="notranslate">artifact.dependencies</code> with exact versions, and a <code class="notranslate">validationReceipt</code> listing the checks that ran and, under <code class="notranslate">notChecked</code>, the ones that did not. <code class="notranslate">"framework": "vue"</code> gives the Vue file-set.</li>
+<li><strong>Look at it.</strong> <code class="notranslate">repl</code> with <code class="notranslate">{"action": "render", "schemaRef": "&lt;from step 3&gt;", "apply": true, "output": {"compact": false}}</code> returns <code class="notranslate">html</code>: a complete document with the token CSS inline, titled <code class="notranslate">OODS Preview</code>, showing the composed screen's structure (its header, tabs, summaries and timelines) with placeholder values where live data would go. Ask the assistant to save it as <code class="notranslate">subscription-detail.html</code> and open it in your browser. To run the generated component in an app instead, create a Vite React project, pack the four packages from the bundle, install the tarballs, copy the artifact's files into <code class="notranslate">src/</code>, and mount <code class="notranslate">GeneratedUI</code> with the object's fields and its four action handlers as props:
+<div class="highlight highlight-source-shell" dir="auto"><pre class="notranslate">npm pack --ignore-scripts <span class="pl-k">~</span>/forge-runtime/packages/tokens <span class="pl-k">~</span>/forge-runtime/packages/component-contracts <span class="pl-k">~</span>/forge-runtime/packages/component-styles <span class="pl-k">~</span>/forge-runtime/packages/components-react
+npm install ./oods-<span class="pl-k">*</span>.tgz</pre></div>
+</li>
+</ol>
+<p dir="auto">Two of these calls return large results: <code class="notranslate">code.generate</code> (the whole file-set) and the rendered document. If your client saves a large result to a file and asks to read it, allow it; a reply written without seeing the result is a guess.</p>
+
+<p dir="auto">The default surface is 19 tools; <code class="notranslate">MCP_TOOLSET=all</code> advertises all 24. <code class="notranslate">health</code> reports the tool ledger's 24 entries by evidence tier, not the surface your client lists.</p>
+
+<p dir="auto"><code class="notranslate">design.preview</code>, the live preview server, is not available from the bundle yet and returns <code class="notranslate">OODS-N019</code>; the rendered document in step 6 is the way to see a screen today. When a step took longer than it should, or read wrong, say so: <a href="FEEDBACK.md">FEEDBACK.md</a>.</p>
+<h2 dir="auto">LICENSING</h2>
+
+<p dir="auto">Copyright (c) 2026 Derek Niedringhaus (<a href="https://derekn.com" rel="nofollow">https://derekn.com</a>). OODS Forge is licensed under the PolyForm Noncommercial License 1.0.0 (SPDX <code class="notranslate">PolyForm-Noncommercial-1.0.0</code>), the text in <a href="LICENSE">LICENSE</a>. Commercial licensing: <a href="COMMERCIAL.md">COMMERCIAL.md</a> or <a href="mailto:derek@derekn.com">derek@derekn.com</a>.</p>
+
+<p dir="auto">In plain words:</p>
+<ul dir="auto">
+<li>Individuals, students, hobbyists, researchers, nonprofits and government bodies may use, study, modify and share Forge for any noncommercial purpose, forks and patches included.</li>
+<li>Any commercial purpose needs a commercial license from Derek. That includes use inside a company, evaluation by a company, products or services built on Forge, and work delivered to a paying client. <a href="COMMERCIAL.md">COMMERCIAL.md</a> says how, and <a href="docs/LICENSE-FAQ.md">docs/LICENSE-FAQ.md</a> covers the fuzzy edges.</li>
+<li>The license is source-available and noncommercial. It is not an OSI-approved license and it never converts to one; GitHub's license detector therefore shows "Other".</li>
+<li>Contributions are welcome under the inbound grant in <a href="CONTRIBUTING.md">CONTRIBUTING.md</a>. There is no CLA.</li>
+</ul>
+<p dir="auto"><strong>The OODS-Foundry snapshot.</strong> The public OODS-Foundry repository's manifest declared MIT with no LICENSE file. Anyone who fetched those commits keeps that grant to that snapshot. Nothing in OODS-Forge from this commit on is MIT.</p>
+<h2 dir="auto">Feedback</h2>
+<p dir="auto">Forge is released to individuals so it can be proven out. A screen that reads wrong, a certification result you disagree with, install friction and how long it took, a chart that says the wrong thing, a sentence that did not make sense: <a href="FEEDBACK.md">FEEDBACK.md</a> says what to include, and the issue templates (<a href="https://github.com/kneelinghorse/OODS-Forge/issues/new?template=bug-report.yml">bug report</a>, <a href="https://github.com/kneelinghorse/OODS-Forge/issues/new?template=did-not-read-right.yml">this did not read right</a>) take it from there.</p>
+<h2 dir="auto">Contributing</h2>
+<p dir="auto">The release is the user path; cloning is the contributor path. Clone, install and build, then connect a client to the clone with <a href="docs/mcp/Connections.md">docs/mcp/Connections.md</a>:</p>
+<div class="highlight highlight-source-shell" dir="auto"><pre class="notranslate">git clone https://github.com/kneelinghorse/OODS-Forge.git <span class="pl-k">&amp;&amp;</span> <span class="pl-c1">cd</span> OODS-Forge
+pnpm install --frozen-lockfile
+pnpm run build:tokens <span class="pl-k">&amp;&amp;</span> pnpm run build:packages
+pnpm --filter @oods/mcp-server run build</pre></div>
+<p dir="auto"><a href="CONTRIBUTING.md">CONTRIBUTING.md</a> has the workflow, the local gates and the inbound license grant. <code class="notranslate">agents.md</code> is the charter for agents working in the repository.</p>
+<h2 dir="auto">Working with the tools</h2>
+
+<ul dir="auto">
+<li><code class="notranslate">schemaRef</code> TTL: refs returned by <code class="notranslate">design.compose</code>, <code class="notranslate">design.preview</code>, <code class="notranslate">pipeline</code>, and <code class="notranslate">schema.load</code> last 30 minutes inside the server process that issued them; a client keeps that process for one conversation, and a restarted client starts a new one that does not know earlier refs (<code class="notranslate">OODS-N003</code>). Persist them with <code class="notranslate">schema.save</code> when the workflow spans sessions or multiple review loops.</li>
+</ul>
+
+<ul dir="auto">
+<li><code class="notranslate">apply</code>: write-capable tools default to dry-run or preview behaviour. Set <code class="notranslate">apply: true</code> only when you want artifacts written or heavy outputs returned; <code class="notranslate">repl</code> (<code class="notranslate">action: render</code>) returns HTML only with <code class="notranslate">apply: true</code>.</li>
+<li><code class="notranslate">compact</code>: <code class="notranslate">pipeline</code> and <code class="notranslate">repl</code> (<code class="notranslate">action: render</code>) omit the token CSS by default and point at <code class="notranslate">tokens.build</code> instead. Pass <code class="notranslate">output.compact: false</code> for a self-contained document.</li>
+<li>Trait names: <code class="notranslate">catalog.list</code> and <code class="notranslate">map</code> use canonical trait names such as <code class="notranslate">Stateful</code> or <code class="notranslate">Priceable</code>. <code class="notranslate">object</code> (<code class="notranslate">action: list</code>) accepts full or suffix-matched namespaced names such as <code class="notranslate">lifecycle/Stateful</code> or <code class="notranslate">Stateful</code>.</li>
+<li>Overrides: when <code class="notranslate">design.compose</code> reports a low-confidence selection or a <code class="notranslate">reviewHint</code> (on the first run's sample call that is the <code class="notranslate">metadata</code> slot, at 0.40), pin only that slot to one of its listed candidates with <code class="notranslate">preferences.componentOverrides</code>, for example <code class="notranslate">{"object": "Subscription", "context": "detail", "preferences": {"componentOverrides": {"metadata": "TagSummary"}}}</code>; a pinned slot comes back at confidence 1.0 with the reason "explicitly pinned".</li>
+<li>Project defaults: a <code class="notranslate">.oodsrc</code> JSON file in your project root sets defaults for <code class="notranslate">pipeline</code>, <code class="notranslate">design.compose</code> and <code class="notranslate">code.generate</code> (<code class="notranslate">{ "framework": "vue", "styling": "tailwind", "typescript": false }</code>); explicit parameters win, and a missing or invalid file is ignored.</li>
+</ul>
+<p dir="auto">Full contracts: <a href="docs/mcp/Tool-Specs.md">docs/mcp/Tool-Specs.md</a> and <a href="docs/api/README.md">docs/api/README.md</a>.</p>
+
+<h2 dir="auto">MCP tool surface (24 tools)</h2>
+<p dir="auto">Generated from <code class="notranslate">packages/mcp-server/src/tools/registry.json</code>, input schemas and the tool capability ledger by <code class="notranslate">pnpm docs:claims</code>. Proof tiers describe source evidence location; they do not certify execution.</p>
+<p dir="auto"><strong>Auto-registered (19 tools)</strong> — available by default. The four action families (<code class="notranslate">map</code>, <code class="notranslate">schema</code>, <code class="notranslate">object</code>, <code class="notranslate">repl</code>) use the top-level <code class="notranslate">action</code> parameter.</p>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>Tool / actions</th>
+<th>Source evidence tier</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code class="notranslate">tokens.build</code></td>
+<td>product-reality</td>
+</tr>
+<tr>
+<td><code class="notranslate">structuredData.fetch</code></td>
+<td>product-reality</td>
+</tr>
+<tr>
+<td><code class="notranslate">brand.apply</code></td>
+<td>product-reality</td>
+</tr>
+<tr>
+<td><code class="notranslate">brand.intake</code></td>
+<td>product-reality</td>
+</tr>
+<tr>
+<td><code class="notranslate">catalog.list</code></td>
+<td>product-reality</td>
+</tr>
+<tr>
+<td><code class="notranslate">code.generate</code></td>
+<td>product-reality</td>
+</tr>
+<tr>
+<td><code class="notranslate">design.compose</code></td>
+<td>product-reality</td>
+</tr>
+<tr>
+<td><code class="notranslate">design.preview</code></td>
+<td>product-reality</td>
+</tr>
+<tr>
+<td><code class="notranslate">pipeline</code></td>
+<td>product-reality</td>
+</tr>
+<tr>
+<td><code class="notranslate">health</code></td>
+<td>product-reality</td>
+</tr>
+<tr>
+<td><code class="notranslate">registry.snapshot</code></td>
+<td>product-reality</td>
+</tr>
+<tr>
+<td><code class="notranslate">viz.render</code></td>
+<td>product-reality</td>
+</tr>
+<tr>
+<td><code class="notranslate">dashboard.render</code></td>
+<td>product-reality</td>
+</tr>
+<tr>
+<td><code class="notranslate">artifact.certify</code></td>
+<td>product-reality</td>
+</tr>
+<tr>
+<td><code class="notranslate">fidelity.preview</code></td>
+<td>product-reality</td>
+</tr>
+<tr>
+<td><code class="notranslate">map</code> (<code class="notranslate">create</code>/<code class="notranslate">list</code>/<code class="notranslate">resolve</code>/<code class="notranslate">update</code>/<code class="notranslate">delete</code>/<code class="notranslate">apply</code>)</td>
+<td>product-reality</td>
+</tr>
+<tr>
+<td><code class="notranslate">schema</code> (<code class="notranslate">save</code>/<code class="notranslate">load</code>/<code class="notranslate">list</code>/<code class="notranslate">delete</code>)</td>
+<td>product-reality</td>
+</tr>
+<tr>
+<td><code class="notranslate">object</code> (<code class="notranslate">list</code>/<code class="notranslate">show</code>)</td>
+<td>product-reality</td>
+</tr>
+<tr>
+<td><code class="notranslate">repl</code> (<code class="notranslate">render</code>/<code class="notranslate">validate</code>)</td>
+<td>product-reality</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<p dir="auto"><strong>On-demand (5 tools)</strong> — enable with <code class="notranslate">MCP_TOOLSET=all</code> or <code class="notranslate">MCP_EXTRA_TOOLS=...</code>:</p>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>Tool</th>
+<th>Source evidence tier</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code class="notranslate">diag.snapshot</code></td>
+<td>contract</td>
+</tr>
+<tr>
+<td><code class="notranslate">billing.reviewKit</code></td>
+<td>contract</td>
+</tr>
+<tr>
+<td><code class="notranslate">billing.switchFixtures</code></td>
+<td>contract</td>
+</tr>
+<tr>
+<td><code class="notranslate">a11y.scan</code></td>
+<td>contract</td>
+</tr>
+<tr>
+<td><code class="notranslate">release.tag</code></td>
+<td>contract</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<p dir="auto">Full contracts: <code class="notranslate">docs/mcp/Tool-Specs.md</code> and <code class="notranslate">docs/api/README.md</code>.</p>
+
+<h2 dir="auto">Repo layout</h2>
+<pre class="notranslate"><code class="notranslate">OODS-Forge/
+├── objects/, traits/, domains/, schemas/   # the registry: what Forge knows
+├── packages/mcp-server/                    # the tools
+├── packages/mcp-adapter/                   # stdio entry point for clients
+├── packages/mcp-bridge/                    # HTTP bridge
+├── packages/tokens/                        # DTCG tokens, brands and themes
+├── packages/components-react|vue|styles/   # the governed components
+├── packages/viz-core|viz-render/           # chart compiler and renderer
+├── scripts/runtime/                        # bundle assembly, E2E, notices, client configs
+├── artifacts/                              # receipts and structured data
+└── docs/                                   # how it works, contracts, runbooks
+</code></pre>
+<h2 dir="auto">Docs</h2>
+<ul dir="auto">
+<li><a href="docs/how-forge-works.html">docs/how-forge-works.html</a>: the deep explanation, generated from the registry and the ledgers.</li>
+<li><a href="docs/runtime/install.md">docs/runtime/install.md</a> and <a href="docs/runtime/portable-runtime.md">docs/runtime/portable-runtime.md</a>: the release and the bundle contract.</li>
+<li><a href="docs/mcp/Tool-Specs.md">docs/mcp/Tool-Specs.md</a>, <a href="docs/api/README.md">docs/api/README.md</a>, <a href="docs/mcp/Connections.md">docs/mcp/Connections.md</a>.</li>
+<li><a href="docs/README.md">docs/README.md</a>, the <a href="docs/specs/regions.md">Regions Specification</a> and <a href="docs/patterns/modifier-purity.md">Modifier Purity</a>.</li>
+<li><a href="CHANGELOG.md">CHANGELOG.md</a> and <a href="SECURITY.md">SECURITY.md</a>.</li>
+</ul>

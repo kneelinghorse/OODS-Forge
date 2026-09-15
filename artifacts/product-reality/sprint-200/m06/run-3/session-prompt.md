@@ -1,3 +1,37 @@
+You are a person trying OODS Forge for the first time. You have never seen it, you have no access to its source code, and you know nothing about it beyond two documents (README.md and install.md, given to you below in full) and the six release files that were downloaded for you into `/private/tmp/claude-501/-Users-systemsystems-portfolio-Design-Tools-OODS-Forge/3451bf4e-7b6f-40ae-a646-79864acacee2/scratchpad/m06-assets-3` (the release lives on a private repository, so the download step was done for you; treat that directory as "the release page's files").
+
+Hard rules for this session:
+
+1. Do not read, list or search anything on this machine other than: the two documents below, the files in `/private/tmp/claude-501/-Users-systemsystems-portfolio-Design-Tools-OODS-Forge/3451bf4e-7b6f-40ae-a646-79864acacee2/scratchpad/m06-assets-3`, and the directories you create under `/private/tmp/claude-501/-Users-systemsystems-portfolio-Design-Tools-OODS-Forge/3451bf4e-7b6f-40ae-a646-79864acacee2/scratchpad/m06-run-3`. No other directories, no source code, no other documentation, no web searches.
+2. Do not use any MCP tool that may already be available to you. Forge is reached only the way the documents describe.
+3. Work in a clean HOME for the install and registration steps: prefix `claude mcp add` and `claude mcp get` with `HOME=/private/tmp/claude-501/-Users-systemsystems-portfolio-Design-Tools-OODS-Forge/3451bf4e-7b6f-40ae-a646-79864acacee2/scratchpad/m06-run-3/home` and run them from the scratch project `/private/tmp/claude-501/-Users-systemsystems-portfolio-Design-Tools-OODS-Forge/3451bf4e-7b6f-40ae-a646-79864acacee2/scratchpad/m06-run-3/project`. Extract the runtime under that HOME (for example `/private/tmp/claude-501/-Users-systemsystems-portfolio-Design-Tools-OODS-Forge/3451bf4e-7b6f-40ae-a646-79864acacee2/scratchpad/m06-run-3/home/forge-runtime`).
+4. Claude Code on this machine is logged in only under the real HOME, so the clean HOME cannot run an interactive assistant. Wherever the README says "ask the assistant" or "ask for", you are the assistant's stand-in: run Claude Code in print mode from `/private/tmp/claude-501/-Users-systemsystems-portfolio-Design-Tools-OODS-Forge/3451bf4e-7b6f-40ae-a646-79864acacee2/scratchpad/m06-run-3/project` without the HOME prefix, with the same server definition install.md gives (the Claude Desktop JSON block with your path filled in, saved as `/private/tmp/claude-501/-Users-systemsystems-portfolio-Design-Tools-OODS-Forge/3451bf4e-7b6f-40ae-a646-79864acacee2/scratchpad/m06-run-3/project/forge.mcp.json`). The exact form that works (the prompt goes on stdin, because `--allowedTools` is variadic; `--add-dir` lets the assistant read tool results that the CLI spills to a file):
+
+   printf '%s' "<exactly what you would have asked>" | claude -p --model sonnet --strict-mcp-config --mcp-config forge.mcp.json --allowedTools "mcp__forge__*,Read,Write,Bash" --add-dir /private/tmp/claude-501 --add-dir /Users/systemsystems/.claude/projects
+
+   (An interactive user would grant the assistant's requests to read a large tool result it saved to a file and to write the HTML file; the two `--add-dir` flags and the extra allowed tools are that grant. Add to any request that expects a large result: "if a tool result was saved to a file, read that file rather than guessing; never invent values.")
+
+   Print mode is one conversation per invocation, and the README says a schemaRef lives for the conversation that made it. So do what a person does in one chat: put the calls that share the schemaRef (steps 3, 5 and 6) into one invocation as one message that asks for them in order and asks the assistant to save the HTML file; step 4 (viz.render then artifact.certify) goes into its own invocation; `health` into its own. Ask for the tool call the README names and for the fields the README says come back; keep each request short. If a print-mode call fails, record it verbatim and try once more with a clearer request, then move on.
+5. Do not fix, patch or work around Forge or its documents. When something fails or reads wrong, record it and continue with whatever honest alternative the documents give.
+6. Time everything. Before and after each step record `date +%s` (or use `time`), and keep the wall-clock seconds per step. The clock that matters is the wall time of the commands you run; do not pause between steps.
+7. Stop after 25 minutes of wall time even if unfinished, and report what you reached.
+
+Do the README's "first run" exactly as written, in its order: (1) verify and extract, (2) install into the client and run `health`, (3) compose one screen, (4) certify a chart, (5) generate the app, (6) look at it (save the returned HTML as `/private/tmp/claude-501/-Users-systemsystems-portfolio-Design-Tools-OODS-Forge/3451bf4e-7b6f-40ae-a646-79864acacee2/scratchpad/m06-run-3/project/subscription-detail.html`, open it with `open`, and describe in the transcript what the document contains: its title, the headings you see in its text, and any component markers such as `data-oods-component`). Skip the "run it as an app" alternative in step 6.
+
+Write these files, and nothing else outside `/private/tmp/claude-501/-Users-systemsystems-portfolio-Design-Tools-OODS-Forge/3451bf4e-7b6f-40ae-a646-79864acacee2/scratchpad/m06-run-3`:
+
+- `/private/tmp/claude-501/-Users-systemsystems-portfolio-Design-Tools-OODS-Forge/3451bf4e-7b6f-40ae-a646-79864acacee2/scratchpad/m06-run-3/out/transcript.md`: every command you ran, verbatim, with its output (or the part of it that matters, and every error in full), each with a timestamp.
+- `/private/tmp/claude-501/-Users-systemsystems-portfolio-Design-Tools-OODS-Forge/3451bf4e-7b6f-40ae-a646-79864acacee2/scratchpad/m06-run-3/out/timings.json`: `{"steps": [{"step": "<name>", "startedAt": "<ISO>", "endedAt": "<ISO>", "seconds": <number>, "outcome": "pass" | "fail" | "partial", "note": "<one line>"}], "totalSeconds": <number>, "installToSeeSeconds": <number>}` where installToSee covers steps 2 through 6.
+- `/private/tmp/claude-501/-Users-systemsystems-portfolio-Design-Tools-OODS-Forge/3451bf4e-7b6f-40ae-a646-79864acacee2/scratchpad/m06-run-3/out/friction.md`: every point of friction, verbatim and specific: what you read (quote it), what you expected, what happened. Include the small things (a sentence you had to read twice, a value you had to guess, a step that took longer than it should) and how long each cost you.
+- `/private/tmp/claude-501/-Users-systemsystems-portfolio-Design-Tools-OODS-Forge/3451bf4e-7b6f-40ae-a646-79864acacee2/scratchpad/m06-run-3/out/issue.md`: if something did not read right, one issue following the "This did not read right" template fields (What did not read right; Which screen or document; What you saw; What you expected instead; Runtime version), about the single most confusing thing you met; if nothing did, write `No issue: nothing read wrong.` into that file and skip filing. To file it:
+
+   gh issue create --repo kneelinghorse/OODS-Forge --title "[Reads wrong]: <short title>" --body-file /private/tmp/claude-501/-Users-systemsystems-portfolio-Design-Tools-OODS-Forge/3451bf4e-7b6f-40ae-a646-79864acacee2/scratchpad/m06-run-3/out/issue.md --label reads-wrong
+
+  and write the returned URL to `/private/tmp/claude-501/-Users-systemsystems-portfolio-Design-Tools-OODS-Forge/3451bf4e-7b6f-40ae-a646-79864acacee2/scratchpad/m06-run-3/out/issue-url.txt`.
+
+Finish with a short report: seconds per step, install-to-see total, which of install / compose / certify / generate / see passed, the issue URL, and the three biggest friction points in one line each.
+
+===== README.md (as published) =====
 # OODS Forge
 
 <!-- forge-claim:what-forge-is -->
@@ -120,7 +154,7 @@ pnpm --filter @oods/mcp-server run build
 - `apply`: write-capable tools default to dry-run or preview behaviour. Set `apply: true` only when you want artifacts written or heavy outputs returned; `repl` (`action: render`) returns HTML only with `apply: true`.
 - `compact`: `pipeline` and `repl` (`action: render`) omit the token CSS by default and point at `tokens.build` instead. Pass `output.compact: false` for a self-contained document.
 - Trait names: `catalog.list` and `map` use canonical trait names such as `Stateful` or `Priceable`. `object` (`action: list`) accepts full or suffix-matched namespaced names such as `lifecycle/Stateful` or `Stateful`.
-- Overrides: when `design.compose` reports a low-confidence selection or a `reviewHint` (on the first run's sample call that is the `metadata` slot, at 0.40), pin only that slot to one of its listed candidates with `preferences.componentOverrides`, for example `{"object": "Subscription", "context": "detail", "preferences": {"componentOverrides": {"metadata": "TagSummary"}}}`; a pinned slot comes back at confidence 1.0 with the reason "explicitly pinned".
+- Overrides: when `design.compose` reports a low-confidence selection or a `reviewHint`, pin only that slot with `preferences.componentOverrides`, for example `{"object": "Subscription", "context": "detail", "preferences": {"componentOverrides": {"header": "DetailHeader"}}}`.
 - Project defaults: a `.oodsrc` JSON file in your project root sets defaults for `pipeline`, `design.compose` and `code.generate` (`{ "framework": "vue", "styling": "tailwind", "typescript": false }`); explicit parameters win, and a missing or invalid file is ignored.
 
 Full contracts: [docs/mcp/Tool-Specs.md](docs/mcp/Tool-Specs.md) and [docs/api/README.md](docs/api/README.md).
@@ -191,3 +225,130 @@ OODS-Forge/
 - [docs/mcp/Tool-Specs.md](docs/mcp/Tool-Specs.md), [docs/api/README.md](docs/api/README.md), [docs/mcp/Connections.md](docs/mcp/Connections.md).
 - [docs/README.md](docs/README.md), the [Regions Specification](docs/specs/regions.md) and [Modifier Purity](docs/patterns/modifier-purity.md).
 - [CHANGELOG.md](CHANGELOG.md) and [SECURITY.md](SECURITY.md).
+
+===== end README.md =====
+
+===== install.md (the release's install page) =====
+<!-- Generated by scripts/runtime/client-configs.mjs from the tool registry, the adapter manifest and the runtime manifest module. Do not edit; run `node scripts/runtime/client-configs.mjs` and verify with `--check`. -->
+# Install the OODS Forge runtime
+
+This page is the user path: from a downloaded release to a working MCP server in Claude Desktop, Claude Code or Cursor. Nothing is built or installed from npm; the archive contains everything the adapter needs. Contributors who clone the repository use [docs/mcp/Connections.md](../mcp/Connections.md) instead.
+
+## 1. What you download
+
+Every release at <https://github.com/kneelinghorse/OODS-Forge/releases> carries these files:
+
+- `forge-runtime.tar.gz`: the runtime (MCP server, stdio adapter, HTTP bridge, tokens, component packages, registry data and the production dependency closure).
+- `forge-runtime.tar.gz.sha256`: the SHA-256 of the archive.
+- `forge-runtime.manifest.json`: the source commit, package versions, Node floor and payload digests.
+- `runtime-sbom-lite.json`: every third-party package in the archive with its integrity hash.
+- `THIRD-PARTY-NOTICES.md`: the licenses of those packages.
+- `install.md`: this page.
+
+Inside the archive, `LICENSE`, `COMMERCIAL.md` and `THIRD-PARTY-NOTICES.md` sit at the root beside the manifest. OODS Forge is licensed under PolyForm Noncommercial 1.0.0: free for personal, research, educational, nonprofit and government use; any commercial use, including use inside a company, needs the commercial license in `COMMERCIAL.md`.
+
+## 2. Requirements
+
+- Node.js 20.11.1 or newer on the PATH as `node` (or set `OODS_NODE_PATH` to a Node binary); the bundle is built and exercised on Node 24.
+- macOS, Linux or Windows with a shell that can run `tar`; no package manager, no build step.
+- One of the clients below.
+
+## 3. Verify and extract
+
+Check the download against its digest, then extract into a directory you keep. Run these in the directory that holds the two downloaded files; the digest file names the archive by its bare file name. The archive has no top-level folder, so always extract into a directory you created for it. The commands below use `~/forge-runtime`; any absolute path works.
+
+```sh
+shasum -a 256 -c forge-runtime.tar.gz.sha256        # macOS
+sha256sum --check forge-runtime.tar.gz.sha256        # Linux
+mkdir -p ~/forge-runtime
+tar -xzf forge-runtime.tar.gz -C ~/forge-runtime
+```
+
+On Windows PowerShell, compare `(Get-FileHash forge-runtime.tar.gz -Algorithm SHA256).Hash` with the value in the `.sha256` file, then extract with `tar -xzf forge-runtime.tar.gz -C C:\forge-runtime`.
+
+The extracted directory is what every configuration below calls `/path/to/forge-runtime`. Use your absolute path (the expanded form of `~/forge-runtime`, or `C:\\forge-runtime` on Windows) wherever the placeholder appears. The server entry point is `/path/to/forge-runtime/packages/mcp-adapter/index.js`; the adapter starts the bundled native server itself.
+
+## 4. Connect a client
+
+All three clients speak to the same stdio adapter and see the same 19 tools by default. The server is registered under the name `forge`.
+
+### Claude Desktop
+
+Open the configuration file (create it if it does not exist):
+
+- macOS: `~/Library/Application Support/Claude/claude_desktop_config.json`
+- Windows: `%APPDATA%\Claude\claude_desktop_config.json`
+
+Add the `forge` entry under `mcpServers` (the same block is in `configs/agents/claude-desktop.stdio-mcp.json`):
+
+```json
+{
+  "mcpServers": {
+    "forge": {
+      "command": "node",
+      "args": [
+        "/path/to/forge-runtime/packages/mcp-adapter/index.js"
+      ]
+    }
+  }
+}
+```
+
+Restart Claude Desktop. The tools appear under the `forge` server.
+
+### Claude Code
+
+From the project directory where you want the server available, run:
+
+```sh
+claude mcp add forge -- node /path/to/forge-runtime/packages/mcp-adapter/index.js
+claude mcp get forge
+```
+
+The second command prints the registration and its status; `Status: ✓ Connected` means the adapter started and answered. Add `-s user` to the first command to register the server for every project, and `-e MCP_TOOLSET=all` to advertise all 24 tools. `claude mcp remove forge` undoes the registration. The equivalent JSON block is in `configs/agents/claude-code.stdio-mcp.json`.
+
+### Cursor
+
+Create `.cursor/mcp.json` in the project (or `~/.cursor/mcp.json` for every project) with the same block as `configs/agents/cursor.stdio-mcp.json`:
+
+```json
+{
+  "mcpServers": {
+    "forge": {
+      "command": "node",
+      "args": [
+        "/path/to/forge-runtime/packages/mcp-adapter/index.js"
+      ]
+    }
+  }
+}
+```
+
+Reload the Cursor window. The server shows up in the MCP settings with its tools.
+
+## 5. First call
+
+Ask the assistant to run the `health` tool. A healthy answer reports `status: ok`, the registry counts (objects, traits, components), `server.uptime` in milliseconds and, under `productReality.tools`, the tool ledger (24 entries with their evidence tiers). The 19 tools your client lists are the default surface, which `health` does not count. Then compose a screen: `design.compose` with an intent such as "subscription detail page", followed by `code.generate` for React or Vue, produces a generated application whose readiness is attested against the shipped package bytes.
+
+## 6. Settings
+
+Environment variables are optional; every default is the documented one.
+
+| Variable | Default | Effect |
+| --- | --- | --- |
+| `MCP_TOOLSET` | `default` | `default` advertises 19 tools; `all` advertises all 24. |
+| `MCP_EXTRA_TOOLS` | (none) | Comma-separated on-demand tools added to the default surface, for example `a11y.scan,diag.snapshot`. |
+| `MCP_ROLE` | `designer` | Policy role (`designer` or `maintainer`). |
+| `OODS_NODE_PATH` | the Node running the adapter | Node binary used to start the native server. |
+
+Set them in the client's `env` block (Claude Desktop, Cursor) or with `-e KEY=value` on `claude mcp add`. The complete runtime contract, including where the bundle writes files and every other variable it reads, is in [docs/runtime/portable-runtime.md](portable-runtime.md).
+
+## 7. Where things go
+
+Read-only use creates no files. Calls that opt into writing (`apply: true`, saved schemas, mappings) write under the extracted directory: `artifacts/current-state/<date>/` for run bundles and `.oods/` for saved schemas. Delete those directories to reset; the shipped files never change. To remove the runtime, remove the client entry and delete `/path/to/forge-runtime`.
+
+## 8. Versions and feedback
+
+This page describes runtime v0.1.0 with adapter 0.3.0. The manifest inside the archive names the exact source commit. Problems, questions and "this did not read right" notes go to <https://github.com/kneelinghorse/OODS-Forge/issues/new/choose>.
+
+===== end install.md =====
