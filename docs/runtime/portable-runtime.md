@@ -108,7 +108,7 @@ workspace-link policy, and performs its production-only install there with
 `--no-frozen-lockfile --no-optional --config.auto-install-peers=false`; the
 synthetic importer is not the repository importer. Peer requirements are
 supplied by their consumers, so peer-only lockfile resolutions are excluded
-from the bundle SBOM. The current lock-derived third-party closure is 314
+from the bundle SBOM. The current lock-derived third-party closure is 315
 packages. Assembly derives this count once from the lock and requires the
 installed closure, SBOM, notices and manifest to agree with that value. The
 repository install remains `pnpm install --frozen-lockfile`, and assembly
@@ -350,7 +350,7 @@ state changes use these real locations:
 | -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Policy-governed run bundles                  | `<bundle-root>/artifacts/current-state/<UTC-date>/...`, resolved from `packages/mcp-server/dist/security/policy.json`. There is no environment override for `artifactsBase`. |
 | `schema` and schema-writing pipeline actions | `.oods/schemas` below the adapter's native-server cwd, `packages/mcp-server/`. Set `MCP_SCHEMA_STORE_ROOT` and/or `MCP_SCHEMA_STORE_DIR` to relocate it.            |
-| `design.compose` and `design.preview`        | `.oods/compositions/<compositionId>/versions/<n>.json` beside the schema store (the same two variables relocate it): every composition version with its inputs, schema, parent, operation, head, and the artifacts and model design.preview attaches; read by the preview host. |
+| `design.compose` and `design.preview`        | `.oods/compositions/<compositionId>/versions/<n>.json` beside the schema store (the same two variables relocate it): every composition version with its inputs, schema, parent, operation, head, and the artifacts, model and measurements design.preview and the running page attach; read by the preview host. |
 | `map`                                        | `artifacts/structured-data/component-mappings.json`, or `MCP_MAPPINGS_PATH`; apply conflicts write below `<bundle-root>/.oods/conflicts/`.                          |
 | `tokens.build`                               | Policy run bundles containing five artifacts copied or resolved from shipped dist outputs. Portable calls never rebuild or rewrite `packages/tokens/dist`.           |
 | `brand.apply`                                | Policy run bundles under `review-kit/brand.apply/` holding the applied theme snapshots, specimens, `variables.css` and diagnostics. Portable calls never rewrite `packages/tokens/src/tokens/brands` or `packages/tokens/dist`. |

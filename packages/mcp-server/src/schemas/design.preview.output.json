@@ -23,7 +23,8 @@
         "brand",
         "theme",
         "recordPath",
-        "durationMs"
+        "durationMs",
+        "measured"
       ],
       "additionalProperties": false,
       "properties": {
@@ -188,6 +189,68 @@
         "durationMs": {
           "type": "number",
           "minimum": 0
+        },
+        "measured": {
+          "type": "object",
+          "required": [
+            "validation",
+            "charts",
+            "axe",
+            "notMeasured"
+          ],
+          "additionalProperties": false,
+          "description": "What this version carries as measured and what it does not: the code.generate validation receipt per framework, artifact.certify for every placed chart, axe-core per framework and brand/theme scope run inside the running page. The page's measurement panel says the same; nothing is claimed that did not run.",
+          "properties": {
+            "validation": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "react",
+                  "vue"
+                ]
+              },
+              "description": "Frameworks whose generation receipt is stored."
+            },
+            "charts": {
+              "type": "object",
+              "required": [
+                "placed",
+                "conformant",
+                "notConformant",
+                "uncertified"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "placed": {
+                  "type": "integer"
+                },
+                "conformant": {
+                  "type": "integer"
+                },
+                "notConformant": {
+                  "type": "integer"
+                },
+                "uncertified": {
+                  "type": "integer"
+                }
+              }
+            },
+            "axe": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "framework:brand/theme scopes with axe-core results stored, e.g. react:A/light."
+            },
+            "notMeasured": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Measurements this version does not carry (validation:<framework>, charts, axe:<framework>:<brand>/<theme>)."
+            }
+          }
         }
       }
     },

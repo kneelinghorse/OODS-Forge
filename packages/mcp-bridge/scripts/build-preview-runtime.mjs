@@ -27,6 +27,8 @@ const ENTRIES = [
   { specifier: '@oods/components-vue', file: 'oods-components-vue.js', commonjs: false },
   { specifier: '@oods/component-contracts', file: 'oods-component-contracts.js', commonjs: false },
   { specifier: '@oods/component-styles', file: 'oods-component-styles.js', commonjs: false },
+  // axe-core runs inside the running page for the current brand and theme; its results are posted back to the host.
+  { specifier: 'axe-core', file: 'axe.js', commonjs: true },
 ];
 const STYLES = { specifier: '@oods/component-styles/css', file: 'styles.css' };
 
@@ -74,7 +76,7 @@ async function main() {
     }
     const version = name => require(`${name}/package.json`).version;
     const manifest = {
-      version: 1, builtAt: new Date().toISOString(), esbuild: version('esbuild'), react: version('react'), vue: version('vue'),
+      version: 1, builtAt: new Date().toISOString(), esbuild: version('esbuild'), react: version('react'), vue: version('vue'), axe: version('axe-core'),
       importMap: Object.fromEntries(ENTRIES.map(entry => [entry.specifier, entry.file])), styles: STYLES.file, files,
       outputs: Object.keys(result.metafile.outputs).length,
     };

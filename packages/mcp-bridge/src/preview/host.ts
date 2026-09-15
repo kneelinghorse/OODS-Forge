@@ -7,7 +7,8 @@ import { diffVersions, sharedFrameworks } from './diff.js';
 import { renderPreviewAppPage } from './page.js';
 import { defaultRuntimeDirectory, loadPreviewRuntime, resolveEsbuildPlatform, type PreviewRuntime } from './runtime.js';
 import { FIXED_WIDTHS, renderPreviewShell } from './shell.js';
-import { isSafeCompositionId, listVersions, parseVersion, readVersion, type CompositionVersion, type PreviewBrand, type PreviewFramework, type PreviewTheme } from './store.js';
+import { parseAxeResult, renderMeasurementPanel, withAxeResult } from './measurements.js';
+import { isSafeCompositionId, listVersions, parseVersion, readVersion, writeVersionMeasurements, type CompositionVersion, type PreviewBrand, type PreviewFramework, type PreviewTheme } from './store.js';
 
 export interface PreviewHostOptions {
   /** Where design.compose writes versions; resolved beside the saved-schema store. */
@@ -114,6 +115,24 @@ export async function registerPreviewHost(fastify: FastifyInstance, options: Pre
       if (error instanceof PreviewCompileError) return fail(reply, 422, error.message);
       return fail(reply, 500, `Preview host cannot compile: ${error instanceof Error ? error.message : String(error)}`);
     }
+  });
+
+  // Measurements: the panel, the raw record, and the one thing the page may write back (axe results).
+  fastify.get<{ Params: Params }>(`${base}/:id/:version/measurements`, async (request, reply) => {
+    const record = load(request.params, reply); if (!record) return;
+    return reply.type('text/html; charset=utf-8').send(renderMeasurementPanel(record));
+  });
+  fastify.get<{ Params: Params }>(`${base}/:id/:version/measurements.json`, async (request, reply) => {
+    const record = load(request.params, reply); if (!record) return;
+    return reply.type('application/json; charset=utf-8').send(JSON.stringify(record.measurements ?? {}));
+  });
+  fastify.post<{ Params: Params; Body: unknown }>(`${base}/:id/:version/measurements/axe`, { bodyLimit: 2_000_000 }, async (request, reply) => {
+    const record = load(request.params, reply); if (!record) return;
+    const result = parseAxeResult(request.body);
+    if (!result) return fail(reply, 400, 'An axe result needs engine {name, version}, framework, brand, theme, violations[], passes, incomplete and inapplicable.');
+    if (!record.artifacts[result.framework]) return fail(reply, 409, `Composition ${record.compositionId} version ${record.version} has no ${result.framework} artifact to have measured.`);
+    writeVersionMeasurements(compositionsDir, withAxeResult(record, result));
+    return reply.type('application/json; charset=utf-8').send(JSON.stringify({ stored: true, compositionId: record.compositionId, version: record.version, framework: result.framework, scope: `${result.brand}/${result.theme}`, violations: result.violations.length, passes: result.passes }));
   });
 
   fastify.get<{ Params: Params }>(`${base}/:id/:version/record.json`, async (request, reply) => {

@@ -66,7 +66,9 @@ describe('preview host runtime', () => {
     const runtime = loadPreviewRuntime(runtimeDir);
     expect(defaultRuntimeDirectory()).toBe(runtimeDir);
     expect(runtime.manifest).toMatchObject({ version: 1, esbuild: '0.25.10', styles: 'styles.css' });
-    expect(Object.keys(runtime.manifest.importMap).sort()).toEqual(['@oods/component-contracts', '@oods/component-styles', '@oods/components-react', '@oods/components-react/status', '@oods/components-react/table', '@oods/components-vue', 'react', 'react-dom', 'react-dom/client', 'react/jsx-runtime', 'vue']);
+    expect(Object.keys(runtime.manifest.importMap).sort()).toEqual(['@oods/component-contracts', '@oods/component-styles', '@oods/components-react', '@oods/components-react/status', '@oods/components-react/table', '@oods/components-vue', 'axe-core', 'react', 'react-dom', 'react-dom/client', 'react/jsx-runtime', 'vue']);
+    expect(runtime.manifest.axe).toBe('4.11.0');
+    expect(readFileSync(path.join(runtimeDir, 'axe.js'), 'utf8')).toMatch(/axe-core/);
     for (const [file, meta] of Object.entries(runtime.manifest.files)) {
       const bytes = readFileSync(path.join(runtimeDir, file));
       expect(bytes.length, file).toBe(meta.bytes);
@@ -95,7 +97,7 @@ describe('preview host routes', () => {
     const response = await server.inject('/preview/status');
     expect(response.statusCode).toBe(200);
     expect(response.json()).toEqual(status);
-    expect(status).toMatchObject({ running: true, base: '/preview', compositionsDir, runtime: { files: 19, esbuild: '0.25.10' }, platform: { supported: true } });
+    expect(status).toMatchObject({ running: true, base: '/preview', compositionsDir, runtime: { files: 20, esbuild: '0.25.10' }, platform: { supported: true } });
   });
 
   it.each(['subscription-card', 'subscription-list'] as const)('compiles and serves the generated React and Vue %s artifacts of a version as one ESM module each', async (name) => {

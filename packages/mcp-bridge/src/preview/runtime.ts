@@ -10,6 +10,8 @@ export interface PreviewRuntimeManifest {
   esbuild: string;
   react: string;
   vue: string;
+  /** axe-core version bundled as axe.js, absent when the runtime was built without it. */
+  axe?: string;
   /** Bare specifier → file name under the runtime directory. */
   importMap: Record<string, string>;
   styles: string;

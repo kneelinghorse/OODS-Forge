@@ -102,7 +102,7 @@ describe('structural what-changed between two composition versions (s201-m03)', 
 
   it('serves the compare page with both apps, the what-changed and both measurement panels, and the diff as JSON', async () => {
     const dir = path.join(mkdtempSync(path.join(tmpdir(), 'oods-compare-')), 'compositions'); directories.push(path.dirname(dir));
-    const one = version(1), two = version(2, (schema, record) => { schema.screens[0]!.children!.push({ id: 'note-region', component: 'Text', props: { content: 'Added' } }); record.measurements = { validationReceipt: { profile: 'build' } }; });
+    const one = version(1), two = version(2, (schema, record) => { schema.screens[0]!.children!.push({ id: 'note-region', component: 'Text', props: { content: 'Added' } }); record.measurements = { validation: { react: { profile: 'build', checks: [{ name: 'schema-structure', status: 'pass' }], notChecked: ['rendered-evidence'] } } }; });
     for (const record of [one, two]) { const folder = path.join(dir, record.compositionId, 'versions'); mkdirSync(folder, { recursive: true }); writeFileSync(path.join(folder, `${record.version}.json`), JSON.stringify(record)); }
     const server = Fastify(); servers.push(server);
     await registerPreviewHost(server, { compositionsDir: dir, runtimeDir });
@@ -115,9 +115,10 @@ describe('structural what-changed between two composition versions (s201-m03)', 
     expect(page.body).toContain('<ul data-oods-diff="regions">');
     expect(page.body).toContain('region added');
     expect(page.body).toContain('data-oods-measurements="cmp-0123456789ab@1"');
-    expect(page.body).toContain('data-oods-measured="none"');
+    expect(page.body).toContain('data-oods-not-measured="validation:react"');
     expect(page.body).toContain('data-oods-measurements="cmp-0123456789ab@2"');
-    expect(page.body).toContain('<code>validationReceipt</code>');
+    expect(page.body).toContain('data-oods-measured="validation:react"');
+    expect(page.body).toContain('1 checks ran (schema-structure)');
     expect(page.body).toContain('style="width:820px"');
     const same = await server.inject('/compare/cmp-0123456789ab@2/cmp-0123456789ab@2');
     expect(same.body).toContain('data-oods-identical="true"');

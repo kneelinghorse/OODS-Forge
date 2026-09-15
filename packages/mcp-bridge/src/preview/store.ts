@@ -64,3 +64,14 @@ export function listVersions(directory: string, compositionId: string): VersionS
     return { version: record.version, parentVersion: record.parentVersion, operation: record.operation, createdAt: record.createdAt, schemaHash: record.schemaHash, head: record.head, artifacts: Object.keys(record.artifacts) as PreviewFramework[] };
   });
 }
+
+/** Replace a version file atomically; only measurements may change this way, the schema never does. */
+export function writeVersionMeasurements(directory: string, record: CompositionVersion): void {
+  const current = readVersion(directory, record.compositionId, record.version);
+  if (!current) throw new Error(`Composition ${record.compositionId} version ${record.version} vanished`);
+  if (current.schemaHash !== record.schemaHash) throw new Error('A measurement write must not change the schema');
+  const file = path.join(directory, record.compositionId, 'versions', `${record.version}.json`);
+  const temporary = `${file}.${process.pid}.tmp`;
+  fs.writeFileSync(temporary, JSON.stringify({ ...current, measurements: record.measurements }, null, 2) + '\n');
+  fs.renameSync(temporary, file);
+}

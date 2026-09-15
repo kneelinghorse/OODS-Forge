@@ -2,6 +2,7 @@ import { createHash } from 'node:crypto';
 import path from 'node:path';
 import { validateGeneratedArtifact } from '../codegen/artifact-envelope.js';
 import { seedPreviewModel } from '../codegen/preview-model.js';
+import { certifyPlacedCharts } from '../lib/measurements.js';
 import { ToolError } from '../errors/tool-error.js';
 import { attachToVersion, latestVersion, readVersion, resolveCompositionsDir, versionPath, type CompositionVersion, type PreviewBrand, type PreviewFramework, type PreviewTheme } from '../lib/composition-store.js';
 import type { ToolContext } from '../lib/tool-context.js';
@@ -95,6 +96,8 @@ export async function handle(input: DesignPreviewInputSchema.DesignPreviewInput,
   // Generate what the version does not carry yet; a version's artifacts are keyed by its schema hash.
   const frameworks: PreviewFramework[] = input.framework && input.framework !== 'both' ? [input.framework] : ['react', 'vue'];
   const artifacts: CompositionVersion['artifacts'] = {};
+  const measurements: Record<string, unknown> = {};
+  const validation = { ...((record.measurements.validation as Record<string, unknown> | undefined) ?? {}) };
   for (const framework of frameworks) {
     if (record.artifacts[framework]) continue;
     const generated = await generate({ schema: record.schema, framework, profile: 'build', options: { theme: record.theme, brand: record.brand } });
@@ -102,8 +105,13 @@ export async function handle(input: DesignPreviewInputSchema.DesignPreviewInput,
     const issues = validateGeneratedArtifact(generated.artifact);
     if (issues.length) throw new Error(issues.join('\n'));
     artifacts[framework] = { artifact: generated.artifact, generatedAt: new Date().toISOString() };
+    // The generation receipt is stored as code.generate returned it: the checks that ran and notChecked.
+    validation[framework] = generated.validationReceipt;
+    measurements.validation = validation;
   }
-  if (Object.keys(artifacts).length || !record.model) record = await attachToVersion(compositionsDir, record.compositionId, record.version, { artifacts, model });
+  // Every placed chart is certified once per version, in the scope the artifacts were generated for.
+  if (!record.measurements.charts) measurements.charts = await certifyPlacedCharts(record.schema, { theme: record.theme, brand: record.brand });
+  if (Object.keys(artifacts).length || !record.model || Object.keys(measurements).length) record = await attachToVersion(compositionsDir, record.compositionId, record.version, { artifacts, model, measurements });
 
   const base = `${hostUrl}/preview/${record.compositionId}/${record.version}`;
   const previews: PreviewEntry[] = [];
@@ -127,7 +135,25 @@ export async function handle(input: DesignPreviewInputSchema.DesignPreviewInput,
     schemaHash: record.schemaHash, object, context: viewContext,
     previewUrl: previews[0]!.url, previews: previews as RenderOutput['previews'],
     host: { url: hostUrl, port: Number(new URL(hostUrl).port), compositionsDir },
-    brand, theme, recordPath: versionPath(compositionsDir, record.compositionId, record.version), durationMs: performance.now() - started,
+    brand, theme, recordPath: versionPath(compositionsDir, record.compositionId, record.version),
+    measured: summarizeMeasurements(record), durationMs: performance.now() - started,
+  };
+}
+
+/** What the version carries as measured, and what it does not; the panel says the same. */
+function summarizeMeasurements(record: CompositionVersion): RenderOutput['measured'] {
+  const validation = (record.measurements.validation as Record<string, unknown> | undefined) ?? {};
+  const charts = (record.measurements.charts as Array<{ path: string; certification: { conformant: boolean | null } }> | undefined) ?? [];
+  const axe = (record.measurements.axe as Record<string, Record<string, unknown>> | undefined) ?? {};
+  return {
+    validation: (['react', 'vue'] as const).filter(framework => validation[framework]),
+    charts: { placed: charts.length, conformant: charts.filter(chart => chart.certification.conformant === true).length, notConformant: charts.filter(chart => chart.certification.conformant === false).length, uncertified: charts.filter(chart => chart.certification.conformant === null).length },
+    axe: Object.entries(axe).flatMap(([framework, scopes]) => Object.keys(scopes).sort().map(scope => `${framework}:${scope}`)),
+    notMeasured: [
+      ...(['react', 'vue'] as const).filter(framework => record.artifacts[framework] && !validation[framework]).map(framework => `validation:${framework}`),
+      ...(record.measurements.charts ? [] : ['charts']),
+      ...(['react', 'vue'] as const).filter(framework => record.artifacts[framework]).flatMap(framework => ['A/light', 'A/dark', 'A/hc', 'B/light', 'B/dark', 'B/hc'].filter(scope => !axe[framework]?.[scope]).map(scope => `axe:${framework}:${scope}`)),
+    ],
   };
 }
 

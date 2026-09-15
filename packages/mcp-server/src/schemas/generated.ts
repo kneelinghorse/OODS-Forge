@@ -3914,6 +3914,29 @@ export namespace DesignPreviewOutputSchema {
         theme: 'light' | 'dark' | 'hc';
         recordPath: string;
         durationMs: number;
+        /**
+         * What this version carries as measured and what it does not: the code.generate validation receipt per framework, artifact.certify for every placed chart, axe-core per framework and brand/theme scope run inside the running page. The page's measurement panel says the same; nothing is claimed that did not run.
+         */
+        measured: {
+          /**
+           * Frameworks whose generation receipt is stored.
+           */
+          validation: ('react' | 'vue')[];
+          charts: {
+            placed: number;
+            conformant: number;
+            notConformant: number;
+            uncertified: number;
+          };
+          /**
+           * framework:brand/theme scopes with axe-core results stored, e.g. react:A/light.
+           */
+          axe: string[];
+          /**
+           * Measurements this version does not carry (validation:<framework>, charts, axe:<framework>:<brand>/<theme>).
+           */
+          notMeasured: string[];
+        };
       }
     | {
         status: 'ok';
