@@ -75,7 +75,7 @@ Use GitHub Issues. Include:
 ## Inbound license grant
 
 <!-- license-holder:start -->
-By submitting a contribution (code, documentation, tokens, tests or any other material) to OODS Forge, you grant Derek Niedringhaus a perpetual, irrevocable, worldwide, royalty-free, sublicensable license to use, reproduce, modify, distribute and sublicense that contribution under any terms, including commercial licenses, and you confirm that you have the right to grant it.
+By submitting a contribution (code, documentation, tokens, tests or any other material) to OODS Forge, you grant System Systems LLC a perpetual, irrevocable, worldwide, royalty-free, sublicensable license to use, reproduce, modify, distribute and sublicense that contribution under any terms, including commercial licenses, and you confirm that you have the right to grant it.
 <!-- license-holder:end -->
 
 Your contribution is otherwise licensed to everyone under the PolyForm Noncommercial License 1.0.0 in [LICENSE](LICENSE), like the rest of the project. Both pull request templates carry a required checkbox confirming this grant; there is no contributor license agreement to sign.

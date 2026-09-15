@@ -83,13 +83,13 @@ The default surface is 19 tools; `MCP_TOOLSET=all` advertises all 24. `health` r
 ## LICENSING
 
 <!-- license-holder:start -->
-Copyright (c) 2026 Derek Niedringhaus (https://derekn.com). OODS Forge is licensed under the PolyForm Noncommercial License 1.0.0 (SPDX `PolyForm-Noncommercial-1.0.0`), the text in [LICENSE](LICENSE). Commercial licensing: [COMMERCIAL.md](COMMERCIAL.md) or derek@derekn.com.
+Copyright (c) 2026 System Systems LLC (https://aquex.ai). OODS Forge is licensed under the PolyForm Noncommercial License 1.0.0 (SPDX `PolyForm-Noncommercial-1.0.0`), the text in [LICENSE](LICENSE). Commercial licensing: [COMMERCIAL.md](COMMERCIAL.md) or derek@derekn.com.
 <!-- license-holder:end -->
 
 In plain words:
 
 - Individuals, students, hobbyists, researchers, nonprofits and government bodies may use, study, modify and share Forge for any noncommercial purpose, forks and patches included.
-- Any commercial purpose needs a commercial license from Derek. That includes use inside a company, evaluation by a company, products or services built on Forge, and work delivered to a paying client. [COMMERCIAL.md](COMMERCIAL.md) says how, and [docs/LICENSE-FAQ.md](docs/LICENSE-FAQ.md) covers the fuzzy edges.
+- Any commercial purpose needs a commercial license from the licensor. That includes use inside a company, evaluation by a company, products or services built on Forge, and work delivered to a paying client. [COMMERCIAL.md](COMMERCIAL.md) says how, and [docs/LICENSE-FAQ.md](docs/LICENSE-FAQ.md) covers the fuzzy edges.
 - The license is source-available and noncommercial. It is not an OSI-approved license and it never converts to one; GitHub's license detector therefore shows "Other".
 - Contributions are welcome under the inbound grant in [CONTRIBUTING.md](CONTRIBUTING.md). There is no CLA.
 
