@@ -196,7 +196,7 @@ export class ReferenceHost {
     assert.equal(content.mimeType, APP_MIME_TYPE, `resources/read ${resourceUri} mime type`);
     const result = await this.callTool(name, args);
     const csp = (content._meta as { ui?: { csp?: Json } } | undefined)?.ui?.csp;
-    await this.page.evaluate(input => window.__referenceHost.render(input as never), { sandboxUrl: `${this.sandboxUrl}/sandbox.html`, html: content.text, ...(csp ? { csp } : {}), tool, toolInput: args, toolResult: result, hostContext: this.hostContext, width: options.width, height: options.height });
+    await this.page.evaluate(input => (window as unknown as ReferenceHostPage).__referenceHost.render(input), { sandboxUrl: `${this.sandboxUrl}/sandbox.html`, html: content.text, ...(csp ? { csp } : {}), tool, toolInput: args, toolResult: result, hostContext: this.hostContext, width: options.width, height: options.height });
     const sandboxFrame = this.page.frames().find(frame => frame.url().startsWith(this.sandboxUrl));
     assert(sandboxFrame, 'the sandbox frame');
     const appFrame = this.page.frames().find(frame => frame.parentFrame() === sandboxFrame);
@@ -204,7 +204,7 @@ export class ReferenceHost {
     return { tool, resourceUri, resource: { mimeType: content.mimeType!, text: content.text, _meta: content._meta }, result, appFrame, sandboxFrame };
   }
 
-  setHostContext(context: Json): Promise<void> { this.hostContext && Object.assign(this.hostContext, context); return this.page.evaluate(value => window.__referenceHost.setHostContext(value as never), context); }
+  setHostContext(context: Json): Promise<void> { this.hostContext && Object.assign(this.hostContext, context); return this.page.evaluate(value => (window as unknown as ReferenceHostPage).__referenceHost.setHostContext(value), context); }
 
   async close(): Promise<void> {
     const exit = await this.rpc.close();
@@ -217,7 +217,8 @@ export class ReferenceHost {
   }
 }
 
-declare global { interface Window { __referenceHost: { render: (input: unknown) => Promise<void>; setHostContext: (context: unknown) => void } } }
+/** What the host page exposes to the harness. Typed locally: reference-host/host.ts declares Window.__referenceHost for its own bundle, and one program cannot hold two shapes. */
+type ReferenceHostPage = { __referenceHost: { render: (input: unknown) => Promise<void>; setHostContext: (context: unknown) => void } };
 
 // CLI: the m02 receipts — the minimal resource rendered from the adapter with the extension negotiated, and the fallback without it.
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
