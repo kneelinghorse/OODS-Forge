@@ -19,13 +19,13 @@ Bridge-exposed tools require both [agent policy](../../configs/agent/policy.json
 
 ## Evidence and portable outcomes
 
-Tool ledger: [packages/mcp-server/registry/tool-capability-ledger.v1.json](../../packages/mcp-server/registry/tool-capability-ledger.v1.json), recorded source head `"86aedaa49f3c90e2ac0dcfbf5b190af8308dd326"`.
+Tool ledger: [packages/mcp-server/registry/tool-capability-ledger.v1.json](../../packages/mcp-server/registry/tool-capability-ledger.v1.json), recorded source head `"5c02dee27297ee9285262fc582a68272a903d277"`.
 
 Proof tier methodology: Highest location tier of a literal runtime import of a handler-bearing module in mcp-server test/spec sources. Grouped action imports roll up to their registered family. Imports are source evidence, not proof of invocation, passing execution or browser certification. Transitive imports and constructed imports/dispatch are not followed; type-only and schema-only imports do not promote a tier.
 
 README references in product-reality directories containing browser/packed/runtime/SVG/screenshot prose. Current census reports are excluded. References are discovery pointers, never verified receipts or tier promotions.
 
-Recorded portable execution: 18 pass and 1 typed dependency outcomes across 19 tools. Receipt: [artifacts/product-reality/sprint-200/m04/e2e-host.json](../../artifacts/product-reality/sprint-200/m04/e2e-host.json); SHA-256 `"sha256:d84402a2e83a0de17c21ad1c77ea7245cda10841ef1c0c3684a304abbce63de7"`; bundle head `"59269dd7f376058216f8c8077719d304de5f31c4"`; dirty=`false`. This records the measured development bundle, not a later clean release.
+Recorded portable execution: 18 pass and 1 typed dependency outcomes across 19 tools. Receipt: [artifacts/product-reality/sprint-200/m04/e2e-host.json](../../artifacts/product-reality/sprint-200/m04/e2e-host.json); SHA-256 `"sha256:81df86a095f78a0d3500f91e914f35b3a0b9611b80ecba626cb20c1348a879d9"`; bundle head `"5c02dee27297ee9285262fc582a68272a903d277"`; dirty=`false`. This records the measured development bundle, not a later clean release.
 
 ## Current component capability counts
 
@@ -638,7 +638,7 @@ If `{"required":["code"]}`:
 
 ### `health`
 
-Read server readiness, live registry/store counts and retained proof summaries. tokens lists brands, themes and scopes from the built css-variables-by-scope.json, plus defaultScope {brand, theme, source: env|default}; this is configured default metadata, never an observed consumer scope. Missing built scopes are reported as unavailable. includeChangelog and sinceVersion select the reported DSL changelog; request-level DSL version selection is not supported. productReality.viz reports the generated taxonomy counts: types, patterns, families, classified, coreCells, coreSurfaceComplete, typedGaps and retiredCells. A surface-complete cell has public pixels from an identity assigned to that cell; Retired Core Analytics cells retain explicit reasons in the taxonomy; missing or invalid taxonomy yields null and degraded health.
+Read server readiness, live registry/store counts and retained proof summaries. tokens lists brands, themes and scopes from the built css-variables-by-scope.json, plus defaultScope {brand, theme, source: env|default}; this is configured default metadata, never an observed consumer scope. Missing built scopes are reported as unavailable. includeChangelog and sinceVersion select the reported DSL changelog; request-level DSL version selection is not supported. productReality.viz reports the generated taxonomy counts: types, patterns, families, classified, coreCells, coreSurfaceComplete, typedGaps and retiredCells. A surface-complete cell has public pixels from an identity assigned to that cell; Retired Core Analytics cells retain explicit reasons in the taxonomy; missing or invalid taxonomy yields null and degraded health. server.uptime is milliseconds since the native server process started.
 
 [Complete input/output reference](../api/health.md). The tables below follow the actual dispatch schema paths; those paths control when the legacy API page selects a different schema.
 

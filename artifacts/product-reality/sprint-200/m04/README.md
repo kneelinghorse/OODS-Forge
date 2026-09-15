@@ -18,19 +18,21 @@ Builder self-certified: **false**. Base 6389f164f (the m03 commit) on `codex/spr
 ## Release
 
 <!-- release:start -->
-Draft GitHub Release **OODS Forge runtime v0.1.0** (`v0.1.0`, draft, no tag on origin) targeting the frozen head `59269dd7f376058216f8c8077719d304de5f31c4`: <https://github.com/kneelinghorse/OODS-Forge/releases/tag/untagged-c81e9d5d8b4c87b61b55>. Archive sha256 `eca3704c4d38cf3352bebc2b8a2fb1d7dc9c0f5aadaa970a77a1e100936d5adf` (32837503 bytes, GNU tar, determinism certified), commit `59269dd7f376058216f8c8077719d304de5f31c4`, dirty `false`, 283 third-party packages.
+Draft GitHub Release **OODS Forge runtime v0.1.0** (`v0.1.0`, draft, no tag on origin) targeting the frozen head `5c02dee27297ee9285262fc582a68272a903d277`: <https://github.com/kneelinghorse/OODS-Forge/releases/tag/untagged-76d154b303e92afa0db7>. Archive sha256 `252fb7151de0c4bd589eab112b029dac4a6f803fdc24d3d424f85b62e63216d6` (32837939 bytes, GNU tar, determinism certified), commit `5c02dee27297ee9285262fc582a68272a903d277`, dirty `false`, 283 third-party packages.
 
 | Asset | Bytes | SHA-256 |
 | --- | --- | --- |
-| `forge-runtime.tar.gz` | 32837503 | `eca3704c4d38cf3352bebc2b8a2fb1d7dc9c0f5aadaa970a77a1e100936d5adf` |
-| `forge-runtime.tar.gz.sha256` | 87 | `135430aea89b17aca1b6da64f43795a76bf8f3c0a5e50aaee6dd00c0da54f7cd` |
-| `forge-runtime.manifest.json` | 3005 | `2e705642804fa41cfc637cc86a7a2d7b1205c0368b95ab96e12c2d9b18735fe6` |
+| `forge-runtime.tar.gz` | 32837939 | `252fb7151de0c4bd589eab112b029dac4a6f803fdc24d3d424f85b62e63216d6` |
+| `forge-runtime.tar.gz.sha256` | 87 | `335183e798d58e5e322ad0d4c4d244904395054504217cb4a6560354c3cffca7` |
+| `forge-runtime.manifest.json` | 3005 | `4164917adace9fcebf63dfc1370fee8f8a026483a380490c1b1d0c6f3ad97899` |
 | `runtime-sbom-lite.json` | 70776 | `3c3c653662bae561b9573450d22d9395849e6e066cc57dc996edc14ffdfd7cfa` |
 | `THIRD-PARTY-NOTICES.md` | 544861 | `067dc1deb317dfb85ef12fb1485cd3a35bb8fb01758282563677d3e997c97c65` |
-| `install.md` | 6340 | `d62d187c66aa9e5f41def0b876a815244760f77141dd051f0dd35962e5803ab9` |
+| `install.md` | 6478 | `697d954706b0d4aef411ac1c65747296988b278ca39978aa2ba306bddcd662f7` |
 
 Receipts: `release/draft-release-receipt.json` (URL, assets, sizes and digests as GitHub reports them), `release/forge-runtime.manifest.json`, `release/forge-runtime.tar.gz.sha256`, `release/runtime-sbom-lite.json`, `release-notes.md` (the notes attached to the draft), `e2e-host.json` (the E2E of the frozen archive; the ledger binds to it), `claude-code/claude-code-proof.json` (the clean-HOME install proof against the frozen extraction). The archive itself is not retained in the repository; its digest is.
 <!-- release:end -->
+
+Refreshed at m06: the first ten-minute run (issue #113) led to producer fixes in the runtime's messages and descriptions, so the draft's six assets were rebuilt with `--final` at the m06 implementation head `5c02dee27` and uploaded with `--clobber`, and the draft was retargeted to that head; the block above, `release/`, `e2e-host.json` (the ledger's receipt) and the ledger head follow the refreshed archive. The first archive's digest (`eca3704c4d38cf3352bebc2b8a2fb1d7dc9c0f5aadaa970a77a1e100936d5adf`, head `59269dd7f`) and its clean-HOME proof stay under `claude-code/`; the refreshed proof is under `../m06/release-refresh/`.
 
 ## Gates run here
 

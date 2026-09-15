@@ -75,7 +75,11 @@ describe('s200-m05 README for a newcomer', () => {
     expect(run).toContain('`pillars: {"a11yEquivalence": "pass", "determinism": "pass", "contrast": "pass", "accuracy": "pass"}`');
     expect(run).toContain('`src/GeneratedUI.tsx`');
     // Run 1 of the ten-minute proof: the ref's scope, the sample call's warnings and the preview's placeholders must be stated.
-    expect(run).toContain('it lives in the running server for 30 minutes; your client keeps that server running for the whole conversation');
+    expect(run).toContain('One rule shapes the run: a `schemaRef` lives in the server your client started, for 30 minutes and for that conversation, so make steps 3, 5 and 6 in one conversation.');
+    expect(run).toContain('`server.uptime` in milliseconds');
+    expect(run).toContain('The screen\'s own chart (`src/charts/payment-001.svg` in step 5) is rendered inside code generation');
+    expect(run).toContain('If your client saves a large result to a file and asks to read it, allow it');
+    expect(run).toContain(`\`health\` reports the tool ledger's ${facts.tools} entries by evidence tier`);
     expect(run).toContain('`warnings` are normal on this call');
     expect(run).toContain('four of the set apply to a plain bar chart');
     expect(run).toContain('titled `OODS Preview`, showing the composed screen\'s structure');

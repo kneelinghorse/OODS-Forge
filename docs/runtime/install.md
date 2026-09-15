@@ -24,7 +24,7 @@ Inside the archive, `LICENSE`, `COMMERCIAL.md` and `THIRD-PARTY-NOTICES.md` sit 
 
 ## 3. Verify and extract
 
-Check the download against its digest, then extract into a directory you keep. The archive has no top-level folder, so always extract into a directory you created for it. The commands below use `~/forge-runtime`; any absolute path works.
+Check the download against its digest, then extract into a directory you keep. Run these in the directory that holds the two downloaded files; the digest file names the archive by its bare file name. The archive has no top-level folder, so always extract into a directory you created for it. The commands below use `~/forge-runtime`; any absolute path works.
 
 ```sh
 shasum -a 256 -c forge-runtime.tar.gz.sha256        # macOS
@@ -97,7 +97,7 @@ Reload the Cursor window. The server shows up in the MCP settings with its tools
 
 ## 5. First call
 
-Ask the assistant to run the `health` tool. A healthy answer reports `status: ok`, the registry counts (19 auto tools, 24 total) and the product-reality summaries. Then compose a screen: `design.compose` with an intent such as "subscription detail page", followed by `code.generate` for React or Vue, produces a generated application whose readiness is attested against the shipped package bytes.
+Ask the assistant to run the `health` tool. A healthy answer reports `status: ok`, the registry counts (objects, traits, components), `server.uptime` in milliseconds and, under `productReality.tools`, the tool ledger (24 entries with their evidence tiers). The 19 tools your client lists are the default surface, which `health` does not count. Then compose a screen: `design.compose` with an intent such as "subscription detail page", followed by `code.generate` for React or Vue, produces a generated application whose readiness is attested against the shipped package bytes.
 
 ## 6. Settings
 

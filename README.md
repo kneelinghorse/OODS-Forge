@@ -44,7 +44,7 @@ Every claim Forge makes about its output sits on one of four pillars, and each i
 
 ## The first run, in ten minutes
 
-You need Node.js 20.11.1 or newer and one of Claude Desktop, Claude Code or Cursor. The steps are the release's install page, [docs/runtime/install.md](docs/runtime/install.md), plus a handful of tool calls your assistant makes for you. Nothing is installed from npm.
+You need Node.js 20.11.1 or newer and one of Claude Desktop, Claude Code or Cursor. The steps are the release's install page, [docs/runtime/install.md](docs/runtime/install.md), plus a handful of tool calls your assistant makes for you. Nothing is installed from npm. One rule shapes the run: a `schemaRef` lives in the server your client started, for 30 minutes and for that conversation, so make steps 3, 5 and 6 in one conversation.
 
 1. **Download and verify.** From the [release page](https://github.com/kneelinghorse/OODS-Forge/releases) take `forge-runtime.tar.gz` and `forge-runtime.tar.gz.sha256`, check the digest and extract:
    ```sh
@@ -56,9 +56,9 @@ You need Node.js 20.11.1 or newer and one of Claude Desktop, Claude Code or Curs
    claude mcp add forge -- node /path/to/forge-runtime/packages/mcp-adapter/index.js
    claude mcp get forge          # Status: ✓ Connected
    ```
-   Claude Desktop and Cursor take the same command in a JSON block; install.md has both. Ask the assistant to run `health`: it answers `status: "ok"` with the registry counts and the tool count.
-3. **Compose one screen.** Ask for `design.compose` with `{"object": "Subscription", "context": "detail"}`. The answer has `status: "ok"`, `layout: "detail"`, a `schemaRef` such as `compose-dae744a8` (it lives in the running server for 30 minutes; your client keeps that server running for the whole conversation, so make the next calls in the same conversation, and `schema.save` keeps a ref across sessions), `objectUsed` (the object, its version, the traits and the fields it composed) and `selections`: one entry per slot naming the component chosen, its confidence and the reason, for example `CycleProgressCard` for `tab-0` at `0.95`. `warnings` are normal on this call: the shipped `Subscription` is beta, some of its fields override trait defaults, and one contribution has no slot in the detail layout; a low-confidence slot carries a `reviewHint` (see Overrides below).
-4. **Certify a chart.** Certification runs on charts, so render one and certify it. Ask for `viz.render` with
+   Claude Desktop and Cursor take the same command in a JSON block; install.md has both. Ask the assistant to run `health`: it answers `status: "ok"` with the registry counts (objects, traits, components), `server.uptime` in milliseconds and, under `productReality.tools`, the tool ledger by evidence tier; the tools your client lists are the default surface, which `health` does not count.
+3. **Compose one screen.** Ask for `design.compose` with `{"object": "Subscription", "context": "detail"}`. The answer has `status: "ok"`, `layout: "detail"`, a `schemaRef` such as `compose-dae744a8` (the rule above; `schema.save` keeps a ref across sessions), `objectUsed` (the object, its version, the traits and the fields it composed) and `selections`: one entry per slot naming the component chosen, its confidence and the reason, for example `CycleProgressCard` for `tab-0` at `0.95`. `warnings` are normal on this call: the shipped `Subscription` is beta, some of its fields override trait defaults, and one contribution has no slot in the detail layout; a low-confidence slot carries a `reviewHint` (see Overrides below).
+4. **Certify a chart.** Certification runs on chart specifications. The screen's own chart (`src/charts/payment-001.svg` in step 5) is rendered inside code generation, so this step makes a small chart of its own with `viz.render` and certifies that. Ask for `viz.render` with
    ```json
    {"chartType": "bar", "rows": [{"status": "active", "count": 17}, {"status": "draft", "count": 5}, {"status": "archived", "count": 3}],
     "encodings": {"x": {"field": "status", "type": "nominal"}, "y": {"field": "count", "type": "quantitative", "aggregate": "sum"}},
@@ -72,8 +72,10 @@ You need Node.js 20.11.1 or newer and one of Claude Desktop, Claude Code or Curs
    npm install ./oods-*.tgz
    ```
 
+Two of these calls return large results: `code.generate` (the whole file-set) and the rendered document. If your client saves a large result to a file and asks to read it, allow it; a reply written without seeing the result is a guess.
+
 <!-- forge-claim:first-run-health -->
-The default surface is 19 tools; `MCP_TOOLSET=all` advertises all 24, and `health` reports the counts it serves.
+The default surface is 19 tools; `MCP_TOOLSET=all` advertises all 24. `health` reports the tool ledger's 24 entries by evidence tier, not the surface your client lists.
 <!-- /forge-claim:first-run-health -->
 
 `design.preview`, the live preview server, is not available from the bundle yet and returns `OODS-N019`; the rendered document in step 6 is the way to see a screen today. When a step took longer than it should, or read wrong, say so: [FEEDBACK.md](FEEDBACK.md).
