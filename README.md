@@ -141,7 +141,7 @@ Generated from `packages/mcp-server/src/tools/registry.json`, input schemas and 
 | `catalog.list` | product-reality |
 | `code.generate` | product-reality |
 | `design.compose` | product-reality |
-| `design.preview` (`render`/`compare`) | product-reality |
+| `design.preview` (`render`/`compare`/`edit`/`versions`) | product-reality |
 | `pipeline` | product-reality |
 | `health` | product-reality |
 | `registry.snapshot` | product-reality |

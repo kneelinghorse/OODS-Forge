@@ -100,6 +100,33 @@
             "type": "string"
           },
           "description": "Slot-name → component-name overrides (e.g., { 'items': 'Table' })."
+        },
+        "regionOrder": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "uniqueItems": true,
+          "description": "The screen's regions (its direct children) by id in the desired order; regions not listed keep their relative order after the listed ones. Applied after composition; the composer never edits a schema by hand."
+        },
+        "fieldOrder": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "uniqueItems": true
+          },
+          "description": "Region id → field names in the desired order among sibling field nodes of that region (a field editor, a read-only row, or a slot placing a field component); fields not listed keep their relative order after the listed ones."
+        },
+        "seed": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64,
+          "description": "Sample-data seed. Rotates the deterministic sample records (labels, names and derived values) generated for previews and workflow apps; recorded on the schema as `seed` and nothing else in the schema changes."
         }
       },
       "additionalProperties": false
@@ -123,6 +150,17 @@
           "type": "boolean",
           "default": false,
           "description": "Do not record a composition version; the result then carries no compositionId. For scratch compositions only."
+        },
+        "operation": {
+          "type": "string",
+          "enum": [
+            "recompose",
+            "reorder-region",
+            "swap-slot",
+            "reorder-fields",
+            "seed"
+          ],
+          "description": "With compositionId: the lineage operation recorded on the new version; default recompose. design.preview action edit sets it."
         }
       },
       "additionalProperties": false

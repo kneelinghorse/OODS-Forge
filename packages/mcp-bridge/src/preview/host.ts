@@ -8,6 +8,7 @@ import { renderPreviewAppPage } from './page.js';
 import { defaultRuntimeDirectory, loadPreviewRuntime, resolveEsbuildPlatform, type PreviewRuntime } from './runtime.js';
 import { FIXED_WIDTHS, renderPreviewShell } from './shell.js';
 import { parseAxeResult, renderMeasurementPanel, withAxeResult } from './measurements.js';
+import type { RunTool } from './native.js';
 import { isSafeCompositionId, listVersions, parseVersion, readVersion, writeVersionMeasurements, type CompositionVersion, type PreviewBrand, type PreviewFramework, type PreviewTheme } from './store.js';
 
 export interface PreviewHostOptions {
@@ -17,6 +18,8 @@ export interface PreviewHostOptions {
   runtimeDir?: string;
   /** Route prefix; the bridge and the standalone host both use /preview. */
   base?: string;
+  /** Runs a native tool for page edits (design.preview action edit); without it the edit route answers 501. */
+  runTool?: RunTool;
 }
 
 export interface PreviewHostStatus {
@@ -114,6 +117,24 @@ export async function registerPreviewHost(fastify: FastifyInstance, options: Pre
     } catch (error) {
       if (error instanceof PreviewCompileError) return fail(reply, 422, error.message);
       return fail(reply, 500, `Preview host cannot compile: ${error instanceof Error ? error.message : String(error)}`);
+    }
+  });
+
+  // Edits from the page: one operation → design.preview action edit on the native server → a new version to open.
+  fastify.post<{ Params: Params; Body: { operation?: string; framework?: string; brand?: string; theme?: string } & Record<string, unknown> }>(`${base}/:id/:version/edit`, async (request, reply) => {
+    const record = load(request.params, reply); if (!record) return;
+    if (!options.runTool) return fail(reply, 501, 'This preview host has no native server to re-compose with; edit through design.preview instead.');
+    const body = request.body ?? {};
+    const { framework, brand, theme, ...edit } = body;
+    if (typeof edit.operation !== 'string') return fail(reply, 400, 'An edit needs an operation: reorder-region, swap-slot, reorder-fields or seed.');
+    try {
+      // Both frameworks are generated for the new version; the framework only chooses which one the page opens.
+      const result = await options.runTool('design.preview', { action: 'edit', compositionId: record.compositionId, version: record.version, edit }) as { compositionId: string; version: number; parentVersion: number | null; operation: string; previewUrl: string };
+      const query = new URLSearchParams({ ...(typeof framework === 'string' ? { framework } : {}), ...(typeof brand === 'string' ? { brand } : {}), ...(typeof theme === 'string' ? { theme } : {}) }).toString();
+      return reply.type('application/json; charset=utf-8').send(JSON.stringify({ compositionId: result.compositionId, version: result.version, parentVersion: result.parentVersion, operation: result.operation, url: `${base}/${result.compositionId}/${result.version}${query ? `?${query}` : ''}` }));
+    } catch (error) {
+      const native = (error as { nativeError?: { code?: string; message?: string; details?: unknown } }).nativeError;
+      return reply.code(native?.code?.startsWith('OODS-V') ? 422 : 500).type('application/json; charset=utf-8').send(JSON.stringify({ error: native ?? { message: error instanceof Error ? error.message : String(error) } }));
     }
   });
 

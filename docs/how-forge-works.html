@@ -406,7 +406,7 @@ schema:
   <!-- 8 -->
   <h2 id="generate"><span class="n">08</span>Generating screens and code</h2>
 <!-- forge-claim:generation-path -->  <p>The generate path is four stages that chain — compose, validate, render and generate — with pipeline running them together. They pass a <b>UiSchema</b> between them:</p><!-- /forge-claim:generation-path -->
-<!-- forge-claim:ui-schema-shape -->  <div class="def"><b>UiSchema</b><p>A JSON tree of components. The schema declares node properties <span class="k">id, component, state, route, layout, style, props, chart, bindings, collection, collectionControl, children, meta</span> and root properties <span class="k">workflow, $schema, version, dsVersion, theme, screens, tokenOverrides, objectSchema</span>. Traits' token maps are carried into <span class="k">tokenOverrides</span>.</p></div><!-- /forge-claim:ui-schema-shape -->
+<!-- forge-claim:ui-schema-shape -->  <div class="def"><b>UiSchema</b><p>A JSON tree of components. The schema declares node properties <span class="k">id, component, state, route, layout, style, props, chart, bindings, collection, collectionControl, children, meta</span> and root properties <span class="k">workflow, $schema, version, dsVersion, theme, screens, tokenOverrides, objectSchema, seed</span>. Traits' token maps are carried into <span class="k">tokenOverrides</span>.</p></div><!-- /forge-claim:ui-schema-shape -->
 <!-- forge-claim:source-example-6 --><p class="note">Illustrative UiSchema shape; the measured Product composition is reported below.</p>
 <pre><code>{ "version": "1.0", "theme": "light",
   "screens": [ { "id": "product-detail", "component": "Page",
@@ -467,7 +467,7 @@ schema:
     <thead><tr><th>Group</th><th>Tools</th></tr></thead>
     <tbody><!-- forge-claim:tool-roster -->
       <tr><td>Registry</td><td>catalog.list · object (list, show) · structuredData.fetch · registry.snapshot · health</td></tr>
-      <tr><td>Generate &amp; review</td><td>design.compose · design.preview (render, compare) · repl (render, validate) · code.generate · pipeline · schema (save, load, list, delete) · fidelity.preview · map (create, list, resolve, update, delete, apply)</td></tr>
+      <tr><td>Generate &amp; review</td><td>design.compose · design.preview (render, compare, edit, versions) · repl (render, validate) · code.generate · pipeline · schema (save, load, list, delete) · fidelity.preview · map (create, list, resolve, update, delete, apply)</td></tr>
       <tr><td>Charts</td><td>viz.render · dashboard.render · artifact.certify</td></tr>
       <tr><td>Tokens &amp; brand</td><td>tokens.build · brand.apply · brand.intake</td></tr>
       <tr><td>On demand</td><td>diag.snapshot · billing.reviewKit · billing.switchFixtures · a11y.scan · release.tag</td></tr>

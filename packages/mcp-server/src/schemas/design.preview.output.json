@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://designlab.local/schemas/design.preview.output.json",
   "title": "Design preview output",
-  "description": "The URL of the composition version running in the preview host, one per compiled framework, with its lineage (composition, version, parent, operation, head), the schema hash and the compiled module digests. An unreachable host throws OODS-N021 before any record is written; an unknown composition or version throws OODS-N022. action compare returns the what-changed between two versions instead.",
+  "description": "The URL of the composition version running in the preview host, one per compiled framework, with its lineage (composition, version, parent, operation, head), the schema hash and the compiled module digests. An unreachable host throws OODS-N021 before any record is written; an unknown composition or version throws OODS-N022. action compare returns the what-changed between two versions instead. action edit records a new version from one operation and opens it; action versions lists a composition's versions.",
   "anyOf": [
     {
       "type": "object",
@@ -24,7 +24,8 @@
         "theme",
         "recordPath",
         "durationMs",
-        "measured"
+        "measured",
+        "editable"
       ],
       "additionalProperties": false,
       "properties": {
@@ -32,7 +33,11 @@
           "const": "ok"
         },
         "action": {
-          "const": "render"
+          "type": "string",
+          "enum": [
+            "render",
+            "edit"
+          ]
         },
         "compositionId": {
           "type": "string",
@@ -249,6 +254,106 @@
                 "type": "string"
               },
               "description": "Measurements this version does not carry (validation:<framework>, charts, axe:<framework>:<brand>/<theme>)."
+            }
+          }
+        },
+        "edit": {
+          "type": "object",
+          "required": [
+            "operation",
+            "parentVersion"
+          ],
+          "additionalProperties": false,
+          "description": "action edit only: the operation that produced this version and the version it derives from.",
+          "properties": {
+            "operation": {
+              "type": "string",
+              "enum": [
+                "reorder-region",
+                "swap-slot",
+                "reorder-fields",
+                "seed"
+              ]
+            },
+            "parentVersion": {
+              "type": "integer"
+            }
+          }
+        },
+        "editable": {
+          "type": "object",
+          "required": [
+            "regions",
+            "slots",
+            "fields",
+            "seed"
+          ],
+          "additionalProperties": false,
+          "description": "What an edit can name on this version: the regions in order, each slot with the composer's candidates, the field order per region, the current seed.",
+          "properties": {
+            "regions": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "id",
+                  "component"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "component": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "slots": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "slotName",
+                  "selectedComponent",
+                  "candidates"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "slotName": {
+                    "type": "string"
+                  },
+                  "selectedComponent": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "candidates": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            },
+            "fields": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "description": "Region id → field names in their current order."
+            },
+            "seed": {
+              "type": [
+                "string",
+                "null"
+              ]
             }
           }
         }
@@ -548,6 +653,113 @@
             }
           },
           "description": "The structural what-changed the preview host computes over the two version records: regions added/removed/reordered, slot components, nodes outside slots, props of matched nodes, field order per region, the seed, and artifact files whose hash moved per framework both versions carry. Identical versions report zero differences."
+        },
+        "host": {
+          "type": "object",
+          "required": [
+            "url",
+            "port",
+            "compositionsDir"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "url": {
+              "type": "string",
+              "format": "uri"
+            },
+            "port": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 65535
+            },
+            "compositionsDir": {
+              "type": "string",
+              "description": "Where the version files live and where the host reads them; beside the saved-schema store."
+            }
+          }
+        },
+        "durationMs": {
+          "type": "number",
+          "minimum": 0
+        }
+      }
+    },
+    {
+      "type": "object",
+      "required": [
+        "status",
+        "action",
+        "compositionId",
+        "latest",
+        "versions",
+        "host",
+        "durationMs"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "status": {
+          "const": "ok"
+        },
+        "action": {
+          "const": "versions"
+        },
+        "compositionId": {
+          "type": "string"
+        },
+        "latest": {
+          "type": "integer"
+        },
+        "versions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "version",
+              "parentVersion",
+              "operation",
+              "createdAt",
+              "schemaHash",
+              "head",
+              "artifacts",
+              "url"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "version": {
+                "type": "integer"
+              },
+              "parentVersion": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "operation": {
+                "type": "string"
+              },
+              "createdAt": {
+                "type": "string"
+              },
+              "schemaHash": {
+                "type": "string"
+              },
+              "head": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "artifacts": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "url": {
+                "type": "string"
+              }
+            }
+          }
         },
         "host": {
           "type": "object",

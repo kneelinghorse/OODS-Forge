@@ -4,15 +4,19 @@ import { validateGeneratedArtifact } from '../codegen/artifact-envelope.js';
 import { seedPreviewModel } from '../codegen/preview-model.js';
 import { certifyPlacedCharts } from '../lib/measurements.js';
 import { ToolError } from '../errors/tool-error.js';
-import { attachToVersion, latestVersion, readVersion, resolveCompositionsDir, versionPath, type CompositionVersion, type PreviewBrand, type PreviewFramework, type PreviewTheme } from '../lib/composition-store.js';
+import { attachToVersion, latestVersion, listVersions, readVersion, resolveCompositionsDir, versionPath, type CompositionVersion, type PreviewBrand, type PreviewFramework, type PreviewTheme } from '../lib/composition-store.js';
+import { fieldKeyOf } from './design.compose.js';
+import type { UiElement } from '../schemas/generated.js';
 import type { ToolContext } from '../lib/tool-context.js';
 import type { DesignPreviewInputSchema, DesignPreviewOutputSchema } from '../schemas/generated.js';
 import { handle as generate } from './code.generate.js';
 import { handle as compose } from './design.compose.js';
 
 type DesignPreviewOutput = DesignPreviewOutputSchema.DesignPreviewOutput;
-type RenderOutput = Extract<DesignPreviewOutput, { action: 'render' }>;
+type RenderOutput = Exclude<DesignPreviewOutput, { action: 'compare' } | { action: 'versions' }>;
 type CompareOutput = Extract<DesignPreviewOutput, { action: 'compare' }>;
+type VersionsOutput = Extract<DesignPreviewOutput, { action: 'versions' }>;
+type EditInput = NonNullable<DesignPreviewInputSchema.DesignPreviewInput['edit']>;
 type PreviewEntry = RenderOutput['previews'][number];
 const PROBE_TIMEOUT_MS = 3_000;
 const COMPILE_TIMEOUT_MS = 60_000;
@@ -63,10 +67,18 @@ export async function handle(input: DesignPreviewInputSchema.DesignPreviewInput,
     throw new ToolError('OODS-V203', 'design.preview needs either compositionId (with an optional version) or object and context', { input: Object.keys(input) });
   }
   if (input.action === 'compare') return compare(input, hostUrl, compositionsDir, started);
+  if (input.action === 'versions') return versions(input, hostUrl, compositionsDir, started);
 
-  // The version to open: an existing one, or the first version of a fresh composition.
+  // The version to open: an existing one, the first version of a fresh composition, or the version an edit records.
   let record: CompositionVersion;
-  if (input.compositionId) {
+  let edit: RenderOutput['edit'] = undefined;
+  if (input.action === 'edit') {
+    if (!input.compositionId || !input.edit) throw new ToolError('OODS-V204', 'design.preview action edit needs compositionId (with version) and edit.operation', { input: Object.keys(input) });
+    const parentVersion = input.version ?? await latestVersion(compositionsDir, input.compositionId);
+    const parent = await readVersion(compositionsDir, input.compositionId, parentVersion);
+    record = await applyEdit(compositionsDir, parent, input.edit);
+    edit = { operation: input.edit.operation, parentVersion };
+  } else if (input.compositionId) {
     const version = input.version ?? await latestVersion(compositionsDir, input.compositionId);
     record = await readVersion(compositionsDir, input.compositionId, version);
   } else {
@@ -86,7 +98,8 @@ export async function handle(input: DesignPreviewInputSchema.DesignPreviewInput,
   if (!model) {
     let workflowSchema: CompositionVersion['schema'] | undefined;
     if (viewContext !== 'workflow' && object && object !== 'Chunk') {
-      const workflow = await compose({ object, context: 'workflow', options: { transient: true } });
+      // The seed records are the version's own: the same seed drives the workflow composition the model is drawn from.
+      const workflow = await compose({ object, context: 'workflow', ...(record.schema.seed ? { preferences: { seed: record.schema.seed } } : {}), options: { transient: true } });
       if (workflow.status !== 'ok' || !workflow.schema) throw new Error(`Seed composition failed: ${JSON.stringify(workflow.errors ?? workflow)}`);
       workflowSchema = workflow.schema;
     }
@@ -130,13 +143,96 @@ export async function handle(input: DesignPreviewInputSchema.DesignPreviewInput,
   }
 
   return {
-    status: 'ok', action: 'render',
+    status: 'ok', action: edit ? 'edit' : 'render', ...(edit ? { edit } : {}),
     compositionId: record.compositionId, version: record.version, parentVersion: record.parentVersion, operation: record.operation, head: record.head,
     schemaHash: record.schemaHash, object, context: viewContext,
     previewUrl: previews[0]!.url, previews: previews as RenderOutput['previews'],
     host: { url: hostUrl, port: Number(new URL(hostUrl).port), compositionsDir },
     brand, theme, recordPath: versionPath(compositionsDir, record.compositionId, record.version),
-    measured: summarizeMeasurements(record), durationMs: performance.now() - started,
+    measured: summarizeMeasurements(record), editable: editableOf(record), durationMs: performance.now() - started,
+  };
+}
+
+/** What an edit may name on a version: its regions, its slots with the composer's candidates, its field order, its seed. */
+export function editableOf(record: CompositionVersion): RenderOutput['editable'] {
+  const screen = record.schema.screens[0];
+  const regions = (screen?.children ?? []).map(node => ({ id: node.id, component: node.component }));
+  const fields: Record<string, string[]> = {};
+  for (const region of screen?.children ?? []) {
+    const names: string[] = [];
+    const walk = (node: UiElement) => { for (const child of node.children ?? []) { const key = fieldKeyOf(child); if (key && !names.includes(key)) names.push(key); if (!/^slot-/.test(child.id)) walk(child); } };
+    walk(region);
+    fields[region.id] = names;
+  }
+  return {
+    regions,
+    slots: record.slots.map(slot => ({ slotName: slot.slotName, selectedComponent: slot.selectedComponent ?? null, candidates: slot.candidates ?? (slot.selectedComponent ? [slot.selectedComponent] : []) })),
+    fields,
+    seed: record.schema.seed ?? null,
+  };
+}
+
+const refuse = (reason: string, details: Record<string, unknown>) => new ToolError('OODS-V204', `design.preview action edit: ${reason}`, details);
+
+/**
+ * One edit = one new version: the parent's compose inputs re-composed through the override surface
+ * with exactly the operation's change, recorded with the parent and the operation. The parent's
+ * file is never written. The schema is produced by the composer, never edited by hand.
+ */
+async function applyEdit(compositionsDir: string, parent: CompositionVersion, edit: EditInput): Promise<CompositionVersion> {
+  const editable = editableOf(parent);
+  const { compositionId: _id, parentVersion: _parent, options: parentOptions, ...compose_ } = parent.compose as Record<string, unknown> & { options?: Record<string, unknown> };
+  const preferences = { ...((compose_.preferences as Record<string, unknown> | undefined) ?? {}) };
+  switch (edit.operation) {
+    case 'reorder-region': {
+      if (!edit.regionOrder?.length) throw refuse('reorder-region needs regionOrder', { editable: editable.regions });
+      const ids = editable.regions.map(region => region.id);
+      const unknown = edit.regionOrder.filter(id => !ids.includes(id));
+      if (unknown.length) throw refuse(`regionOrder names regions this version does not have: ${unknown.join(', ')}`, { regionOrder: edit.regionOrder, regions: ids });
+      if (JSON.stringify([...edit.regionOrder, ...ids.filter(id => !edit.regionOrder!.includes(id))]) === JSON.stringify(ids)) throw refuse('regionOrder leaves the regions where they are', { regionOrder: edit.regionOrder, regions: ids });
+      preferences.regionOrder = edit.regionOrder;
+      break;
+    }
+    case 'swap-slot': {
+      if (!edit.slot || !edit.component) throw refuse('swap-slot needs slot and component', { editable: editable.slots });
+      const slot = editable.slots.find(entry => entry.slotName === edit.slot);
+      if (!slot) throw refuse(`this version has no slot ${edit.slot}`, { slot: edit.slot, slots: editable.slots.map(entry => entry.slotName) });
+      if (!slot.candidates.includes(edit.component)) throw refuse(`${edit.component} is not one of the composer's candidates for slot ${edit.slot}`, { slot: edit.slot, component: edit.component, candidates: slot.candidates });
+      if (slot.selectedComponent === edit.component) throw refuse(`slot ${edit.slot} already leads with ${edit.component}`, { slot: edit.slot, component: edit.component });
+      preferences.componentOverrides = { ...((preferences.componentOverrides as Record<string, string> | undefined) ?? {}), [edit.slot]: edit.component };
+      break;
+    }
+    case 'reorder-fields': {
+      if (!edit.region || !edit.fieldOrder?.length) throw refuse('reorder-fields needs region and fieldOrder', { editable: editable.fields });
+      const current = editable.fields[edit.region];
+      if (!current) throw refuse(`this version has no region ${edit.region}`, { region: edit.region, regions: Object.keys(editable.fields) });
+      const unknown = edit.fieldOrder.filter(field => !current.includes(field));
+      if (unknown.length) throw refuse(`fieldOrder names fields region ${edit.region} does not carry: ${unknown.join(', ')}`, { region: edit.region, fieldOrder: edit.fieldOrder, fields: current });
+      if (JSON.stringify([...edit.fieldOrder, ...current.filter(field => !edit.fieldOrder!.includes(field))]) === JSON.stringify(current)) throw refuse('fieldOrder leaves the fields where they are', { region: edit.region, fieldOrder: edit.fieldOrder, fields: current });
+      preferences.fieldOrder = { ...((preferences.fieldOrder as Record<string, string[]> | undefined) ?? {}), [edit.region]: edit.fieldOrder };
+      break;
+    }
+    case 'seed': {
+      if (!edit.seed) throw refuse('seed needs a seed string', { seed: editable.seed });
+      if (edit.seed === editable.seed) throw refuse('the seed is unchanged', { seed: edit.seed });
+      preferences.seed = edit.seed;
+      break;
+    }
+    default: throw refuse(`unknown operation ${String((edit as { operation: string }).operation)}`, { operations: ['reorder-region', 'swap-slot', 'reorder-fields', 'seed'] });
+  }
+  const composed = await compose({ ...(compose_ as object), preferences, compositionId: parent.compositionId, parentVersion: parent.version, options: { ...(parentOptions ?? {}), transient: false, operation: edit.operation } } as Parameters<typeof compose>[0]);
+  if (composed.status !== 'ok' || !composed.compositionId || !composed.version) throw new Error(`Re-composition failed: ${JSON.stringify(composed.errors ?? composed)}`);
+  return readVersion(compositionsDir, composed.compositionId, composed.version);
+}
+
+/** The composition's versions with their lineage and the URL each opens at. */
+async function versions(input: DesignPreviewInputSchema.DesignPreviewInput, hostUrl: string, compositionsDir: string, started: number): Promise<VersionsOutput> {
+  if (!input.compositionId) throw new ToolError('OODS-V203', 'design.preview action versions needs compositionId', { input: Object.keys(input) });
+  const entries = await listVersions(compositionsDir, input.compositionId);
+  return {
+    status: 'ok', action: 'versions', compositionId: input.compositionId, latest: entries.at(-1)!.version,
+    versions: entries.map(entry => ({ ...entry, url: `${hostUrl}/preview/${input.compositionId}/${entry.version}` })),
+    host: { url: hostUrl, port: Number(new URL(hostUrl).port), compositionsDir }, durationMs: performance.now() - started,
   };
 }
 

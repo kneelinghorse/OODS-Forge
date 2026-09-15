@@ -213,6 +213,10 @@ export namespace A11yScanInputSchema {
     objectSchema?: {
       [k: string]: FieldSchemaEntry;
     };
+    /**
+     * Sample-data seed recorded by design.compose (preferences.seed): rotates the deterministic sample records generated for previews and workflow apps. Absent: the authored order.
+     */
+    seed?: string;
   }
   export interface Workflow {
     object: string;
@@ -1593,6 +1597,10 @@ export namespace CodeGenerateInputSchema {
     objectSchema?: {
       [k: string]: FieldSchemaEntry;
     };
+    /**
+     * Sample-data seed recorded by design.compose (preferences.seed): rotates the deterministic sample records generated for previews and workflow apps. Absent: the authored order.
+     */
+    seed?: string;
   }
   export interface Workflow {
     object: string;
@@ -3181,6 +3189,25 @@ export namespace DesignComposeInputSchema {
       componentOverrides?: {
         [k: string]: string;
       };
+      /**
+       * The screen's regions (its direct children) by id in the desired order; regions not listed keep their relative order after the listed ones. Applied after composition; the composer never edits a schema by hand.
+       *
+       * @minItems 1
+       */
+      regionOrder?: [string, ...string[]];
+      /**
+       * Region id → field names in the desired order among sibling field nodes of that region (a field editor, a read-only row, or a slot placing a field component); fields not listed keep their relative order after the listed ones.
+       */
+      fieldOrder?: {
+        /**
+         * @minItems 1
+         */
+        [k: string]: [string, ...string[]];
+      };
+      /**
+       * Sample-data seed. Rotates the deterministic sample records (labels, names and derived values) generated for previews and workflow apps; recorded on the schema as `seed` and nothing else in the schema changes.
+       */
+      seed?: string;
     };
     options?: {
       /**
@@ -3195,6 +3222,10 @@ export namespace DesignComposeInputSchema {
        * Do not record a composition version; the result then carries no compositionId. For scratch compositions only.
        */
       transient?: boolean;
+      /**
+       * With compositionId: the lineage operation recorded on the new version; default recompose. design.preview action edit sets it.
+       */
+      operation?: 'recompose' | 'reorder-region' | 'swap-slot' | 'reorder-fields' | 'seed';
     };
     /**
      * Record this composition as the next version of an existing composition (operation "recompose") instead of creating a new one.
@@ -3533,6 +3564,10 @@ export namespace DesignComposeOutputSchema {
     objectSchema?: {
       [k: string]: FieldSchemaEntry;
     };
+    /**
+     * Sample-data seed recorded by design.compose (preferences.seed): rotates the deterministic sample records generated for previews and workflow apps. Absent: the authored order.
+     */
+    seed?: string;
   }
   export interface Workflow {
     object: string;
@@ -3740,9 +3775,9 @@ export namespace DesignPreviewInputSchema {
 
   export interface DesignPreviewInput2 {
     /**
-     * render (default): open the version as the running app. compare: the structural what-changed between compositionId@version and against, with the side-by-side URL.
+     * render (default): open the version as the running app. compare: the what-changed between compositionId@version and against. edit: apply one operation to compositionId@version by re-composing through the override surface and re-generating, recording a new version with its parent, then open it. versions: list the composition's versions.
      */
-    action?: 'render' | 'compare';
+    action?: 'render' | 'compare' | 'edit' | 'versions';
     /**
      * An existing composition from design.compose; with no version, its latest version opens.
      */
@@ -3805,6 +3840,40 @@ export namespace DesignPreviewInputSchema {
       compositionId?: string;
       version: number;
     };
+    /**
+     * action edit: the one operation to apply to compositionId@version. The parent version is never changed.
+     */
+    edit?: {
+      operation: 'reorder-region' | 'swap-slot' | 'reorder-fields' | 'seed';
+      /**
+       * reorder-region: the screen's region ids in the desired order (the version record lists them).
+       *
+       * @minItems 1
+       */
+      regionOrder?: [string, ...string[]];
+      /**
+       * swap-slot: the slot name.
+       */
+      slot?: string;
+      /**
+       * swap-slot: one of the composer's own candidates for that slot on the parent version (the version record lists them).
+       */
+      component?: string;
+      /**
+       * reorder-fields: the region id.
+       */
+      region?: string;
+      /**
+       * reorder-fields: the region's field names in the desired order.
+       *
+       * @minItems 1
+       */
+      fieldOrder?: [string, ...string[]];
+      /**
+       * seed: the new sample-data seed.
+       */
+      seed?: string;
+    };
   }
 }
 export type DesignPreviewInput = DesignPreviewInputSchema.DesignPreviewInput;
@@ -3812,12 +3881,12 @@ export type DesignPreviewInput = DesignPreviewInputSchema.DesignPreviewInput;
 // Source: design.preview.output.json
 export namespace DesignPreviewOutputSchema {
   /**
-   * The URL of the composition version running in the preview host, one per compiled framework, with its lineage (composition, version, parent, operation, head), the schema hash and the compiled module digests. An unreachable host throws OODS-N021 before any record is written; an unknown composition or version throws OODS-N022. action compare returns the what-changed between two versions instead.
+   * The URL of the composition version running in the preview host, one per compiled framework, with its lineage (composition, version, parent, operation, head), the schema hash and the compiled module digests. An unreachable host throws OODS-N021 before any record is written; an unknown composition or version throws OODS-N022. action compare returns the what-changed between two versions instead. action edit records a new version from one operation and opens it; action versions lists a composition's versions.
    */
   export type DesignPreviewOutput =
     | {
         status: 'ok';
-        action: 'render';
+        action: 'render' | 'edit';
         compositionId: string;
         version: number;
         parentVersion: number | null;
@@ -3937,6 +4006,34 @@ export namespace DesignPreviewOutputSchema {
            */
           notMeasured: string[];
         };
+        /**
+         * action edit only: the operation that produced this version and the version it derives from.
+         */
+        edit?: {
+          operation: 'reorder-region' | 'swap-slot' | 'reorder-fields' | 'seed';
+          parentVersion: number;
+        };
+        /**
+         * What an edit can name on this version: the regions in order, each slot with the composer's candidates, the field order per region, the current seed.
+         */
+        editable: {
+          regions: {
+            id: string;
+            component: string;
+          }[];
+          slots: {
+            slotName: string;
+            selectedComponent: string | null;
+            candidates: string[];
+          }[];
+          /**
+           * Region id → field names in their current order.
+           */
+          fields: {
+            [k: string]: string[];
+          };
+          seed: string | null;
+        };
       }
     | {
         status: 'ok';
@@ -4005,6 +4102,31 @@ export namespace DesignPreviewOutputSchema {
             note: string;
           }[];
         };
+        host: {
+          url: string;
+          port: number;
+          /**
+           * Where the version files live and where the host reads them; beside the saved-schema store.
+           */
+          compositionsDir: string;
+        };
+        durationMs: number;
+      }
+    | {
+        status: 'ok';
+        action: 'versions';
+        compositionId: string;
+        latest: number;
+        versions: {
+          version: number;
+          parentVersion: number | null;
+          operation: string;
+          createdAt: string;
+          schemaHash: string;
+          head: string | null;
+          artifacts: string[];
+          url: string;
+        }[];
         host: {
           url: string;
           port: number;
@@ -6493,6 +6615,10 @@ export namespace ReplOutputSchema {
     objectSchema?: {
       [k: string]: FieldSchemaEntry;
     };
+    /**
+     * Sample-data seed recorded by design.compose (preferences.seed): rotates the deterministic sample records generated for previews and workflow apps. Absent: the authored order.
+     */
+    seed?: string;
   }
   export interface Workflow {
     object: string;
@@ -6921,6 +7047,10 @@ export namespace ReplRenderInputSchema {
     objectSchema?: {
       [k: string]: FieldSchemaEntry;
     };
+    /**
+     * Sample-data seed recorded by design.compose (preferences.seed): rotates the deterministic sample records generated for previews and workflow apps. Absent: the authored order.
+     */
+    seed?: string;
   }
   export interface Workflow {
     object: string;
@@ -7311,6 +7441,10 @@ export namespace ReplRenderOutputSchema {
     objectSchema?: {
       [k: string]: FieldSchemaEntry;
     };
+    /**
+     * Sample-data seed recorded by design.compose (preferences.seed): rotates the deterministic sample records generated for previews and workflow apps. Absent: the authored order.
+     */
+    seed?: string;
   }
   export interface Workflow {
     object: string;
@@ -7619,6 +7753,10 @@ export namespace UiSchemaSchema {
     objectSchema?: {
       [k: string]: FieldSchemaEntry;
     };
+    /**
+     * Sample-data seed recorded by design.compose (preferences.seed): rotates the deterministic sample records generated for previews and workflow apps. Absent: the authored order.
+     */
+    seed?: string;
   }
   export interface Workflow {
     object: string;
@@ -7942,6 +8080,10 @@ export namespace ReplValidateInputSchema {
     objectSchema?: {
       [k: string]: FieldSchemaEntry;
     };
+    /**
+     * Sample-data seed recorded by design.compose (preferences.seed): rotates the deterministic sample records generated for previews and workflow apps. Absent: the authored order.
+     */
+    seed?: string;
   }
   export interface Workflow {
     object: string;
@@ -8118,6 +8260,10 @@ export namespace ReplValidateInputSchema {
     objectSchema?: {
       [k: string]: FieldSchemaEntry;
     };
+    /**
+     * Sample-data seed recorded by design.compose (preferences.seed): rotates the deterministic sample records generated for previews and workflow apps. Absent: the authored order.
+     */
+    seed?: string;
   }
 }
 export type ReplValidateInput = ReplValidateInputSchema.ReplValidateInput;
@@ -8312,6 +8458,10 @@ export namespace ReplValidateOutputSchema {
     objectSchema?: {
       [k: string]: FieldSchemaEntry;
     };
+    /**
+     * Sample-data seed recorded by design.compose (preferences.seed): rotates the deterministic sample records generated for previews and workflow apps. Absent: the authored order.
+     */
+    seed?: string;
   }
   export interface Workflow {
     object: string;

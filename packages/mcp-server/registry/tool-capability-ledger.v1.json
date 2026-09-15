@@ -27,7 +27,7 @@
       "reason": "apply:false invokes package builds and prepack in canonical package directories; no honest dry-run. Earlier probe rebuilt workspace dist but created no tags or publications."
     }
   ],
-  "head": "680c5f9e41c044f155ac2c3375d10b6a5eec9a0d",
+  "head": "1613ad0ed9abf44e8c0a7d3ff6ae4d73130e2497",
   "builderSelfCertified": false,
   "methodology": {
     "proofTier": "Highest location tier of a literal runtime import of a handler-bearing module in mcp-server test/spec sources. Grouped action imports roll up to their registered family. Imports are source evidence, not proof of invocation, passing execution or browser certification. Transitive imports and constructed imports/dispatch are not followed; type-only and schema-only imports do not promote a tier.",
@@ -1053,6 +1053,12 @@
           "line": 19,
           "kind": "readme-reference",
           "verifiedReceipt": false
+        },
+        {
+          "path": "artifacts/product-reality/sprint-201/m05/README.md",
+          "line": 28,
+          "kind": "readme-reference",
+          "verifiedReceipt": false
         }
       ],
       "portableE2E": true,
@@ -1090,12 +1096,12 @@
       "name": "design.compose",
       "registration": "auto",
       "advertisedClaim": {
-        "description": "Compose a complete UiSchema from a natural-language intent description. Returns schemaRef for reuse in validate/render/code.generate. schemaRef includes createdAt/expiresAt timestamps (default TTL: 30 minutes) and lives in the server process that issued it: a restarted client starts a new server that does not know earlier refs and returns OODS-N003 for them. Use schema.save to persist beyond TTL or across sessions. Every successful composition is recorded as a durable version (compositions/<compositionId>/versions/<n>.json beside the saved-schema store) and the result carries compositionId, version, parentVersion, operation and head; pass compositionId to record the result as that composition's next version, or options.transient to record nothing. design.preview opens any version at /preview/<compositionId>/<version>.",
+        "description": "Compose a complete UiSchema from a natural-language intent description. Returns schemaRef for reuse in validate/render/code.generate. schemaRef includes createdAt/expiresAt timestamps (default TTL: 30 minutes) and lives in the server process that issued it: a restarted client starts a new server that does not know earlier refs and returns OODS-N003 for them. Use schema.save to persist beyond TTL or across sessions. Every successful composition is recorded as a durable version (compositions/<compositionId>/versions/<n>.json beside the saved-schema store) and the result carries compositionId, version, parentVersion, operation and head; pass compositionId to record the result as that composition's next version, or options.transient to record nothing. design.preview opens any version at /preview/<compositionId>/<version>. preferences.regionOrder, preferences.fieldOrder and preferences.seed are the override surface edits re-compose through; the seed is recorded on the schema and rotates the deterministic sample data.",
         "inputSchemaDescription": "Generate a complete UiSchema from an intent description and/or object definition using layout templates and component selection. Provide at least one of 'intent' or 'object'. context=workflow assembles a routed, stateful application from the object's list/detail/form/timeline compositions. Every successful composition is recorded as a durable version under the schema store (compositions/<compositionId>/versions/<n>.json); pass compositionId to record the result as that composition's next version."
       },
-      "claimHash": "sha256:605c823defd2fcceb948e4ab7fccafcf060dc8a3aad579d1366b433cefca8817",
+      "claimHash": "sha256:ea7a3db0e75b987bcc139ec8ef472594132123a3d7fcfa0594f90c5ac2714e6b",
       "inputSchemaPath": "packages/mcp-server/src/schemas/design.compose.input.json",
-      "inputSchemaHash": "sha256:a0480d84a54183d14fb8597a36da381ce35d4994669bbe25af0ef5e9d6d833dc",
+      "inputSchemaHash": "sha256:ddc76556099bf2ad2b98adf56fdc2353f5ec73d2bfe1383fe89bc98db72bd560",
       "proofTier": "product-reality",
       "testImports": {
         "product-reality": [
@@ -1449,6 +1455,12 @@
           "line": 16,
           "kind": "readme-reference",
           "verifiedReceipt": false
+        },
+        {
+          "path": "artifacts/product-reality/sprint-201/m05/README.md",
+          "line": 7,
+          "kind": "readme-reference",
+          "verifiedReceipt": false
         }
       ],
       "portableE2E": true,
@@ -1469,12 +1481,12 @@
       "name": "design.preview",
       "registration": "auto",
       "advertisedClaim": {
-        "description": "Open a composition version as the generated React or Vue app actually running in a browser: an existing compositionId (and optional version) or an object and context composed now as a new composition. Generates one or both frameworks onto the version, seeds the deterministic field model, compiles each artifact once through the preview host and returns one URL per framework with the lineage (compositionId, version, parentVersion, operation, head), the schema hash and the compiled module digests; the page shows the lineage and the measurements beside the running app with brand, theme and width controls, and brand and theme re-mount the app in place. Measurements are stored on the version and the result's measured block names them: the code.generate validation receipt per framework, artifact.certify for every placed chart, and axe-core run inside the running page per framework, brand and theme; every measurement not taken is listed under notMeasured, so nothing is claimed that did not run. The HTTP bridge hosts the preview in-process and the stdio adapter starts it on 127.0.0.1 for Claude Desktop, Claude Code and Cursor, so the extracted runtime bundle serves it with no Vite, npm install or browser automation. action compare (compositionId@version against another version) returns the structural what-changed the compare page shows: regions added, removed or reordered, slot components, nodes outside slots, props, field order, the seed and artifact files whose hash moved, with the side-by-side URL; identical versions report zero differences. Typed limits: without a reachable host (a native server run on its own, a host reading another schema store root, or a platform without a bundled esbuild binary) the outcome is OODS-N021, retryable, with the host details in data; an unknown composition or version is OODS-N022. Writes only the version's artifacts and model; never saves or edits a schema. A running preview is an observation, not usability certification.",
+        "description": "Open a composition version as the generated React or Vue app actually running in a browser: an existing compositionId (and optional version) or an object and context composed now as a new composition. Generates one or both frameworks onto the version, seeds the deterministic field model, compiles each artifact once through the preview host and returns one URL per framework with the lineage (compositionId, version, parentVersion, operation, head), the schema hash and the compiled module digests; the page shows the lineage and the measurements beside the running app with brand, theme and width controls, and brand and theme re-mount the app in place. Measurements are stored on the version and the result's measured block names them: the code.generate validation receipt per framework, artifact.certify for every placed chart, and axe-core run inside the running page per framework, brand and theme; every measurement not taken is listed under notMeasured, so nothing is claimed that did not run. The HTTP bridge hosts the preview in-process and the stdio adapter starts it on 127.0.0.1 for Claude Desktop, Claude Code and Cursor, so the extracted runtime bundle serves it with no Vite, npm install or browser automation. action compare (compositionId@version against another version) returns the structural what-changed the compare page shows: regions added, removed or reordered, slot components, nodes outside slots, props, field order, the seed and artifact files whose hash moved, with the side-by-side URL; identical versions report zero differences. action edit applies one operation to compositionId@version by re-composing through the override surface and re-generating, and records the result as a new version with its parent and the operation, then opens it: reorder-region (regionOrder), swap-slot (slot, component from the composer's own candidates), reorder-fields (region, fieldOrder), seed (seed); the parent version is never changed, and an operation that names nothing on the version or changes nothing is refused with OODS-V204. action versions lists the composition's versions with their lineage. The render result's editable block names the regions, slots with candidates, field order and seed an edit may use; the page offers the same four edits. Typed limits: without a reachable host (a native server run on its own, a host reading another schema store root, or a platform without a bundled esbuild binary) the outcome is OODS-N021, retryable, with the host details in data; an unknown composition or version is OODS-N022. Writes only the version's artifacts and model; never saves or edits a schema. A running preview is an observation, not usability certification.",
         "inputSchemaDescription": "Open a composition version as the generated React or Vue app actually running in a browser: either an existing compositionId (and optional version) or an object and context composed now as a new composition. The preview host (in the HTTP bridge, or started by the stdio adapter) compiles the artifact and serves it at one URL per version with its lineage and brand, theme and width controls. action \"compare\" returns the structural what-changed between this version and `against` (regions, slots, nodes, props, field order, seed, artifact file hashes) with the side-by-side URL."
       },
-      "claimHash": "sha256:cd7d277be77b9455b5a4d1f6470d198e31b4f317ae64bb2fed9798d64bf77ce3",
+      "claimHash": "sha256:af39fef580abbe5c5a133b30be6af42474a4d05161f9d451cab52f07a2696b0d",
       "inputSchemaPath": "packages/mcp-server/src/schemas/design.preview.input.json",
-      "inputSchemaHash": "sha256:bf424df566db0e34140bb0b5ac9a1d7ab73897179ce78c3bc7135a777c60ac83",
+      "inputSchemaHash": "sha256:6e375a124d27c89d8124416298edaeec6c18d9f882f70a67419660469a2ce532",
       "proofTier": "product-reality",
       "testImports": {
         "product-reality": [
@@ -1494,7 +1506,7 @@
         "unit": [
           {
             "path": "packages/mcp-server/test/tools/design.preview.s201.spec.ts",
-            "line": 18,
+            "line": 19,
             "handler": "packages/mcp-server/src/tools/design.preview.ts"
           }
         ]
@@ -1625,6 +1637,24 @@
           "line": 19,
           "kind": "readme-reference",
           "verifiedReceipt": false
+        },
+        {
+          "path": "artifacts/product-reality/sprint-201/m05/README.md",
+          "line": 8,
+          "kind": "readme-reference",
+          "verifiedReceipt": false
+        },
+        {
+          "path": "artifacts/product-reality/sprint-201/m05/README.md",
+          "line": 9,
+          "kind": "readme-reference",
+          "verifiedReceipt": false
+        },
+        {
+          "path": "artifacts/product-reality/sprint-201/m05/README.md",
+          "line": 23,
+          "kind": "readme-reference",
+          "verifiedReceipt": false
         }
       ],
       "portableE2E": true,
@@ -1644,7 +1674,7 @@
           "kind": "documented-limit",
           "file": "packages/mcp-server/src/tools/design.preview.ts",
           "reason": "Requires a reachable preview host: the HTTP bridge hosts it in-process and the stdio adapter starts it; a native server run on its own, a host reading another schema store root, or a platform without a bundled esbuild binary returns retryable OODS-N021.",
-          "line": 34
+          "line": 38
         }
       ]
     },

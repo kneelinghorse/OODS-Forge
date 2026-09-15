@@ -15,6 +15,7 @@ import { handle as generate } from '../../src/tools/code.generate.js';
 import { handle as compose } from '../../src/tools/design.compose.js';
 import { handle as render } from '../../src/tools/viz.render.js';
 import { placedChartRequests } from '../../src/codegen/chart-assets.js';
+import { workflowSampleRecords } from '../../src/codegen/workflow-data-emitter.js';
 import { handle as preview, resolvePreviewHostUrl } from '../../src/tools/design.preview.js';
 import { loadToolRegistry } from '../../src/tools/registry.js';
 
@@ -225,5 +226,102 @@ describe('design.preview serves a composition version through the preview host (
     if (card.action !== 'render') throw new Error('render expected');
     expect(card.measured).toMatchObject({ validation: ['vue'], charts: { placed: 0, conformant: 0, notConformant: 0, uncertified: 0 }, axe: [] });
     expect((await readVersion(compositionsDir, card.compositionId, 1)).measurements.charts).toEqual([]);
+  });
+
+  it('action edit records one new version per operation with its parent and operation, never touching the parent file, and refuses what is not applicable (s201-m05)', async () => {
+    const compositionsDir = resolveCompositionsDir();
+    const hostUrl = await host(compositionsDir);
+    const base = await preview({ object: 'Subscription', context: 'detail' }, { previewHostUrl: hostUrl });
+    if (base.action !== 'render') throw new Error('render expected');
+    const id = base.compositionId;
+    const parentBytes = () => fs.readFileSync(path.join(compositionsDir, id, 'versions', '1.json'));
+    const before = parentBytes();
+    expect(base.editable.regions.map(region => region.id)).toEqual(['detail-header-1', 'detail-body-10']);
+    const metadata = base.editable.slots.find(slot => slot.slotName === 'metadata')!;
+    expect(metadata.candidates).toContain('TagSummary');
+    expect(base.editable.fields['detail-body-10']!.slice(0, 2)).toEqual(['created_at', 'updated_at']);
+    expect(base.editable.seed).toBeNull();
+
+    // 1. Reorder the two regions: version 2 shows the body before the header, in both frameworks.
+    const reordered = await preview({ action: 'edit', compositionId: id, version: 1, edit: { operation: 'reorder-region', regionOrder: ['detail-body-10', 'detail-header-1'] } }, { previewHostUrl: hostUrl });
+    if (reordered.action !== 'edit') throw new Error('edit expected');
+    expect(reordered).toMatchObject({ compositionId: id, version: 2, parentVersion: 1, operation: 'reorder-region', edit: { operation: 'reorder-region', parentVersion: 1 } });
+    expect(reordered.editable.regions.map(region => region.id)).toEqual(['detail-body-10', 'detail-header-1']);
+    const v2 = await readVersion(compositionsDir, id, 2);
+    expect(v2.schema.screens[0]!.children!.map(node => node.id)).toEqual(['detail-body-10', 'detail-header-1']);
+    expect(v2.compose).toMatchObject({ object: 'Subscription', context: 'detail', preferences: { regionOrder: ['detail-body-10', 'detail-header-1'] } });
+    for (const framework of ['react', 'vue'] as const) {
+      const source = v2.artifacts[framework]!.artifact.files[0]!.contents;
+      expect(source.indexOf('detail-body-10')).toBeLessThan(source.indexOf('detail-header-1'));
+      const original = (await readVersion(compositionsDir, id, 1)).artifacts[framework]!.artifact.files[0]!.contents;
+      expect(original.indexOf('detail-header-1')).toBeLessThan(original.indexOf('detail-body-10'));
+    }
+    expect(reordered.previews.map(entry => entry.framework)).toEqual(['react', 'vue']);
+    expect(parentBytes().equals(before)).toBe(true);
+
+    // 2. Swap the metadata slot to a composer candidate: the compare view reports exactly that change.
+    const swapped = await preview({ action: 'edit', compositionId: id, version: 1, edit: { operation: 'swap-slot', slot: 'metadata', component: 'TagSummary' } }, { previewHostUrl: hostUrl });
+    if (swapped.action !== 'edit') throw new Error('edit expected');
+    expect(swapped).toMatchObject({ version: 3, parentVersion: 1, operation: 'swap-slot' });
+    expect(swapped.editable.slots.find(slot => slot.slotName === 'metadata')!.selectedComponent).toBe('TagSummary');
+    const compared = await preview({ action: 'compare', compositionId: id, version: 1, against: { version: 3 } }, { previewHostUrl: hostUrl });
+    if (compared.action !== 'compare') throw new Error('compare expected');
+    expect(Object.entries(compared.diff.summary).filter(([, count]) => count > 0).map(([category]) => category)).toEqual(['slots', 'artifacts']);
+    expect(compared.diff.differences.filter(entry => entry.category === 'slots')).toEqual([{ category: 'slots', field: 'metadata', before: ['AuditTimeline'], after: ['TagSummary'], note: 'slot components changed' }]);
+    expect(parentBytes().equals(before)).toBe(true);
+
+    // 3. Reorder the body's fields: updated_at now leads.
+    const fields = await preview({ action: 'edit', compositionId: id, version: 1, edit: { operation: 'reorder-fields', region: 'detail-body-10', fieldOrder: ['updated_at', 'created_at'] } }, { previewHostUrl: hostUrl });
+    if (fields.action !== 'edit') throw new Error('edit expected');
+    expect(fields).toMatchObject({ version: 4, parentVersion: 1, operation: 'reorder-fields' });
+    expect(fields.editable.fields['detail-body-10']!.slice(0, 2)).toEqual(['updated_at', 'created_at']);
+    const fieldDiff = await preview({ action: 'compare', compositionId: id, version: 1, against: { version: 4 } }, { previewHostUrl: hostUrl });
+    if (fieldDiff.action !== 'compare') throw new Error('compare expected');
+    expect(fieldDiff.diff.summary.fieldOrder).toBe(1);
+    expect(fieldDiff.diff.summary.slots).toBe(0);
+    expect(parentBytes().equals(before)).toBe(true);
+
+    // 4. Change the seed: the sample data changes, and nothing else in the schema.
+    const seeded = await preview({ action: 'edit', compositionId: id, version: 1, edit: { operation: 'seed', seed: 'harbor-2' } }, { previewHostUrl: hostUrl });
+    if (seeded.action !== 'edit') throw new Error('edit expected');
+    expect(seeded).toMatchObject({ version: 5, parentVersion: 1, operation: 'seed' });
+    expect(seeded.editable.seed).toBe('harbor-2');
+    const v5 = await readVersion(compositionsDir, id, 5);
+    const v1 = await readVersion(compositionsDir, id, 1);
+    const { seed: _seed, ...v5Rest } = v5.schema as { seed?: string };
+    expect(v5Rest).toEqual(v1.schema);
+    expect(v5.schema.seed).toBe('harbor-2');
+    expect(v5.model).not.toEqual(v1.model);
+    expect(workflowSampleRecords(v5.schema)[0]!.plan_name).not.toBe(workflowSampleRecords(v1.schema)[0]!.plan_name);
+    const seedDiff = await preview({ action: 'compare', compositionId: id, version: 1, against: { version: 5 } }, { previewHostUrl: hostUrl });
+    if (seedDiff.action !== 'compare') throw new Error('compare expected');
+    // This screen's artifact carries no seeded text (its chart amounts do not rotate), so only the seed moved; the model did.
+    expect(Object.entries(seedDiff.diff.summary).filter(([, count]) => count > 0).map(([category]) => category)).toEqual(['seed']);
+    expect(parentBytes().equals(before)).toBe(true);
+
+    // Every version opens with its lineage; the composition lists them all.
+    const listed = await preview({ action: 'versions', compositionId: id }, { previewHostUrl: hostUrl });
+    if (listed.action !== 'versions') throw new Error('versions expected');
+    expect(listed.latest).toBe(5);
+    expect(listed.versions.map(entry => [entry.version, entry.parentVersion, entry.operation])).toEqual([[1, null, 'compose'], [2, 1, 'reorder-region'], [3, 1, 'swap-slot'], [4, 1, 'reorder-fields'], [5, 1, 'seed']]);
+    const page = await (await fetch(reordered.previewUrl)).text();
+    expect(page).toContain('<code>reorder-region</code>');
+    expect(page).toContain(`<a href="/preview/${id}/1?framework=react&brand=A&theme=light">version 1</a>`);
+    expect(page).toContain('data-oods-edit="true"');
+
+    // Refusals: a component outside the composer's candidates, an unknown region or field, an order that changes nothing, an unchanged seed.
+    for (const edit of [
+      { operation: 'swap-slot', slot: 'metadata', component: 'Table' },
+      { operation: 'swap-slot', slot: 'nope', component: 'TagSummary' },
+      { operation: 'reorder-region', regionOrder: ['detail-header-1', 'nope'] },
+      { operation: 'reorder-region', regionOrder: ['detail-header-1', 'detail-body-10'] },
+      { operation: 'reorder-fields', region: 'detail-body-10', fieldOrder: ['nope'] },
+      { operation: 'reorder-fields', region: 'detail-header-1', fieldOrder: ['created_at'] },
+      { operation: 'seed', seed: 'harbor-2' },
+    ] as const) {
+      await expect(preview({ action: 'edit', compositionId: id, version: 5, edit: edit as never }, { previewHostUrl: hostUrl }), JSON.stringify(edit)).rejects.toMatchObject({ opiCode: 'OODS-V204' });
+    }
+    expect((await listVersions(compositionsDir, id)).length).toBe(5);
+    expect(parentBytes().equals(before)).toBe(true);
   });
 });

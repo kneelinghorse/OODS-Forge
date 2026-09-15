@@ -3,6 +3,14 @@ import type { UiSchema, UiElement, FieldSchemaEntry } from '../schemas/generated
 import { mapFieldType, snakeToCamel } from './binding-utils.js';
 
 /** One deterministic preview policy. Authored examples/defaults and enums own domain values. */
+/** A stable rotation for a seed string: the same seed always rotates the sample lists the same way; no seed leaves them as authored. */
+export function sampleSeedRotation(seed: string | undefined): number {
+  if (!seed) return 0;
+  let hash = 0;
+  for (const char of seed) hash = (hash * 31 + char.charCodeAt(0)) >>> 0;
+  return 1 + (hash % 9);
+}
+
 export function workflowSampleData(schema: UiSchema): { records: Array<Record<string, unknown>>; seedTable: Array<{ recordId: string; field: string; value: unknown; rule: string }> } {
   const fields = schema.objectSchema ?? {};
   const workflow = schema.workflow ?? {
@@ -14,8 +22,11 @@ export function workflowSampleData(schema: UiSchema): { records: Array<Record<st
   const charts = chartNodes(schema.screens).map(node => node.chart!);
   const titleField = ['plan_name', 'name', 'title', 'display_name', 'label'].find(name => fields[name]) ?? idField;
   const humanize = (value: string) => value.split(/[_-]/).filter(Boolean).map(part => part.charAt(0).toUpperCase() + part.slice(1)).join(' ');
-  const labels = ['Northstar', 'Harbor', 'Cedar', 'Summit', 'Orchard', 'Willow', 'Atlas', 'Meadow', 'Juniper', 'Brook'];
-  const names = ['Anika Bhatt', 'Milo Chen', 'Sunny Rivera', 'Ada Morgan', 'Theo Reed', 'Lena Park', 'Sam Brooks', 'Nora Patel', 'Eli Stone', 'Maya Silva'];
+  // The schema's seed rotates the deterministic lists, so a seed change alters the sample data and nothing else.
+  const rotation = sampleSeedRotation(schema.seed);
+  const rotate = <T>(list: T[]): T[] => [...list.slice(rotation % list.length), ...list.slice(0, rotation % list.length)];
+  const labels = rotate(['Northstar', 'Harbor', 'Cedar', 'Summit', 'Orchard', 'Willow', 'Atlas', 'Meadow', 'Juniper', 'Brook']);
+  const names = rotate(['Anika Bhatt', 'Milo Chen', 'Sunny Rivera', 'Ada Morgan', 'Theo Reed', 'Lena Park', 'Sam Brooks', 'Nora Patel', 'Eli Stone', 'Maya Silva']);
   const seedTable: Array<{ recordId: string; field: string; value: unknown; rule: string }> = [];
   const chart = charts.find(chart => chart.source === 'payment-events');
   const eventNames = workflow.data.recordedEvents?.length ? workflow.data.recordedEvents : fields.last_event?.enum ?? [];

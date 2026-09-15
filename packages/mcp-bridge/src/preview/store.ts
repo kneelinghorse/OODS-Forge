@@ -23,7 +23,7 @@ export interface CompositionVersion {
   schemaHash: string;
   brand: PreviewBrand;
   theme: PreviewTheme;
-  slots: Array<{ slotName: string; selectedComponent?: string; placedComponents?: string[] }>;
+  slots: Array<{ slotName: string; selectedComponent?: string; placedComponents?: string[]; candidates?: string[] }>;
   model?: Record<string, unknown>;
   artifacts: Partial<Record<PreviewFramework, { artifact: PreviewArtifact; generatedAt: string }>>;
   measurements: Record<string, unknown>;

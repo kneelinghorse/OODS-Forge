@@ -10,6 +10,7 @@ import Fastify from 'fastify';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { registerPreviewHost } from './host.js';
+import { NativeToolClient } from './native.js';
 import { resolveCompositionsDir } from './store.js';
 
 function parseArgs(argv: string[]): { serverCwd: string; port: number } {
@@ -29,11 +30,15 @@ async function main() {
   const { serverCwd, port } = parseArgs(process.argv.slice(2));
   const fastify = Fastify({ logger: false });
   const compositionsDir = resolveCompositionsDir(serverCwd);
-  const status = await registerPreviewHost(fastify, { compositionsDir });
+  let url: string | undefined;
+  // Page edits re-compose through the native server this host owns; every call names this host's own address.
+  const native = new NativeToolClient(serverCwd, () => url);
+  const status = await registerPreviewHost(fastify, { compositionsDir, runTool: native.run });
+  fastify.addHook('onClose', () => native.close());
   await fastify.listen({ port, host: '127.0.0.1' });
   const address = fastify.server.address();
   const actualPort = typeof address === 'object' && address ? address.port : port;
-  const url = `http://127.0.0.1:${actualPort}`;
+  url = `http://127.0.0.1:${actualPort}`;
   process.stdout.write(JSON.stringify({ previewHost: { url, port: actualPort, pid: process.pid, compositionsDir, platform: status.platform } }) + '\n');
   process.stderr.write(`[oods-preview-host] listening on ${url}; compositions from ${compositionsDir}\n`);
   let stopping = false;

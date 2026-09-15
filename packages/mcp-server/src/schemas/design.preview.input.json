@@ -10,10 +10,12 @@
       "type": "string",
       "enum": [
         "render",
-        "compare"
+        "compare",
+        "edit",
+        "versions"
       ],
       "default": "render",
-      "description": "render (default): open the version as the running app. compare: the structural what-changed between compositionId@version and against, with the side-by-side URL."
+      "description": "render (default): open the version as the running app. compare: the what-changed between compositionId@version and against. edit: apply one operation to compositionId@version by re-composing through the override surface and re-generating, recording a new version with its parent, then open it. versions: list the composition's versions."
     },
     "compositionId": {
       "type": "string",
@@ -128,6 +130,61 @@
         }
       },
       "description": "action compare: the version on the right; the left is compositionId@version."
+    },
+    "edit": {
+      "type": "object",
+      "required": [
+        "operation"
+      ],
+      "additionalProperties": false,
+      "description": "action edit: the one operation to apply to compositionId@version. The parent version is never changed.",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": [
+            "reorder-region",
+            "swap-slot",
+            "reorder-fields",
+            "seed"
+          ]
+        },
+        "regionOrder": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "uniqueItems": true,
+          "description": "reorder-region: the screen's region ids in the desired order (the version record lists them)."
+        },
+        "slot": {
+          "type": "string",
+          "description": "swap-slot: the slot name."
+        },
+        "component": {
+          "type": "string",
+          "description": "swap-slot: one of the composer's own candidates for that slot on the parent version (the version record lists them)."
+        },
+        "region": {
+          "type": "string",
+          "description": "reorder-fields: the region id."
+        },
+        "fieldOrder": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "uniqueItems": true,
+          "description": "reorder-fields: the region's field names in the desired order."
+        },
+        "seed": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64,
+          "description": "seed: the new sample-data seed."
+        }
+      }
     }
   },
   "examples": [
@@ -151,6 +208,20 @@
       "against": {
         "version": 2
       }
+    },
+    {
+      "action": "edit",
+      "compositionId": "cmp-0123456789ab",
+      "version": 2,
+      "edit": {
+        "operation": "swap-slot",
+        "slot": "metadata",
+        "component": "TagSummary"
+      }
+    },
+    {
+      "action": "versions",
+      "compositionId": "cmp-0123456789ab"
     }
   ],
   "anyOf": [

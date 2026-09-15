@@ -49,7 +49,7 @@ describe('Tool-Specs generated from dispatched contracts (s196 m04)', () => {
     for (const family of ['map', 'schema', 'object', 'repl']) expect(links).toContain(`../api/${family}.md`);
   });
 
-  it('includes every adapter description verbatim and every one of the 124 actual root input properties', () => {
+  it('includes every adapter description verbatim and every one of the 125 actual root input properties', () => {
     let inputs = 0;
     for (const name of names) {
       const body = section(name);
@@ -65,8 +65,8 @@ describe('Tool-Specs generated from dispatched contracts (s196 m04)', () => {
         }
       }
     }
-    expect(inputs).toBe(124); // s201-m03: action and against on design.preview beside m02's compositionId/version and compositionId/parentVersion; dispatch measurement is the denominator.
-    expect(document).toContain('124 root input parameters');
+    expect(inputs).toBe(125); // s201-m05: edit on design.preview beside m03's action/against and m02's compositionId/version, compositionId/parentVersion; dispatch measurement is the denominator.
+    expect(document).toContain('125 root input parameters');
     expect(sources.dispatch['diag.snapshot'].input).toBe('packages/mcp-server/src/schemas/generic.input.json');
     expect(sources.dispatch['tokens.build'].output).toBe('packages/mcp-server/src/schemas/generic.output.json');
   });

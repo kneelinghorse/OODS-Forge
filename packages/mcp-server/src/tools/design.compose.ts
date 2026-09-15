@@ -38,6 +38,7 @@ import type { ComponentCatalogSummary } from './types.js';
 import { createSchemaRef, describeSchemaRef } from './schema-ref.js';
 import { newCompositionId, nextVersion, readForgeHead, resolveCompositionsDir, writeVersion, type CompositionOperation, type CompositionVersion } from '../lib/composition-store.js';
 import { createHash } from 'node:crypto';
+import { ToolError } from '../errors/tool-error.js';
 import { resolveEntity, isResolved as isEntityResolved } from './entity-resolver.js';
 import { loadObject } from '../objects/object-loader.js';
 import { composeObject, type ComposedObject } from '../objects/trait-composer.js';
@@ -159,12 +160,20 @@ export interface DesignComposeInput {
     tabCount?: number;
     tabLabels?: string[];
     componentOverrides?: Record<string, string>;
+    /** Regions (the screen's direct children) by id in the desired order. */
+    regionOrder?: string[];
+    /** Region id → field names in the desired order among sibling field nodes. */
+    fieldOrder?: Record<string, string[]>;
+    /** Sample-data seed, recorded on the schema; rotates the deterministic sample records. */
+    seed?: string;
   };
   options?: {
     validate?: boolean;
     topN?: number;
     /** Do not record a composition version (internal seed compositions); the result carries no compositionId. */
     transient?: boolean;
+    /** With compositionId: the lineage operation recorded on the new version; default recompose. */
+    operation?: CompositionOperation;
   };
   /** Record the result as the next version of this composition (operation "recompose") instead of a new one. */
   compositionId?: string;
@@ -614,6 +623,62 @@ function fillSlots(
 
     return entry;
   });
+}
+
+/**
+ * The field a sibling node stands for: its own `field`; for a slot, the first field it places; for a
+ * row wrapping exactly one field (a label + value pair, a field editor group), that field. A node
+ * whose subtree carries several fields stands for none and is walked into instead.
+ */
+export function fieldKeyOf(node: UiElement): string | undefined {
+  if (typeof node.props?.field === 'string') return node.props.field;
+  const fields = new Set<string>();
+  const walk = (child: UiElement) => { if (typeof child.props?.field === 'string') fields.add(child.props.field); child.children?.forEach(walk); };
+  node.children?.forEach(walk);
+  const slot = /^slot-/.test(node.id) || (typeof node.meta?.intent === 'string' && node.meta.intent.startsWith('slot:'));
+  if (slot) return fields.values().next().value;
+  return fields.size === 1 ? fields.values().next().value : undefined;
+}
+
+/** Reorder a list by an explicit order of keys: listed keys first, in that order; the rest keep their relative order. */
+function reorderBy<T>(items: T[], keyOf: (item: T) => string | undefined, order: string[]): T[] {
+  const listed = order.map(key => items.find(item => keyOf(item) === key)).filter((item): item is T => item !== undefined);
+  return [...listed, ...items.filter(item => !listed.includes(item))];
+}
+
+/**
+ * The override surface for edits: regionOrder reorders the screen's direct children by id;
+ * fieldOrder[region] reorders sibling field nodes inside that region; seed is recorded on the
+ * schema. Every override names ids and fields that must exist, so an edit can never point at
+ * nothing; nothing here changes what a node is, only where it sits and which sample data it shows.
+ */
+function applyOrderOverrides(schema: UiSchema, preferences: DesignComposeInput['preferences']): void {
+  if (!preferences) return;
+  const screen = schema.screens[0];
+  if (preferences.regionOrder && screen?.children) {
+    const ids = new Set(screen.children.map(node => node.id));
+    const unknown = preferences.regionOrder.filter(id => !ids.has(id));
+    if (unknown.length) throw new ToolError('OODS-V204', `regionOrder names regions this screen does not have: ${unknown.join(', ')}`, { regionOrder: preferences.regionOrder, regions: [...ids] });
+    screen.children = reorderBy(screen.children, node => node.id, preferences.regionOrder);
+  }
+  if (preferences.fieldOrder && screen?.children) {
+    for (const [regionId, order] of Object.entries(preferences.fieldOrder)) {
+      const region = screen.children.find(node => node.id === regionId);
+      if (!region) throw new ToolError('OODS-V204', `fieldOrder names a region this screen does not have: ${regionId}`, { region: regionId, regions: screen.children.map(node => node.id) });
+      const present = new Set<string>();
+      const parents: UiElement[] = [];
+      const walk = (node: UiElement) => {
+        if (!node.children?.length) return;
+        if (node.children.some(child => fieldKeyOf(child) !== undefined)) parents.push(node);
+        for (const child of node.children) { const key = fieldKeyOf(child); if (key) present.add(key); if (!/^slot-/.test(child.id)) walk(child); }
+      };
+      walk(region);
+      const unknown = order.filter(field => !present.has(field));
+      if (unknown.length) throw new ToolError('OODS-V204', `fieldOrder for ${regionId} names fields the region does not carry: ${unknown.join(', ')}`, { region: regionId, fields: [...present] });
+      for (const parent of parents) parent.children = reorderBy(parent.children!, fieldKeyOf, order);
+    }
+  }
+  if (preferences.seed !== undefined) schema.seed = preferences.seed;
 }
 
 /**
@@ -1399,7 +1464,7 @@ async function recordComposition(input: DesignComposeInput, schema: UiSchema, se
   const directory = resolveCompositionsDir();
   const { compositionId: _id, parentVersion: _parent, ...compose } = input;
   const target = input.compositionId
-    ? { compositionId: input.compositionId, operation: 'recompose' as const, ...(await nextVersion(directory, input.compositionId, input.parentVersion)) }
+    ? { compositionId: input.compositionId, operation: (input.options?.operation ?? 'recompose') as CompositionOperation, ...(await nextVersion(directory, input.compositionId, input.parentVersion)) }
     : { compositionId: newCompositionId(), version: 1, parentVersion: null, operation: 'compose' as const };
   const theme = input.preferences?.theme === 'dark' || input.preferences?.theme === 'hc' ? input.preferences.theme : 'light';
   const brand = input.preferences?.brand === 'B' ? 'B' : 'A';
@@ -1408,7 +1473,9 @@ async function recordComposition(input: DesignComposeInput, schema: UiSchema, se
     createdAt: new Date().toISOString(), head: readForgeHead(),
     compose: compose as unknown as Record<string, unknown>, schema, schemaHash: `sha256:${createHash('sha256').update(JSON.stringify(schema)).digest('hex')}`,
     brand, theme,
-    slots: selections.map(selection => ({ slotName: selection.slotName, ...(selection.selectedComponent ? { selectedComponent: selection.selectedComponent } : {}), ...(selection.placedComponents ? { placedComponents: selection.placedComponents } : {}) })),
+    slots: selections.map(selection => ({ slotName: selection.slotName, ...(selection.selectedComponent ? { selectedComponent: selection.selectedComponent } : {}), ...(selection.placedComponents ? { placedComponents: selection.placedComponents } : {}),
+      // The composer's own candidates for the slot: what a swap may choose from.
+      candidates: [...new Set([...selection.candidates.map(candidate => candidate.name), ...(selection.alternativeCandidates ?? []).map(candidate => candidate.name)])] })),
     artifacts: {}, measurements: {},
   };
   await writeVersion(directory, record);
@@ -1993,6 +2060,7 @@ export async function handle(input: DesignComposeInput): Promise<DesignComposeOu
   if (composed && effectiveContext) populateCollections(schema, effectiveContext, composed.object.name, Number(composed.traits.find(trait => trait.ref.name.split('/').pop() === 'Billable')?.ref.parameters?.minorUnits ?? 100));
   if (composed && effectiveContext) reconcileFormDetail(schema, effectiveContext, composed, input.preferences?.tabLabels);
   reportLayoutLeaders(schema, selections);
+  applyOrderOverrides(schema, input.preferences);
   if (composed && effectiveContext === 'list') populateListStates(schema);
   if (input.preferences?.brand) {
     const applyChartBrand = (node: UiElement): void => {

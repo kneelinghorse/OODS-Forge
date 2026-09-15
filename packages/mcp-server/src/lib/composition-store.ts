@@ -33,7 +33,7 @@ export interface CompositionVersion {
   brand: PreviewBrand;
   theme: PreviewTheme;
   /** Slot name → leading component, for lineage and compare. */
-  slots: Array<{ slotName: string; selectedComponent?: string; placedComponents?: string[] }>;
+  slots: Array<{ slotName: string; selectedComponent?: string; placedComponents?: string[]; candidates?: string[] }>;
   /** Attached by design.preview: the deterministic field model the page mounts with. */
   model?: Record<string, unknown>;
   /** Attached by design.preview: the generated artifact per framework, keyed by the same schemaHash. */

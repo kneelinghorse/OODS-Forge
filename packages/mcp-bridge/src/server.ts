@@ -250,7 +250,7 @@ async function main() {
   // The running-app preview: composition versions design.compose writes beside the saved-schema
   // store are compiled at request time and served with the prebuilt host runtimes under /preview/.
   const compositionsDir = resolveCompositionsDir(mcpServerCwd);
-  await registerPreviewHost(fastify, { compositionsDir });
+  await registerPreviewHost(fastify, { compositionsDir, runTool: (tool, input) => client.run(tool, input) });
 
   await registerArtifactEndpoints(fastify, artifactsRoot, {
     list: bridgeConfig.rateLimit.artifacts,
