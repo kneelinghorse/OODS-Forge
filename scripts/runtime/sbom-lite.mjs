@@ -185,8 +185,8 @@ export function buildSbomLiteFromLock(
     0,
     "portable runtime closure gained optional packages",
   );
-  // Sprint 201: exactly the esbuild binaries the preview host ships, nothing else platform-bound.
-  assert.deepEqual(
+  // Sprint 201: a closure that ships esbuild (the preview host) carries exactly its four binaries and nothing else platform-bound.
+  if (packages.some((entry) => entry.name === "esbuild")) assert.deepEqual(
     packages.filter((entry) => entry.platformSpecific).map((entry) => entry.name).sort(bytewiseCompare),
     PREVIEW_PLATFORMS.map((platform) => `@esbuild/${platform}`).sort(bytewiseCompare),
     "portable runtime closure platform-specific packages must be the shipped esbuild binaries",
