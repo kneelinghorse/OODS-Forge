@@ -19,13 +19,13 @@ Bridge-exposed tools require both [agent policy](../../configs/agent/policy.json
 
 ## Evidence and portable outcomes
 
-Tool ledger: [packages/mcp-server/registry/tool-capability-ledger.v1.json](../../packages/mcp-server/registry/tool-capability-ledger.v1.json), recorded source head `"82f55f1906d396d8345e2a07f94afd9d39ca165e"`.
+Tool ledger: [packages/mcp-server/registry/tool-capability-ledger.v1.json](../../packages/mcp-server/registry/tool-capability-ledger.v1.json), recorded source head `"a6bd41b2577d69bf294d8aeaa03ee88d30925415"`.
 
 Proof tier methodology: Highest location tier of a literal runtime import of a handler-bearing module in mcp-server test/spec sources. Grouped action imports roll up to their registered family. Imports are source evidence, not proof of invocation, passing execution or browser certification. Transitive imports and constructed imports/dispatch are not followed; type-only and schema-only imports do not promote a tier.
 
 README references in product-reality directories containing browser/packed/runtime/SVG/screenshot prose. Current census reports are excluded. References are discovery pointers, never verified receipts or tier promotions.
 
-Recorded portable execution: 19 pass and 0 typed dependency outcomes across 19 tools. Receipt: [artifacts/product-reality/sprint-201/m01/e2e-host.json](../../artifacts/product-reality/sprint-201/m01/e2e-host.json); SHA-256 `"sha256:d7d8946d854966df15e5f9f6cf9325ef5769f813b18d66614dfcc0f1f59f5de5"`; bundle head `"68a771c421b02389ddf33b5c96aeefa278ec1347"`; dirty=`true`. This records the measured development bundle, not a later clean release.
+Recorded portable execution: 19 pass and 0 typed dependency outcomes across 19 tools. Receipt: [artifacts/product-reality/sprint-201/m07/pre-freeze/e2e-host.json](../../artifacts/product-reality/sprint-201/m07/pre-freeze/e2e-host.json); SHA-256 `"sha256:6004c55687a5c3aa505402715cadc0c0d47782353efdaede000d2fbf8b2a403b"`; bundle head `"37fc2351b64e716938be5c1850b94dbfd7e161e4"`; dirty=`false`. This records the measured development bundle, not a later clean release.
 
 ## Current component capability counts
 

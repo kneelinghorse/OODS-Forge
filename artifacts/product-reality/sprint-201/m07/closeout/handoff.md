@@ -2,7 +2,7 @@
 
 Builder self-certified: **false**. Independent review and delivery remain separate; GitHub CI is off, so every gate below is a local command with its log in this tree.
 
-Implementation head: `82f55f190` (the last product change, Sprint 201 m06). Pre-freeze head: `__PREFREEZE_HEAD__` (the roadmap row and the part A receipts). Part B receipts at `__PARTB_HEAD__` (the frozen bundle and its E2E). Capture head: `__CAPTURE_HEAD__`. Execution head: the tip of `codex/sprint-201-design-surface` that adds this handoff.
+Implementation head: `82f55f190` (the last product change, Sprint 201 m06). Pre-freeze head: `c3d06b762` (the roadmap row and the part A receipts). Part B: the chart gate at `4e372aeed`, the frozen bundle and its E2E at `37fc2351b`, their receipts committed at `a6bd41b25`. Capture head: `a6bd41b25`. Execution head: the tip of `codex/sprint-201-design-surface` that adds this handoff.
 
 ## What was built
 
@@ -23,19 +23,38 @@ Every composition Forge produces opens in a browser as the generated React or Vu
 
 ## Verified scope
 
-__VERIFIED_SCOPE__
+The frozen bundle `forge-runtime.tar.gz` at `37fc2351b`: sha256 `c4c51dc271b8fa3ec047d3570395622eabfce0d6debac231222eeedb099deffc`, 55,521,681 bytes, 315 packages in the production closure (the four esbuild binaries, `@vue/compiler-sfc`, react, react-dom, vue and axe-core added this sprint), 20,937 payload entries, terms and brand source aboard; the extracted-runtime E2E passed with all 19 advertised tools executed and 0 typed limits (`design.preview` compiled a Subscription detail composition to React and Vue through the adapter-started host on 127.0.0.1; the version recorded the bundle head). The tool ledger is in mode `s201`, bound to that E2E receipt (`pre-freeze/e2e-host.json`): 24 rows, 19 auto, 19 executed from the archive, 0 typed (OODS-N019 and OODS-N020 closed).
+
+Canonical runtime roster 18 objects / 240 cells re-swept once in m06 (240/240 pass; 160 cells' generation hashes moved from the base, attributed); the generation census at the capture head re-composed and re-generated every registry row and found all 240 hashes equal. 110 component identities, 1,320 theme cells (Sprint 200 m02's measurement stands; this sprint changed one stylesheet rule, carried by the m06 screenshots). Viz 13 types / 78 rendered scopes; the recipes registry and the certified matrix moved once (sankey and force_graph, the two chart titles) with the pattern registry, taxonomy and classification byte-identical to the base.
+
+The advertised diff from `c02f3ddcb`: 11 commits (one planning, six mission, four closeout), 6,744 changed paths (6,556 of them m06's before/after captures, runtime sweep and chart receipts), 33 advertised-surface paths (schemas, tool descriptions, registries, error registry, docs), each attributed to its commits (`closeout/advertised-diff.json`).
 
 ## Test accounting
 
-__CAPTURE__
+One numbered run at the capture head `a6bd41b25` (the part B receipts commit), serial files (`maxWorkers=1`), a 60 s test timeout, suites sequential, every cleanliness checkpoint clean, 2026-09-15T08:50:53.705Z → 2026-09-15T09:11:18.600Z. **Status: passed.** The five counts stated separately:
+
+| Suite | Status | Passed | Failed | Skipped | Failed files | Uncollected |
+| --- | --- | ---: | ---: | ---: | ---: | ---: |
+| viz-core | passed | 1,546 | 0 | 0 | 0 | 0 |
+| viz-render | passed | 72 | 0 | 0 | 0 | 0 |
+| mcp-server | passed | 7,153 | 0 | 16 | 0 | 0 |
+| root-core | passed | 7,535 | 0 | 16 | 0 | 0 |
+| component-packages | passed | 1,484 | 0 | 0 | 0 | 0 |
+| **Total** | **passed** | **17,790** | **0** | **32** | **0** | **0** |
+
+The 32 skipped executions are the same 16 optional external Stage1 cases collected by both MCP and root. Raw Vitest JSON per suite under `capture/forge-s201-m07-head/run-1/`, the harness log in `capture/capture.log`, the accounting in `capture/head-accounting.json`. An earlier four-suite attempt at the same head (not retained as a run) failed only on `tests/contracts/public-api.contract.test.ts`, which needs the publishable package the five-suite harness builds in its setup step.
 
 ## Golden ledger and sealed receipts
 
-`artifacts/product-reality/sprint-201/golden-ledger.json`: __LEDGER__. `git diff --stat -- artifacts/product-reality/sprint-19[5-9] artifacts/product-reality/sprint-200` is empty at every commit of the sprint.
+`artifacts/product-reality/sprint-201/golden-ledger.json`: 166 entries, every pin that moved this sprint attributed once (160 runtime cells and the sweep head in m06; the viz-recipes registry, the certified matrix, the preview-samples fixture, the ECharts option goldens and the network-fidelity golden for the two chart titles), 2 must-not-move files verified; the certified matrix moved from must-not-move to may-move-once in m06 with the decision recorded in CMOS. `git diff --stat -- artifacts/product-reality/sprint-19[5-9] artifacts/product-reality/sprint-200` is empty at every commit of the sprint.
 
 ## Carries for the next sprint's m01
 
-__CARRIES__
+- The placed Subscription area chart keeps its title inside the public SVG at 720×400 and scales to the column; at 390px its axis text is small. Moving placed-chart titles into the figure heading is a `chart-assets` change (m06 not-done note).
+- axe-core findings the running pages report (landmark-one-main, page-has-heading-one, region) are stored per version and shown on the panel; they are measurements of the generated shell, not fixed this sprint (m04 note).
+- Overriding a tab slot to `Card` composes a schema `code.generate` refuses with OODS-V007 (composer quirk noted in m03); the swap edit offers only the composer's own candidates, so the page never reaches it.
+- Sprint 202: the same preview inside Claude and Cursor as an MCP Apps `ui://` resource (planned separately).
+- Delivery of this head to the served bridge (fast-forward, install, build, PM2 restart, `/health`) belongs to the reviewing session, as does the near.md closure paragraph.
 
 ## Not done, by rule
 

@@ -39,7 +39,7 @@ describe('tool truth derives claims without upgrading source references to runti
       // s201-m01 ships the preview host: design.preview executes from the archive and no advertised tool stays typed.
       const execution = derivePortableExecution(fs.readFileSync(path.join(root, PORTABLE_RECEIPT_PATHS.s201), 'utf8'), ledger.rows.filter((row: any) => row.registration === 'auto').map((row: any) => row.name), 's201');
       expect(ledger.portableExecution).toEqual(execution.proof);
-      expect(ledger.portableExecution).toMatchObject({ path: 'artifacts/product-reality/sprint-201/m01/e2e-host.json', tools: 19, pass: 19, typed: 0 });
+      expect(ledger.portableExecution).toMatchObject({ path: 'artifacts/product-reality/sprint-201/m07/pre-freeze/e2e-host.json', tools: 19, pass: 19, typed: 0 });
       expect(ledger.rows.flatMap((row: any) => row.portableLimits)).toEqual([]);
       expect(ledger.rows.find((row: any) => row.name === 'design.preview').portableOutcome).toEqual({ outcome: 'pass', receiptSha256: execution.proof.sha256 });
       expect(execution.outcomes['design.preview']).toMatchObject({ outcome: 'pass' });

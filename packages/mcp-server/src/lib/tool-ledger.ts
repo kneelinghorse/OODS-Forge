@@ -14,7 +14,7 @@ type ToolRow = { portableE2E: boolean; portableOutcome?: PortableOutcome; portab
 type ToolLedger = { mode?: 's194' | 's196' | 's200' | 's201'; portableExecution?: PortableExecution; schemaVersion: string; head: string; builderSelfCertified: false; rows: ToolRow[]; summary: { entries: number; auto: number; onDemand: number; byTier: Record<Tier, number>; autoByTier: Record<Tier, number>; onDemandByTier: Record<Tier, number>; portableE2E: number } };
 export type ToolSummary = { entries: number; byTier: Record<Tier, number>; head: string };
 /** One retained extracted-runtime receipt per bound mode; s200 ships the brand source (design.preview stays typed), s201 ships the preview host (nothing typed). */
-const PORTABLE_RECEIPTS = { s196: 'artifacts/product-reality/sprint-196/m02/e2e-host.json', s200: 'artifacts/product-reality/sprint-200/m04/e2e-host.json', s201: 'artifacts/product-reality/sprint-201/m01/e2e-host.json' } as const;
+const PORTABLE_RECEIPTS = { s196: 'artifacts/product-reality/sprint-196/m02/e2e-host.json', s200: 'artifacts/product-reality/sprint-200/m04/e2e-host.json', s201: 'artifacts/product-reality/sprint-201/m07/pre-freeze/e2e-host.json' } as const;
 const PORTABLE_TYPED_CODES: Record<keyof typeof PORTABLE_RECEIPTS, Record<string, string>> = { s196: { 'brand.apply': 'OODS-N020', 'design.preview': 'OODS-N019' }, s200: { 'design.preview': 'OODS-N019' }, s201: {} };
 const counts = (rows: ToolRow[]) => Object.fromEntries(TIERS.map(tier => [tier, rows.filter(row => row.proofTier === tier).length])) as Record<Tier, number>;
 

@@ -12,7 +12,7 @@ export const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '
 export const LEDGER_PATH = 'packages/mcp-server/registry/tool-capability-ledger.v1.json';
 export const PORTABLE_RECEIPT_PATH = 'artifacts/product-reality/sprint-196/m02/e2e-host.json';
 /** One retained extracted-runtime receipt per mode; s200 ships the brand source, so only design.preview stays typed. */
-export const PORTABLE_RECEIPT_PATHS = { s196: PORTABLE_RECEIPT_PATH, s200: 'artifacts/product-reality/sprint-200/m04/e2e-host.json', s201: 'artifacts/product-reality/sprint-201/m01/e2e-host.json' };
+export const PORTABLE_RECEIPT_PATHS = { s196: PORTABLE_RECEIPT_PATH, s200: 'artifacts/product-reality/sprint-200/m04/e2e-host.json', s201: 'artifacts/product-reality/sprint-201/m07/pre-freeze/e2e-host.json' };
 /** s201 ships the preview host, so no advertised tool stays typed from the bundle. */
 export const PORTABLE_TYPED_CODES = { s196: { 'brand.apply': 'OODS-N020', 'design.preview': 'OODS-N019' }, s200: { 'design.preview': 'OODS-N019' }, s201: {} };
 export const TIERS = ['product-reality', 'contract', 'unit', 'none'];
