@@ -27,6 +27,7 @@ describe('tool truth derives claims without upgrading source references to runti
       if (ledger.mode === 's196') expect(row.receiptRefs.some((ref: any) => ref.path.includes('/sprint-196/m07/'))).toBe(false);
       if (ledger.mode === 's200') expect(row.receiptRefs.some((ref: any) => /\/sprint-(?:196|200)\/m07\//.test(ref.path))).toBe(false);
       if (ledger.mode === 's201') expect(row.receiptRefs.some((ref: any) => /\/sprint-(?:196|200|201)\/m07\//.test(ref.path))).toBe(false);
+      if (ledger.mode === 's202') expect(row.receiptRefs.some((ref: any) => /\/sprint-(?:196|200|201)\/m07\/|\/sprint-202\/m06\//.test(ref.path))).toBe(false);
     }
     if (ledger.mode === 's196') {
       const execution = derivePortableExecution(fs.readFileSync(path.join(root, PORTABLE_RECEIPT_PATH), 'utf8'), ledger.rows.filter((row: any) => row.registration === 'auto').map((row: any) => row.name));
@@ -45,6 +46,20 @@ describe('tool truth derives claims without upgrading source references to runti
       expect(execution.outcomes['design.preview']).toMatchObject({ outcome: 'pass' });
       expect(execution.outcomes['design.preview'].previewUrl).toMatch(/^http:\/\/127\.0\.0\.1:\d+\/preview\/cmp-[a-f0-9]{12}\/1\?framework=react&brand=A&theme=light$/);
       expect(Object.keys(execution.outcomes['design.preview'].compiled).sort()).toEqual(['react', 'vue']);
+    }
+    if (ledger.mode === 's202') {
+      // s202-m05 adds the MCP Apps resources to the same E2E: the frozen archive still executes all 19 tools with none typed, the
+      // negotiated client read the shipped preview app and the design_preview resources, and the restart client kept the text result.
+      const bytes = fs.readFileSync(path.join(root, PORTABLE_RECEIPT_PATHS.s202), 'utf8');
+      const execution = derivePortableExecution(bytes, ledger.rows.filter((row: any) => row.registration === 'auto').map((row: any) => row.name), 's202');
+      expect(ledger.portableExecution).toEqual(execution.proof);
+      expect(ledger.portableExecution).toMatchObject({ path: 'artifacts/product-reality/sprint-202/m06/pre-freeze/e2e-host.json', dirty: false, tools: 19, pass: 19, typed: 0 });
+      expect(ledger.rows.flatMap((row: any) => row.portableLimits)).toEqual([]);
+      expect(ledger.rows.find((row: any) => row.name === 'design.preview').portableOutcome).toEqual({ outcome: 'pass', receiptSha256: execution.proof.sha256 });
+      const receipt = JSON.parse(bytes);
+      expect(receipt.calls.mcpApps).toMatchObject({ protocolVersion: '2025-06-18', capabilities: { resources: {}, extensions: { 'io.modelcontextprotocol/ui': {} } }, app: { readEqualsShipped: true, listed: 1 }, preview: { structuredContentEqualsText: true, versions: { count: 1, accepted: null } } });
+      expect(receipt.calls.mcpApps.negotiation).toMatch(/MCP Apps io\.modelcontextprotocol\/ui: negotiated .*preview app offered on design_preview/);
+      expect(receipt.lifecycle.restart.negotiation).toMatch(/MCP Apps io\.modelcontextprotocol\/ui: not advertised; preview app kept as the text result/);
     }
     if (ledger.mode === 's200') {
       // s200-m04 ships the brand source in the bundle: brand.apply executes from the archive and only design.preview stays typed.

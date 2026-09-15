@@ -34,9 +34,9 @@ export function commands(directory = root) {
   ];
 }
 
-export function verify(output = 'artifacts/product-reality/sprint-201/gate') {
+export function verify(output = 'artifacts/product-reality/sprint-202/gate') {
   const directory = path.resolve(root, output);
-  if (!directory.startsWith(path.join(root, 'artifacts/product-reality/sprint-201') + path.sep)) throw new Error('Chart gate receipts must be under unsealed sprint-201');
+  if (!directory.startsWith(path.join(root, 'artifacts/product-reality/sprint-202') + path.sep)) throw new Error('Chart gate receipts must be under unsealed sprint-202');
   mkdirSync(directory, { recursive: true });
   const reports = [];
   const plan = commands();

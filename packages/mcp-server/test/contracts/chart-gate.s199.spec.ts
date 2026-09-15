@@ -15,12 +15,12 @@ const directories: string[] = [];
 afterEach(() => directories.splice(0).forEach(directory => rmSync(directory, { recursive: true, force: true })));
 
 describe('s199 local chart gate and receipt boundaries', () => {
-  it.each([195, 196, 197, 198, 199, 200])('rejects new chart-gate receipts in sealed Sprint %s before executing commands', sprint => {
-    expect(() => verify(`artifacts/product-reality/sprint-${sprint}/gate`)).toThrow('under unsealed sprint-201');
+  it.each([195, 196, 197, 198, 199, 200, 201])('rejects new chart-gate receipts in sealed Sprint %s before executing commands', sprint => {
+    expect(() => verify(`artifacts/product-reality/sprint-${sprint}/gate`)).toThrow('under unsealed sprint-202');
   });
 
-  it.each(['artifacts/product-reality/sprint-201/../sprint-200/gate', 'artifacts/product-reality/sprint-201-other/gate'])('rejects a path escaping the current receipt boundary: %s', output => {
-    expect(() => verify(output)).toThrow('under unsealed sprint-201');
+  it.each(['artifacts/product-reality/sprint-202/../sprint-201/gate', 'artifacts/product-reality/sprint-202-other/gate'])('rejects a path escaping the current receipt boundary: %s', output => {
+    expect(() => verify(output)).toThrow('under unsealed sprint-202');
   });
 
   it('loads the named golden command from the workflow and keeps the gate narrow', () => {
