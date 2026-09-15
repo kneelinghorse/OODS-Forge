@@ -115,6 +115,7 @@ const ENVIRONMENT = (facts) => ({
   MCP_EXTRA_TOOLS: "comma-separated on-demand tools to add to the default surface, for example a11y.scan,diag.snapshot",
   MCP_ROLE: "designer (default) | maintainer",
   OODS_NODE_PATH: "absolute path of the Node binary the adapter should start the server with; default: the Node running the adapter",
+  OODS_MCP_APPS_UI: "1 offers the design preview app to a client that did not negotiate the MCP Apps extension; default: unset, only clients that negotiated it",
 });
 
 const NOTES = (facts) => [
@@ -123,6 +124,12 @@ const NOTES = (facts) => [
   `The adapter starts the bundled native server itself; nothing else needs to be built, installed or running.`,
   `Default surface: ${facts.autoTools} tools. MCP_TOOLSET=all advertises all ${facts.allTools}.`,
 ];
+
+// The design preview inside the conversation (s202-m05): a client that renders MCP Apps shows design.preview as the
+// running app, every other client gets the text result. Only what the Sprint 202 research recorded is stated
+// (cmos/planning/forge-s202-conversation-preview-decision-memo.md §2 and decision 7).
+const TEXT_FALLBACK = "otherwise the result is text with links to the preview in the browser, served by the adapter on 127.0.0.1";
+const DIRECT_REGISTRATION = `Register ${SERVER_NAME} directly, beside any other entry such as an MCP hub, not behind it: the preview app reaches the conversation only when the client talks to the adapter itself or a hub passes the MCP Apps extension, the tool's _meta.ui and resources/read through.`;
 
 export function renderConfigs(facts) {
   const desktop = {
@@ -136,7 +143,13 @@ export function renderConfigs(facts) {
     },
     claudeDesktopConfig: claudeDesktopConfig(),
     env: ENVIRONMENT(facts),
-    notes: [...NOTES(facts), "Restart Claude Desktop after saving the file; the tools appear under the forge server."],
+    notes: [
+      ...NOTES(facts),
+      "Restart Claude Desktop after saving the file; the tools appear under the forge server.",
+      `Turn on Developer Mode to see design.preview as the running app inside the conversation: Claude Desktop renders apps from a local server only with Developer Mode on; ${TEXT_FALLBACK}.`,
+      DIRECT_REGISTRATION,
+      "After replacing the runtime with a newer release, choose Reload MCP Configuration: Claude Desktop keeps the tool list and the preview app it fetched until then.",
+    ],
   };
   const code = {
     name: "OODS Forge — Claude Code (stdio)",
@@ -149,7 +162,11 @@ export function renderConfigs(facts) {
     claudeCodeCommands: claudeCodeCommands(),
     claudeCodeConfig: { mcpServers: { [SERVER_NAME]: { type: "stdio", ...serverBlock({ env: {} }) } } },
     env: ENVIRONMENT(facts),
-    notes: [...NOTES(facts), `Pass environment with -e, for example: claude mcp add ${SERVER_NAME} -e MCP_TOOLSET=all -- node ${RUNTIME_DIR_PLACEHOLDER}/${ADAPTER_ENTRY}`],
+    notes: [
+      ...NOTES(facts),
+      `Pass environment with -e, for example: claude mcp add ${SERVER_NAME} -e MCP_TOOLSET=all -- node ${RUNTIME_DIR_PLACEHOLDER}/${ADAPTER_ENTRY}`,
+      "Claude Code does not render MCP Apps: design.preview answers with text and links to the preview in the browser, served by the adapter on 127.0.0.1.",
+    ],
   };
   const cursor = {
     name: "OODS Forge — Cursor (stdio)",
@@ -158,7 +175,13 @@ export function renderConfigs(facts) {
     placement: { file: ".cursor/mcp.json (project) or ~/.cursor/mcp.json (all projects)", key: `mcpServers.${SERVER_NAME}` },
     cursorConfig: cursorConfig(),
     env: ENVIRONMENT(facts),
-    notes: [...NOTES(facts), "Cursor reads the file on start; reload the window after saving."],
+    notes: [
+      ...NOTES(facts),
+      "Cursor reads the file on start; reload the window after saving.",
+      `Cursor 2.6 and later render MCP Apps, so design.preview can show the running app inside the chat; ${TEXT_FALLBACK}.`,
+      DIRECT_REGISTRATION,
+      "Reload the window after replacing the runtime with a newer release.",
+    ],
   };
   return {
     [CONFIG_FILES.claudeDesktop]: `${JSON.stringify(desktop, null, 2)}\n`,
@@ -248,6 +271,18 @@ export function renderInstallDoc(facts) {
     "",
     "Reload the Cursor window. The server shows up in the MCP settings with its tools.",
     "",
+    "### The design preview inside the conversation",
+    "",
+    "`design.preview` returns the running app of a composition. A client that renders MCP Apps shows it inside the conversation, where you edit the composition, compare two versions side by side, accept one and request changes. Any other client gets the same result as text, with links to the preview in your browser, served by the adapter on 127.0.0.1. To see it, ask for `design.preview` with `object` set to `Subscription` and `context` set to `detail`.",
+    "",
+    "- **Claude Desktop** renders the app from a local server only with Developer Mode on. After you replace the runtime with a newer release, choose Reload MCP Configuration: Claude Desktop keeps the tool list and the app it fetched until then.",
+    "- **Cursor** renders MCP Apps from version 2.6. Reload the window after you replace the runtime.",
+    "- **Claude Code** does not render MCP Apps; it shows the text result.",
+    "",
+    `Register \`${SERVER_NAME}\` directly, beside any other entry such as an MCP hub, not behind it. The app reaches the conversation only when the client talks to the adapter itself, or when a hub passes the MCP Apps extension (\`io.modelcontextprotocol/ui\`), the tool's \`_meta.ui\` and \`resources/read\` through to it.`,
+    "",
+    "When a client connects, the adapter writes one line to its standard error naming the client and whether it negotiated the extension; the client's log for the `forge` server shows whether the app was offered.",
+    "",
     "## 5. First call",
     "",
     `Ask the assistant to run the \`health\` tool. A healthy answer reports \`status: ok\`, the registry counts (objects, traits, components), \`server.uptime\` in milliseconds and, under \`productReality.tools\`, the tool ledger (${facts.allTools} entries with their evidence tiers). The ${facts.autoTools} tools your client lists are the default surface, which \`health\` does not count. Then compose a screen: \`design.compose\` with an intent such as "subscription detail page", followed by \`code.generate\` for React or Vue, produces a generated application whose readiness is attested against the shipped package bytes.`,
@@ -262,6 +297,7 @@ export function renderInstallDoc(facts) {
     "| `MCP_EXTRA_TOOLS` | (none) | Comma-separated on-demand tools added to the default surface, for example `a11y.scan,diag.snapshot`. |",
     "| `MCP_ROLE` | `designer` | Policy role (`designer` or `maintainer`). |",
     "| `OODS_NODE_PATH` | the Node running the adapter | Node binary used to start the native server. |",
+    "| `OODS_MCP_APPS_UI` | (unset) | `1` offers the preview app on `design.preview` even to a client that did not negotiate the MCP Apps extension. |",
     "",
     `Set them in the client's \`env\` block (Claude Desktop, Cursor) or with \`-e KEY=value\` on \`claude mcp add\`. The complete runtime contract, including where the bundle writes files and every other variable it reads, is in [docs/runtime/portable-runtime.md](portable-runtime.md).`,
     "",

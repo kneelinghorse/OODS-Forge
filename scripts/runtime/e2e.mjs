@@ -20,6 +20,12 @@ import {
 } from "./manifest.mjs";
 
 const PROTOCOL_VERSION = "2024-11-05";
+// s202-m05: the client an MCP Apps host is (the reference host's protocol version) and the protocol's own names.
+const APPS_PROTOCOL_VERSION = "2025-06-18";
+const UI_EXTENSION = "io.modelcontextprotocol/ui";
+const APP_MIME_TYPE = "text/html;profile=mcp-app";
+const APP_RESOURCE_PREFIX = "ui://oods-forge/preview/";
+const COMPOSITION_RESOURCE_PREFIX = "ui://oods-forge/compositions/";
 const REQUEST_TIMEOUT_MS = 120_000;
 const LIFECYCLE_TIMEOUT_MS = 3_000;
 const MAX_STDOUT_BYTES = 32 * 1024 * 1024;
@@ -199,6 +205,7 @@ const FORBIDDEN_CHILD_ENV = [
   "MCP_BRIDGE_CORS_ORIGIN",
   "OODS_PREVIEW_HOST_URL",
   "ESBUILD_BINARY_PATH",
+  "OODS_MCP_APPS_UI",
 ];
 
 function parseArgs(argv) {
@@ -237,6 +244,7 @@ function sanitizedRuntimeEnvironment(healthCanaryPort) {
     MCP_MAPPINGS_PATH: "/tmp/hostile-mappings.json",
     OODS_OTLP_ENDPOINT: "http://127.0.0.1:9/v1/traces",
     OODS_OTLP_HEADERS: "Authorization=hostile",
+    OODS_MCP_APPS_UI: "1",
   };
   const env = {
     PATH: hostileParent.PATH ?? "",
@@ -415,6 +423,8 @@ export class McpClient {
     this.callCount += 1;
     this.calledTools.add(name);
     const result = await this.request("tools/call", { name, arguments: args });
+    // The whole result of the latest call, for what travels beside the text (design_preview's structuredContent).
+    this.lastResult = result;
     if (expectedError) {
       assert.equal(result?.isError, true, `${name} must disclose the expected portable limit`);
       const error = JSON.parse(result.content?.[0]?.text ?? "{}").error;
@@ -600,17 +610,22 @@ function assertCertification(viz, positive, negative) {
   );
 }
 
-async function initializeAndList(client, expectedVersion, expectedToolNames) {
+async function initializeAndList(client, expectedVersion, expectedToolNames, negotiate = false) {
+  // negotiate (s202-m05): initialize as an MCP Apps host does, declaring io.modelcontextprotocol/ui with its mimeTypes;
+  // otherwise the client that declares nothing, as every proof before Sprint 202.
+  const protocolVersion = negotiate ? APPS_PROTOCOL_VERSION : PROTOCOL_VERSION;
   const initialized = await client.request("initialize", {
-    protocolVersion: PROTOCOL_VERSION,
-    capabilities: {},
+    protocolVersion,
+    capabilities: negotiate ? { extensions: { [UI_EXTENSION]: { mimeTypes: [APP_MIME_TYPE] } } } : {},
     clientInfo: { name: "forge-portable-runtime-e2e", version: "0.1.0" },
   });
-  assert.equal(initialized.protocolVersion, PROTOCOL_VERSION);
+  assert.equal(initialized.protocolVersion, protocolVersion);
   assert.deepEqual(initialized.serverInfo, {
     name: "oods-foundry-adapter",
     version: expectedVersion,
   });
+  // Resources and the extension are advertised to every client; only the tool's pointer to the app is negotiated.
+  assert.deepEqual(initialized.capabilities, { tools: {}, resources: {}, extensions: { [UI_EXTENSION]: {} } });
   client.notify("notifications/initialized");
   const listed = await client.request("tools/list", {});
   const names = listed.tools.map((tool) => tool.name);
@@ -619,7 +634,106 @@ async function initializeAndList(client, expectedVersion, expectedToolNames) {
     expectedToolNames,
     "tools/list differs from extracted registry auto order",
   );
-  return { initialized, names };
+  const negotiation = await negotiationLine(client);
+  const pointing = listed.tools.filter((tool) => tool._meta !== undefined);
+  if (negotiate) {
+    assert.deepEqual(pointing.map((tool) => tool.name), ["design_preview"], "only design_preview points at the preview app");
+    assert.equal(negotiation, `[oods-mcp-adapter] client forge-portable-runtime-e2e 0.1.0 (protocol ${APPS_PROTOCOL_VERSION}); MCP Apps ${UI_EXTENSION}: negotiated (mimeTypes ${JSON.stringify([APP_MIME_TYPE])}); preview app offered on design_preview; client capability keys: extensions`);
+  } else {
+    assert.deepEqual(pointing, [], "a client that did not negotiate MCP Apps gets no _meta.ui");
+    assert.equal(negotiation, `[oods-mcp-adapter] client forge-portable-runtime-e2e 0.1.0 (protocol ${PROTOCOL_VERSION}); MCP Apps ${UI_EXTENSION}: not advertised; preview app kept as the text result; client capability keys: none`);
+  }
+  return { initialized, names, tools: listed.tools, negotiation };
+}
+
+/** The adapter's one-line negotiation receipt on stderr (never stdout), awaited because the two pipes are not ordered. */
+async function negotiationLine(client) {
+  const deadline = Date.now() + LIFECYCLE_TIMEOUT_MS;
+  for (;;) {
+    const line = client.stderrBuffer.split("\n").find((entry) => entry.startsWith("[oods-mcp-adapter] client "));
+    if (line) return line;
+    assert(Date.now() < deadline, `the adapter logged no negotiation line on stderr:\n${client.stderrBuffer}`);
+    await new Promise((resolve) => setTimeout(resolve, 25));
+  }
+}
+
+/**
+ * s202-m05: the preview app from the extracted archive. The one listed resource is the shipped app.html under its
+ * revision URI (the first 12 hex of its sha256, so a host that caches by URI refetches after an update), design_preview
+ * points at it, and resources/read returns the shipped bytes.
+ */
+async function proveAppResource(client, runtimeRoot, tools) {
+  const appRoot = path.join(runtimeRoot, "packages/mcp-bridge/dist/preview-app");
+  const appManifest = await loadJson(path.join(appRoot, "manifest.json"));
+  const shipped = await fsp.readFile(path.join(appRoot, "app.html"));
+  assert.equal(sha256(shipped), appManifest.sha256, "the shipped preview app differs from its build manifest");
+  assert.equal(shipped.length, appManifest.bytes);
+  assert.equal(appManifest.revision, appManifest.sha256.slice(0, 12));
+  const uri = `${APP_RESOURCE_PREFIX}${appManifest.revision}/app.html`;
+  const preview = tools.find((tool) => tool.name === "design_preview");
+  assert.deepEqual(preview?._meta, { ui: { resourceUri: uri }, "ui/resourceUri": uri }, "design_preview points at the shipped app");
+  const listed = await client.request("resources/list", {});
+  assert.deepEqual(listed.resources.map((resource) => [resource.uri, resource.mimeType]), [[uri, APP_MIME_TYPE]], "the archive lists exactly the preview app");
+  const read = await client.request("resources/read", { uri });
+  assert.equal(read.contents.length, 1);
+  assert.equal(read.contents[0].uri, uri);
+  assert.equal(read.contents[0].mimeType, APP_MIME_TYPE);
+  assert.equal(sha256(read.contents[0].text), appManifest.sha256, "resources/read returns the shipped preview app byte for byte");
+  return { uri, mimeType: APP_MIME_TYPE, bytes: appManifest.bytes, sha256: appManifest.sha256, revision: appManifest.revision, listed: listed.resources.length, readEqualsShipped: true };
+}
+
+/**
+ * s202-m05: the same design_preview call as the app receives it. structuredContent is the text result plus the resource
+ * URIs, and each resolves from the archive: both frameworks' compiled modules as the inline script the app injects (bound
+ * to the app's inlined runtime, no imports), their styles, the version record naming the bundle head and the lineage list.
+ */
+async function proveCompositionResources(client, raw, preview, appUri, manifest) {
+  assert.equal(raw?.content?.length, 1, "the text result is unchanged");
+  const { resources, ...rest } = raw.structuredContent ?? {};
+  assert.deepEqual(rest, preview, "structuredContent is the text result");
+  const base = `${COMPOSITION_RESOURCE_PREFIX}${preview.compositionId}/${preview.version}/`;
+  const scope = `?brand=${preview.brand}&theme=${preview.theme}`;
+  assert.deepEqual(resources, {
+    app: appUri,
+    record: `${base}record.json`,
+    versions: `${COMPOSITION_RESOURCE_PREFIX}${preview.compositionId}/versions.json`,
+    modules: { react: `${base}react.js${scope}`, vue: `${base}vue.js${scope}` },
+    styles: { react: `${base}react.css${scope}`, vue: `${base}vue.css${scope}` },
+  }, "structuredContent names the resources the app reads");
+  const readOne = async (uri, mimeType) => {
+    const read = await client.request("resources/read", { uri });
+    assert.equal(read.contents.length, 1, uri);
+    assert.equal(read.contents[0].uri, uri);
+    assert.equal(read.contents[0].mimeType, mimeType, uri);
+    assert.equal(typeof read.contents[0].text, "string", uri);
+    return read.contents[0].text;
+  };
+  const modules = {};
+  for (const framework of ["react", "vue"]) {
+    const code = await readOne(resources.modules[framework], "text/javascript");
+    assert.match(code, /^var __oodsModules;\s*\(__oodsModules \|\|= \{\}\)\.m_[a-f0-9]{16} = /, `${framework} module registers on the app's module table`);
+    assert(code.includes("globalThis.__oodsRuntime"), `${framework} module binds its imports to the app's inlined runtime`);
+    assert.doesNotMatch(code, /^import /m, `${framework} module must not import`);
+    const styles = await readOne(resources.styles[framework], "text/css");
+    modules[framework] = { uri: resources.modules[framework], bytes: Buffer.byteLength(code), sha256: sha256(code), stylesBytes: Buffer.byteLength(styles) };
+  }
+  const record = JSON.parse(await readOne(resources.record, "application/json"));
+  assert.equal(record.compositionId, preview.compositionId);
+  assert.equal(record.version, preview.version);
+  assert.equal(record.head, manifest.commit, "the version record names the bundle head");
+  assert.equal(record.schemaHash, preview.schemaHash);
+  assert.deepEqual(Object.keys(record.artifacts).sort(), ["react", "vue"]);
+  const versions = JSON.parse(await readOne(resources.versions, "application/json"));
+  assert.equal(versions.compositionId, preview.compositionId);
+  assert.deepEqual(versions.versions.map((entry) => [entry.version, entry.parentVersion, entry.operation]), [[1, null, "compose"]]);
+  assert.equal(versions.accepted, null);
+  return {
+    structuredContentEqualsText: true,
+    resources,
+    modules,
+    record: { uri: resources.record, head: record.head, schemaHash: record.schemaHash },
+    versions: { uri: resources.versions, count: versions.versions.length, accepted: versions.accepted },
+  };
 }
 
 function assertGeneratedArtifact(artifact, framework) {
@@ -810,8 +924,17 @@ async function main() {
   let stdinClose;
   let primaryTermination = null;
   let calls;
+  let mcpApps;
   try {
-    await initializeAndList(primary, adapterPackage.version, expectedToolNames);
+    // s202-m05: the primary client negotiates MCP Apps: the tool's pointer to the archive's preview app, the app
+    // resource and the negotiation receipt on stderr are proven before the first call.
+    const negotiated = await initializeAndList(primary, adapterPackage.version, expectedToolNames, true);
+    mcpApps = {
+      protocolVersion: APPS_PROTOCOL_VERSION,
+      capabilities: negotiated.initialized.capabilities,
+      negotiation: negotiated.negotiation,
+      app: await proveAppResource(primary, runtimeRoot, negotiated.tools),
+    };
     const health = await primary.callTool("health", operand("health")); // 1
     assert.equal(health.status, "ok");
     assert.deepEqual(
@@ -977,6 +1100,7 @@ async function main() {
     assert.equal(composed.status, 'ok'); assert(composed.schemaRef); state.compose = composed;
     // The adapter starts the preview host lazily for this call and reports its port in the result.
     const preview = await primary.callTool("design_preview", operand("design.preview"));
+    const previewResult = primary.lastResult;
     assert.equal(preview.status, 'ok');
     assert.match(preview.previewUrl, /^http:\/\/127\.0\.0\.1:\d+\/preview\/cmp-[a-f0-9]{12}\/1\?framework=react&brand=A&theme=light$/);
     assert.equal(preview.version, 1); assert.equal(preview.parentVersion, null); assert.equal(preview.operation, 'compose');
@@ -1007,6 +1131,7 @@ async function main() {
       const runtime = await fetch(`${preview.host.url}/preview/runtime/${entry.framework === 'react' ? 'react.js' : 'vue.js'}`, { signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS) });
       assert(runtime.ok, 'preview host runtime served');
     }
+    mcpApps.preview = await proveCompositionResources(primary, previewResult, preview, mcpApps.app.uri, manifest);
     const generated = await primary.callTool("code_generate", operand("code.generate"));
     assert.equal(generated.status, 'ok');
     assertGeneratedArtifact(generated.artifact, 'react');
@@ -1069,6 +1194,7 @@ async function main() {
     await assertLoopbackPortClosed(healthCanaryPort);
     calls = {
       bridge,
+      mcpApps,
       primarySequenceCount: primary.callCount,
       outcomes,
       fixturePins: TOOL_FIXTURE_PINS,
@@ -1121,7 +1247,8 @@ async function main() {
   });
   let restart;
   try {
-    await initializeAndList(
+    // The second process is a client that declares nothing: no pointer to the app, and its stderr line says so.
+    const plain = await initializeAndList(
       restarted,
       adapterPackage.version,
       expectedToolNames,
@@ -1149,6 +1276,7 @@ async function main() {
     );
     restart = {
       initialized: true,
+      negotiation: plain.negotiation,
       nativeHealth: restartHealth.status,
       sigterm: termination,
     };
