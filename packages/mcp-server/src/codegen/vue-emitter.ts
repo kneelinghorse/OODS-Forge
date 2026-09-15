@@ -1116,9 +1116,11 @@ function buildScriptSetup(
   const lines: string[] = [];
   const hasObjectSchema = objectSchema && Object.keys(objectSchema).length > 0;
   const hasDomainActions = bindingAnalysis.handlers.some((handler) => handler.kind === 'domain');
-  const stateNames = Array.from(new Set(
-    collectUiStateBranches(screens).map(({ state }) => state),
-  ));
+  // A rows collection keeps its controls mounted through the empty state, so the union names it even without an empty branch.
+  const stateNames = Array.from(new Set([
+    ...collectUiStateBranches(screens).map(({ state }) => state),
+    ...(collectionSources(screens).has('rows') && collectUiStateBranches(screens).length ? ['empty'] : []),
+  ]));
   const hasStateBranches = stateNames.length > 0;
   const includeCva = tailwindVariants.size > 0;
   const formMode = Boolean(hasObjectSchema && isFormSchema(screens));

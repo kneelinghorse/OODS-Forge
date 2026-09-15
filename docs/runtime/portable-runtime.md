@@ -108,7 +108,7 @@ workspace-link policy, and performs its production-only install there with
 `--no-frozen-lockfile --no-optional --config.auto-install-peers=false`; the
 synthetic importer is not the repository importer. Peer requirements are
 supplied by their consumers, so peer-only lockfile resolutions are excluded
-from the bundle SBOM. The current lock-derived third-party closure is 283
+from the bundle SBOM. The current lock-derived third-party closure is 315
 packages. Assembly derives this count once from the lock and requires the
 installed closure, SBOM, notices and manifest to agree with that value. The
 repository install remains `pnpm install --frozen-lockfile`, and assembly
@@ -262,17 +262,17 @@ object
 repl
 ```
 
-Eighteen of the nineteen advertised tools execute from the extracted archive. One typed limit remains: `design.preview` requires the local design-loop server and returns retryable `OODS-N019` when it is unavailable. The adapter retains structured native failures as JSON text content shaped `{error:{...native,retryable}}` with `isError:true`, so the native code is preserved at `tools/call` and a client can tell a dependency limit from a failure.
+All nineteen advertised tools execute from the extracted archive. `design.preview` runs through the preview host: the bridge hosts it in-process under `/preview/`, and the stdio adapter starts one on 127.0.0.1 the first time the tool is called and stops it with the adapter. The tool returns one URL per framework; the page mounts the generated app with the prebuilt React, Vue and foundation runtimes shipped in `packages/mcp-bridge/dist/preview-runtime/`, and each artifact is compiled at request time with the bundled esbuild binary (macOS arm64 and x64, Linux x64 and arm64; `@vue/compiler-sfc` for Vue). Without a reachable host, on a platform without a bundled binary, or when the host reads another schema store root, the outcome is retryable `OODS-N021`. The adapter retains structured native failures as JSON text content shaped `{error:{...native,retryable}}` with `isError:true`, so the native code is preserved at `tools/call` and a client can tell a dependency limit from a failure.
 
 `brand.apply` executes from the archive because the brand documents ship. `apply:false` previews the delta against the shipped brand source. `apply:true` from the archive emits the review kit under the run directory (the three applied theme snapshots, `specimens.json`, `variables.css` and `diagnostics.json`) and skips the two host-only steps, the source write and the token build; the receipt records `sourceWritten:false`, `build:null` and `portable:{sourceWrites:"skipped",tokenBuild:"skipped"}`, and the shipped brand source and built output stay byte-identical. `OODS-N020` is returned only when the brand-source directory is missing.
 
 ## E2E sequence and lifecycle
 
-`scripts/runtime/e2e.mjs` verifies the embedded manifest, the SBOM, the terms files against the manifest and the repository copies, the shipped brand directories, and the adapter version, then initializes the extracted adapter and checks `tools/list` against the extracted registry. The primary adapter process makes 30 calls across all 19 advertised tools. It retains the four twin dashboard renders, the certification positive and negative pillars, the real token export, both React and Vue generation, the saved-schema and mapping round trips, and the two `brand.apply` calls: the preview, then an apply whose review kit lands under the extraction's `artifacts/current-state/` while the brand-source digest is proven unchanged.
+`scripts/runtime/e2e.mjs` verifies the embedded manifest, the SBOM, the terms files against the manifest and the repository copies, the shipped brand directories, and the adapter version, then initializes the extracted adapter and checks `tools/list` against the extracted registry. The primary adapter process makes 30 calls across all 19 advertised tools. `design.preview` runs against the preview host the adapter starts for it: the result names the host's port, both frameworks compile, the page and the compiled modules are fetched from that port, and the port must be closed once the adapter has exited. It retains the four twin dashboard renders, the certification positive and negative pillars, the real token export, both React and Vue generation, the saved-schema and mapping round trips, and the two `brand.apply` calls: the preview, then an apply whose review kit lands under the extraction's `artifacts/current-state/` while the brand-source digest is proven unchanged.
 
 Every dashboard HTML hash covers returned bytes; repeats compare deterministic response projections while excluding only the three ephemeral reference fields. Certification retains all four positive pillars and the typed negative code.
 
-Closing stdin must stop the adapter cleanly. A second process initializes, calls health, and exits on SIGTERM without SIGKILL. Total: 31 adapter calls across two processes. The E2E separately launches the bundled bridge on an owned loopback port, checks its stamped revision against the manifest, lists the same 19 tools and renders one chart through `POST /run` with the same SVG hash the adapter produced. It exercises the token transcript, mapping, saved-schema and brand review-kit writers inside owned extraction roots, cleans up, and proves the complete tree is restored.
+Closing stdin must stop the adapter cleanly. A second process initializes, calls health, and exits on SIGTERM without SIGKILL. Total: 31 adapter calls across two processes. The E2E separately launches the bundled bridge on an owned loopback port, checks its stamped revision against the manifest, lists the same 19 tools, renders one chart through `POST /run` with the same SVG hash the adapter produced, and opens one composed screen through `design_preview`, fetching its page and compiled modules from the bridge's own port. It exercises the token transcript, mapping, saved-schema and brand review-kit writers inside owned extraction roots, cleans up, and proves the complete tree is restored.
 
 The retained receipt of the run behind the current tool ledger is named by `portableExecution.path` in `packages/mcp-server/registry/tool-capability-ledger.v1.json`; `docs/mcp/Tool-Specs.md` renders each tool's portable outcome from it.
 
@@ -339,7 +339,7 @@ The bridge spawns `packages/mcp-server/dist/index.js` from the same bundle.
 Its `/health` revision is stamped at assembly from the manifest source commit
 and structured-data hash; runtime startup never calls git. `/artifacts/` serves
 the parent of the server policy's resolved `artifactsBase`, and `/runs` reads
-that exact run directory. SIGINT or SIGTERM closes both bridge and native child.
+that exact run directory. `/preview/` serves the running-app preview: `/preview/status`, `/preview/<key>?framework=react|vue&brand=A|B&theme=light|dark|hc`, the compiled module at `/preview/<key>/module.js` and the prebuilt runtimes under `/preview/runtime/`. SIGINT or SIGTERM closes both bridge and native child.
 
 ## Persistence contract
 
@@ -350,6 +350,8 @@ state changes use these real locations:
 | -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Policy-governed run bundles                  | `<bundle-root>/artifacts/current-state/<UTC-date>/...`, resolved from `packages/mcp-server/dist/security/policy.json`. There is no environment override for `artifactsBase`. |
 | `schema` and schema-writing pipeline actions | `.oods/schemas` below the adapter's native-server cwd, `packages/mcp-server/`. Set `MCP_SCHEMA_STORE_ROOT` and/or `MCP_SCHEMA_STORE_DIR` to relocate it.            |
+| `design.compose` and `design.preview`        | `.oods/compositions/<compositionId>/versions/<n>.json` beside the schema store (the same two variables relocate it): every composition version with its inputs, schema, parent, operation, head, and the artifacts, model and measurements design.preview and the running page attach; edits from the page or `design.preview` action edit record new versions here; read by the preview host. |
+| `code.generate` and `repl` (`payloadMode: file`) | `.oods/payloads/<tool>-<digest>/` beside the schema store (the same two variables relocate it): the artifact files plus `artifact.json`, or `index.html` (`fragments.json` and `css.json` for fragments); the response carries only the file references. Inline is the default and unchanged. |
 | `map`                                        | `artifacts/structured-data/component-mappings.json`, or `MCP_MAPPINGS_PATH`; apply conflicts write below `<bundle-root>/.oods/conflicts/`.                          |
 | `tokens.build`                               | Policy run bundles containing five artifacts copied or resolved from shipped dist outputs. Portable calls never rebuild or rewrite `packages/tokens/dist`.           |
 | `brand.apply`                                | Policy run bundles under `review-kit/brand.apply/` holding the applied theme snapshots, specimens, `variables.css` and diagnostics. Portable calls never rewrite `packages/tokens/src/tokens/brands` or `packages/tokens/dist`. |
@@ -358,7 +360,7 @@ state changes use these real locations:
 ## Environment contract
 
 The native server and bridge load `<bundle-root>/.env` through dotenv when the
-file is present. None of these 26 operational variables is required by the E2E;
+file is present. None of these 28 operational variables is required by the E2E;
 an absent variable uses the stated default or leaves the optional feature
 disabled.
 
@@ -386,6 +388,8 @@ disabled.
 | `MCP_TELEMETRY_DIR`         | Legacy JSONL path; its writer currently has no production importer.                |
 | `MCP_BRAND_SOURCE_ROOT`     | Host-only override of the tokens package root read by `brand.apply` and `tokens.build`; unset in the bundle. |
 | `OODS_NODE_PATH`            | Node executable used by the adapter; default `process.execPath`.                   |
+| `OODS_PREVIEW_HOST_URL`     | Preview host the native server uses when neither the bridge nor the adapter passes one with the request; unset in the bundle. |
+| `ESBUILD_BINARY_PATH`       | esbuild binary override; the preview host sets it from the shipped `@esbuild/<platform>` package when unset. |
 | `OODS_TAILWIND_TOKENS_PATH` | Tailwind-token file override for code generation.                                  |
 | `OODS_OTLP_ENDPOINT`        | Enables OTLP/HTTP trace export when set.                                           |
 | `OODS_OTLP_SERVICE_NAME`    | OODS-specific service-name override.                                               |

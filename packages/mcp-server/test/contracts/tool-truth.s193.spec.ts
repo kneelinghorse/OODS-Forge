@@ -26,6 +26,7 @@ describe('tool truth derives claims without upgrading source references to runti
       expect(row.receiptRefs.some((ref: any) => ref.path.includes('/sprint-195/m07/'))).toBe(false);
       if (ledger.mode === 's196') expect(row.receiptRefs.some((ref: any) => ref.path.includes('/sprint-196/m07/'))).toBe(false);
       if (ledger.mode === 's200') expect(row.receiptRefs.some((ref: any) => /\/sprint-(?:196|200)\/m07\//.test(ref.path))).toBe(false);
+      if (ledger.mode === 's201') expect(row.receiptRefs.some((ref: any) => /\/sprint-(?:196|200|201)\/m07\//.test(ref.path))).toBe(false);
     }
     if (ledger.mode === 's196') {
       const execution = derivePortableExecution(fs.readFileSync(path.join(root, PORTABLE_RECEIPT_PATH), 'utf8'), ledger.rows.filter((row: any) => row.registration === 'auto').map((row: any) => row.name));
@@ -33,6 +34,17 @@ describe('tool truth derives claims without upgrading source references to runti
       expect(ledger.rows.flatMap((row: any) => row.portableLimits).map((limit: any) => [limit.tool, limit.code])).toEqual([
         ['brand.apply', 'OODS-N020'], ['design.preview', 'OODS-N019'],
       ]);
+    }
+    if (ledger.mode === 's201') {
+      // s201-m01 ships the preview host: design.preview executes from the archive and no advertised tool stays typed.
+      const execution = derivePortableExecution(fs.readFileSync(path.join(root, PORTABLE_RECEIPT_PATHS.s201), 'utf8'), ledger.rows.filter((row: any) => row.registration === 'auto').map((row: any) => row.name), 's201');
+      expect(ledger.portableExecution).toEqual(execution.proof);
+      expect(ledger.portableExecution).toMatchObject({ path: 'artifacts/product-reality/sprint-201/m07/pre-freeze/e2e-host.json', tools: 19, pass: 19, typed: 0 });
+      expect(ledger.rows.flatMap((row: any) => row.portableLimits)).toEqual([]);
+      expect(ledger.rows.find((row: any) => row.name === 'design.preview').portableOutcome).toEqual({ outcome: 'pass', receiptSha256: execution.proof.sha256 });
+      expect(execution.outcomes['design.preview']).toMatchObject({ outcome: 'pass' });
+      expect(execution.outcomes['design.preview'].previewUrl).toMatch(/^http:\/\/127\.0\.0\.1:\d+\/preview\/cmp-[a-f0-9]{12}\/1\?framework=react&brand=A&theme=light$/);
+      expect(Object.keys(execution.outcomes['design.preview'].compiled).sort()).toEqual(['react', 'vue']);
     }
     if (ledger.mode === 's200') {
       // s200-m04 ships the brand source in the bundle: brand.apply executes from the archive and only design.preview stays typed.

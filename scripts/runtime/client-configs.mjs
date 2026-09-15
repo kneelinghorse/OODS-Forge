@@ -16,10 +16,23 @@ import { fileURLToPath } from "node:url";
 import {
   RUNTIME_ARCHIVE_FILE,
   RUNTIME_ARCHIVE_SHA256_FILE,
+  PREVIEW_PLATFORMS,
   RUNTIME_MANIFEST_FILE,
   RUNTIME_PACKAGES,
   RUNTIME_SBOM_FILE,
 } from "./manifest.mjs";
+
+/** "macOS (arm64, x64) and Linux (arm64, x64)" from the shipped esbuild platform list. */
+export function previewPlatformMatrix(platforms = PREVIEW_PLATFORMS) {
+  const names = { darwin: "macOS", linux: "Linux", win32: "Windows" };
+  const groups = new Map();
+  for (const platform of platforms) {
+    const [os, arch] = platform.split("-");
+    if (!groups.has(os)) groups.set(os, []);
+    groups.get(os).push(arch);
+  }
+  return [...groups.entries()].map(([os, arches]) => `${names[os] ?? os} (${arches.join(", ")})`).join(" and ");
+}
 
 const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = path.resolve(SCRIPT_DIR, "..", "..");
@@ -63,6 +76,7 @@ export function collectInstallFacts() {
   const repositoryUrl = String(root.repository?.url ?? "").replace(/^git\+/, "").replace(/\.git$/, "");
   assert(/^https:\/\/github\.com\/[^/]+\/[^/]+$/.test(repositoryUrl), `root repository.url is not a GitHub URL: ${repositoryUrl}`);
   return {
+    previewPlatforms: previewPlatformMatrix(),
     version: root.version,
     repositoryUrl,
     releasesUrl: `${repositoryUrl}/releases`,
@@ -180,6 +194,7 @@ export function renderInstallDoc(facts) {
     "",
     `- Node.js ${facts.nodeFloor} or newer on the PATH as \`node\` (or set \`OODS_NODE_PATH\` to a Node binary); the bundle is built and exercised on Node 24.`,
     "- macOS, Linux or Windows with a shell that can run `tar`; no package manager, no build step.",
+    `- The running-app preview (\`design.preview\`) compiles generated screens with a bundled esbuild binary on ${facts.previewPlatforms}; on any other platform the other tools work and \`design.preview\` returns \`OODS-N021\` naming the platform.`,
     "- One of the clients below.",
     "",
     "## 3. Verify and extract",

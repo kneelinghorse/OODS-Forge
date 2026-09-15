@@ -2,18 +2,35 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://designlab.local/schemas/design.preview.input.json",
   "title": "Design preview input",
-  "description": "Capture real generated React/Vue screens through the running local design loop. Start it in this checkout with pnpm design:loop serve.",
+  "description": "Open a composition version as the generated React or Vue app actually running in a browser: either an existing compositionId (and optional version) or an object and context composed now as a new composition. The preview host (in the HTTP bridge, or started by the stdio adapter) compiles the artifact and serves it at one URL per version with its lineage and brand, theme and width controls. action \"compare\" returns the structural what-changed between this version and `against` (regions, slots, nodes, props, field order, seed, artifact file hashes) with the side-by-side URL.",
   "type": "object",
-  "required": [
-    "object",
-    "context"
-  ],
   "additionalProperties": false,
   "properties": {
+    "action": {
+      "type": "string",
+      "enum": [
+        "render",
+        "compare",
+        "edit",
+        "versions"
+      ],
+      "default": "render",
+      "description": "render (default): open the version as the running app. compare: the what-changed between compositionId@version and against. edit: apply one operation to compositionId@version by re-composing through the override surface and re-generating, recording a new version with its parent, then open it. versions: list the composition's versions."
+    },
+    "compositionId": {
+      "type": "string",
+      "pattern": "^cmp-[a-f0-9]{12}$",
+      "description": "An existing composition from design.compose; with no version, its latest version opens."
+    },
+    "version": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "The version of compositionId to open."
+    },
     "object": {
       "type": "string",
       "minLength": 1,
-      "description": "Object name from the OODS registry (e.g., 'Subscription', 'User'). When provided, composition uses trait-driven component placement via view_extensions."
+      "description": "Object name from the OODS registry (e.g., 'Subscription', 'User'); with context, composes a new composition (version 1) and opens it."
     },
     "context": {
       "type": "string",
@@ -26,7 +43,7 @@
         "inline",
         "workflow"
       ],
-      "description": "View context for object-aware composition. Determines which view_extensions are applied. When object is provided without layout, context infers the layout (detail\u2192detail, list\u2192list, form\u2192form). workflow assembles list/detail/form/timeline screens with trait actions, routes, four UI states and generated application data."
+      "description": "View context for object-aware composition. Determines which view_extensions are applied. When object is provided without layout, context infers the layout (detail→detail, list→list, form→form). workflow assembles list/detail/form/timeline screens with trait actions, routes, four UI states and generated application data."
     },
     "framework": {
       "type": "string",
@@ -35,30 +52,30 @@
         "vue",
         "both"
       ],
-      "default": "both"
-    },
-    "widths": {
-      "type": "array",
-      "minItems": 1,
-      "maxItems": 10,
-      "uniqueItems": true,
-      "items": {
-        "type": "integer",
-        "minimum": 200,
-        "maximum": 3840
-      },
-      "default": [
-        390,
-        820,
-        1440
-      ]
+      "default": "both",
+      "description": "Which generated app to compile and serve; both frameworks by default, each at its own URL."
     },
     "preferences": {
       "type": "object",
       "properties": {
         "theme": {
           "type": "string",
-          "description": "Theme token (e.g., 'light', 'dark')."
+          "enum": [
+            "light",
+            "dark",
+            "hc"
+          ],
+          "default": "light",
+          "description": "Theme the page mounts with (data-theme and the matching token CSS scope)."
+        },
+        "brand": {
+          "type": "string",
+          "enum": [
+            "A",
+            "B"
+          ],
+          "default": "A",
+          "description": "Brand the page mounts with (data-brand and the matching token CSS scope)."
         },
         "metricColumns": {
           "type": "integer",
@@ -90,17 +107,134 @@
           "additionalProperties": {
             "type": "string"
           },
-          "description": "Slot-name \u2192 component-name overrides (e.g., { 'items': 'Table' })."
+          "description": "Slot-name → component-name overrides (e.g., { 'items': 'Table' })."
         }
       },
       "additionalProperties": false
+    },
+    "against": {
+      "type": "object",
+      "required": [
+        "version"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "compositionId": {
+          "type": "string",
+          "pattern": "^cmp-[a-f0-9]{12}$",
+          "description": "The other composition; default the same composition."
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "description": "action compare: the version on the right; the left is compositionId@version."
+    },
+    "edit": {
+      "type": "object",
+      "required": [
+        "operation"
+      ],
+      "additionalProperties": false,
+      "description": "action edit: the one operation to apply to compositionId@version. The parent version is never changed.",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": [
+            "reorder-region",
+            "swap-slot",
+            "reorder-fields",
+            "seed"
+          ]
+        },
+        "regionOrder": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "uniqueItems": true,
+          "description": "reorder-region: the screen's region ids in the desired order (the version record lists them)."
+        },
+        "slot": {
+          "type": "string",
+          "description": "swap-slot: the slot name."
+        },
+        "component": {
+          "type": "string",
+          "description": "swap-slot: one of the composer's own candidates for that slot on the parent version (the version record lists them)."
+        },
+        "region": {
+          "type": "string",
+          "description": "reorder-fields: the region id."
+        },
+        "fieldOrder": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "uniqueItems": true,
+          "description": "reorder-fields: the region's field names in the desired order."
+        },
+        "seed": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64,
+          "description": "seed: the new sample-data seed."
+        }
+      }
     }
   },
   "examples": [
     {
       "object": "Subscription",
-      "context": "list",
-      "framework": "react"
+      "context": "detail",
+      "preferences": {
+        "theme": "dark",
+        "brand": "B"
+      }
+    },
+    {
+      "compositionId": "cmp-0123456789ab",
+      "version": 2,
+      "framework": "vue"
+    },
+    {
+      "action": "compare",
+      "compositionId": "cmp-0123456789ab",
+      "version": 1,
+      "against": {
+        "version": 2
+      }
+    },
+    {
+      "action": "edit",
+      "compositionId": "cmp-0123456789ab",
+      "version": 2,
+      "edit": {
+        "operation": "swap-slot",
+        "slot": "metadata",
+        "component": "TagSummary"
+      }
+    },
+    {
+      "action": "versions",
+      "compositionId": "cmp-0123456789ab"
+    }
+  ],
+  "anyOf": [
+    {
+      "required": [
+        "compositionId"
+      ]
+    },
+    {
+      "required": [
+        "object",
+        "context"
+      ]
     }
   ]
 }

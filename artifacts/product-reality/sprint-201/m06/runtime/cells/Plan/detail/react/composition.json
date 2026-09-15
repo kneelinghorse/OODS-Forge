@@ -1,0 +1,936 @@
+{
+  "status": "ok",
+  "layout": "detail",
+  "schema": {
+    "version": "2026.02",
+    "screens": [
+      {
+        "id": "screen-detail-13",
+        "component": "Stack",
+        "layout": {
+          "type": "stack",
+          "gapToken": "cluster-default"
+        },
+        "children": [
+          {
+            "id": "detail-header-1",
+            "component": "Stack",
+            "layout": {
+              "type": "stack",
+              "align": "space-between",
+              "gapToken": "stack-default"
+            },
+            "style": {
+              "spacingToken": "inset-default"
+            },
+            "children": [
+              {
+                "id": "detail-header-1-record-title",
+                "component": "DetailHeader",
+                "props": {
+                  "titleField": "plan_name",
+                  "headingLevel": 2
+                }
+              },
+              {
+                "id": "slot-header-2",
+                "component": "OwnershipSummary",
+                "meta": {
+                  "intent": "slot:header",
+                  "label": "header"
+                },
+                "props": {
+                  "ownerIdField": "owner_id",
+                  "ownerTypeField": "owner_type",
+                  "roleField": "ownership_role",
+                  "transferredAtField": "ownership_transferred_at",
+                  "allowTransferParameter": "allowTransfer"
+                }
+              }
+            ]
+          },
+          {
+            "id": "detail-body-10",
+            "component": "Card",
+            "layout": {
+              "type": "stack",
+              "gapToken": "cluster-default"
+            },
+            "children": [
+              {
+                "id": "detail-tabs-9",
+                "component": "Tabs",
+                "children": [
+                  {
+                    "id": "detail-tab-panel-14",
+                    "component": "Stack",
+                    "layout": {
+                      "type": "stack",
+                      "gapToken": "cluster-default"
+                    },
+                    "props": {
+                      "label": "Details"
+                    },
+                    "children": [
+                      {
+                        "id": "slot-tab-3-15-read-field",
+                        "component": "Stack",
+                        "children": [
+                          {
+                            "id": "slot-tab-3-15-label",
+                            "component": "Text",
+                            "props": {
+                              "as": "strong",
+                              "content": "Amount"
+                            }
+                          },
+                          {
+                            "id": "slot-tab-3-15-value",
+                            "meta": {
+                              "intent": "read-only-field"
+                            },
+                            "component": "BillingSummaryBadge",
+                            "props": {
+                              "amountField": "amount_minor",
+                              "currencyField": "currency",
+                              "minorUnits": 100,
+                              "showInterval": false
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "id": "detail-tabs-9-plan_code-read-field",
+                        "component": "Stack",
+                        "children": [
+                          {
+                            "id": "detail-tabs-9-plan_code-label",
+                            "component": "Text",
+                            "props": {
+                              "as": "strong",
+                              "content": "Plan code"
+                            }
+                          },
+                          {
+                            "id": "detail-tabs-9-plan_code-value",
+                            "meta": {
+                              "intent": "read-only-field"
+                            },
+                            "component": "Text",
+                            "props": {
+                              "field": "plan_code"
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "id": "detail-tabs-9-overage_rate_minor-read-field",
+                        "component": "Stack",
+                        "children": [
+                          {
+                            "id": "detail-tabs-9-overage_rate_minor-label",
+                            "component": "Text",
+                            "props": {
+                              "as": "strong",
+                              "content": "Overage rate"
+                            }
+                          },
+                          {
+                            "id": "detail-tabs-9-overage_rate_minor-value",
+                            "meta": {
+                              "intent": "read-only-field"
+                            },
+                            "component": "BillingSummaryBadge",
+                            "props": {
+                              "amountField": "overage_rate_minor",
+                              "currencyField": "currency",
+                              "minorUnits": 100,
+                              "showInterval": false
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "id": "detail-tabs-9-projected_overage_minor-read-field",
+                        "component": "Stack",
+                        "children": [
+                          {
+                            "id": "detail-tabs-9-projected_overage_minor-label",
+                            "component": "Text",
+                            "props": {
+                              "as": "strong",
+                              "content": "Projected overage"
+                            }
+                          },
+                          {
+                            "id": "detail-tabs-9-projected_overage_minor-value",
+                            "meta": {
+                              "intent": "read-only-field"
+                            },
+                            "component": "BillingSummaryBadge",
+                            "props": {
+                              "amountField": "projected_overage_minor",
+                              "currencyField": "currency",
+                              "minorUnits": 100,
+                              "showInterval": false
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "id": "detail-tabs-9-plan_id-read-field",
+                        "component": "Stack",
+                        "children": [
+                          {
+                            "id": "detail-tabs-9-plan_id-label",
+                            "component": "Text",
+                            "props": {
+                              "as": "strong",
+                              "content": "Plan id"
+                            }
+                          },
+                          {
+                            "id": "detail-tabs-9-plan_id-value",
+                            "meta": {
+                              "intent": "read-only-field"
+                            },
+                            "component": "Text",
+                            "props": {
+                              "field": "plan_id"
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "id": "detail-tabs-9-product_family-read-field",
+                        "component": "Stack",
+                        "children": [
+                          {
+                            "id": "detail-tabs-9-product_family-label",
+                            "component": "Text",
+                            "props": {
+                              "as": "strong",
+                              "content": "Product family"
+                            }
+                          },
+                          {
+                            "id": "detail-tabs-9-product_family-value",
+                            "meta": {
+                              "intent": "read-only-field"
+                            },
+                            "component": "Text",
+                            "props": {
+                              "field": "product_family"
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "id": "detail-tabs-9-status-read-field",
+                        "component": "Stack",
+                        "children": [
+                          {
+                            "id": "detail-tabs-9-status-label",
+                            "component": "Text",
+                            "props": {
+                              "as": "strong",
+                              "content": "Status"
+                            }
+                          },
+                          {
+                            "id": "detail-tabs-9-status-value",
+                            "meta": {
+                              "intent": "read-only-field"
+                            },
+                            "component": "Text",
+                            "props": {
+                              "field": "status"
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "id": "detail-tabs-9-notes-read-field",
+                        "component": "Stack",
+                        "children": [
+                          {
+                            "id": "detail-tabs-9-notes-label",
+                            "component": "Text",
+                            "props": {
+                              "as": "strong",
+                              "content": "Notes"
+                            }
+                          },
+                          {
+                            "id": "detail-tabs-9-notes-value",
+                            "meta": {
+                              "intent": "read-only-field"
+                            },
+                            "component": "Text",
+                            "props": {
+                              "field": "notes"
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ],
+                "props": {
+                  "ariaLabel": "Record details"
+                }
+              }
+            ]
+          }
+        ],
+        "bindings": {
+          "onEdit": "handleEdit",
+          "onDelete": "handleDelete"
+        }
+      }
+    ],
+    "objectSchema": {
+      "plan_code": {
+        "type": "string",
+        "required": true,
+        "description": "Provider specific identifier for the plan or price.",
+        "semanticType": "billing.plan.code"
+      },
+      "plan_name": {
+        "type": "string",
+        "required": true,
+        "description": "Human readable plan label rendered in list and detail contexts.",
+        "semanticType": "billing.plan.name"
+      },
+      "billing_interval": {
+        "type": "string",
+        "required": true,
+        "description": "Billing cadence name selected from supportedIntervals.",
+        "enum": [
+          "monthly",
+          "quarterly",
+          "annual"
+        ],
+        "semanticType": "billing.plan.interval"
+      },
+      "interval_count": {
+        "type": "integer",
+        "required": false,
+        "default": 1,
+        "description": "Multiplier for interval (ex: 12 with monthly => yearly cadence).",
+        "semanticType": "billing.plan.interval_count"
+      },
+      "amount_minor": {
+        "type": "integer",
+        "required": true,
+        "description": "Contract value expressed in minor currency units.",
+        "semanticType": "billing.plan.amount_minor"
+      },
+      "currency": {
+        "type": "string",
+        "required": true,
+        "default": "usd",
+        "description": "ISO 4217 currency for the plan price.",
+        "semanticType": "billing.plan.currency"
+      },
+      "trial_period_days": {
+        "type": "integer",
+        "required": false,
+        "description": "Length of introductory trial period in days.",
+        "semanticType": "billing.plan.trial_period_days"
+      },
+      "collection_method": {
+        "type": "string",
+        "required": false,
+        "description": "How billing is collected (charge_automatically, send_invoice).",
+        "semanticType": "billing.plan.collection_method"
+      },
+      "billing_anchor_day": {
+        "type": "integer",
+        "required": false,
+        "description": "Day of month used to anchor renewals when prorating.",
+        "semanticType": "billing.plan.billing_anchor_day"
+      },
+      "pricing_model": {
+        "type": "string",
+        "required": false,
+        "default": "flat",
+        "description": "Price strategy (flat, per_unit, tiered, package).",
+        "semanticType": "billing.plan.pricing_model"
+      },
+      "meter_name": {
+        "type": "string",
+        "required": true,
+        "description": "Friendly metered feature name shown in UI (ex: Analytics Seats).",
+        "semanticType": "billing.usage.meter_name"
+      },
+      "included_quantity": {
+        "type": "integer",
+        "required": true,
+        "description": "Quantity included in base plan before overages.",
+        "semanticType": "billing.usage.included_quantity"
+      },
+      "consumed_quantity": {
+        "type": "integer",
+        "required": true,
+        "description": "Actual quantity consumed in the active period.",
+        "semanticType": "billing.usage.consumed_quantity"
+      },
+      "unit_label": {
+        "type": "string",
+        "required": true,
+        "default": "seats",
+        "description": "Label for display, defaults to the unit parameter.",
+        "semanticType": "billing.usage.unit_label"
+      },
+      "period_start": {
+        "type": "date",
+        "required": true,
+        "description": "Date the usage accumulation window began.",
+        "semanticType": "billing.usage.period_start"
+      },
+      "period_end": {
+        "type": "date",
+        "required": true,
+        "description": "Date the usage accumulation window ends.",
+        "semanticType": "billing.usage.period_end"
+      },
+      "rollover_strategy": {
+        "type": "string",
+        "required": false,
+        "default": "none",
+        "description": "Strategy for unused units (inherits rolloverStrategy parameter).",
+        "semanticType": "billing.usage.rollover_strategy"
+      },
+      "overage_rate_minor": {
+        "type": "integer",
+        "required": false,
+        "description": "Cost per additional unit expressed in minor currency units.",
+        "semanticType": "billing.usage.overage_rate_minor"
+      },
+      "projected_overage_minor": {
+        "type": "integer",
+        "required": false,
+        "description": "Forecasted overage spend derived from consumption trends.",
+        "semanticType": "billing.usage.projected_overage_minor"
+      },
+      "samples": {
+        "type": "UsageSample[]",
+        "required": false,
+        "default": [],
+        "description": "Rolling usage measurements for charts or anomaly detection.",
+        "semanticType": "billing.usage.samples"
+      },
+      "owner_id": {
+        "type": "string",
+        "required": true,
+        "description": "Identifier of the owning principal scoped by owner_type.",
+        "semanticType": "ownership.owner.id"
+      },
+      "owner_type": {
+        "type": "string",
+        "required": true,
+        "description": "Categorical owner type sourced from the ownerTypes parameter.",
+        "enum": [
+          "organization",
+          "team",
+          "user"
+        ],
+        "semanticType": "ownership.owner.type"
+      },
+      "ownership_role": {
+        "type": "string",
+        "required": false,
+        "description": "Optional role name describing how the owner governs the entity.",
+        "semanticType": "ownership.owner.role"
+      },
+      "ownership_transferred_at": {
+        "type": "datetime",
+        "required": false,
+        "description": "Timestamp recording when ownership was last transferred.",
+        "semanticType": "ownership.owner.transferred_at"
+      },
+      "plan_id": {
+        "type": "string",
+        "required": true,
+        "description": "Stable identifier for the plan within the billing domain.",
+        "semanticType": "billing.plan.id"
+      },
+      "product_family": {
+        "type": "string",
+        "required": true,
+        "description": "High level product family grouping for analytics and reporting.",
+        "semanticType": "billing.plan.product_family"
+      },
+      "status": {
+        "type": "string",
+        "required": true,
+        "description": "Availability state of the plan (active, deprecated, private_beta).",
+        "enum": [
+          "active",
+          "deprecated",
+          "private_beta",
+          "legacy"
+        ],
+        "semanticType": "billing.plan.status"
+      },
+      "feature_matrix": {
+        "type": "FeatureDescriptor[]",
+        "required": false,
+        "default": [],
+        "description": "Array of feature descriptors listing entitlement tiers.",
+        "semanticType": "billing.plan.feature_matrix"
+      },
+      "add_on_ids": {
+        "type": "string[]",
+        "required": false,
+        "default": [],
+        "description": "Identifiers for add-ons commonly sold with this plan.",
+        "semanticType": "billing.plan.add_on_ids"
+      },
+      "upgrade_targets": {
+        "type": "string[]",
+        "required": false,
+        "default": [],
+        "description": "Plans presented as upgrade destinations.",
+        "semanticType": "billing.plan.upgrade_targets"
+      },
+      "downgrade_targets": {
+        "type": "string[]",
+        "required": false,
+        "default": [],
+        "description": "Plans that can be downgraded to from this plan.",
+        "semanticType": "billing.plan.downgrade_targets"
+      },
+      "notes": {
+        "type": "string",
+        "required": false,
+        "description": "Internal commentary for packaging or finance teams.",
+        "semanticType": "billing.plan.notes"
+      }
+    }
+  },
+  "schemaRef": "compose-d252a609",
+  "schemaRefCreatedAt": "2026-09-15T07:50:08.577Z",
+  "schemaRefExpiresAt": "2026-09-15T08:20:08.577Z",
+  "compositionId": "cmp-56930bebbecf",
+  "version": 1,
+  "parentVersion": null,
+  "operation": "compose",
+  "head": null,
+  "selections": [
+    {
+      "slotName": "header",
+      "intent": "page-header",
+      "selectedComponent": "DetailHeader",
+      "confidence": 1,
+      "confidenceLevel": "high",
+      "explanation": "DetailHeader leads slot \"header\" because record title placed by the layout from the object's label field. The slot also renders OwnershipSummary after it, in that order. Confidence is high (1.00).",
+      "candidates": [
+        {
+          "name": "DetailHeader",
+          "score": 1,
+          "reason": "record title placed by the layout from the object's label field"
+        },
+        {
+          "name": "OwnershipSummary",
+          "score": 0.95,
+          "reason": "view_extension placement"
+        }
+      ],
+      "placedComponents": [
+        "DetailHeader",
+        "OwnershipSummary"
+      ]
+    },
+    {
+      "slotName": "tab-0",
+      "intent": "data-display",
+      "selectedComponent": "Card",
+      "confidence": 0.5,
+      "confidenceLevel": "medium",
+      "explanation": "Card leads slot \"tab-0\" because fallback placement. Confidence is medium (0.50).",
+      "candidates": [
+        {
+          "name": "Card",
+          "score": 0.5,
+          "reason": "fallback placement"
+        }
+      ],
+      "placedComponents": [
+        "Card"
+      ]
+    },
+    {
+      "slotName": "tab-1",
+      "intent": "data-display",
+      "selectedComponent": "Card",
+      "confidence": 0.94,
+      "confidenceLevel": "high",
+      "explanation": "Card was selected for slot \"tab-1\" because preferred for \"data-display\" (rank 1); 2 tag match(es); 2 context match(es); 1 region match(es); position affinity: Card fits well in tab. Confidence is high (0.94).",
+      "candidates": [
+        {
+          "name": "Card",
+          "reason": "preferred for \"data-display\" (rank 1); 2 tag match(es); 2 context match(es); 1 region match(es); position affinity: Card fits well in tab",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 1
+        },
+        {
+          "name": "Table",
+          "reason": "preferred for \"data-display\" (rank 2); 1 tag match(es); tag match (data); 2 context match(es); 1 region match(es); position affinity: Table fits well in tab",
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.98
+        },
+        {
+          "name": "Stack",
+          "reason": "preferred for \"data-display\" (rank 3); 2 context match(es); 1 region match(es); position affinity: Stack fits well in tab",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.66
+        }
+      ]
+    },
+    {
+      "slotName": "tab-2",
+      "intent": "data-display",
+      "selectedComponent": "Card",
+      "confidence": 0.94,
+      "confidenceLevel": "high",
+      "explanation": "Card was selected for slot \"tab-2\" because preferred for \"data-display\" (rank 1); 2 tag match(es); 2 context match(es); 1 region match(es); position affinity: Card fits well in tab. Confidence is high (0.94).",
+      "candidates": [
+        {
+          "name": "Card",
+          "reason": "preferred for \"data-display\" (rank 1); 2 tag match(es); 2 context match(es); 1 region match(es); position affinity: Card fits well in tab",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 1
+        },
+        {
+          "name": "Table",
+          "reason": "preferred for \"data-display\" (rank 2); 1 tag match(es); tag match (data); 2 context match(es); 1 region match(es); position affinity: Table fits well in tab",
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.98
+        },
+        {
+          "name": "Stack",
+          "reason": "preferred for \"data-display\" (rank 3); 2 context match(es); 1 region match(es); position affinity: Stack fits well in tab",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.66
+        }
+      ]
+    },
+    {
+      "slotName": "metadata",
+      "intent": "metadata-display",
+      "selectedComponent": "AuditTimeline",
+      "confidence": 0.4,
+      "confidenceLevel": "low",
+      "explanation": "AuditTimeline was selected for slot \"metadata\" because 1 tag match(es); tag match (metadata); 1 context match(es); 1 region match(es); 2 trait(s). Confidence is low (0.40). Alternatives to review: TagSummary (score 0.95), TagManager (score 0.90). Review this slot before shipping, or pin a component with preferences.componentOverrides if you disagree with the pick.",
+      "candidates": [
+        {
+          "name": "AuditTimeline",
+          "reason": "1 tag match(es); tag match (metadata); 1 context match(es); 1 region match(es); 2 trait(s)",
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 1,
+          "contextTraitMatches": 0,
+          "score": 1
+        },
+        {
+          "name": "TagSummary",
+          "reason": "1 tag match(es); tag match (metadata); 1 context match(es); 1 region match(es); 1 trait(s)",
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 1,
+          "contextTraitMatches": 0,
+          "score": 0.95
+        },
+        {
+          "name": "TagManager",
+          "reason": "1 tag match(es); tag match (metadata); 1 context match(es); 1 region match(es)",
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 1,
+          "contextTraitMatches": 0,
+          "score": 0.9
+        }
+      ],
+      "alternativeCandidates": [
+        {
+          "name": "TagSummary",
+          "reason": "1 tag match(es); tag match (metadata); 1 context match(es); 1 region match(es); 1 trait(s)",
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 1,
+          "contextTraitMatches": 0,
+          "score": 0.95
+        },
+        {
+          "name": "TagManager",
+          "reason": "1 tag match(es); tag match (metadata); 1 context match(es); 1 region match(es)",
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 1,
+          "contextTraitMatches": 0,
+          "score": 0.9
+        }
+      ],
+      "reviewHint": "Low-confidence selection for \"metadata\". Consider preferences.componentOverrides to pin a different component if needed."
+    },
+    {
+      "slotName": "tab-3",
+      "intent": "metadata-display",
+      "selectedComponent": "Text",
+      "confidence": 0.76,
+      "confidenceLevel": "medium",
+      "explanation": "Text was selected for slot \"tab-3\" because preferred for \"metadata-display\" (rank 2); 1 context match(es); 2 region match(es); field affinity: field type \"date\" (rank 3); position affinity: Text fits well in tab. Confidence is medium (0.76).",
+      "candidates": [
+        {
+          "name": "Text",
+          "reason": "preferred for \"metadata-display\" (rank 2); 1 context match(es); 2 region match(es); field affinity: field type \"date\" (rank 3); position affinity: Text fits well in tab",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 1
+        },
+        {
+          "name": "Stack",
+          "reason": "preferred for \"metadata-display\" (rank 1); 1 context match(es); 2 region match(es); position affinity: Stack fits well in tab",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.94
+        },
+        {
+          "name": "Card",
+          "reason": "preferred for \"metadata-display\" (rank 3); 1 context match(es); position affinity: Card fits well in tab",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.58
+        }
+      ]
+    },
+    {
+      "slotName": "tab-4",
+      "intent": "data-display",
+      "selectedComponent": "Card",
+      "confidence": 0.94,
+      "confidenceLevel": "high",
+      "explanation": "Card was selected for slot \"tab-4\" because preferred for \"data-display\" (rank 1); 2 tag match(es); 2 context match(es); 1 region match(es); position affinity: Card fits well in tab. Confidence is high (0.94).",
+      "candidates": [
+        {
+          "name": "Card",
+          "reason": "preferred for \"data-display\" (rank 1); 2 tag match(es); 2 context match(es); 1 region match(es); position affinity: Card fits well in tab",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 1
+        },
+        {
+          "name": "Table",
+          "reason": "preferred for \"data-display\" (rank 2); 1 tag match(es); tag match (data); 2 context match(es); 1 region match(es); position affinity: Table fits well in tab",
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.98
+        },
+        {
+          "name": "Stack",
+          "reason": "preferred for \"data-display\" (rank 3); 2 context match(es); 1 region match(es); position affinity: Stack fits well in tab",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.66
+        }
+      ]
+    },
+    {
+      "slotName": "tab-5",
+      "intent": "data-display",
+      "selectedComponent": "Card",
+      "confidence": 0.94,
+      "confidenceLevel": "high",
+      "explanation": "Card was selected for slot \"tab-5\" because preferred for \"data-display\" (rank 1); 2 tag match(es); 2 context match(es); 1 region match(es); position affinity: Card fits well in tab. Confidence is high (0.94).",
+      "candidates": [
+        {
+          "name": "Card",
+          "reason": "preferred for \"data-display\" (rank 1); 2 tag match(es); 2 context match(es); 1 region match(es); position affinity: Card fits well in tab",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 1
+        },
+        {
+          "name": "Table",
+          "reason": "preferred for \"data-display\" (rank 2); 1 tag match(es); tag match (data); 2 context match(es); 1 region match(es); position affinity: Table fits well in tab",
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.98
+        },
+        {
+          "name": "Stack",
+          "reason": "preferred for \"data-display\" (rank 3); 2 context match(es); 1 region match(es); position affinity: Stack fits well in tab",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.66
+        }
+      ]
+    },
+    {
+      "slotName": "tab-6",
+      "intent": "data-display",
+      "selectedComponent": "Card",
+      "confidence": 0.94,
+      "confidenceLevel": "high",
+      "explanation": "Card was selected for slot \"tab-6\" because preferred for \"data-display\" (rank 1); 2 tag match(es); 2 context match(es); 1 region match(es); position affinity: Card fits well in tab. Confidence is high (0.94).",
+      "candidates": [
+        {
+          "name": "Card",
+          "reason": "preferred for \"data-display\" (rank 1); 2 tag match(es); 2 context match(es); 1 region match(es); position affinity: Card fits well in tab",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 1
+        },
+        {
+          "name": "Table",
+          "reason": "preferred for \"data-display\" (rank 2); 1 tag match(es); tag match (data); 2 context match(es); 1 region match(es); position affinity: Table fits well in tab",
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.98
+        },
+        {
+          "name": "Stack",
+          "reason": "preferred for \"data-display\" (rank 3); 2 context match(es); 1 region match(es); position affinity: Stack fits well in tab",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.66
+        }
+      ]
+    },
+    {
+      "slotName": "tab-7",
+      "intent": "metadata-display",
+      "selectedComponent": "Stack",
+      "confidence": 0.71,
+      "confidenceLevel": "medium",
+      "explanation": "Stack was selected for slot \"tab-7\" because preferred for \"metadata-display\" (rank 1); 1 context match(es); 2 region match(es); position affinity: Stack fits well in tab. Confidence is medium (0.71).",
+      "candidates": [
+        {
+          "name": "Stack",
+          "reason": "preferred for \"metadata-display\" (rank 1); 1 context match(es); 2 region match(es); position affinity: Stack fits well in tab",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 1
+        },
+        {
+          "name": "Text",
+          "reason": "preferred for \"metadata-display\" (rank 2); 1 context match(es); 2 region match(es); position affinity: Text fits well in tab",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.9
+        },
+        {
+          "name": "Card",
+          "reason": "preferred for \"metadata-display\" (rank 3); 1 context match(es); position affinity: Card fits well in tab",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.61
+        }
+      ]
+    }
+  ],
+  "validation": {
+    "status": "ok",
+    "errors": [],
+    "warnings": []
+  },
+  "warnings": [
+    {
+      "code": "OODS-V121",
+      "message": "Object 'Plan' has maturity 'beta' — composed output may change.",
+      "hint": "Consider using stable objects for production compositions."
+    },
+    {
+      "code": "OODS-V122",
+      "message": "Object \"Plan\" has a single trait category group for context \"detail\". Consider using a single-section layout instead of tabs."
+    }
+  ],
+  "objectUsed": {
+    "name": "Plan",
+    "version": "1.0.0",
+    "traits": [
+      "SaaSBillingBillable",
+      "SaaSBillingMetered",
+      "structural/Ownerable"
+    ],
+    "fieldsComposed": 32,
+    "viewExtensionsApplied": {
+      "detail": 1,
+      "list": 1,
+      "card": 1
+    }
+  },
+  "meta": {
+    "intentParsed": "Plan detail view",
+    "layoutDetected": "context-inferred: detail (from context=\"detail\")",
+    "slotCount": 10,
+    "nodeCount": 31,
+    "intentSynthetic": true,
+    "warnings": [
+      "Object 'Plan' has maturity 'beta' — composed output may change.",
+      "Object \"Plan\" has a single trait category group for context \"detail\". Consider using a single-section layout instead of tabs."
+    ],
+    "intelligence": {
+      "fieldsExpanded": true,
+      "slotsExpanded": 5,
+      "expansionReason": "Expanded from 3 to 8 tabs for 32 fields",
+      "positionAffinityUsed": true,
+      "fieldAffinityUsed": true,
+      "compositionConfidence": 0.81,
+      "lowConfidenceSlots": 1,
+      "lowConfidenceSlotNames": [
+        "metadata"
+      ]
+    }
+  }
+}

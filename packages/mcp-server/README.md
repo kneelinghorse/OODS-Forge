@@ -5,7 +5,7 @@ Native tool handlers for OODS Forge. Build from the repository root with `pnpm -
 
 The registry advertises 19 tools by default and 5 on demand (24 total). Enable on-demand entries with `MCP_TOOLSET=all` or select them with `MCP_EXTRA_TOOLS`.
 
-The retained portable adapter E2E exercises 19 advertised tools: 18 results and 1 typed dependency limit, design.preview (OODS-N019). Source evidence tiers below do not imply executed proof for every tool.
+The retained portable adapter E2E exercises 19 advertised tools: 19 results and no typed dependency limit. Source evidence tiers below do not imply executed proof for every tool.
 
 | Default tool / actions | Source evidence tier |
 | --- | --- |
@@ -16,7 +16,7 @@ The retained portable adapter E2E exercises 19 advertised tools: 18 results and 
 | `catalog.list` | product-reality |
 | `code.generate` | product-reality |
 | `design.compose` | product-reality |
-| `design.preview` | product-reality |
+| `design.preview` (`render`/`compare`/`edit`/`versions`) | product-reality |
 | `pipeline` | product-reality |
 | `health` | product-reality |
 | `registry.snapshot` | product-reality |

@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { validateNormalizedVizSpec } from '@oods/viz-core';
+import { sparseForceDefaults, validateNormalizedVizSpec } from '@oods/viz-core';
 import { getAjv } from '../lib/ajv.js';
 import type { VizRenderInput } from '../schemas/generated.js';
 import { handle, cartesianColorRangeWarnings } from './viz.render.js';
@@ -697,7 +697,8 @@ describe('viz.render handler — force_graph (network) path', () => {
     expect(series[0].data).toHaveLength(3);
     expect(series[0].links).toHaveLength(2);
     // force PARAMS are part of the deterministic option (not rendered coordinates)
-    expect(series[0].force).toMatchObject({ repulsion: 100, gravity: 0.1, edgeLength: 30, friction: 0.6 });
+    // Sprint 201 m06: sparse graphs spread to the canvas; three nodes on the default 600×400 canvas get 115px edges and 288 repulsion.
+    expect(series[0].force).toMatchObject({ ...sparseForceDefaults(3), gravity: 0.1, friction: 0.6 });
     expect(out.meta?.renderer).toBe('echarts');
     expect(out.meta?.mark).toBe('MarkGraph');
     expect(out.meta?.rowCount).toBe(3);

@@ -92,6 +92,12 @@
           "type": "object",
           "description": "Inline measured-COLOUR delta resolved against the Forge-owned style library to a scoped :root{} override on the --sys-/--ref- skin (distinct from tokenOverlay's --oods- token path); applied only in document output (format=document), gated by apply===true. An unmapped logical key fails loud with OODS-V140. Lands in the same components <style> block as tokenOverlay; default-absent is byte-identical.",
           "additionalProperties": true
+        },
+        "payloadMode": {
+          "type": "string",
+          "enum": ["inline", "file"],
+          "default": "inline",
+          "description": "inline (default) returns html (or fragments and css) in the response. file writes index.html (or fragments.json and css.json) beside the saved-schema store (<store>/../payloads/repl.render-<digest>/) and returns a payload block of file references instead; html, fragments and css are then omitted."
         }
       },
       "additionalProperties": false

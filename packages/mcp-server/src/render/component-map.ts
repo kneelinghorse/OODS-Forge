@@ -1297,12 +1297,18 @@ function renderSummarySection(node: UiElement, childrenHtml: string, options: Su
   const entries = options.fields
     .map((field) => {
       const rawValue = field.keys
+        .filter((key) => !isBindingKey(key))
         .map((key) => props[key])
         .find((value) => value !== undefined && value !== null);
       const value = field.format
         ? field.format(rawValue)
         : summaryValue(rawValue);
-      if (!value) return '';
+      if (!value) {
+        // A field bound by name with no value supplied renders the shared unbound placeholder,
+        // never the binding key as if it were data (Sprint 200 ten-minute run, item 4).
+        const binding = boundField(props, field.keys);
+        return binding ? `<div data-summary-item="true"><dt>${escapeHtml(field.term)}</dt>${unboundPlaceholder(binding, 'dd')}</div>` : '';
+      }
       return `<div data-summary-item="true"><dt>${escapeHtml(field.term)}</dt><dd>${escapeHtml(value)}</dd></div>`;
     })
     .filter((entry) => entry.length > 0)
@@ -1310,6 +1316,19 @@ function renderSummarySection(node: UiElement, childrenHtml: string, options: Su
   const fallback = firstSerialized(props, ['summary', 'text', 'description']);
   const body = entries ? `<dl>${entries}</dl>` : fallback ? `<p data-summary-fallback="true">${escapeHtml(fallback)}</p>` : '<dl></dl>';
   return `<section${attrs}><h3 data-summary-title="true">${escapeHtml(title)}</h3>${body}</section>`;
+}
+
+/** Placeholder convention for a field bound by name without a value: one mark, machine-readable. */
+export const UNBOUND_PLACEHOLDER = '\u2014';
+const isBindingKey = (key: string) => key.endsWith('Field');
+function boundField(props: Record<string, unknown>, keys: string[]): string | undefined {
+  for (const key of keys) {
+    if (isBindingKey(key) && typeof props[key] === 'string' && (props[key] as string).length > 0) return props[key] as string;
+  }
+  return undefined;
+}
+function unboundPlaceholder(field: string, tag: 'dd' | 'span'): string {
+  return `<${tag} data-oods-placeholder="unbound-field" data-field="${escapeHtml(field)}">${UNBOUND_PLACEHOLDER}</${tag}>`;
 }
 
 type MetaOptions = {
@@ -1331,8 +1350,11 @@ function renderMetaInline(node: UiElement, childrenHtml: string, options: MetaOp
   const title = firstSerialized(props, ['title', 'label', 'heading', 'name']) ?? node.meta?.label ?? options.defaultTitle;
   const values = options.fields
     .map((field) => {
-      const value = firstSerialized(props, field.keys);
-      if (!value) return '';
+      const value = firstSerialized(props, field.keys.filter((key) => !isBindingKey(key)));
+      if (!value) {
+        const binding = boundField(props, field.keys);
+        return binding ? `<span data-meta-item="true"><strong>${escapeHtml(field.term)}:</strong> ${unboundPlaceholder(binding, 'span')}</span>` : '';
+      }
       return `<span data-meta-item="true"><strong>${escapeHtml(field.term)}:</strong> ${escapeHtml(value)}</span>`;
     })
     .filter((entry) => entry.length > 0)

@@ -174,7 +174,7 @@
     },
     {
       "name": "design.compose",
-      "description": "Composes UiSchema from intent or objects; workflow context assembles four routed screens with states and trait actions",
+      "description": "Composes UiSchema from intent or objects; workflow context assembles four routed screens with states and trait actions Every successful composition is recorded as a durable version and the result carries compositionId, version, parentVersion, operation and head; pass compositionId to record the next version. preferences.regionOrder, fieldOrder and seed extend the override surface for edits.",
       "modes": [
         "dry-run"
       ],
@@ -265,7 +265,7 @@
     },
     {
       "name": "design.preview",
-      "description": "Render a public object/context through the same local browser design loop used by pnpm design:loop render. Returns exact React/Vue receipts with screenshots, accessibility text, layout measurements, browser errors, and schema/artifact hashes. Defaults to both frameworks at 390/820/1440 px. Requires pnpm design:loop serve in this checkout; OODS-N019 explains how to start it when unavailable. Writes isolated local receipt artifacts only; never saves or edits a schema. This observation is not usability certification.",
+      "description": "Open a composition version (an existing compositionId, or an object and context composed now) as the generated React or Vue app actually running in a browser, at one URL per version with its lineage (composition, version, parent, operation, head) and brand, theme and width controls, and the measurements the version carries (generation receipt, placed-chart certifications, axe-core in the running page) with what was not measured named. The HTTP bridge hosts the preview in-process and the stdio adapter starts it on 127.0.0.1. action compare returns the structural what-changed between two versions with the side-by-side URL. action edit records one of four operations (reorder-region, swap-slot to a composer candidate, reorder-fields, seed) as a new version with lineage; action versions lists them. Without a reachable host the outcome is retryable OODS-N021; an unknown composition or version is OODS-N022. Writes only the version's artifacts and model; never saves or edits a schema.",
       "modes": [
         "dry-run"
       ],

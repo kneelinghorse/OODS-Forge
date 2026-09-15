@@ -3,6 +3,8 @@ import '../apps/explorer/src/styles/tokens.css';
 import '../apps/explorer/src/styles/overlays.css';
 import '../apps/explorer/src/styles/index.css';
 import '../src/styles/globals.css';
+// The component chrome the generated apps and the Explorer ship with (Sprint 200 residue: the root Storybook loaded tokens but no component styles).
+import '@oods/component-styles/css';
 import type { Decorator, Preview } from '@storybook/react';
 import { INITIAL_VIEWPORTS } from 'storybook/viewport';
 import React, { useEffect } from 'react';

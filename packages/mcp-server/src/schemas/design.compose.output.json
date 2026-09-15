@@ -31,6 +31,15 @@
       "type": "string",
       "description": "ISO timestamp when the schemaRef expires."
     },
+    "compositionId": {
+      "type": "string",
+      "pattern": "^cmp-[a-f0-9]{12}$",
+      "description": "The durable composition this result was recorded as; absent for transient compositions. Every version opens at /preview/<compositionId>/<version> on the preview host."
+    },
+    "version": { "type": "integer", "minimum": 1, "description": "The recorded version number (1 for a new composition)." },
+    "parentVersion": { "type": ["integer", "null"], "description": "The version this one derives from; null for the first." },
+    "operation": { "type": "string", "enum": ["compose", "recompose", "reorder-region", "swap-slot", "reorder-fields", "seed"], "description": "How this version was produced." },
+    "head": { "type": ["string", "null"], "description": "The Forge build head that produced it; null from a source checkout." },
     "selections": {
       "type": "array",
       "items": { "$ref": "#/$defs/slotSelection" },
@@ -149,7 +158,7 @@
         "slotName": { "type": "string" },
         "intent": { "type": "string" },
         "selectedComponent": { "type": "string" },
-        "confidence": { "type": "number", "description": "Raw confidence score (0-1) before normalization." },
+        "confidence": { "type": "number", "description": "The slot's selection confidence (0-1, raw). Not the same number as candidates[].score, which ranks each candidate." },
         "confidenceLevel": {
           "type": "string",
           "enum": ["high", "medium", "low"],
@@ -167,10 +176,10 @@
           "type": "array",
           "items": {
             "type": "object",
-            "required": ["name", "confidence", "reason"],
+            "required": ["name", "score", "reason"],
             "properties": {
               "name": { "type": "string" },
-              "confidence": { "type": "number" },
+              "score": { "type": "number", "description": "The candidate's ranking score (0-1) within this slot; the slot's own confidence is reported beside it." },
               "reason": { "type": "string" },
               "keywordTagMatches": { "type": "number" },
               "keywordTraitMatches": { "type": "number" },
@@ -180,15 +189,20 @@
             "additionalProperties": false
           }
         },
+        "placedComponents": {
+          "type": "array",
+          "description": "Every component the layout or a view extension placed in this slot, in render order; the first is selectedComponent.",
+          "items": { "type": "string" }
+        },
         "alternativeCandidates": {
           "type": "array",
           "description": "Alternative candidates surfaced when confidence < 0.5.",
           "items": {
             "type": "object",
-            "required": ["name", "confidence", "reason"],
+            "required": ["name", "score", "reason"],
             "properties": {
               "name": { "type": "string" },
-              "confidence": { "type": "number" },
+              "score": { "type": "number", "description": "The candidate's ranking score (0-1) within this slot; the slot's own confidence is reported beside it." },
               "reason": { "type": "string" },
               "keywordTagMatches": { "type": "number" },
               "keywordTraitMatches": { "type": "number" },

@@ -72,7 +72,9 @@ export function emitCollectionNode(
     const content = (node.children ?? []).filter(child => child !== empty).map(emit).join('\n');
     // Repeated controls must not introduce duplicate DOM IDs.
     const indexed = content.replace(/(?<=\s)id="([^"]+)"/g, (_, original: string) => attr('id', `${literal(original + '-')} + collectionIndex`));
-    const emptyCode = empty ? emit({ ...empty, collectionControl: undefined }) : '';
+    // The collection's banner is the list's empty branch: it renders whenever the rows are empty and carries the
+    // state marker, without the uiState wrap (the toolbar stays mounted through an empty search).
+    const emptyCode = empty ? emit({ ...empty, collectionControl: undefined, state: undefined }).replace('data-oods-component="Banner"', 'data-oods-component="Banner" data-oods-state="empty"') : '';
     const items = source === 'events' ? 'chronologicalEvents(events)' : 'rows';
     const label = source === 'events' ? 'Lifecycle history' : 'Records';
     const key = source === 'events' ? 'collectionEvent.id' : `String(${snakeToCamel(node.collection.keyField)})`;
@@ -81,7 +83,7 @@ export function emitCollectionNode(
     return `<section ${id} data-oods-collection="${source}"><template v-if="${source}.length === 0">${emptyCode}</template><ol v-else aria-label="${label}" class="oods-collection"><li v-for="(${escapeDoubleQuotedAttribute(binding)}, collectionIndex) in ${items}" :key="${escapeDoubleQuotedAttribute(key)}">${indexed}</li></ol></section>`;
   }
   switch (node.collectionControl) {
-    case 'empty': return emit({ ...node, collectionControl: undefined });
+    case 'empty': return emit({ ...node, collectionControl: undefined, state: undefined }).replace('data-oods-component="Banner"', 'data-oods-component="Banner" data-oods-state="empty"');
     case 'search': return `<SearchInput ${id} label="Search" placeholder="Search records" ${attr('value', "collectionQuery.search ?? ''")} ${attr('clearable', 'true')} ${on(react ? 'ValueChange' : 'valueChange', react ? `(search) => handleFilter({ ...collectionQuery, search })` : `handleFilter({ ...collectionQuery, search: $event })`)} />`;
     case 'filter': {
       const options = node.props?.options as Array<{ value: string; label: string }> | undefined;
@@ -91,7 +93,7 @@ export function emitCollectionNode(
       // Function expressions also survive vue-tsc's handling of HTML-escaped attributes.
       const values = `[...new Set([...rows.map(function(row) { return String(row.${field} ?? ''); }), collectionQuery.status ?? ''])].filter(Boolean).sort()`;
       const expression = options && options.length > 1 ? literal(options)
-        : `[{ value: '', label: 'All states' }, ...${values}.map(function(value) { return { value, label: value.replaceAll('_', ' ') }; })]`;
+        : `[{ value: '', label: 'All states' }, ...${values}.map(function(value) { return { value, label: value.split(/[_\\-\\s]+/).filter(Boolean).map(function(part) { return part.charAt(0).toUpperCase() + part.slice(1); }).join(' ') }; })]`;
       return `<Select ${id} label="${escapeDoubleQuotedAttribute(String(node.props?.label ?? 'Status'))}" ${attr('value', "collectionQuery.status ?? ''")} ${attr('options', expression)} ${on('Change', react ? `(event) => handleFilter({ ...collectionQuery, status: event.currentTarget.value })` : `handleFilter({ ...collectionQuery, status: $event })`)} />`;
     }
     case 'sort': return `<Select ${id} label="Sort" ${attr('value', "collectionQuery.descending ? 'desc' : 'asc'")} ${attr('options', literal(node.props?.options ?? []))} ${on('Change', react ? `() => handleSort(${literal(node.props?.field)})` : `handleSort(${literal(node.props?.field)})`)} />`;

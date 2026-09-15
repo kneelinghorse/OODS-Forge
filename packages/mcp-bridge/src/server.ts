@@ -22,6 +22,8 @@ import { buildToolNameMaps, resolveInternalToolName } from './tool-names.js';
 import { resolveBridgeToolSurface } from './tool-surface.js';
 import { registerBridgeHealth } from './health.js';
 import { resolveBridgeArtifacts } from './runtime-paths.js';
+import { registerPreviewHost } from './preview/host.js';
+import { resolveCompositionsDir } from './preview/store.js';
 
 const APPROVAL_REQUIRED_TOOLS = approvalRequiredTools;
 const APPLY_CAPABLE_TOOLS = applyCapableTools;
@@ -46,6 +48,8 @@ class McpClient {
     { resolve: (v: any) => void; reject: (e: any) => void }
   >();
   private buffer = '';
+  /** Where the preview host listens; sent with every request so design.preview can hand back URLs. */
+  previewHostUrl: string | undefined;
 
   constructor(private serverCwd: string) {}
 
@@ -104,8 +108,9 @@ class McpClient {
   async run(tool: string, input: any, role?: string): Promise<any> {
     this.ensure();
     const id = ++this.seq;
-    const envelope: { id: number; tool: string; input: any; role?: string } = { id, tool, input };
+    const envelope: { id: number; tool: string; input: any; role?: string; context?: { previewHostUrl: string } } = { id, tool, input };
     if (role) envelope.role = role;
+    if (this.previewHostUrl) envelope.context = { previewHostUrl: this.previewHostUrl };
     const payload = JSON.stringify(envelope) + '\n';
     return new Promise((resolve, reject) => {
       this.pending.set(id, { resolve, reject });
@@ -242,6 +247,11 @@ async function main() {
     decorateReply: false,
   });
 
+  // The running-app preview: composition versions design.compose writes beside the saved-schema
+  // store are compiled at request time and served with the prebuilt host runtimes under /preview/.
+  const compositionsDir = resolveCompositionsDir(mcpServerCwd);
+  await registerPreviewHost(fastify, { compositionsDir, runTool: (tool, input) => client.run(tool, input) });
+
   await registerArtifactEndpoints(fastify, artifactsRoot, {
     list: bridgeConfig.rateLimit.artifacts,
     detail: bridgeConfig.rateLimit.artifacts,
@@ -377,6 +387,7 @@ async function main() {
     }
     const addr = fastify.server.address();
     const actualPort = typeof addr === 'object' && addr ? (addr as any).port : bridgePort;
+    client.previewHostUrl = `http://127.0.0.1:${actualPort}`;
     // eslint-disable-next-line no-console
     console.log(`[mcp-bridge] listening on :${actualPort}`);
   }

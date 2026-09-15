@@ -213,6 +213,10 @@ export namespace A11yScanInputSchema {
     objectSchema?: {
       [k: string]: FieldSchemaEntry;
     };
+    /**
+     * Sample-data seed recorded by design.compose (preferences.seed): rotates the deterministic sample records generated for previews and workflow apps. Absent: the authored order.
+     */
+    seed?: string;
   }
   export interface Workflow {
     object: string;
@@ -968,6 +972,11 @@ export namespace BrandApplyOutputSchema {
         }[];
         durationMs: number;
       } | null;
+      portable?: {
+        sourceWrites: 'skipped';
+        tokenBuild: 'skipped';
+        reason: string;
+      };
     };
     artifacts: string[];
     diagnosticsPath?: string;
@@ -1561,6 +1570,10 @@ export namespace CodeGenerateInputSchema {
        * React/Vue styling strategy: inline style objects, design-token CSS variables, or Tailwind utility classes. HTML uses document CSS; requesting Tailwind reports OODS-N018 as a draft warning or a build/release error.
        */
       styling?: 'inline' | 'tokens' | 'tailwind';
+      /**
+       * inline (default) returns the artifact in the response. file writes every artifact file plus artifact.json beside the saved-schema store (<store>/../payloads/code.generate-<digest>/) and returns a payload block of file references; the artifact is then omitted from the response and code is empty.
+       */
+      payloadMode?: 'inline' | 'file';
     };
   }
   /**
@@ -1588,6 +1601,10 @@ export namespace CodeGenerateInputSchema {
     objectSchema?: {
       [k: string]: FieldSchemaEntry;
     };
+    /**
+     * Sample-data seed recorded by design.compose (preferences.seed): rotates the deterministic sample records generated for previews and workflow apps. Absent: the authored order.
+     */
+    seed?: string;
   }
   export interface Workflow {
     object: string;
@@ -1852,6 +1869,28 @@ export namespace CodeGenerateOutputSchema {
     framework: 'react' | 'vue' | 'html';
     artifact?: GeneratedArtifact;
     /**
+     * payloadMode file: where the large output was written instead of being returned inline; the directory is beside the saved-schema store (<store>/../payloads/<tool>-<digest>).
+     */
+    payload?: {
+      mode: 'file';
+      /**
+       * Absolute directory holding the written files.
+       */
+      directory: string;
+      /**
+       * Total bytes written.
+       */
+      bytes: number;
+      files: {
+        /**
+         * Relative POSIX path inside the directory.
+         */
+        path: string;
+        bytes: number;
+        sha256: string;
+      }[];
+    };
+    /**
      * @deprecated
      * Deprecated v0 compatibility alias for artifact.files[0].contents. Empty string on error.
      */
@@ -1882,7 +1921,7 @@ export namespace CodeGenerateOutputSchema {
     };
   }
   /**
-   * Primary versioned, content-addressed file-set payload. Required when status is ok.
+   * Primary versioned, content-addressed file-set payload. Present when status is ok and options.payloadMode is inline (the default); with payloadMode file it is written to payload.directory as artifact.json instead.
    */
   export interface GeneratedArtifact {
     /**
@@ -3121,7 +3160,7 @@ export type DashboardRenderOutput = DashboardRenderOutputSchema.DashboardRenderO
 // Source: design.compose.input.json
 export namespace DesignComposeInputSchema {
   /**
-   * Generate a complete UiSchema from an intent description and/or object definition using layout templates and component selection. Provide at least one of 'intent' or 'object'. context=workflow assembles a routed, stateful application from the object's list/detail/form/timeline compositions.
+   * Generate a complete UiSchema from an intent description and/or object definition using layout templates and component selection. Provide at least one of 'intent' or 'object'. context=workflow assembles a routed, stateful application from the object's list/detail/form/timeline compositions. Every successful composition is recorded as a durable version under the schema store (compositions/<compositionId>/versions/<n>.json); pass compositionId to record the result as that composition's next version.
    */
   export type DesignComposeInput = DesignComposeInput1 & DesignComposeInput2;
   export type DesignComposeInput1 = {
@@ -3176,6 +3215,25 @@ export namespace DesignComposeInputSchema {
       componentOverrides?: {
         [k: string]: string;
       };
+      /**
+       * The screen's regions (its direct children) by id in the desired order; regions not listed keep their relative order after the listed ones. Applied after composition; the composer never edits a schema by hand.
+       *
+       * @minItems 1
+       */
+      regionOrder?: [string, ...string[]];
+      /**
+       * Region id → field names in the desired order among sibling field nodes of that region (a field editor, a read-only row, or a slot placing a field component); fields not listed keep their relative order after the listed ones.
+       */
+      fieldOrder?: {
+        /**
+         * @minItems 1
+         */
+        [k: string]: [string, ...string[]];
+      };
+      /**
+       * Sample-data seed. Rotates the deterministic sample records (labels, names and derived values) generated for previews and workflow apps; recorded on the schema as `seed` and nothing else in the schema changes.
+       */
+      seed?: string;
     };
     options?: {
       /**
@@ -3186,7 +3244,23 @@ export namespace DesignComposeInputSchema {
        * Number of component candidates to return per slot.
        */
       topN?: number;
+      /**
+       * Do not record a composition version; the result then carries no compositionId. For scratch compositions only.
+       */
+      transient?: boolean;
+      /**
+       * With compositionId: the lineage operation recorded on the new version; default recompose. design.preview action edit sets it.
+       */
+      operation?: 'recompose' | 'reorder-region' | 'swap-slot' | 'reorder-fields' | 'seed';
     };
+    /**
+     * Record this composition as the next version of an existing composition (operation "recompose") instead of creating a new one.
+     */
+    compositionId?: string;
+    /**
+     * With compositionId: the version the new one derives from; default the latest.
+     */
+    parentVersion?: number;
   }
 }
 export type DesignComposeInput = DesignComposeInputSchema.DesignComposeInput;
@@ -3349,6 +3423,26 @@ export namespace DesignComposeOutputSchema {
      */
     schemaRefExpiresAt?: string;
     /**
+     * The durable composition this result was recorded as; absent for transient compositions. Every version opens at /preview/<compositionId>/<version> on the preview host.
+     */
+    compositionId?: string;
+    /**
+     * The recorded version number (1 for a new composition).
+     */
+    version?: number;
+    /**
+     * The version this one derives from; null for the first.
+     */
+    parentVersion?: number | null;
+    /**
+     * How this version was produced.
+     */
+    operation?: 'compose' | 'recompose' | 'reorder-region' | 'swap-slot' | 'reorder-fields' | 'seed';
+    /**
+     * The Forge build head that produced it; null from a source checkout.
+     */
+    head?: string | null;
+    /**
      * Component selection results per slot.
      */
     selections: SlotSelection[];
@@ -3496,6 +3590,10 @@ export namespace DesignComposeOutputSchema {
     objectSchema?: {
       [k: string]: FieldSchemaEntry;
     };
+    /**
+     * Sample-data seed recorded by design.compose (preferences.seed): rotates the deterministic sample records generated for previews and workflow apps. Absent: the authored order.
+     */
+    seed?: string;
   }
   export interface Workflow {
     object: string;
@@ -3635,7 +3733,7 @@ export namespace DesignComposeOutputSchema {
     intent: string;
     selectedComponent?: string;
     /**
-     * Raw confidence score (0-1) before normalization.
+     * The slot's selection confidence (0-1, raw). Not the same number as candidates[].score, which ranks each candidate.
      */
     confidence?: number;
     /**
@@ -3652,7 +3750,10 @@ export namespace DesignComposeOutputSchema {
     reviewHint?: string;
     candidates: {
       name: string;
-      confidence: number;
+      /**
+       * The candidate's ranking score (0-1) within this slot; the slot's own confidence is reported beside it.
+       */
+      score: number;
       reason: string;
       keywordTagMatches?: number;
       keywordTraitMatches?: number;
@@ -3660,11 +3761,18 @@ export namespace DesignComposeOutputSchema {
       contextTraitMatches?: number;
     }[];
     /**
+     * Every component the layout or a view extension placed in this slot, in render order; the first is selectedComponent.
+     */
+    placedComponents?: string[];
+    /**
      * Alternative candidates surfaced when confidence < 0.5.
      */
     alternativeCandidates?: {
       name: string;
-      confidence: number;
+      /**
+       * The candidate's ranking score (0-1) within this slot; the slot's own confidence is reported beside it.
+       */
+      score: number;
       reason: string;
       keywordTagMatches?: number;
       keywordTraitMatches?: number;
@@ -3684,38 +3792,47 @@ export type DesignComposeOutput = DesignComposeOutputSchema.DesignComposeOutput;
 // Source: design.preview.input.json
 export namespace DesignPreviewInputSchema {
   /**
-   * Capture real generated React/Vue screens through the running local design loop. Start it in this checkout with pnpm design:loop serve.
+   * Open a composition version as the generated React or Vue app actually running in a browser: either an existing compositionId (and optional version) or an object and context composed now as a new composition. The preview host (in the HTTP bridge, or started by the stdio adapter) compiles the artifact and serves it at one URL per version with its lineage and brand, theme and width controls. action "compare" returns the structural what-changed between this version and `against` (regions, slots, nodes, props, field order, seed, artifact file hashes) with the side-by-side URL.
    */
-  export interface DesignPreviewInput {
+  export type DesignPreviewInput = DesignPreviewInput1 & DesignPreviewInput2;
+  export type DesignPreviewInput1 = {
+    [k: string]: any;
+  };
+
+  export interface DesignPreviewInput2 {
     /**
-     * Object name from the OODS registry (e.g., 'Subscription', 'User'). When provided, composition uses trait-driven component placement via view_extensions.
+     * render (default): open the version as the running app. compare: the what-changed between compositionId@version and against. edit: apply one operation to compositionId@version by re-composing through the override surface and re-generating, recording a new version with its parent, then open it. versions: list the composition's versions.
      */
-    object: string;
+    action?: 'render' | 'compare' | 'edit' | 'versions';
+    /**
+     * An existing composition from design.compose; with no version, its latest version opens.
+     */
+    compositionId?: string;
+    /**
+     * The version of compositionId to open.
+     */
+    version?: number;
+    /**
+     * Object name from the OODS registry (e.g., 'Subscription', 'User'); with context, composes a new composition (version 1) and opens it.
+     */
+    object?: string;
     /**
      * View context for object-aware composition. Determines which view_extensions are applied. When object is provided without layout, context infers the layout (detail→detail, list→list, form→form). workflow assembles list/detail/form/timeline screens with trait actions, routes, four UI states and generated application data.
      */
-    context: 'detail' | 'list' | 'form' | 'timeline' | 'card' | 'inline' | 'workflow';
-    framework?: 'react' | 'vue' | 'both';
+    context?: 'detail' | 'list' | 'form' | 'timeline' | 'card' | 'inline' | 'workflow';
     /**
-     * @minItems 1
-     * @maxItems 10
+     * Which generated app to compile and serve; both frameworks by default, each at its own URL.
      */
-    widths?:
-      | [number]
-      | [number, number]
-      | [number, number, number]
-      | [number, number, number, number]
-      | [number, number, number, number, number]
-      | [number, number, number, number, number, number]
-      | [number, number, number, number, number, number, number]
-      | [number, number, number, number, number, number, number, number]
-      | [number, number, number, number, number, number, number, number, number]
-      | [number, number, number, number, number, number, number, number, number, number];
+    framework?: 'react' | 'vue' | 'both';
     preferences?: {
       /**
-       * Theme token (e.g., 'light', 'dark').
+       * Theme the page mounts with (data-theme and the matching token CSS scope).
        */
-      theme?: string;
+      theme?: 'light' | 'dark' | 'hc';
+      /**
+       * Brand the page mounts with (data-brand and the matching token CSS scope).
+       */
+      brand?: 'A' | 'B';
       /**
        * Number of metric columns for dashboard layout.
        */
@@ -3739,6 +3856,50 @@ export namespace DesignPreviewInputSchema {
         [k: string]: string;
       };
     };
+    /**
+     * action compare: the version on the right; the left is compositionId@version.
+     */
+    against?: {
+      /**
+       * The other composition; default the same composition.
+       */
+      compositionId?: string;
+      version: number;
+    };
+    /**
+     * action edit: the one operation to apply to compositionId@version. The parent version is never changed.
+     */
+    edit?: {
+      operation: 'reorder-region' | 'swap-slot' | 'reorder-fields' | 'seed';
+      /**
+       * reorder-region: the screen's region ids in the desired order (the version record lists them).
+       *
+       * @minItems 1
+       */
+      regionOrder?: [string, ...string[]];
+      /**
+       * swap-slot: the slot name.
+       */
+      slot?: string;
+      /**
+       * swap-slot: one of the composer's own candidates for that slot on the parent version (the version record lists them).
+       */
+      component?: string;
+      /**
+       * reorder-fields: the region id.
+       */
+      region?: string;
+      /**
+       * reorder-fields: the region's field names in the desired order.
+       *
+       * @minItems 1
+       */
+      fieldOrder?: [string, ...string[]];
+      /**
+       * seed: the new sample-data seed.
+       */
+      seed?: string;
+    };
   }
 }
 export type DesignPreviewInput = DesignPreviewInputSchema.DesignPreviewInput;
@@ -3746,34 +3907,262 @@ export type DesignPreviewInput = DesignPreviewInputSchema.DesignPreviewInput;
 // Source: design.preview.output.json
 export namespace DesignPreviewOutputSchema {
   /**
-   * Validated browser receipts, including local paths, accessibility text, measurements, errors, source and artifact hashes. An unavailable loop throws OODS-N019 before writing partial output.
+   * The URL of the composition version running in the preview host, one per compiled framework, with its lineage (composition, version, parent, operation, head), the schema hash and the compiled module digests. An unreachable host throws OODS-N021 before any record is written; an unknown composition or version throws OODS-N022. action compare returns the what-changed between two versions instead. action edit records a new version from one operation and opens it; action versions lists a composition's versions.
    */
-  export interface DesignPreviewOutput {
-    status: 'ok';
-    schemaHash: string;
-    /**
-     * Exact receipts validated against scripts/design-loop/receipt.schema.json by the shared render leg.
-     *
-     * @minItems 1
-     * @maxItems 2
-     */
-    receipts:
-      | [
-          {
-            [k: string]: any;
-          }
-        ]
-      | [
-          {
-            [k: string]: any;
-          },
-          {
-            [k: string]: any;
-          }
-        ];
-    receiptPaths: string[];
-    durationMs: number;
-  }
+  export type DesignPreviewOutput =
+    | {
+        status: 'ok';
+        action: 'render' | 'edit';
+        compositionId: string;
+        version: number;
+        parentVersion: number | null;
+        operation: 'compose' | 'recompose' | 'reorder-region' | 'swap-slot' | 'reorder-fields' | 'seed';
+        head: string | null;
+        /**
+         * Canonical hash of the version's composed schema.
+         */
+        schemaHash: string;
+        object: string;
+        context: string;
+        /**
+         * The first compiled framework's page with lineage and controls; open it in a browser.
+         */
+        previewUrl: string;
+        /**
+         * @minItems 1
+         * @maxItems 2
+         */
+        previews:
+          | [
+              {
+                framework: 'react' | 'vue';
+                /**
+                 * The page with the lineage panel and the brand, theme and width controls around the running app.
+                 */
+                url: string;
+                /**
+                 * The bare running app the page frames; it re-mounts on brand and theme messages.
+                 */
+                appUrl: string;
+                /**
+                 * The artifact compiled to one ESM module; fetched once here so a compile failure fails this call.
+                 */
+                moduleUrl: string;
+                artifactContentHash: string;
+                compiled: {
+                  bytes: number;
+                  sha256: string;
+                };
+              }
+            ]
+          | [
+              {
+                framework: 'react' | 'vue';
+                /**
+                 * The page with the lineage panel and the brand, theme and width controls around the running app.
+                 */
+                url: string;
+                /**
+                 * The bare running app the page frames; it re-mounts on brand and theme messages.
+                 */
+                appUrl: string;
+                /**
+                 * The artifact compiled to one ESM module; fetched once here so a compile failure fails this call.
+                 */
+                moduleUrl: string;
+                artifactContentHash: string;
+                compiled: {
+                  bytes: number;
+                  sha256: string;
+                };
+              },
+              {
+                framework: 'react' | 'vue';
+                /**
+                 * The page with the lineage panel and the brand, theme and width controls around the running app.
+                 */
+                url: string;
+                /**
+                 * The bare running app the page frames; it re-mounts on brand and theme messages.
+                 */
+                appUrl: string;
+                /**
+                 * The artifact compiled to one ESM module; fetched once here so a compile failure fails this call.
+                 */
+                moduleUrl: string;
+                artifactContentHash: string;
+                compiled: {
+                  bytes: number;
+                  sha256: string;
+                };
+              }
+            ];
+        host: {
+          url: string;
+          port: number;
+          /**
+           * Where the version files live and where the host reads them; beside the saved-schema store.
+           */
+          compositionsDir: string;
+        };
+        brand: 'A' | 'B';
+        theme: 'light' | 'dark' | 'hc';
+        recordPath: string;
+        durationMs: number;
+        /**
+         * What this version carries as measured and what it does not: the code.generate validation receipt per framework, artifact.certify for every placed chart, axe-core per framework and brand/theme scope run inside the running page. The page's measurement panel says the same; nothing is claimed that did not run.
+         */
+        measured: {
+          /**
+           * Frameworks whose generation receipt is stored.
+           */
+          validation: ('react' | 'vue')[];
+          charts: {
+            placed: number;
+            conformant: number;
+            notConformant: number;
+            uncertified: number;
+          };
+          /**
+           * framework:brand/theme scopes with axe-core results stored, e.g. react:A/light.
+           */
+          axe: string[];
+          /**
+           * Measurements this version does not carry (validation:<framework>, charts, axe:<framework>:<brand>/<theme>).
+           */
+          notMeasured: string[];
+        };
+        /**
+         * action edit only: the operation that produced this version and the version it derives from.
+         */
+        edit?: {
+          operation: 'reorder-region' | 'swap-slot' | 'reorder-fields' | 'seed';
+          parentVersion: number;
+        };
+        /**
+         * What an edit can name on this version: the regions in order, each slot with the composer's candidates, the field order per region, the current seed.
+         */
+        editable: {
+          regions: {
+            id: string;
+            component: string;
+          }[];
+          slots: {
+            slotName: string;
+            selectedComponent: string | null;
+            candidates: string[];
+          }[];
+          /**
+           * Region id → field names in their current order.
+           */
+          fields: {
+            [k: string]: string[];
+          };
+          seed: string | null;
+        };
+      }
+    | {
+        status: 'ok';
+        action: 'compare';
+        left: {
+          compositionId: string;
+          version: number;
+          schemaHash: string;
+          parentVersion: number | null;
+          operation: string;
+          object: string | null;
+          context: string | null;
+        };
+        right: {
+          compositionId: string;
+          version: number;
+          schemaHash: string;
+          parentVersion: number | null;
+          operation: string;
+          object: string | null;
+          context: string | null;
+        };
+        /**
+         * Both running apps side by side with the what-changed and both measurement panels.
+         */
+        compareUrl: string;
+        diffUrl: string;
+        /**
+         * Frameworks both versions carry, shown side by side.
+         */
+        frameworks: ('react' | 'vue')[];
+        identical: boolean;
+        differenceCount: number;
+        /**
+         * The structural what-changed the preview host computes over the two version records: regions added/removed/reordered, slot components, nodes outside slots, props of matched nodes, field order per region, the seed, and artifact files whose hash moved per framework both versions carry. Identical versions report zero differences.
+         */
+        diff: {
+          left: {
+            compositionId: string;
+            version: number;
+            schemaHash: string;
+            parentVersion: number | null;
+            operation: string;
+            object: string | null;
+            context: string | null;
+          };
+          right: {
+            compositionId: string;
+            version: number;
+            schemaHash: string;
+            parentVersion: number | null;
+            operation: string;
+            object: string | null;
+            context: string | null;
+          };
+          identical: boolean;
+          differenceCount: number;
+          summary: {
+            [k: string]: number;
+          };
+          differences: {
+            category: 'regions' | 'slots' | 'nodes' | 'props' | 'fieldOrder' | 'seed' | 'artifacts';
+            field: string;
+            before: any;
+            after: any;
+            note: string;
+          }[];
+        };
+        host: {
+          url: string;
+          port: number;
+          /**
+           * Where the version files live and where the host reads them; beside the saved-schema store.
+           */
+          compositionsDir: string;
+        };
+        durationMs: number;
+      }
+    | {
+        status: 'ok';
+        action: 'versions';
+        compositionId: string;
+        latest: number;
+        versions: {
+          version: number;
+          parentVersion: number | null;
+          operation: string;
+          createdAt: string;
+          schemaHash: string;
+          head: string | null;
+          artifacts: string[];
+          url: string;
+        }[];
+        host: {
+          url: string;
+          port: number;
+          /**
+           * Where the version files live and where the host reads them; beside the saved-schema store.
+           */
+          compositionsDir: string;
+        };
+        durationMs: number;
+      };
 }
 export type DesignPreviewOutput = DesignPreviewOutputSchema.DesignPreviewOutput;
 
@@ -4024,6 +4413,9 @@ export namespace HealthOutputSchema {
     status: 'ok' | 'degraded';
     server: {
       version: string;
+      /**
+       * Milliseconds since the native server process started.
+       */
       uptime: number;
     };
     registry: {
@@ -6204,6 +6596,28 @@ export namespace ReplOutputSchema {
       [k: string]: string;
     };
     /**
+     * payloadMode file: where the large output was written instead of being returned inline; the directory is beside the saved-schema store (<store>/../payloads/<tool>-<digest>).
+     */
+    payload?: {
+      mode: 'file';
+      /**
+       * Absolute directory holding the written files.
+       */
+      directory: string;
+      /**
+       * Total bytes written.
+       */
+      bytes: number;
+      files: {
+        /**
+         * Relative POSIX path inside the directory.
+         */
+        path: string;
+        bytes: number;
+        sha256: string;
+      }[];
+    };
+    /**
      * Echoes normalized output controls used by the renderer.
      */
     output?: {
@@ -6249,6 +6663,10 @@ export namespace ReplOutputSchema {
     objectSchema?: {
       [k: string]: FieldSchemaEntry;
     };
+    /**
+     * Sample-data seed recorded by design.compose (preferences.seed): rotates the deterministic sample records generated for previews and workflow apps. Absent: the authored order.
+     */
+    seed?: string;
   }
   export interface Workflow {
     object: string;
@@ -6652,6 +7070,10 @@ export namespace ReplRenderInputSchema {
       skinOverlay?: {
         [k: string]: any;
       };
+      /**
+       * inline (default) returns html (or fragments and css) in the response. file writes index.html (or fragments.json and css.json) beside the saved-schema store (<store>/../payloads/repl.render-<digest>/) and returns a payload block of file references instead; html, fragments and css are then omitted.
+       */
+      payloadMode?: 'inline' | 'file';
     };
     apply?: boolean;
   }
@@ -6677,6 +7099,10 @@ export namespace ReplRenderInputSchema {
     objectSchema?: {
       [k: string]: FieldSchemaEntry;
     };
+    /**
+     * Sample-data seed recorded by design.compose (preferences.seed): rotates the deterministic sample records generated for previews and workflow apps. Absent: the authored order.
+     */
+    seed?: string;
   }
   export interface Workflow {
     object: string;
@@ -7022,6 +7448,28 @@ export namespace ReplRenderOutputSchema {
       [k: string]: string;
     };
     /**
+     * payloadMode file: where the large output was written instead of being returned inline; the directory is beside the saved-schema store (<store>/../payloads/<tool>-<digest>).
+     */
+    payload?: {
+      mode: 'file';
+      /**
+       * Absolute directory holding the written files.
+       */
+      directory: string;
+      /**
+       * Total bytes written.
+       */
+      bytes: number;
+      files: {
+        /**
+         * Relative POSIX path inside the directory.
+         */
+        path: string;
+        bytes: number;
+        sha256: string;
+      }[];
+    };
+    /**
      * Echoes normalized output controls used by the renderer.
      */
     output?: {
@@ -7067,6 +7515,10 @@ export namespace ReplRenderOutputSchema {
     objectSchema?: {
       [k: string]: FieldSchemaEntry;
     };
+    /**
+     * Sample-data seed recorded by design.compose (preferences.seed): rotates the deterministic sample records generated for previews and workflow apps. Absent: the authored order.
+     */
+    seed?: string;
   }
   export interface Workflow {
     object: string;
@@ -7375,6 +7827,10 @@ export namespace UiSchemaSchema {
     objectSchema?: {
       [k: string]: FieldSchemaEntry;
     };
+    /**
+     * Sample-data seed recorded by design.compose (preferences.seed): rotates the deterministic sample records generated for previews and workflow apps. Absent: the authored order.
+     */
+    seed?: string;
   }
   export interface Workflow {
     object: string;
@@ -7698,6 +8154,10 @@ export namespace ReplValidateInputSchema {
     objectSchema?: {
       [k: string]: FieldSchemaEntry;
     };
+    /**
+     * Sample-data seed recorded by design.compose (preferences.seed): rotates the deterministic sample records generated for previews and workflow apps. Absent: the authored order.
+     */
+    seed?: string;
   }
   export interface Workflow {
     object: string;
@@ -7874,6 +8334,10 @@ export namespace ReplValidateInputSchema {
     objectSchema?: {
       [k: string]: FieldSchemaEntry;
     };
+    /**
+     * Sample-data seed recorded by design.compose (preferences.seed): rotates the deterministic sample records generated for previews and workflow apps. Absent: the authored order.
+     */
+    seed?: string;
   }
 }
 export type ReplValidateInput = ReplValidateInputSchema.ReplValidateInput;
@@ -8068,6 +8532,10 @@ export namespace ReplValidateOutputSchema {
     objectSchema?: {
       [k: string]: FieldSchemaEntry;
     };
+    /**
+     * Sample-data seed recorded by design.compose (preferences.seed): rotates the deterministic sample records generated for previews and workflow apps. Absent: the authored order.
+     */
+    seed?: string;
   }
   export interface Workflow {
     object: string;

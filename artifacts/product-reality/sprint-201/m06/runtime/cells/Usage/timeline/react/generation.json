@@ -1,0 +1,103 @@
+{
+  "status": "ok",
+  "framework": "react",
+  "artifact": {
+    "schemaVersion": "1.0.0",
+    "framework": "react",
+    "files": [
+      {
+        "path": "src/GeneratedUI.tsx",
+        "contents": "import React from 'react';\nimport { Banner, Card, Stack, Text } from '@oods/components-react';\nimport '@oods/component-styles/css';\nimport { chronologicalEvents, formatDateTime, type CollectionEvent } from '@oods/component-contracts';\n\nexport interface PageProps {\n  events?: CollectionEvent[];\n  /** Detected anomalies with context for investigation. */\n  anomalies?: unknown[];\n  /** Actual quantity consumed in the active period. */\n  consumedQuantity: number;\n  /** Timestamp recording when the entity was first created. */\n  createdAt: string;\n  /** Quantity included in base plan before overages. */\n  includedQuantity: number;\n  /** Lifecycle event associated with the most recent timestamp mutation. */\n  lastEvent: 'reading_captured' | 'anomaly_detected' | 'reset';\n  /** Timestamp for the lifecycle event captured in last_event. */\n  lastEventAt?: string;\n  /** Timestamp of the most recent provider usage payload. */\n  lastReportedAt: string;\n  /** Provider specific meter identifier. */\n  meterId: string;\n  /** Friendly metered feature name shown in UI (ex: Analytics Seats). */\n  meterName: string;\n  /** Cost per additional unit expressed in minor currency units. */\n  overageRateMinor?: number;\n  /** Date the usage accumulation window ends. */\n  periodEnd: string;\n  /** Date the usage accumulation window began. */\n  periodStart: string;\n  /** Forecasted overage spend derived from consumption trends. */\n  projectedOverageMinor?: number;\n  /** Source provider for usage data. */\n  provider: string;\n  /** Strategy for unused units (inherits rolloverStrategy parameter). */\n  rolloverStrategy?: string;\n  /** Rolling usage measurements for charts or anomaly detection. */\n  samples?: unknown[];\n  /** Health of the usage feed (ok, delayed, investigating). */\n  status?: 'ok' | 'delayed' | 'investigating';\n  /** Subscription the usage belongs to. */\n  subscriptionId: string;\n  /** Percent delta compared to previous window. */\n  trendPercent?: number;\n  /** Label for display, defaults to the unit parameter. */\n  unitLabel: string;\n  /** Timestamp for the most recent modification, when available. */\n  updatedAt?: string;\n  /** Identifier for this usage record. */\n  usageId: string;\n  /** Currency impact of usage variance calculated with overage rate. */\n  varianceMinor?: number;\n}\n\ntype BannerProps = React.ComponentPropsWithoutRef<typeof Banner>;\ntype CardProps = React.ComponentPropsWithoutRef<typeof Card>;\ntype StackProps = React.ComponentPropsWithoutRef<typeof Stack>;\ntype TextProps = React.ComponentPropsWithoutRef<typeof Text>;\n\nexport const GeneratedUI: React.FC<PageProps> = ({ anomalies, consumedQuantity, createdAt, includedQuantity, lastEvent, lastEventAt, lastReportedAt, meterId, meterName, overageRateMinor, periodEnd, periodStart, projectedOverageMinor, provider, rolloverStrategy, samples, status, subscriptionId, trendPercent, unitLabel, updatedAt, usageId, varianceMinor, events = [] }) => {\n  return (\n    <>\n      <Stack id=\"screen-timeline-14\" data-oods-component=\"Stack\" data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-default)' }}>\n            <Stack id=\"timeline-header-1\" data-oods-component=\"Stack\" data-layout=\"inline\" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', padding: 'var(--ref-space-inset-default)' }}>\n                    <Text id=\"timeline-header-1-title\" data-oods-component=\"Text\">{usageId}</Text>\n                  </Stack>\n            <section id=\"timeline-entries-13\" data-oods-collection=\"events\">{events.length === 0 ? (<Banner id=\"timeline-entries-13-empty\" data-oods-component=\"Banner\" data-oods-state=\"empty\" content=\"No events yet.\" />) : (<ol aria-label=\"Lifecycle history\" className=\"oods-collection\">{chronologicalEvents(events).map((collectionEvent, collectionIndex) => <li key={collectionEvent.id}><Card id={'timeline-entries-13-entry-' + collectionIndex}><strong>{collectionEvent.title}</strong><time dateTime={collectionEvent.at}>{formatDateTime(collectionEvent.at)}</time><p>{collectionEvent.description}</p></Card></li>)}</ol>)}</section>\n          </Stack>\n    </>\n  );\n};\n",
+        "contentHash": "sha256:0e6eec8a29710bcd488d7f3bdb5b98900346a17adea0ff2de46fd34dc2877e09"
+      }
+    ],
+    "dependencies": [
+      {
+        "name": "@oods/component-contracts",
+        "version": "0.1.0",
+        "kind": "dependency"
+      },
+      {
+        "name": "@oods/component-styles",
+        "version": "0.1.0",
+        "kind": "dependency"
+      },
+      {
+        "name": "@oods/components-react",
+        "version": "0.1.0",
+        "kind": "dependency"
+      },
+      {
+        "name": "react",
+        "version": "19.2.0",
+        "kind": "peerDependency"
+      },
+      {
+        "name": "react-dom",
+        "version": "19.2.0",
+        "kind": "peerDependency"
+      }
+    ],
+    "actions": [],
+    "contentHash": "sha256:d88c9f7da22e068e76d7a51123fa9b2bb629244f3db5f3b93e2a3a5bb63293ae"
+  },
+  "code": "import React from 'react';\nimport { Banner, Card, Stack, Text } from '@oods/components-react';\nimport '@oods/component-styles/css';\nimport { chronologicalEvents, formatDateTime, type CollectionEvent } from '@oods/component-contracts';\n\nexport interface PageProps {\n  events?: CollectionEvent[];\n  /** Detected anomalies with context for investigation. */\n  anomalies?: unknown[];\n  /** Actual quantity consumed in the active period. */\n  consumedQuantity: number;\n  /** Timestamp recording when the entity was first created. */\n  createdAt: string;\n  /** Quantity included in base plan before overages. */\n  includedQuantity: number;\n  /** Lifecycle event associated with the most recent timestamp mutation. */\n  lastEvent: 'reading_captured' | 'anomaly_detected' | 'reset';\n  /** Timestamp for the lifecycle event captured in last_event. */\n  lastEventAt?: string;\n  /** Timestamp of the most recent provider usage payload. */\n  lastReportedAt: string;\n  /** Provider specific meter identifier. */\n  meterId: string;\n  /** Friendly metered feature name shown in UI (ex: Analytics Seats). */\n  meterName: string;\n  /** Cost per additional unit expressed in minor currency units. */\n  overageRateMinor?: number;\n  /** Date the usage accumulation window ends. */\n  periodEnd: string;\n  /** Date the usage accumulation window began. */\n  periodStart: string;\n  /** Forecasted overage spend derived from consumption trends. */\n  projectedOverageMinor?: number;\n  /** Source provider for usage data. */\n  provider: string;\n  /** Strategy for unused units (inherits rolloverStrategy parameter). */\n  rolloverStrategy?: string;\n  /** Rolling usage measurements for charts or anomaly detection. */\n  samples?: unknown[];\n  /** Health of the usage feed (ok, delayed, investigating). */\n  status?: 'ok' | 'delayed' | 'investigating';\n  /** Subscription the usage belongs to. */\n  subscriptionId: string;\n  /** Percent delta compared to previous window. */\n  trendPercent?: number;\n  /** Label for display, defaults to the unit parameter. */\n  unitLabel: string;\n  /** Timestamp for the most recent modification, when available. */\n  updatedAt?: string;\n  /** Identifier for this usage record. */\n  usageId: string;\n  /** Currency impact of usage variance calculated with overage rate. */\n  varianceMinor?: number;\n}\n\ntype BannerProps = React.ComponentPropsWithoutRef<typeof Banner>;\ntype CardProps = React.ComponentPropsWithoutRef<typeof Card>;\ntype StackProps = React.ComponentPropsWithoutRef<typeof Stack>;\ntype TextProps = React.ComponentPropsWithoutRef<typeof Text>;\n\nexport const GeneratedUI: React.FC<PageProps> = ({ anomalies, consumedQuantity, createdAt, includedQuantity, lastEvent, lastEventAt, lastReportedAt, meterId, meterName, overageRateMinor, periodEnd, periodStart, projectedOverageMinor, provider, rolloverStrategy, samples, status, subscriptionId, trendPercent, unitLabel, updatedAt, usageId, varianceMinor, events = [] }) => {\n  return (\n    <>\n      <Stack id=\"screen-timeline-14\" data-oods-component=\"Stack\" data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-default)' }}>\n            <Stack id=\"timeline-header-1\" data-oods-component=\"Stack\" data-layout=\"inline\" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', padding: 'var(--ref-space-inset-default)' }}>\n                    <Text id=\"timeline-header-1-title\" data-oods-component=\"Text\">{usageId}</Text>\n                  </Stack>\n            <section id=\"timeline-entries-13\" data-oods-collection=\"events\">{events.length === 0 ? (<Banner id=\"timeline-entries-13-empty\" data-oods-component=\"Banner\" data-oods-state=\"empty\" content=\"No events yet.\" />) : (<ol aria-label=\"Lifecycle history\" className=\"oods-collection\">{chronologicalEvents(events).map((collectionEvent, collectionIndex) => <li key={collectionEvent.id}><Card id={'timeline-entries-13-entry-' + collectionIndex}><strong>{collectionEvent.title}</strong><time dateTime={collectionEvent.at}>{formatDateTime(collectionEvent.at)}</time><p>{collectionEvent.description}</p></Card></li>)}</ol>)}</section>\n          </Stack>\n    </>\n  );\n};\n",
+  "fileExtension": ".tsx",
+  "imports": [
+    "react",
+    "@oods/components-react",
+    "@oods/component-styles/css",
+    "@oods/component-contracts"
+  ],
+  "warnings": [],
+  "validationReceipt": {
+    "profile": "build",
+    "defaulted": false,
+    "rationale": "Build is the default minimum gate for a runnable artifact: target, bindings, dependencies, and fallbacks must resolve.",
+    "axes": {
+      "scope": "generated-artifact",
+      "enforcement": "blocking",
+      "fallback": "forbidden",
+      "target": {
+        "requested": "react",
+        "resolved": "react",
+        "source": "explicit"
+      }
+    },
+    "checks": [
+      "schema-structure",
+      "component-registry",
+      "state-contract",
+      "target-readiness",
+      "normalization-fidelity",
+      "binding-contract",
+      "props-contract",
+      "slots-contract",
+      "events-contract",
+      "dependency-closure",
+      "fallback-policy"
+    ],
+    "notChecked": [
+      "rendered-evidence",
+      "interaction-evidence",
+      "accessibility-evidence",
+      "theme-evidence",
+      "determinism-evidence",
+      "performance-evidence",
+      "certification-evidence"
+    ],
+    "evidence": {
+      "required": [],
+      "provided": [],
+      "missing": [],
+      "mismatched": [],
+      "accepted": [],
+      "notApplicable": [],
+      "artifactContentHash": "sha256:d88c9f7da22e068e76d7a51123fa9b2bb629244f3db5f3b93e2a3a5bb63293ae"
+    }
+  },
+  "meta": {
+    "nodeCount": 6,
+    "componentCount": 4
+  }
+}

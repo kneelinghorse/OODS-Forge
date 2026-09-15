@@ -95,7 +95,8 @@ describe('Subscription workflow composition', () => {
 
   it.each(['react', 'vue'] as const)('keeps exactly four canonical branches on every %s screen', (framework) => {
     for (const screen of schema.screens) {
-      expect(collectUiStateBranches([screen]).map(({ state }) => state)).toEqual(['loading', 'empty', 'error', 'success']);
+      // Sprint 201 m06 (#2046 doubled empty states): the list's rows collection owns its empty banner, so that screen carries three branches.
+      expect(collectUiStateBranches([screen]).map(({ state }) => state)).toEqual(screen.id === 'list-screen' ? ['loading', 'error', 'success', 'empty'] : ['loading', 'empty', 'error', 'success']);
       expect(preflightStateContract([screen], framework)).toEqual([]);
     }
     const broken = structuredClone(schema.screens);
@@ -180,7 +181,10 @@ describe('Generated store drives the lifecycle without consumer wiring', () => {
       expect(sampleData).toHaveLength(10);
       expect(new Set(sampleData.map((record: { status: string }) => record.status)).size).toBe(8);
       expect(new Set(sampleData.map((record: { billing_interval: string }) => record.billing_interval))).toEqual(new Set(['monthly', 'yearly']));
-      expect(new Set(sampleData.map((record: { payment_status: string }) => record.payment_status))).toEqual(new Set(schema.objectSchema!.payment_status!.enum));
+      // Sprint 201 m06 (#2046): the collection outcome agrees with the lifecycle state instead of rotating the enum.
+      for (const record of sampleData as Array<{ status: string; payment_status: string }>) {
+        expect(record.payment_status).toBe(['past_due', 'unpaid'].includes(record.status) ? 'failed' : ['future', 'trialing'].includes(record.status) ? 'pending' : 'succeeded');
+      }
       const store = createStore({ latency: 2, now: () => '2026-01-20T12:00:00.000Z' });
       expect(store.list().total).toBe(9);
       expect(store.list({ archived: true }).total).toBe(1);

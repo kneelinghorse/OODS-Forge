@@ -30,11 +30,15 @@ import {
 import {
   selectComponent,
   loadCatalog,
+  type SelectionCandidate,
   type SelectionResult,
 } from '../compose/component-selector.js';
 import { handle as validateHandle } from './repl.validate.js';
 import type { ComponentCatalogSummary } from './types.js';
 import { createSchemaRef, describeSchemaRef } from './schema-ref.js';
+import { newCompositionId, nextVersion, readForgeHead, resolveCompositionsDir, writeVersion, type CompositionOperation, type CompositionVersion } from '../lib/composition-store.js';
+import { createHash } from 'node:crypto';
+import { ToolError } from '../errors/tool-error.js';
 import { resolveEntity, isResolved as isEntityResolved } from './entity-resolver.js';
 import { loadObject } from '../objects/object-loader.js';
 import { composeObject, type ComposedObject } from '../objects/trait-composer.js';
@@ -156,11 +160,25 @@ export interface DesignComposeInput {
     tabCount?: number;
     tabLabels?: string[];
     componentOverrides?: Record<string, string>;
+    /** Regions (the screen's direct children) by id in the desired order. */
+    regionOrder?: string[];
+    /** Region id → field names in the desired order among sibling field nodes. */
+    fieldOrder?: Record<string, string[]>;
+    /** Sample-data seed, recorded on the schema; rotates the deterministic sample records. */
+    seed?: string;
   };
   options?: {
     validate?: boolean;
     topN?: number;
+    /** Do not record a composition version (internal seed compositions); the result carries no compositionId. */
+    transient?: boolean;
+    /** With compositionId: the lineage operation recorded on the new version; default recompose. */
+    operation?: CompositionOperation;
   };
+  /** Record the result as the next version of this composition (operation "recompose") instead of a new one. */
+  compositionId?: string;
+  /** The version the new one derives from; default the latest. */
+  parentVersion?: number;
   /** Sprint 88: Stage1 BridgeSummary action_mappings — flat verb-keyed entries. */
   actionMappings?: ActionMapping[];
   /** Sprint 88.1: Stage1 BridgeSummary.actions[] — per-component action instances. Merged with actionMappings[] for trait lookup. */
@@ -191,18 +209,17 @@ export interface SlotSelectionEntry {
   explanation: string;
   /** Follow-up guidance when the selection confidence is low. */
   reviewHint?: string;
-  candidates: Array<{
-    name: string;
-    confidence: number;
-    reason: string;
-  }>;
+  /** Ranked candidates; `score` is each candidate's ranking score, distinct from the slot's `confidence`. */
+  candidates: SlotCandidate[];
   /** Alternative candidates surfaced when confidence < 0.5. */
-  alternativeCandidates?: Array<{
-    name: string;
-    confidence: number;
-    reason: string;
-  }>;
+  alternativeCandidates?: SlotCandidate[];
+  /** Every component a view extension or the layout placed in this slot, in render order. */
+  placedComponents?: string[];
 }
+
+export type SlotCandidate = Omit<SelectionCandidate, 'confidence'> & { score: number };
+/** The selector scores candidates under `confidence`; the public contract names the two numbers apart. */
+const toSlotCandidate = ({ confidence, ...candidate }: SelectionCandidate): SlotCandidate => ({ ...candidate, score: confidence });
 
 export interface TraitStateMachineEntry {
   trait: string;
@@ -235,6 +252,12 @@ export interface DesignComposeOutput {
   schemaRef?: string;
   schemaRefCreatedAt?: string;
   schemaRefExpiresAt?: string;
+  /** The durable composition this result was recorded as (absent for transient compositions). */
+  compositionId?: string;
+  version?: number;
+  parentVersion?: number | null;
+  operation?: CompositionOperation;
+  head?: string | null;
   selections: SlotSelectionEntry[];
   validation?: {
     status: 'ok' | 'invalid' | 'skipped';
@@ -545,7 +568,7 @@ function fillSlots(
         explanation: `Selected ${override} for slot "${slot.name}" because it was explicitly pinned via preferences.componentOverrides.`,
         candidates: [{
           name: override,
-          confidence: 1,
+          score: 1,
           reason: `user override for slot "${slot.name}"`,
         }],
       };
@@ -590,16 +613,103 @@ function fillSlots(
       confidence: result.rawConfidence,
       confidenceLevel: 'low',
       explanation: '',
-      candidates: result.candidates,
+      candidates: result.candidates.map(toSlotCandidate),
     };
 
     // Surface alternative candidates when confidence is low
     if (result.rawConfidence < 0.5 && result.candidates.length > 1) {
-      entry.alternativeCandidates = result.candidates.slice(1, 4);
+      entry.alternativeCandidates = result.candidates.slice(1, 4).map(toSlotCandidate);
     }
 
     return entry;
   });
+}
+
+/**
+ * The field a sibling node stands for: its own `field`; for a slot, the first field it places; for a
+ * row wrapping exactly one field (a label + value pair, a field editor group), that field. A node
+ * whose subtree carries several fields stands for none and is walked into instead.
+ */
+export function fieldKeyOf(node: UiElement): string | undefined {
+  if (typeof node.props?.field === 'string') return node.props.field;
+  const fields = new Set<string>();
+  const walk = (child: UiElement) => { if (typeof child.props?.field === 'string') fields.add(child.props.field); child.children?.forEach(walk); };
+  node.children?.forEach(walk);
+  const slot = /^slot-/.test(node.id) || (typeof node.meta?.intent === 'string' && node.meta.intent.startsWith('slot:'));
+  if (slot) return fields.values().next().value;
+  return fields.size === 1 ? fields.values().next().value : undefined;
+}
+
+/** Reorder a list by an explicit order of keys: listed keys first, in that order; the rest keep their relative order. */
+function reorderBy<T>(items: T[], keyOf: (item: T) => string | undefined, order: string[]): T[] {
+  const listed = order.map(key => items.find(item => keyOf(item) === key)).filter((item): item is T => item !== undefined);
+  return [...listed, ...items.filter(item => !listed.includes(item))];
+}
+
+/**
+ * The override surface for edits: regionOrder reorders the screen's direct children by id;
+ * fieldOrder[region] reorders sibling field nodes inside that region; seed is recorded on the
+ * schema. Every override names ids and fields that must exist, so an edit can never point at
+ * nothing; nothing here changes what a node is, only where it sits and which sample data it shows.
+ */
+function applyOrderOverrides(schema: UiSchema, preferences: DesignComposeInput['preferences']): void {
+  if (!preferences) return;
+  const screen = schema.screens[0];
+  if (preferences.regionOrder && screen?.children) {
+    const ids = new Set(screen.children.map(node => node.id));
+    const unknown = preferences.regionOrder.filter(id => !ids.has(id));
+    if (unknown.length) throw new ToolError('OODS-V204', `regionOrder names regions this screen does not have: ${unknown.join(', ')}`, { regionOrder: preferences.regionOrder, regions: [...ids] });
+    screen.children = reorderBy(screen.children, node => node.id, preferences.regionOrder);
+  }
+  if (preferences.fieldOrder && screen?.children) {
+    for (const [regionId, order] of Object.entries(preferences.fieldOrder)) {
+      const region = screen.children.find(node => node.id === regionId);
+      if (!region) throw new ToolError('OODS-V204', `fieldOrder names a region this screen does not have: ${regionId}`, { region: regionId, regions: screen.children.map(node => node.id) });
+      const present = new Set<string>();
+      const parents: UiElement[] = [];
+      const walk = (node: UiElement) => {
+        if (!node.children?.length) return;
+        if (node.children.some(child => fieldKeyOf(child) !== undefined)) parents.push(node);
+        for (const child of node.children) { const key = fieldKeyOf(child); if (key) present.add(key); if (!/^slot-/.test(child.id)) walk(child); }
+      };
+      walk(region);
+      const unknown = order.filter(field => !present.has(field));
+      if (unknown.length) throw new ToolError('OODS-V204', `fieldOrder for ${regionId} names fields the region does not carry: ${unknown.join(', ')}`, { region: regionId, fields: [...present] });
+      for (const parent of parents) parent.children = reorderBy(parent.children!, fieldKeyOf, order);
+    }
+  }
+  if (preferences.seed !== undefined) schema.seed = preferences.seed;
+}
+
+/**
+ * A slot reports what leads it on screen. When the layout places a record title (DetailHeader)
+ * before a slot's view-extension stack, that title is the slot's leader and the extensions are
+ * the components placed after it; the report says so instead of naming the first extension.
+ */
+function reportLayoutLeaders(schema: UiSchema, selections: SlotSelectionEntry[]): void {
+  const parents = new Map<string, UiElement>();
+  const slots = new Map<string, UiElement>();
+  const walk = (node: UiElement): void => {
+    const intent = node.meta?.intent;
+    if (typeof intent === 'string' && intent.startsWith('slot:')) slots.set(intent.slice(5), node);
+    for (const child of node.children ?? []) { parents.set(child.id, node); walk(child); }
+  };
+  schema.screens.forEach(walk);
+  for (const selection of selections) {
+    if (!selection.placedComponents?.length) continue;
+    const slot = slots.get(selection.slotName);
+    const parent = slot ? parents.get(slot.id) : undefined;
+    if (!slot || !parent) continue;
+    const siblings = parent.children ?? [];
+    const before = siblings.slice(0, siblings.indexOf(slot)).filter((node) => node.component === 'DetailHeader');
+    if (before.length === 0) continue;
+    const leader = before[0]!.component;
+    selection.placedComponents = [leader, ...selection.placedComponents];
+    selection.selectedComponent = leader;
+    selection.confidence = 1;
+    selection.confidenceLevel = 'high';
+    selection.candidates = [{ name: leader, score: 1, reason: 'record title placed by the layout from the object\'s label field' }, ...selection.candidates.filter((candidate) => candidate.name !== leader)];
+  }
 }
 
 function getConfidenceLevel(confidence: number): 'high' | 'medium' | 'low' {
@@ -617,12 +727,18 @@ function buildSelectionExplanation(selection: SlotSelectionEntry): string {
   }
   const alternatives = selection.alternativeCandidates && selection.alternativeCandidates.length > 0
     ? ` Alternatives to review: ${selection.alternativeCandidates
-      .map((candidate) => `${candidate.name} (${candidate.confidence.toFixed(2)})`)
+      .map((candidate) => `${candidate.name} (score ${candidate.score.toFixed(2)})`)
       .join(', ')}.`
     : '';
   const reviewSentence = selection.confidenceLevel === 'low'
     ? ' Review this slot before shipping, or pin a component with preferences.componentOverrides if you disagree with the pick.'
     : '';
+  if (selection.placedComponents && selection.placedComponents.length > 0) {
+    // Placement, not ranking: the components stacked in the slot are what renders, in order.
+    const rest = selection.placedComponents.slice(1);
+    const stacked = rest.length > 0 ? ` The slot also renders ${rest.join(', ')} after it, in that order.` : '';
+    return `${selected} leads slot "${selection.slotName}" because ${topReason}.${stacked} Confidence is ${selection.confidenceLevel} (${selection.confidence.toFixed(2)}).${reviewSentence}`;
+  }
 
   return `${selected} was selected for slot "${selection.slotName}" because ${topReason}. Confidence is ${selection.confidenceLevel} (${selection.confidence.toFixed(2)}).${alternatives}${reviewSentence}`;
 }
@@ -1343,6 +1459,29 @@ function normalizeObjectPlanForCatalog(
 /*  Handler                                                            */
 /* ------------------------------------------------------------------ */
 
+/** Write the result as a composition version: a new composition, or the next version of the one named. */
+async function recordComposition(input: DesignComposeInput, schema: UiSchema, selections: SlotSelectionEntry[]): Promise<Pick<DesignComposeOutput, 'compositionId' | 'version' | 'parentVersion' | 'operation' | 'head'>> {
+  const directory = resolveCompositionsDir();
+  const { compositionId: _id, parentVersion: _parent, ...compose } = input;
+  const target = input.compositionId
+    ? { compositionId: input.compositionId, operation: (input.options?.operation ?? 'recompose') as CompositionOperation, ...(await nextVersion(directory, input.compositionId, input.parentVersion)) }
+    : { compositionId: newCompositionId(), version: 1, parentVersion: null, operation: 'compose' as const };
+  const theme = input.preferences?.theme === 'dark' || input.preferences?.theme === 'hc' ? input.preferences.theme : 'light';
+  const brand = input.preferences?.brand === 'B' ? 'B' : 'A';
+  const record: CompositionVersion = {
+    recordVersion: '1', compositionId: target.compositionId, version: target.version, parentVersion: target.parentVersion, operation: target.operation,
+    createdAt: new Date().toISOString(), head: readForgeHead(),
+    compose: compose as unknown as Record<string, unknown>, schema, schemaHash: `sha256:${createHash('sha256').update(JSON.stringify(schema)).digest('hex')}`,
+    brand, theme,
+    slots: selections.map(selection => ({ slotName: selection.slotName, ...(selection.selectedComponent ? { selectedComponent: selection.selectedComponent } : {}), ...(selection.placedComponents ? { placedComponents: selection.placedComponents } : {}),
+      // The composer's own candidates for the slot: what a swap may choose from.
+      candidates: [...new Set([...selection.candidates.map(candidate => candidate.name), ...(selection.alternativeCandidates ?? []).map(candidate => candidate.name)])] })),
+    artifacts: {}, measurements: {},
+  };
+  await writeVersion(directory, record);
+  return { compositionId: record.compositionId, version: record.version, parentVersion: record.parentVersion, operation: record.operation, head: record.head };
+}
+
 export async function handle(input: DesignComposeInput): Promise<DesignComposeOutput> {
   const warnings: ComposeIssue[] = [];
 
@@ -1783,11 +1922,9 @@ export async function handle(input: DesignComposeInput): Promise<DesignComposeOu
           confidence: rawConf,
           confidenceLevel: getConfidenceLevel(rawConf),
           explanation: '',
-          candidates: p.components.map((name) => ({
-            name,
-            confidence: rawConf,
-            reason: `${p.source} placement`,
-          })),
+          // The stacked components are placements, not alternatives: candidates names the leader only.
+          candidates: [{ name: p.components[0]!, score: rawConf, reason: `${p.source} placement` }],
+          placedComponents: [...p.components],
         };
       });
 
@@ -1922,6 +2059,8 @@ export async function handle(input: DesignComposeInput): Promise<DesignComposeOu
 
   if (composed && effectiveContext) populateCollections(schema, effectiveContext, composed.object.name, Number(composed.traits.find(trait => trait.ref.name.split('/').pop() === 'Billable')?.ref.parameters?.minorUnits ?? 100));
   if (composed && effectiveContext) reconcileFormDetail(schema, effectiveContext, composed, input.preferences?.tabLabels);
+  reportLayoutLeaders(schema, selections);
+  applyOrderOverrides(schema, input.preferences);
   if (composed && effectiveContext === 'list') populateListStates(schema);
   if (input.preferences?.brand) {
     const applyChartBrand = (node: UiElement): void => {
@@ -1996,7 +2135,7 @@ export async function handle(input: DesignComposeInput): Promise<DesignComposeOu
   }
 
   // 5. Return result
-  const schemaRefRecord = createSchemaRef(schema, 'compose');
+  const schemaRefRecord = createSchemaRef(schema, 'compose', input.object ? `${input.object} ${effectiveContext ?? layoutType}` : undefined);
   const schemaRefMeta = describeSchemaRef(schemaRefRecord);
   const explainedSelections = applySelectionExplainability(selections);
   // Compute overall composition confidence from per-slot raw confidences
@@ -2040,6 +2179,9 @@ export async function handle(input: DesignComposeInput): Promise<DesignComposeOu
     lowConfidenceSlotNames: lowConfidenceSlotNames.length > 0 ? lowConfidenceSlotNames : undefined,
   };
 
+  // The composition is durable: one version file per result, beside the saved-schema store.
+  const recorded = input.options?.transient ? undefined : await recordComposition(input, schema, explainedSelections);
+
   return {
     status: 'ok',
     layout: layoutType,
@@ -2047,6 +2189,7 @@ export async function handle(input: DesignComposeInput): Promise<DesignComposeOu
     schemaRef: schemaRefMeta.ref,
     schemaRefCreatedAt: schemaRefMeta.createdAt,
     schemaRefExpiresAt: schemaRefMeta.expiresAt,
+    ...(recorded ?? {}),
     selections: explainedSelections,
     validation,
     warnings,

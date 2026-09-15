@@ -119,9 +119,9 @@ function epochPayload(matrix: any): string {
 const args = process.argv.slice(2);
 const modeIndex = args.indexOf('--mode');
 const mode = modeIndex >= 0 ? args[modeIndex + 1] : 's195';
-assert(['s195', 's197', 's199'].includes(mode!), 'Supported modes: s195, s197, s199');
-assert(args.every((arg, i) => arg === '--check' || arg === '--mode' || (modeIndex >= 0 && i === modeIndex + 1)), 'Supported options: --check --mode <s195|s197|s199>');
-const receiptDirectory = mode === 's199' ? 'artifacts/product-reality/sprint-199/m05' : mode === 's197' ? 'artifacts/product-reality/sprint-197/m05' : 'artifacts/product-reality/sprint-195/m05/golden-migration';
+assert(['s195', 's197', 's199', 's201'].includes(mode!), 'Supported modes: s195, s197, s199, s201');
+assert(args.every((arg, i) => arg === '--check' || arg === '--mode' || (modeIndex >= 0 && i === modeIndex + 1)), 'Supported options: --check --mode <s195|s197|s199|s201>');
+const receiptDirectory = mode === 's201' ? 'artifacts/product-reality/sprint-201/m06/certified-matrix' : mode === 's199' ? 'artifacts/product-reality/sprint-199/m05' : mode === 's197' ? 'artifacts/product-reality/sprint-197/m05' : 'artifacts/product-reality/sprint-195/m05/golden-migration';
 const matrixPath = resolve(root, 'packages/viz-render/certified-matrix.json');
 const matrix = JSON.parse(readFileSync(matrixPath, 'utf8'));
 const changes = [];
@@ -132,7 +132,7 @@ for (const family of MATRIX_FAMILIES) {
  const option = matrixOption(family), first = await renderEChartsToSvg(option), second = await renderEChartsToSvg(option);
  assert.equal(first, second);
  const next = sha256(first), previous = matrix.normalizedSvgHashes[family];
- if (previous !== next) changes.push({ family, before: previous, after: next, reason: `${mode}-m05 measured chart qualification; see the sprint golden ledger for the attributed producer changes` });
+ if (previous !== next) changes.push({ family, before: previous, after: next, reason: mode === 's201' ? 's201-m06 chart title band: the sankey flow is inset below its title and sparse graphs spread to the canvas (the two chart titles from #2060); see the sprint golden ledger' : `${mode}-m05 measured chart qualification; see the sprint golden ledger for the attributed producer changes` });
  matrix.normalizedSvgHashes[family] = next;
 }
 matrix.renderHashEpoch = 'sha256:' + sha256(epochPayload(matrix));

@@ -490,6 +490,8 @@ export type CodeGenerateInput = {
     styling?: CodegenStyling;
     theme?: NonNullable<import('../schemas/generated.js').CodeGenerateInput['options']>['theme'];
     brand?: 'A' | 'B';
+    /** 'file' writes the artifact beside the saved-schema store and returns file references instead of the bytes. */
+    payloadMode?: import('../lib/payload-store.js').PayloadMode;
   };
 };
 
@@ -523,6 +525,14 @@ export type CodeGenerateOutput = CodeGenerateOutputBase & (
   | {
       status: "ok";
       artifact: GeneratedArtifact;
+      payload?: undefined;
+      errors?: CodegenIssue[];
+    }
+  | {
+      /** payloadMode 'file': the artifact envelope and its files live in payload.directory. */
+      status: "ok";
+      artifact?: undefined;
+      payload: import('../lib/payload-store.js').PayloadReceipt;
       errors?: CodegenIssue[];
     }
   | {

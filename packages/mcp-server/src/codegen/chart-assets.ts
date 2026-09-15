@@ -9,13 +9,16 @@ import { workflowSampleRecords } from './workflow-data-emitter.js';
 /** Placed charts render at twice the former 360×200 so the detail card shows them at design size; the preview never scales an SVG above this width. */
 export const PLACED_CHART_SIZE = { width: 720, height: 400 } as const;
 
-/** Render once at generation time; emitted consumers need no chart runtime. */
-export async function prepareChartAssets(input: UiSchema, options: Pick<CodegenOptions, 'theme' | 'brand'> = {}): Promise<{
-  schema: UiSchema;
-  files: Array<{ path: string; contents: string }>;
-}> {
-  if (!chartNodes(input.screens).length) return { schema: input, files: [] };
-  const schema = structuredClone(input);
+export interface PlacedChartRequest { index: number; path: string; recordId: string; source: string; request: VizRenderInput }
+
+/**
+ * The viz.render requests behind every placed chart of a schema, one per sample record, with the
+ * artifact path each renders to. Generation renders them; measurement re-renders the same request
+ * with the normalized spec and certifies it, so what is certified is what was placed.
+ */
+export function placedChartRequests(input: UiSchema, options: Pick<CodegenOptions, 'theme' | 'brand'> = {}): PlacedChartRequest[] {
+  if (!chartNodes(input.screens).length) return [];
+  const schema = input;
   const nodes = chartNodes(schema.screens);
   for (const candidate of nodes) {
     if (!chartMatchesPreview(candidate)) throw new Error(`Chart type '${candidate.chart!.chartType}' does not match preview '${candidate.component}'.`);
@@ -38,8 +41,7 @@ export async function prepareChartAssets(input: UiSchema, options: Pick<CodegenO
   const theme = options.theme ?? schema.theme ?? 'light';
   if (theme !== 'light' && theme !== 'dark' && theme !== 'hc') throw new Error(`Payment chart theme '${theme}' is not supported.`);
   const records = workflowSampleRecords(schema);
-  const files: Array<{ path: string; contents: string }> = [];
-  const byRecord: Record<string, string> = {};
+  const requests: PlacedChartRequest[] = [];
   for (const [index, record] of records.entries()) {
     let request: VizRenderInput;
     if (chart.source === 'payment-events') {
@@ -86,13 +88,31 @@ export async function prepareChartAssets(input: UiSchema, options: Pick<CodegenO
         output: { svg: true, ...PLACED_CHART_SIZE },
       };
     }
+    const id = schema.workflow ? String(record[schema.workflow.data.idField]) : 'seed';
+    requests.push({ index, recordId: id, source: chart.source, path: `src/charts/${chart.source === 'payment-events' ? 'payment' : chart.chartType}-${String(index + 1).padStart(3, '0')}.svg`, request });
+  }
+  return requests;
+}
+
+/** Render once at generation time; emitted consumers need no chart runtime. */
+export async function prepareChartAssets(input: UiSchema, options: Pick<CodegenOptions, 'theme' | 'brand'> = {}): Promise<{
+  schema: UiSchema;
+  files: Array<{ path: string; contents: string }>;
+}> {
+  const requests = placedChartRequests(input, options);
+  if (!requests.length) return { schema: input, files: [] };
+  const schema = structuredClone(input);
+  const nodes = chartNodes(schema.screens);
+  const chart = nodes[0]!.chart!;
+  const files: Array<{ path: string; contents: string }> = [];
+  const byRecord: Record<string, string> = {};
+  for (const { index, recordId, path, request } of requests) {
     const result = await render(request);
     if (result.status !== 'ok' || !result.svg) throw new Error(`${chart.source === 'payment-events' ? 'Payment chart' : 'Chart'} render failed: ${JSON.stringify(result.errors)}`);
     const svg = assertStaticSvg(result.svg);
     if (index === 0) for (const candidate of nodes) candidate.props = { ...candidate.props, svg, ...PLACED_CHART_SIZE };
-    const id = schema.workflow ? String(record[schema.workflow.data.idField]) : 'seed';
-    byRecord[id] = svg;
-    files.push({ path: `src/charts/${chart.source === 'payment-events' ? 'payment' : chart.chartType}-${String(index + 1).padStart(3, '0')}.svg`, contents: svg });
+    byRecord[recordId] = svg;
+    files.push({ path, contents: svg });
   }
   if (schema.workflow) {
     files.push({ path: 'src/chart-assets.ts', contents: `// Static public viz.render output, keyed by the seed record identity.\nexport const chartSvgByRecord: Readonly<Record<string, string>> = ${JSON.stringify(byRecord, null, 2)};\n` });

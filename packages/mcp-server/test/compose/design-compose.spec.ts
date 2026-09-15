@@ -154,7 +154,7 @@ describe('design.compose — dashboard intent', () => {
     for (const sel of result.selections) {
       expect(sel.candidates.length).toBeGreaterThan(0);
       expect(sel.candidates[0].reason).toBeTruthy();
-      expect(sel.candidates[0].confidence).toBeGreaterThan(0);
+      expect(sel.candidates[0].score).toBeGreaterThan(0);
     }
   });
 

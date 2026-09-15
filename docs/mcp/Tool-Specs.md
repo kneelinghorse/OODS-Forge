@@ -4,7 +4,7 @@
 
 This operator contract is generated from the live dispatcher, registry, adapter descriptions, JSON schemas and capability ledgers. Optional policy and usage notes belong in `docs/mcp/tool-notes/<tool>.md`.
 
-The 24 live tools declare 119 root input parameters. Conditional action parameters and output union branches are expanded below. Required flags apply only within the displayed branch; alternatives do not make every key mandatory. Nested structures remain defined by the linked dispatch schemas.
+The 24 live tools declare 125 root input parameters. Conditional action parameters and output union branches are expanded below. Required flags apply only within the displayed branch; alternatives do not make every key mandatory. Nested structures remain defined by the linked dispatch schemas.
 
 ## Registration + enablement
 
@@ -19,13 +19,13 @@ Bridge-exposed tools require both [agent policy](../../configs/agent/policy.json
 
 ## Evidence and portable outcomes
 
-Tool ledger: [packages/mcp-server/registry/tool-capability-ledger.v1.json](../../packages/mcp-server/registry/tool-capability-ledger.v1.json), recorded source head `"723bc2195cb99fa3482cad3fbd5700d8713e9a7e"`.
+Tool ledger: [packages/mcp-server/registry/tool-capability-ledger.v1.json](../../packages/mcp-server/registry/tool-capability-ledger.v1.json), recorded source head `"a6bd41b2577d69bf294d8aeaa03ee88d30925415"`.
 
 Proof tier methodology: Highest location tier of a literal runtime import of a handler-bearing module in mcp-server test/spec sources. Grouped action imports roll up to their registered family. Imports are source evidence, not proof of invocation, passing execution or browser certification. Transitive imports and constructed imports/dispatch are not followed; type-only and schema-only imports do not promote a tier.
 
 README references in product-reality directories containing browser/packed/runtime/SVG/screenshot prose. Current census reports are excluded. References are discovery pointers, never verified receipts or tier promotions.
 
-Recorded portable execution: 18 pass and 1 typed dependency outcomes across 19 tools. Receipt: [artifacts/product-reality/sprint-200/m04/e2e-host.json](../../artifacts/product-reality/sprint-200/m04/e2e-host.json); SHA-256 `"sha256:0ec3551038a9d61557066b8d0e2e28c514704976a3d28179bb05eb3b2350d099"`; bundle head `"723bc2195cb99fa3482cad3fbd5700d8713e9a7e"`; dirty=`false`. This records the measured development bundle, not a later clean release.
+Recorded portable execution: 19 pass and 0 typed dependency outcomes across 19 tools. Receipt: [artifacts/product-reality/sprint-201/m07/pre-freeze/e2e-host.json](../../artifacts/product-reality/sprint-201/m07/pre-freeze/e2e-host.json); SHA-256 `"sha256:6004c55687a5c3aa505402715cadc0c0d47782353efdaede000d2fbf8b2a403b"`; bundle head `"37fc2351b64e716938be5c1850b94dbfd7e161e4"`; dirty=`false`. This records the measured development bundle, not a later clean release.
 
 ## Current component capability counts
 
@@ -358,7 +358,7 @@ Additional properties: `false`.
 
 ### `code.generate`
 
-Generate a versioned, content-addressed React, Vue, or HTML file-set artifact from a validated UiSchema tree. Select draft, build, or release validation; build is the default runnable-artifact gate, and every response includes a validationReceipt naming applied policy, checks, omissions, and evidence disposition. Receipts produced after artifact construction also name that artifact's content hash. Release receipts retain accepted caller-supplied evidence references without claiming independent execution. The artifact includes exact dependencies and required consumer-supplied domain actions. Legacy code/fileExtension/imports aliases remain for compatibility. Accepts schemaRef from design.compose; save it before the 30-minute reference expires. Release receipts explicitly report evidenceVerification:hash-bound-not-re-executed. References are format-checked and hash-bound, not re-executed. OODS-V162 reports missing evidence; OODS-V163 reports an artifact hash mismatch. Portable React/Vue generation uses an assembly-time readiness attestation bound to shipped package bytes and emits real artifacts without source or test files. Missing or tampered readiness evidence returns OODS-N015 without an artifact. Host repository generation retains direct readiness checks. Application options.theme accepts light, dark and hc, with options.brand A or B, for both the shell and embedded chart assets. Subscription/detail HC area SVG assets pass through the same public viz.render boundary and remain verbatim in React and Vue. Bound record-array charts support bar, line, area, scatter and heatmap with explicit sampleRows; trait titles, descriptions and units accompany generated static SVG. Invoice bar and Usage line are authored in detail and dashboard layouts. Relationship detail and workflow declare an edge-array force_graph over optional neighborhood rows, explicitly labelled synthetic. Source and target IDs produce sorted distinct nodes and row-ordered directed links; a true bidirectional flag adds the reverse link, with directed-pair deduplication and no invented values or groups. Missing or malformed edge fields fail closed. VizGraphPreview embeds the exact public SVG inside a named wrapper. React/Vue application output is supported. Static HTML tab panel trees preserve nested content and layout. Full Invoice/Usage detail HTML remains a typed OODS-V007 static-action limit: HTML has no runtime for domain actions such as Edit/Delete/View timeline. Owner: Forge code-generation maintainers, enforced by target-contracts.ts.
+Generate a versioned, content-addressed React, Vue, or HTML file-set artifact from a validated UiSchema tree. Select draft, build, or release validation; build is the default runnable-artifact gate, and every response includes a validationReceipt naming applied policy, checks, omissions, and evidence disposition. Receipts produced after artifact construction also name that artifact's content hash. Release receipts retain accepted caller-supplied evidence references without claiming independent execution. The artifact includes exact dependencies and required consumer-supplied domain actions. Legacy code/fileExtension/imports aliases remain for compatibility. Accepts schemaRef from design.compose; save it before the 30-minute reference expires. Release receipts explicitly report evidenceVerification:hash-bound-not-re-executed. References are format-checked and hash-bound, not re-executed. OODS-V162 reports missing evidence; OODS-V163 reports an artifact hash mismatch. Portable React/Vue generation uses an assembly-time readiness attestation bound to shipped package bytes and emits real artifacts without source or test files. Missing or tampered readiness evidence returns OODS-N015 without an artifact. Host repository generation retains direct readiness checks. Application options.theme accepts light, dark and hc, with options.brand A or B, for both the shell and embedded chart assets. Subscription/detail HC area SVG assets pass through the same public viz.render boundary and remain verbatim in React and Vue. Bound record-array charts support bar, line, area, scatter and heatmap with explicit sampleRows; trait titles, descriptions and units accompany generated static SVG. Invoice bar and Usage line are authored in detail and dashboard layouts. Relationship detail and workflow declare an edge-array force_graph over optional neighborhood rows, explicitly labelled synthetic. Source and target IDs produce sorted distinct nodes and row-ordered directed links; a true bidirectional flag adds the reverse link, with directed-pair deduplication and no invented values or groups. Missing or malformed edge fields fail closed. VizGraphPreview embeds the exact public SVG inside a named wrapper. React/Vue application output is supported. Static HTML tab panel trees preserve nested content and layout. Full Invoice/Usage detail HTML remains a typed OODS-V007 static-action limit: HTML has no runtime for domain actions such as Edit/Delete/View timeline. Owner: Forge code-generation maintainers, enforced by target-contracts.ts. options.payloadMode file writes every artifact file plus artifact.json beside the saved-schema store (<store>/../payloads/code.generate-<content hash prefix>/) and returns a payload block of file references instead of the artifact, for clients with a result-size cap; a directory that cannot be written is OODS-S020 with no payload.
 
 [Complete input/output reference](../api/code-generate.md). The tables below follow the actual dispatch schema paths; those paths control when the legacy API page selects a different schema.
 
@@ -417,7 +417,8 @@ Versioned generated artifact from a UiSchema. Legacy single-source fields remain
 |---|---|---|---|---|
 | `status` | `"ok"` or `"error"` | Yes | — | Whether code generation succeeded. |
 | `framework` | `"react"` or `"vue"` or `"html"` | Yes | — | The target framework that was used. |
-| `artifact` | ref `"#/$defs/generatedArtifact"` | No | — | Primary versioned, content-addressed file-set payload. Required when status is ok. |
+| `artifact` | ref `"#/$defs/generatedArtifact"` | No | — | Primary versioned, content-addressed file-set payload. Present when status is ok and options.payloadMode is inline (the default); with payloadMode file it is written to payload.directory as artifact.json instead. |
+| `payload` | object | No | — | payloadMode file: where the large output was written instead of being returned inline; the directory is beside the saved-schema store (<store>/../payloads/<tool>-<digest>).; additionalProperties: `false` |
 | `code` | string | Yes | — | Deprecated v0 compatibility alias for artifact.files[0].contents. Empty string on error. |
 | `fileExtension` | string | Yes | — | Deprecated v0 compatibility alias for the primary generated file extension. |
 | `imports` | array of string | Yes | — | Deprecated v0 compatibility alias. Use artifact.dependencies for exact versions and dependency kinds. |
@@ -440,17 +441,29 @@ If `{"properties":{"status":{"const":"ok"}},"required":["status"]}`:
 |---|---|---|---|---|
 | `validationReceipt` | any | Yes | — | — |
 
+anyOf: at least one branch must match.
+
+##### Output allOf[0] then anyOf[0]
+
+Shape: any.
+
 Required keys in this branch: `"artifact"`.
+
+##### Output allOf[0] then anyOf[1]
+
+Shape: any.
+
+Required keys in this branch: `"payload"`.
 
 Otherwise:
 
 Shape: any.
 
-Must not match: `{"required":["artifact"]}`.
+Must not match: `{"anyOf":[{"required":["artifact"]},{"required":["payload"]}]}`.
 
 ### `design.compose`
 
-Compose a complete UiSchema from a natural-language intent description. Returns schemaRef for reuse in validate/render/code.generate. schemaRef includes createdAt/expiresAt timestamps (default TTL: 30 minutes) and lives in the server process that issued it: a restarted client starts a new server that does not know earlier refs and returns OODS-N003 for them. Use schema.save to persist beyond TTL or across sessions.
+Compose a complete UiSchema from a natural-language intent description. Returns schemaRef for reuse in validate/render/code.generate. schemaRef includes createdAt/expiresAt timestamps (default TTL: 30 minutes) and lives in the server process that issued it: a restarted client starts a new server that does not know earlier refs and returns OODS-N003 for them. Use schema.save to persist beyond TTL or across sessions. Every successful composition is recorded as a durable version (compositions/<compositionId>/versions/<n>.json beside the saved-schema store) and the result carries compositionId, version, parentVersion, operation and head; pass compositionId to record the result as that composition's next version, or options.transient to record nothing. design.preview opens any version at /preview/<compositionId>/<version>. preferences.regionOrder, preferences.fieldOrder and preferences.seed are the override surface edits re-compose through; the seed is recorded on the schema and rotates the deterministic sample data.
 
 [Complete input/output reference](../api/design-compose.md). The tables below follow the actual dispatch schema paths; those paths control when the legacy API page selects a different schema.
 
@@ -462,7 +475,7 @@ Server policy: roles `"designer"`, `"maintainer"`; read-only; timeout 30000 ms; 
 
 Dispatch schema: [packages/mcp-server/src/schemas/design.compose.input.json](../../packages/mcp-server/src/schemas/design.compose.input.json).
 
-Generate a complete UiSchema from an intent description and/or object definition using layout templates and component selection. Provide at least one of 'intent' or 'object'. context=workflow assembles a routed, stateful application from the object's list/detail/form/timeline compositions.
+Generate a complete UiSchema from an intent description and/or object definition using layout templates and component selection. Provide at least one of 'intent' or 'object'. context=workflow assembles a routed, stateful application from the object's list/detail/form/timeline compositions. Every successful composition is recorded as a durable version under the schema store (compositions/<compositionId>/versions/<n>.json); pass compositionId to record the result as that composition's next version.
 
 | Parameter / field | Type | Required in this branch | Default | Description / constraints |
 |---|---|---|---|---|
@@ -472,6 +485,8 @@ Generate a complete UiSchema from an intent description and/or object definition
 | `layout` | `"dashboard"` or `"form"` or `"detail"` or `"list"` or `"card"` or `"timeline"` or `"landing"` or `"auto"` | No | `"auto"` | Layout template to use. 'landing' is a content/marketing page (hero + sections + CTA), not bound to a data object. 'auto' infers the best template from intent keywords. |
 | `preferences` | object | No | — | additionalProperties: `false` |
 | `options` | object | No | — | additionalProperties: `false` |
+| `compositionId` | string | No | — | Record this composition as the next version of an existing composition (operation "recompose") instead of creating a new one.; pattern: `"^cmp-[a-f0-9]{12}$"` |
+| `parentVersion` | integer | No | — | With compositionId: the version the new one derives from; default the latest.; minimum: `1` |
 
 Additional properties: `false`.
 
@@ -503,6 +518,11 @@ Generated UiSchema with component selections and validation result.
 | `schemaRef` | string | No | — | Server-managed reference to the generated schema for reuse in validate/render/code.generate. |
 | `schemaRefCreatedAt` | string | No | — | ISO timestamp when the schemaRef was created. |
 | `schemaRefExpiresAt` | string | No | — | ISO timestamp when the schemaRef expires. |
+| `compositionId` | string | No | — | The durable composition this result was recorded as; absent for transient compositions. Every version opens at /preview/<compositionId>/<version> on the preview host.; pattern: `"^cmp-[a-f0-9]{12}$"` |
+| `version` | integer | No | — | The recorded version number (1 for a new composition).; minimum: `1` |
+| `parentVersion` | integer or null | No | — | The version this one derives from; null for the first. |
+| `operation` | `"compose"` or `"recompose"` or `"reorder-region"` or `"swap-slot"` or `"reorder-fields"` or `"seed"` | No | — | How this version was produced. |
+| `head` | string or null | No | — | The Forge build head that produced it; null from a source checkout. |
 | `selections` | array of ref `"#/$defs/slotSelection"` | Yes | — | Component selection results per slot. |
 | `validation` | object | No | — | additionalProperties: `false` |
 | `warnings` | array of ref `"#/$defs/issue"` | Yes | — | Non-fatal issues during composition. |
@@ -516,51 +536,121 @@ Additional properties: `false`.
 
 ### `design.preview`
 
-Render a public object/context through the same local browser design loop used by pnpm design:loop render. Returns exact React/Vue receipts with screenshots, accessibility text, layout measurements, browser errors, and schema/artifact hashes. Defaults to both frameworks at 390/820/1440 px. Requires pnpm design:loop serve in this checkout; OODS-N019 explains how to start it when unavailable. Writes isolated local receipt artifacts only; never saves or edits a schema. This observation is not usability certification. Local dependency limitation: when the design-loop server at 127.0.0.1:4477 is absent, the outcome is typed OODS-N019; no hosted preview is implied. Adapter v0.3.0 preserves the native OODS-N019 code, retryable flag and data in JSON error content at the tools/call wire.
+Open a composition version as the generated React or Vue app actually running in a browser: an existing compositionId (and optional version) or an object and context composed now as a new composition. Generates one or both frameworks onto the version, seeds the deterministic field model, compiles each artifact once through the preview host and returns one URL per framework with the lineage (compositionId, version, parentVersion, operation, head), the schema hash and the compiled module digests; the page shows the lineage and the measurements beside the running app with brand, theme and width controls, and brand and theme re-mount the app in place. Measurements are stored on the version and the result's measured block names them: the code.generate validation receipt per framework, artifact.certify for every placed chart, and axe-core run inside the running page per framework, brand and theme; every measurement not taken is listed under notMeasured, so nothing is claimed that did not run. The HTTP bridge hosts the preview in-process and the stdio adapter starts it on 127.0.0.1 for Claude Desktop, Claude Code and Cursor, so the extracted runtime bundle serves it with no Vite, npm install or browser automation. action compare (compositionId@version against another version) returns the structural what-changed the compare page shows: regions added, removed or reordered, slot components, nodes outside slots, props, field order, the seed and artifact files whose hash moved, with the side-by-side URL; identical versions report zero differences. action edit applies one operation to compositionId@version by re-composing through the override surface and re-generating, and records the result as a new version with its parent and the operation, then opens it: reorder-region (regionOrder), swap-slot (slot, component from the composer's own candidates), reorder-fields (region, fieldOrder), seed (seed); the parent version is never changed, and an operation that names nothing on the version or changes nothing is refused with OODS-V204. action versions lists the composition's versions with their lineage. The render result's editable block names the regions, slots with candidates, field order and seed an edit may use; the page offers the same four edits. Typed limits: without a reachable host (a native server run on its own, a host reading another schema store root, or a platform without a bundled esbuild binary) the outcome is OODS-N021, retryable, with the host details in data; an unknown composition or version is OODS-N022. Writes only the version's artifacts and model; never saves or edits a schema. A running preview is an observation, not usability certification.
 
 [Complete input/output reference](../api/design-preview.md). The tables below follow the actual dispatch schema paths; those paths control when the legacy API page selects a different schema.
 
-Proof tier: `"product-reality"` (source-import classification under the methodology above). Portable outcome: `"typed"` (`"OODS-N019"`).
+Proof tier: `"product-reality"` (source-import classification under the methodology above). Portable outcome: `"pass"`.
 
 Server policy: roles `"designer"`, `"maintainer"`; read-only; timeout 150000 ms; rate 10/minute; concurrency 1.
 
-Portable limit `"portable-design-loop-unavailable"`: Design loop server not running in this checkout. Start it with pnpm design:loop serve. Code `"OODS-N019"`; retryable=`true`. tools/call returned isError with OODS-N019, retryable and data preserved.
-
-Documented limit (documented-limit): Requires the local design-loop server in this checkout and a browser runtime; unavailable dependency returns OODS-N019. Source: [packages/mcp-server/src/tools/design.preview.ts](../../packages/mcp-server/src/tools/design.preview.ts).
+Documented limit (documented-limit): Requires a reachable preview host: the HTTP bridge hosts it in-process and the stdio adapter starts it; a native server run on its own, a host reading another schema store root, or a platform without a bundled esbuild binary returns retryable OODS-N021. Source: [packages/mcp-server/src/tools/design.preview.ts](../../packages/mcp-server/src/tools/design.preview.ts).
 
 #### Input contract
 
 Dispatch schema: [packages/mcp-server/src/schemas/design.preview.input.json](../../packages/mcp-server/src/schemas/design.preview.input.json).
 
-Capture real generated React/Vue screens through the running local design loop. Start it in this checkout with pnpm design:loop serve.
+Open a composition version as the generated React or Vue app actually running in a browser: either an existing compositionId (and optional version) or an object and context composed now as a new composition. The preview host (in the HTTP bridge, or started by the stdio adapter) compiles the artifact and serves it at one URL per version with its lineage and brand, theme and width controls. action "compare" returns the structural what-changed between this version and `against` (regions, slots, nodes, props, field order, seed, artifact file hashes) with the side-by-side URL.
 
 | Parameter / field | Type | Required in this branch | Default | Description / constraints |
 |---|---|---|---|---|
-| `object` | string | Yes | — | Object name from the OODS registry (e.g., 'Subscription', 'User'). When provided, composition uses trait-driven component placement via view_extensions.; minLength: `1` |
-| `context` | `"detail"` or `"list"` or `"form"` or `"timeline"` or `"card"` or `"inline"` or `"workflow"` | Yes | — | View context for object-aware composition. Determines which view_extensions are applied. When object is provided without layout, context infers the layout (detail→detail, list→list, form→form). workflow assembles list/detail/form/timeline screens with trait actions, routes, four UI states and generated application data. |
-| `framework` | `"react"` or `"vue"` or `"both"` | No | `"both"` | — |
-| `widths` | array of integer | No | `[390,820,1440]` | minItems: `1`; maxItems: `10`; uniqueItems: `true` |
+| `action` | `"render"` or `"compare"` or `"edit"` or `"versions"` | No | `"render"` | render (default): open the version as the running app. compare: the what-changed between compositionId@version and against. edit: apply one operation to compositionId@version by re-composing through the override surface and re-generating, recording a new version with its parent, then open it. versions: list the composition's versions. |
+| `compositionId` | string | No | — | An existing composition from design.compose; with no version, its latest version opens.; pattern: `"^cmp-[a-f0-9]{12}$"` |
+| `version` | integer | No | — | The version of compositionId to open.; minimum: `1` |
+| `object` | string | No | — | Object name from the OODS registry (e.g., 'Subscription', 'User'); with context, composes a new composition (version 1) and opens it.; minLength: `1` |
+| `context` | `"detail"` or `"list"` or `"form"` or `"timeline"` or `"card"` or `"inline"` or `"workflow"` | No | — | View context for object-aware composition. Determines which view_extensions are applied. When object is provided without layout, context infers the layout (detail→detail, list→list, form→form). workflow assembles list/detail/form/timeline screens with trait actions, routes, four UI states and generated application data. |
+| `framework` | `"react"` or `"vue"` or `"both"` | No | `"both"` | Which generated app to compile and serve; both frameworks by default, each at its own URL. |
 | `preferences` | object | No | — | additionalProperties: `false` |
-
-Required keys in this branch: `"object"`, `"context"`.
+| `against` | object | No | — | action compare: the version on the right; the left is compositionId@version.; additionalProperties: `false` |
+| `edit` | object | No | — | action edit: the one operation to apply to compositionId@version. The parent version is never changed.; additionalProperties: `false` |
 
 Additional properties: `false`.
+
+anyOf: at least one branch must match.
+
+##### Input anyOf[0]
+
+Shape: any.
+
+Required keys in this branch: `"compositionId"`.
+
+##### Input anyOf[1]
+
+Shape: any.
+
+Required keys in this branch: `"object"`, `"context"`.
 
 #### Output contract
 
 Dispatch schema: [packages/mcp-server/src/schemas/design.preview.output.json](../../packages/mcp-server/src/schemas/design.preview.output.json).
 
-Validated browser receipts, including local paths, accessibility text, measurements, errors, source and artifact hashes. An unavailable loop throws OODS-N019 before writing partial output.
+The URL of the composition version running in the preview host, one per compiled framework, with its lineage (composition, version, parent, operation, head), the schema hash and the compiled module digests. An unreachable host throws OODS-N021 before any record is written; an unknown composition or version throws OODS-N022. action compare returns the what-changed between two versions instead. action edit records a new version from one operation and opens it; action versions lists a composition's versions.
+
+anyOf: at least one branch must match.
+
+##### Output anyOf[0]
 
 | Parameter / field | Type | Required in this branch | Default | Description / constraints |
 |---|---|---|---|---|
 | `status` | `"ok"` | Yes | — | — |
-| `schemaHash` | string | Yes | — | pattern: `"^sha256:[a-f0-9]{64}$"` |
-| `receipts` | array of object | Yes | — | Exact receipts validated against scripts/design-loop/receipt.schema.json by the shared render leg.; minItems: `1`; maxItems: `2` |
-| `receiptPaths` | array of string | Yes | — | — |
+| `action` | `"render"` or `"edit"` | Yes | — | — |
+| `compositionId` | string | Yes | — | pattern: `"^cmp-[a-f0-9]{12}$"` |
+| `version` | integer | Yes | — | minimum: `1` |
+| `parentVersion` | integer or null | Yes | — | — |
+| `operation` | `"compose"` or `"recompose"` or `"reorder-region"` or `"swap-slot"` or `"reorder-fields"` or `"seed"` | Yes | — | — |
+| `head` | string or null | Yes | — | — |
+| `schemaHash` | string | Yes | — | Canonical hash of the version's composed schema.; pattern: `"^sha256:[a-f0-9]{64}$"` |
+| `object` | string | Yes | — | — |
+| `context` | string | Yes | — | — |
+| `previewUrl` | string | Yes | — | The first compiled framework's page with lineage and controls; open it in a browser.; format: `"uri"` |
+| `previews` | array of object | Yes | — | minItems: `1`; maxItems: `2` |
+| `host` | object | Yes | — | additionalProperties: `false` |
+| `brand` | `"A"` or `"B"` | Yes | — | — |
+| `theme` | `"light"` or `"dark"` or `"hc"` | Yes | — | — |
+| `recordPath` | string | Yes | — | — |
+| `durationMs` | number | Yes | — | minimum: `0` |
+| `measured` | object | Yes | — | What this version carries as measured and what it does not: the code.generate validation receipt per framework, artifact.certify for every placed chart, axe-core per framework and brand/theme scope run inside the running page. The page's measurement panel says the same; nothing is claimed that did not run.; additionalProperties: `false` |
+| `edit` | object | No | — | action edit only: the operation that produced this version and the version it derives from.; additionalProperties: `false` |
+| `editable` | object | Yes | — | What an edit can name on this version: the regions in order, each slot with the composer's candidates, the field order per region, the current seed.; additionalProperties: `false` |
+
+Required keys in this branch: `"status"`, `"action"`, `"compositionId"`, `"version"`, `"parentVersion"`, `"operation"`, `"head"`, `"schemaHash"`, `"object"`, `"context"`, `"previewUrl"`, `"previews"`, `"host"`, `"brand"`, `"theme"`, `"recordPath"`, `"durationMs"`, `"measured"`, `"editable"`.
+
+Additional properties: `false`.
+
+##### Output anyOf[1]
+
+| Parameter / field | Type | Required in this branch | Default | Description / constraints |
+|---|---|---|---|---|
+| `status` | `"ok"` | Yes | — | — |
+| `action` | `"compare"` | Yes | — | — |
+| `left` | object | Yes | — | additionalProperties: `false` |
+| `right` | object | Yes | — | additionalProperties: `false` |
+| `compareUrl` | string | Yes | — | Both running apps side by side with the what-changed and both measurement panels.; format: `"uri"` |
+| `diffUrl` | string | Yes | — | format: `"uri"` |
+| `frameworks` | array of `"react"` or `"vue"` | Yes | — | Frameworks both versions carry, shown side by side. |
+| `identical` | boolean | Yes | — | — |
+| `differenceCount` | integer | Yes | — | minimum: `0` |
+| `diff` | object | Yes | — | The structural what-changed the preview host computes over the two version records: regions added/removed/reordered, slot components, nodes outside slots, props of matched nodes, field order per region, the seed, and artifact files whose hash moved per framework both versions carry. Identical versions report zero differences.; additionalProperties: `false` |
+| `host` | object | Yes | — | additionalProperties: `false` |
 | `durationMs` | number | Yes | — | minimum: `0` |
 
-Required keys in this branch: `"status"`, `"schemaHash"`, `"receipts"`, `"receiptPaths"`, `"durationMs"`.
+Required keys in this branch: `"status"`, `"action"`, `"left"`, `"right"`, `"compareUrl"`, `"diffUrl"`, `"frameworks"`, `"identical"`, `"differenceCount"`, `"diff"`, `"host"`, `"durationMs"`.
+
+Additional properties: `false`.
+
+##### Output anyOf[2]
+
+| Parameter / field | Type | Required in this branch | Default | Description / constraints |
+|---|---|---|---|---|
+| `status` | `"ok"` | Yes | — | — |
+| `action` | `"versions"` | Yes | — | — |
+| `compositionId` | string | Yes | — | — |
+| `latest` | integer | Yes | — | — |
+| `versions` | array of object | Yes | — | — |
+| `host` | object | Yes | — | additionalProperties: `false` |
+| `durationMs` | number | Yes | — | minimum: `0` |
+
+Required keys in this branch: `"status"`, `"action"`, `"compositionId"`, `"latest"`, `"versions"`, `"host"`, `"durationMs"`.
 
 Additional properties: `false`.
 
@@ -1660,7 +1750,7 @@ Additional properties: `false`.
 
 ### `repl`
 
-Grouped Design Lab REPL tool. Set `action` to validate (check a UiSchema/patch against the DSL+registry) or render (produce HTML/CSS preview; apply=true to emit). Consolidates the former repl.* tools with identical per-action behavior. BRAND (s169 m04): pass brand:'A'|'B' to render a specific brand's palette; omit it for the previous behaviour, byte-identical. On dashboard.render the brand drives both the tokens inlined into the output.html export and the palette output.contrastScan grades, so what is painted and what is checked are always the same brand. Fragment output diagnoses ignored brand/output.tokenOverlay/output.skinOverlay with OODS-W001. Non-strict fragments expose OODS-W002 when OODS-V006 is reclassified per node. Document output applies scope options. validate.apply is an ignored bridge-parity key. Fragment depth and request-level dslVersion are not supported.
+Grouped Design Lab REPL tool. Set `action` to validate (check a UiSchema/patch against the DSL+registry) or render (produce HTML/CSS preview; apply=true to emit). Consolidates the former repl.* tools with identical per-action behavior. BRAND (s169 m04): pass brand:'A'|'B' to render a specific brand's palette; omit it for the previous behaviour, byte-identical. On dashboard.render the brand drives both the tokens inlined into the output.html export and the palette output.contrastScan grades, so what is painted and what is checked are always the same brand. Fragment output diagnoses ignored brand/output.tokenOverlay/output.skinOverlay with OODS-W001. Non-strict fragments expose OODS-W002 when OODS-V006 is reclassified per node. Document output applies scope options. validate.apply is an ignored bridge-parity key. Fragment depth and request-level dslVersion are not supported. output.payloadMode file writes the rendered document as index.html (or fragments.json and css.json) beside the saved-schema store (<store>/../payloads/repl.render-<digest>/) and returns a payload block of file references instead of html, fragments and css; a directory that cannot be written is OODS-S020.
 
 [Complete input/output reference](../api/repl.md). The tables below follow the actual dispatch schema paths; those paths control when the legacy API page selects a different schema.
 
@@ -1839,6 +1929,7 @@ anyOf: at least one branch must match.
 | `tokenCssRef` | string | No | — | Reference to the token CSS artifact when compact mode is enabled. Use tokens.build to obtain the full CSS. |
 | `fragments` | object | No | — | Fragment payload keyed by canonical node id when output.format=fragments.; additionalProperties: `{"type":"object","required":["nodeId","component","html","cssRefs"],"properties":{"nodeId":{"type":"string"},"component":{"type":"string"},"html":{"type":"string"},"cssRefs":{"type":"array","items":{"type":"string"}}},"additionalProperties":false}` |
 | `css` | object | No | — | Resolved CSS map keyed by cssRef identifier.; additionalProperties: `{"type":"string"}` |
+| `payload` | object | No | — | payloadMode file: where the large output was written instead of being returned inline; the directory is beside the saved-schema store (<store>/../payloads/<tool>-<digest>).; additionalProperties: `false` |
 | `output` | object | No | — | Echoes normalized output controls used by the renderer.; additionalProperties: `false` |
 | `meta` | object | No | — | additionalProperties: `false` |
 

@@ -1,0 +1,49 @@
+- main:
+  - paragraph: SUBSCRIPTION WORKSPACE
+  - heading "Subscriptions" [level=1]
+  - text: Local workspace
+  - navigation "Workflow screens":
+    - button "List"
+    - button "Detail"
+    - button "Edit"
+    - button "Timeline"
+  - region "Subscription screen":
+    - search "Search":
+      - text: Search
+      - searchbox "Search"
+    - text: Status
+    - combobox "Status":
+      - option "All states" [selected]
+      - option "Future"
+      - option "Trialing"
+      - option "Active"
+      - option "Paused"
+      - option "Pending Cancellation"
+      - option "Past Due"
+      - option "Unpaid"
+      - option "Terminated"
+    - text: Sort
+    - combobox "Sort":
+      - option "Name A–Z" [selected]
+      - option "Name Z–A"
+    - tablist "Archive views":
+      - tab "Active"
+      - tab "Archived" [selected]
+    - tabpanel "Archived":
+      - list "Records":
+        - listitem:
+          - 'group "Archived: Brook Plan"':
+            - 'button "Brook Plan Status: Trialing Mar 1, 2026, 12:00 PM $249.00 · yearly"':
+              - text: Brook Plan Trialing
+              - time: Mar 1, 2026, 12:00 PM
+              - text: $249.00 · yearly
+            - text: Archived
+    - navigation "Pagination":
+      - text: 1 record Showing 1–1 of 1
+      - button "Previous page" [disabled]: ‹
+      - list:
+        - listitem:
+          - button "Page 1": "1"
+      - button "Next page" [disabled]: ›
+      - text: Page 1 of 1
+  - status

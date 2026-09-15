@@ -144,6 +144,13 @@ export async function collectFacts(): Promise<Facts> {
     portableLimits: typed.map(row => `${row.name} (${row.portableOutcome!.code})`).join(' and '),
     portableTypedPhrase: typed.length === 1 ? 'retains a typed dependency limit' : 'retain typed dependency limits',
     portableLimitNoun: typed.length === 1 ? 'limit' : 'limits',
+    // Zero typed limits reads as a sentence of its own, never "0 retain typed dependency limits: ."
+    portableOutcomeSentence: typed.length === 0
+      ? `All ${passed.length} return the exercised result; no typed dependency limit remains.`
+      : `${passed.length} return the exercised result and ${typed.length} ${typed.length === 1 ? 'retains a typed dependency limit' : 'retain typed dependency limits'}: ${typed.map(row => `${row.name} (${row.portableOutcome!.code})`).join(' and ')}.`,
+    portableReadmeSentence: typed.length === 0
+      ? `${passed.length} results and no typed dependency limit.`
+      : `${passed.length} results and ${typed.length} typed dependency ${typed.length === 1 ? 'limit' : 'limits'}, ${typed.map(row => `${row.name} (${row.portableOutcome!.code})`).join(' and ')}.`,
     traits: traits.length, vizTraits: traits.filter(row => row.definition.trait.category?.startsWith('viz')).length,
     traitSectionCount: traitSections.length, traitSectionRoster: traitSections.map(section => `<span class="k">${section}</span>`).join(', '),
     domainTraitsWord: words(traits.filter(row => row.file.startsWith('domains/')).length),

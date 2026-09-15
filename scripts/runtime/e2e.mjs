@@ -197,6 +197,8 @@ const FORBIDDEN_CHILD_ENV = [
   "MCP_BRIDGE_PORT",
   "BRIDGE_TOKEN",
   "MCP_BRIDGE_CORS_ORIGIN",
+  "OODS_PREVIEW_HOST_URL",
+  "ESBUILD_BINARY_PATH",
 ];
 
 function parseArgs(argv) {
@@ -631,7 +633,7 @@ function assertGeneratedArtifact(artifact, framework) {
   }
 }
 
-async function proveBridge(runtimeRoot, env, manifest, expectedToolNames, input, adapterSvgHash) {
+async function proveBridge(runtimeRoot, env, manifest, expectedToolNames, input, adapterSvgHash, previewInput) {
   const port = await reserveClosedPort();
   const base = `http://127.0.0.1:${port}`;
   const child = spawn(process.execPath, ['dist/server.js'], {
@@ -670,13 +672,38 @@ async function proveBridge(runtimeRoot, env, manifest, expectedToolNames, input,
     assert(response.ok && rendered.ok, JSON.stringify(rendered));
     assert(adapterSvgHash, 'adapter SVG proof missing');
     assert.equal(rendered.result.svgHash, adapterSvgHash);
+    // The bridge hosts the running-app preview in-process: design.preview answers with a URL on its own port.
+    const statusResponse = await fetch(`${base}/preview/status`, { signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS) });
+    assert(statusResponse.ok, 'bundled bridge preview host status');
+    const previewStatus = await statusResponse.json();
+    assert.equal(previewStatus.running, true);
+    assert.equal(previewStatus.platform?.supported, true, JSON.stringify(previewStatus.platform));
+    const previewResponse = await fetch(`${base}/run`, { method: 'POST',
+      headers: { 'content-type': 'application/json', 'x-bridge-token': 'portable-e2e-owned-token' },
+      body: JSON.stringify({ tool: 'design_preview', input: previewInput }), signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS) });
+    const previewRun = await previewResponse.json();
+    assert(previewResponse.ok && previewRun.ok, JSON.stringify(previewRun));
+    const bridgePreview = previewRun.result;
+    assert.equal(bridgePreview.status, 'ok');
+    assert.equal(bridgePreview.host.port, port, 'the bridge serves the preview on its own port');
+    assert.equal(bridgePreview.previews.length, 2);
+    for (const entry of bridgePreview.previews) {
+      const page = await fetch(entry.url, { signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS) });
+      assert(page.ok, `bridge preview page ${entry.url}`);
+      const html = await page.text();
+      assert(html.includes('data-oods-lineage="true"') && html.includes(`<code>${bridgePreview.compositionId}</code>`), 'bridge preview page lineage');
+      const module = await fetch(entry.moduleUrl, { signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS) });
+      assert(module.ok, `bridge preview module ${entry.moduleUrl}`);
+      assert.equal(`sha256:${sha256(await module.text())}`, entry.compiled.sha256, 'bridge compiled module digest');
+    }
     child.kill('SIGTERM');
     const termination = await Promise.race([exited,
       new Promise(resolve => setTimeout(() => resolve(null), LIFECYCLE_TIMEOUT_MS))]);
     assert(termination, 'bridge did not stop cleanly');
     assert(termination.code === 0 || termination.signal === 'SIGTERM');
     await assertLoopbackPortClosed(port);
-    return { revision: health.revision, tools: tools.tools, svgHash: adapterSvgHash, parity: true, termination };
+    return { revision: health.revision, tools: tools.tools, svgHash: adapterSvgHash, parity: true, termination,
+      preview: { compositionId: bridgePreview.compositionId, version: bridgePreview.version, hostPort: bridgePreview.host.port, compiled: Object.fromEntries(bridgePreview.previews.map(entry => [entry.framework, entry.compiled.sha256])) } };
   } finally {
     if (child.exitCode === null && child.signalCode === null) child.kill('SIGKILL');
     await exited;
@@ -731,8 +758,8 @@ async function main() {
   );
   assert.equal(
     adapterPackage.version,
-    "0.3.0",
-    "adapter 0.3.0 preserves structured native errors",
+    "0.4.0",
+    "adapter 0.4.0 preserves structured native errors and hosts the running-app preview",
   );
   assert.equal(
     manifest.packageVersions["@oods/mcp-adapter"],
@@ -774,6 +801,7 @@ async function main() {
   assert.deepEqual(Object.keys(fixtures.tools).sort(), [...registry.auto].sort());
   const adapterPath = path.join(runtimeRoot, "packages/mcp-adapter/index.js");
   const adapterCwd = path.join(runtimeRoot, "packages/mcp-adapter");
+  let previewHostPort;
   const primary = new McpClient({
     adapterPath,
     cwd: adapterCwd,
@@ -947,8 +975,38 @@ async function main() {
     assert.equal(catalog.totalCount, 110); assert.equal(catalog.returnedCount, 109);
     const composed = await primary.callTool("design_compose", operand("design.compose"));
     assert.equal(composed.status, 'ok'); assert(composed.schemaRef); state.compose = composed;
-    await assertLoopbackPortClosed(4477);
-    const preview = await primary.callTool("design_preview", operand("design.preview"), "OODS-N019");
+    // The adapter starts the preview host lazily for this call and reports its port in the result.
+    const preview = await primary.callTool("design_preview", operand("design.preview"));
+    assert.equal(preview.status, 'ok');
+    assert.match(preview.previewUrl, /^http:\/\/127\.0\.0\.1:\d+\/preview\/cmp-[a-f0-9]{12}\/1\?framework=react&brand=A&theme=light$/);
+    assert.equal(preview.version, 1); assert.equal(preview.parentVersion, null); assert.equal(preview.operation, 'compose');
+    assert.equal(preview.head, manifest.commit, 'the version records the bundle head');
+    assert(Number.isInteger(preview.host.port) && preview.host.port > 0, 'preview host port must be reported');
+    assert.equal(preview.host.url, `http://127.0.0.1:${preview.host.port}`);
+    assert.equal(preview.previews.length, 2, 'both frameworks compile from the archive');
+    assert(isInside(scratch, preview.recordPath), `preview record escaped the scratch store: ${preview.recordPath}`);
+    assert(fs.existsSync(preview.recordPath));
+    previewHostPort = preview.host.port;
+    const previewStatus = await (await fetch(`${preview.host.url}/preview/status`, { signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS) })).json();
+    assert.equal(previewStatus.running, true);
+    assert.equal(path.resolve(previewStatus.compositionsDir), path.resolve(preview.host.compositionsDir));
+    for (const entry of preview.previews) {
+      const page = await fetch(entry.url, { signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS) });
+      assert(page.ok, `preview page ${entry.url}`);
+      const shell = await page.text();
+      assert(shell.includes('data-oods-lineage="true"') && shell.includes(`<code>${preview.compositionId}</code>`) && shell.includes('<code>compose</code>') && shell.includes(`<code>${manifest.commit}</code>`), 'preview page lineage');
+      const app = await fetch(entry.appUrl, { signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS) });
+      assert(app.ok, `preview app ${entry.appUrl}`);
+      const html = await app.text();
+      assert(html.includes('<script type="importmap">') && html.includes('data-theme="light" data-brand="A"') && html.includes(`data-oods-preview="${preview.compositionId}" data-oods-preview-version="1"`), 'preview app shape');
+      const module = await fetch(entry.moduleUrl, { signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS) });
+      assert(module.ok, `preview module ${entry.moduleUrl}`);
+      const code = await module.text();
+      assert.equal(`sha256:${sha256(code)}`, entry.compiled.sha256, 'compiled module digest');
+      assert(!code.includes('@oods/component-styles/css'), 'the page links the styles; the module must not import them');
+      const runtime = await fetch(`${preview.host.url}/preview/runtime/${entry.framework === 'react' ? 'react.js' : 'vue.js'}`, { signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS) });
+      assert(runtime.ok, 'preview host runtime served');
+    }
     const generated = await primary.callTool("code_generate", operand("code.generate"));
     assert.equal(generated.status, 'ok');
     assertGeneratedArtifact(generated.artifact, 'react');
@@ -989,7 +1047,8 @@ async function main() {
       'brand.intake': { outcome: 'pass', envelopeHash: intake.envelopeHash },
       'catalog.list': { outcome: 'pass', count: catalog.totalCount },
       'design.compose': { outcome: 'pass', schemaHash: sha256(canonicalJson(composed.schema)) },
-      'design.preview': { outcome: 'typed', gap: 'portable-design-loop-unavailable', adapterCodePreserved: true, ...preview },
+      'design.preview': { outcome: 'pass', compositionId: preview.compositionId, version: preview.version, previewUrl: preview.previewUrl, hostPort: preview.host.port, schemaHash: preview.schemaHash,
+        compiled: Object.fromEntries(preview.previews.map(entry => [entry.framework, entry.compiled.sha256])) },
       'code.generate': { outcome: 'pass', reactHash: generated.artifact.contentHash, vueHash: generatedVue.artifact.contentHash },
       pipeline: { outcome: 'pass', contentHash: run.code.artifact.contentHash },
       'registry.snapshot': { outcome: 'pass', etag: snapshot.etag },
@@ -1003,10 +1062,10 @@ async function main() {
       'viz.render': { outcome: 'pass', contentHash: viz.contentHash },
       'artifact.certify': { outcome: 'pass', pillars: positive.pillars, negativeCode: 'OODS-V126' },
     };
-    assert.equal(Object.values(outcomes).filter(row => row.outcome === 'pass').length, 18);
-    assert.equal(Object.values(outcomes).filter(row => row.outcome === 'typed').length, 1);
+    assert.equal(Object.values(outcomes).filter(row => row.outcome === 'pass').length, 19);
+    assert.equal(Object.values(outcomes).filter(row => row.outcome === 'typed').length, 0);
     const bridge = await proveBridge(runtimeRoot, childEnvironment, manifest, expectedToolNames,
-      vizInput, viz.svgHash);
+      vizInput, viz.svgHash, operand("design.preview"));
     await assertLoopbackPortClosed(healthCanaryPort);
     calls = {
       bridge,
@@ -1046,6 +1105,10 @@ async function main() {
       "adapter stdin-close exit was signal-driven",
     );
     primaryTermination = { method: "stdin-close", ...stdinClose };
+    // The preview host the adapter started must not outlive it.
+    assert(previewHostPort, 'preview host port was never recorded');
+    await assertLoopbackPortClosed(previewHostPort);
+    primaryTermination.previewHostPortClosed = previewHostPort;
   } catch (error) {
     await primary.terminate("SIGTERM");
     throw error;

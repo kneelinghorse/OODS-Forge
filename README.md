@@ -66,7 +66,7 @@ You need Node.js 20.11.1 or newer and one of Claude Desktop, Claude Code or Curs
    ```
    It returns the spec, a `contentHash`, an `a11y` narrative and table, and `normalizedSpec`. Then `artifact.certify` with `{"spec": <that normalizedSpec>}` returns `coverage: "certified"`, `conformant: true` and `pillars: {"a11yEquivalence": "pass", "determinism": "pass", "contrast": "pass", "accuracy": "pass"}`, with `findings` for anything that failed and `accuracyRules` naming the rules that applied to this chart (four of the set apply to a plain bar chart).
 5. **Generate the app.** `code.generate` with `{"schemaRef": "<from step 3>", "framework": "react", "profile": "build"}` returns `artifact.files` (`src/GeneratedUI.tsx` and the screen's chart, `src/charts/payment-001.svg`), `artifact.contentHash` (`sha256:…`; the same inputs give the same hash), `artifact.dependencies` with exact versions, and a `validationReceipt` listing the checks that ran and, under `notChecked`, the ones that did not. `"framework": "vue"` gives the Vue file-set.
-6. **Look at it.** `repl` with `{"action": "render", "schemaRef": "<from step 3>", "apply": true, "output": {"compact": false}}` returns `html`: a complete document with the token CSS inline, titled `OODS Preview`, showing the composed screen's structure (its header, tabs, summaries and timelines) with placeholder values where live data would go. Ask the assistant to save it as `subscription-detail.html` and open it in your browser. To run the generated component in an app instead, create a Vite React project, pack the four packages from the bundle, install the tarballs, copy the artifact's files into `src/`, and mount `GeneratedUI` with the object's fields and its four action handlers as props:
+6. **Look at it.** `repl` with `{"action": "render", "schemaRef": "<from step 3>", "apply": true, "output": {"compact": false}}` returns `html`: a complete document with the token CSS inline, titled after the screen (`Subscription detail`), showing the composed screen's structure (its header, tabs, summaries and timelines); a field bound by name with no value shows `—` where live data would go. Ask the assistant to save it as `subscription-detail.html` and open it in your browser. To run the generated component in an app instead, create a Vite React project, pack the four packages from the bundle, install the tarballs, copy the artifact's files into `src/`, and mount `GeneratedUI` with the object's fields and its four action handlers as props:
    ```sh
    npm pack --ignore-scripts ~/forge-runtime/packages/tokens ~/forge-runtime/packages/component-contracts ~/forge-runtime/packages/component-styles ~/forge-runtime/packages/components-react
    npm install ./oods-*.tgz
@@ -78,7 +78,7 @@ Two of these calls return large results: `code.generate` (the whole file-set) an
 The default surface is 19 tools; `MCP_TOOLSET=all` advertises all 24. `health` reports the tool ledger's 24 entries by evidence tier, not the surface your client lists.
 <!-- /forge-claim:first-run-health -->
 
-`design.preview`, the live preview server, is not available from the bundle yet and returns `OODS-N019`; the rendered document in step 6 is the way to see a screen today. When a step took longer than it should, or read wrong, say so: [FEEDBACK.md](FEEDBACK.md).
+`design.preview` opens the composed screen as the generated React or Vue app actually running: `{"object": "Subscription", "context": "detail"}` returns one URL per framework, served on 127.0.0.1 by the preview host your adapter starts (or by the bridge), with the schema hash and the compiled module digests; open the URL in your browser. Without a reachable host it returns `OODS-N021`. When a step took longer than it should, or read wrong, say so: [FEEDBACK.md](FEEDBACK.md).
 
 ## LICENSING
 
@@ -119,6 +119,7 @@ pnpm --filter @oods/mcp-server run build
 <!-- /forge-claim:schema-ttl -->
 - `apply`: write-capable tools default to dry-run or preview behaviour. Set `apply: true` only when you want artifacts written or heavy outputs returned; `repl` (`action: render`) returns HTML only with `apply: true`.
 - `compact`: `pipeline` and `repl` (`action: render`) omit the token CSS by default and point at `tokens.build` instead. Pass `output.compact: false` for a self-contained document.
+- `payloadMode`: `code.generate` (`options.payloadMode: "file"`) and `repl` (`action: render`, `output.payloadMode: "file"`) write the artifact or the rendered document under `.oods/payloads/` beside the schema store and return file references instead of the bytes, for clients with a result-size cap. Inline is the default.
 - Trait names: `catalog.list` and `map` use canonical trait names such as `Stateful` or `Priceable`. `object` (`action: list`) accepts full or suffix-matched namespaced names such as `lifecycle/Stateful` or `Stateful`.
 - Overrides: when `design.compose` reports a low-confidence selection or a `reviewHint` (on the first run's sample call that is the `metadata` slot, at 0.40), pin only that slot to one of its listed candidates with `preferences.componentOverrides`, for example `{"object": "Subscription", "context": "detail", "preferences": {"componentOverrides": {"metadata": "TagSummary"}}}`; a pinned slot comes back at confidence 1.0 with the reason "explicitly pinned".
 - Project defaults: a `.oodsrc` JSON file in your project root sets defaults for `pipeline`, `design.compose` and `code.generate` (`{ "framework": "vue", "styling": "tailwind", "typescript": false }`); explicit parameters win, and a missing or invalid file is ignored.
@@ -130,7 +131,7 @@ Full contracts: [docs/mcp/Tool-Specs.md](docs/mcp/Tool-Specs.md) and [docs/api/R
 
 Generated from `packages/mcp-server/src/tools/registry.json`, input schemas and the tool capability ledger by `pnpm docs:claims`. Proof tiers describe source evidence location; they do not certify execution.
 
-**Auto-registered (19 tools)** — available by default. The four action families (`map`, `schema`, `object`, `repl`) use the top-level `action` parameter.
+**Auto-registered (19 tools)** — available by default. The five action families (`design.preview`, `map`, `schema`, `object`, `repl`) use the top-level `action` parameter.
 
 | Tool / actions | Source evidence tier |
 | --- | --- |
@@ -141,7 +142,7 @@ Generated from `packages/mcp-server/src/tools/registry.json`, input schemas and 
 | `catalog.list` | product-reality |
 | `code.generate` | product-reality |
 | `design.compose` | product-reality |
-| `design.preview` | product-reality |
+| `design.preview` (`render`/`compare`/`edit`/`versions`) | product-reality |
 | `pipeline` | product-reality |
 | `health` | product-reality |
 | `registry.snapshot` | product-reality |

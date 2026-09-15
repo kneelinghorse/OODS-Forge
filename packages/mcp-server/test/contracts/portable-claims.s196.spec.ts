@@ -39,7 +39,7 @@ describe('s196 portable claims at the public tool boundary', () => {
       'brand.apply': ['ships the brand source', 'review kit', 'OODS-N020'],
       'code.generate': ['readiness attestation', 'shipped package bytes', 'OODS-N015'],
       pipeline: ['readiness attestation', 'shipped package bytes', 'OODS-N015'],
-      'design.preview': ['OODS-N019', 'retryable', 'data'],
+      'design.preview': ['OODS-N021', 'retryable', 'data'],
     }[tool]!;
     for (const phrase of expected) {
       expect(descriptions[tool]).toContain(phrase);
@@ -71,11 +71,14 @@ describe('s196 portable claims at the public tool boundary', () => {
     expect(descriptions['brand.intake']).toContain('in memory');
   });
 
-  it('keeps the unavailable preview code retryable before any receipt work', async () => {
+  it('keeps the unreachable preview host code retryable before any record is written', async () => {
+    vi.stubEnv('OODS_PREVIEW_HOST_URL', '');
+    await expect(preview(wire('design.preview', 'input', { object: 'Subscription', context: 'card' }))).rejects.toMatchObject({ opiCode: 'OODS-N021', details: { dependency: 'preview-host' } });
     vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('dependency absent')));
-    await expect(preview(wire('design.preview', 'input', { object: 'Subscription', context: 'card' }))).rejects.toMatchObject({ opiCode: 'OODS-N019' });
-    expect(getDefinition('OODS-N019')?.retryable).toBe(true);
-    expect(descriptions['design.preview']).toContain('retryable flag and data');
+    await expect(preview(wire('design.preview', 'input', { object: 'Subscription', context: 'card' }), { previewHostUrl: 'http://127.0.0.1:1' })).rejects.toMatchObject({ opiCode: 'OODS-N021', details: { dependency: 'preview-host', hostUrl: 'http://127.0.0.1:1' } });
+    expect(getDefinition('OODS-N021')?.retryable).toBe(true);
+    expect(getDefinition('OODS-N019')).toBeUndefined();
+    expect(descriptions['design.preview']).toContain('OODS-N021, retryable, with the host details in data');
   });
 
   it.each(['react', 'vue'] as const)('retains real host %s generation while refusing a source-pruned root without attestation', async (framework) => {

@@ -139,6 +139,30 @@
         "type": "string"
       }
     },
+    "payload": {
+      "type": "object",
+      "description": "payloadMode file: where the large output was written instead of being returned inline; the directory is beside the saved-schema store (<store>/../payloads/<tool>-<digest>).",
+      "required": ["mode", "directory", "bytes", "files"],
+      "properties": {
+        "mode": { "const": "file" },
+        "directory": { "type": "string", "description": "Absolute directory holding the written files." },
+        "bytes": { "type": "integer", "minimum": 0, "description": "Total bytes written." },
+        "files": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["path", "bytes", "sha256"],
+            "properties": {
+              "path": { "type": "string", "description": "Relative POSIX path inside the directory." },
+              "bytes": { "type": "integer", "minimum": 0 },
+              "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
     "output": {
       "type": "object",
       "description": "Echoes normalized output controls used by the renderer.",

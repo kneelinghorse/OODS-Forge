@@ -1,6 +1,7 @@
 import type { UiElement, UiSchema } from '../schemas/generated.js';
 import type { ComposedObject } from '../objects/trait-composer.js';
 import { fieldLabel, fieldHelp } from './label-generator.js';
+import { isInternalField } from './internal-fields.js';
 import { VIZ_CONTROL_IDS } from '@oods/component-contracts';
 
 const controls = new Set(['Input', 'Select', 'Textarea', 'DatePicker', 'Checkbox', 'Switch', 'Toggle', 'StatusSelector', 'CancellationForm', 'BillingAmountInput', 'BillingIntervalSelector']);
@@ -35,6 +36,12 @@ export function reconcileFormDetail(schema: UiSchema, context: string, composed:
         node.props = { field: titleField };
       }
       node.children = node.children?.filter(child => !(controls.has(child.component) && !owners[child.component] && owned.has(String(child.props?.field))));
+      // Internal fields (derived counts, version counters, hint copy) are not edited by hand.
+      node.children = node.children?.filter(child => !(controls.has(child.component) && typeof child.props?.field === 'string' && isInternalField(child.props.field, fields)));
+      // The object's own scalar role field is the role editor; a membership Role Assignment beside it is a duplicate Role field.
+      node.children = node.children?.filter(child => !(child.component === 'RoleAssignmentForm' && fieldEditors.has('role')));
+      // The Labelled heading group only echoes the label input above the same form.
+      node.children = node.children?.filter(child => !(child.component === 'FormLabelGroup' && !child.children?.length && fields[String(child.props?.labelField ?? 'label')]));
       const field = node.props?.field;
       const entry = typeof field === 'string' ? schema.objectSchema?.[field] : undefined;
       if (entry && controls.has(node.component)) {
@@ -44,7 +51,9 @@ export function reconcileFormDetail(schema: UiSchema, context: string, composed:
         if (node.component === 'Textarea' && !/description|reason|notes|body|content|instructions/.test(String(field))) node.component = 'Input';
         if (node.component === 'DatePicker' && !['date', 'datetime'].includes(type)) node.component = 'Input';
         if (entry.enum?.length && ['Input', 'Textarea'].includes(node.component)) { node.component = 'Select'; node.props = { field }; }
-        node.props = { ...node.props, label: node.props?.label === entry.description || !node.props?.label ? fieldLabel(field as string) : node.props.label, ...(entry.description ? { help: fieldHelp(field as string, entry.description) } : {}) };
+        // A Labelled object's `label` is its display name; the form calls it that.
+        const defaultLabel = field === 'label' && !fields.name && !fields.title && !fields.display_name ? 'Name' : fieldLabel(field as string);
+        node.props = { ...node.props, label: node.props?.label === entry.description || !node.props?.label || node.props.label === fieldLabel(field as string) ? defaultLabel : node.props.label, ...(entry.description ? { help: fieldHelp(field as string, entry.description) } : {}) };
         if (entry.type.replace(/\?$/, '') === 'datetime' && ['Input', 'DatePicker'].includes(node.component)) {
           node.component = 'Input'; node.props.type = 'datetime-local';
         }
@@ -141,13 +150,14 @@ export function reconcileFormDetail(schema: UiSchema, context: string, composed:
       covered.add(labelField);
       if (!header && !screen.children?.some(node => node.component === 'DetailHeader')) screen.children = [{ id: `${screen.id}-record-title`, component: 'DetailHeader', props: { titleField: labelField, headingLevel: 2 } }, ...(screen.children ?? [])];
     }
-    const remaining = Object.keys(fields).filter(name => isScalar(name) && summaryField(name) && !covered.has(name));
+    const remaining = Object.keys(fields).filter(name => isScalar(name) && summaryField(name) && !covered.has(name) && !isInternalField(name, fields));
     if (remaining.length && !tabs) {
       tabs = { id: `${screen.id}-record-tabs`, component: 'Tabs', children: [] };
       screen.children = [...(screen.children ?? []), { id: `${screen.id}-record-body`, component: 'Card', children: [tabs] }];
     }
     if (remaining.length && tabs) {
-      tabs.children = [{ id: `${tabs.id}-read-fields`, component: 'Stack', props: { label: 'Details' }, children: remaining.map(name => fieldRow(name, `${tabs!.id}-${name}`)) }, ...(tabs.children ?? [])];
+      // The trait panels (Billing, Status & History) are the record's own content and come first; the generic read-only summary follows them.
+      tabs.children = [...(tabs.children ?? []), { id: `${tabs.id}-read-fields`, component: 'Stack', props: { label: 'Details' }, children: remaining.map(name => fieldRow(name, `${tabs!.id}-${name}`)) }];
     }
     if (!tabs?.children) continue;
     tabs.props = { ...tabs.props, ariaLabel: tabs.props?.ariaLabel ?? 'Record details' };

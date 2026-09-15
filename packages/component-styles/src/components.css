@@ -1114,6 +1114,25 @@
   cursor: not-allowed;
 }
 
+/* Narrow widths: the record count and range share the first line; the page controls stay together on the second. */
+@media (max-width: 600px) {
+  :where([data-oods-component='PaginationBar']) {
+    display: grid;
+    grid-template-columns: auto auto auto minmax(0, 1fr);
+    grid-template-areas: 'count count range range' 'prev pages next current';
+    align-items: center;
+    justify-items: start;
+    row-gap: var(--cmp-spacing-stack-xs, 0.5rem);
+  }
+  :where([data-oods-component='PaginationBar']) [data-pagination-count] { grid-area: count; }
+  :where([data-oods-component='PaginationBar']) [data-pagination-range] { grid-area: range; justify-self: end; }
+  :where([data-oods-component='PaginationBar']) [data-pagination-prev] { grid-area: prev; }
+  :where([data-oods-component='PaginationBar']) .oods-pagination-bar__pages { grid-area: pages; }
+  :where([data-oods-component='PaginationBar']) [data-pagination-next] { grid-area: next; }
+  :where([data-oods-component='PaginationBar']) [data-pagination-current] { grid-area: current; }
+  :where([data-oods-component='PaginationBar']) label { grid-column: 1 / -1; }
+}
+
 :where([data-oods-component='RelativeTimestamp']) {
   color: var(--cmp-text-muted, GrayText);
   font-size: var(--sys-text-size-sm, 0.875rem);

@@ -1,0 +1,46 @@
+- main:
+  - paragraph: SUBSCRIPTION WORKSPACE
+  - heading "Subscriptions" [level=1]
+  - navigation "Workflow screens":
+    - button "List"
+    - button "Detail"
+    - button "Edit"
+    - button "Timeline"
+  - region "Subscription screen":
+    - search "Search":
+      - text: Search
+      - searchbox "Search"
+    - text: Status
+    - combobox "Status":
+      - option "All states"
+      - option "Future"
+      - option "Trialing"
+      - option "Active" [selected]
+      - option "Paused"
+      - option "Pending Cancellation"
+      - option "Past Due"
+      - option "Unpaid"
+      - option "Terminated"
+    - text: Sort
+    - combobox "Sort":
+      - option "Name A–Z" [selected]
+      - option "Name Z–A"
+    - tablist "Archive views":
+      - tab "Active" [selected]
+      - tab "Archived"
+    - tabpanel "Active":
+      - list "Records":
+        - listitem:
+          - 'button "Cedar Plan Status: Active Sep 1, 2026, 12:00 PM $99.00 · monthly"':
+            - text: Cedar Plan Active
+            - time: Sep 1, 2026, 12:00 PM
+            - text: $99.00 · monthly
+    - navigation "Pagination":
+      - text: 1 record Showing 1–1 of 1
+      - button "Previous page" [disabled]: ‹
+      - list:
+        - listitem:
+          - button "Page 1": "1"
+      - button "Next page" [disabled]: ›
+      - text: Page 1 of 1
+  - status

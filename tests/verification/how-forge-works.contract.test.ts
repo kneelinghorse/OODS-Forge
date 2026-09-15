@@ -68,7 +68,7 @@ describe("how Forge works narrative truth", () => {
       health: ["defaultScope"], "dashboard.render": ["OODS-V130", "OODS-V137"],
       "viz.render": ["echarts-primary-family"], repl: ["OODS-W001", "OODS-W002"],
       "code.generate": ["hash-bound-not-re-executed"], pipeline: ["hash-bound-not-re-executed"],
-      "design.preview": ["127.0.0.1:4477", "OODS-N019"],
+      "design.preview": ["127.0.0.1", "OODS-N021"],
     };
     for (const [tool, phrases] of Object.entries(pins)) for (const phrase of phrases) {
       expect(html).toContain(phrase);
@@ -202,9 +202,10 @@ describe("how Forge works narrative truth", () => {
     const receipt = JSON.parse(read(ledger.portableExecution.path));
     expect(portable).toContain(`${receipt.calls.primarySequenceCount} calls across all ${receipt.tools.count} advertised tools`);
     expect(portable).toContain(`${receipt.calls.totalAcrossProcesses} adapter calls across two processes`);
-    // s200-m04 ships the brand source: brand.apply executes from the archive; design.preview stays typed.
+    // s200-m04 ships the brand source and s201-m01 the preview host: both execute from the archive.
     expect(receipt.calls.outcomes["brand.apply"].outcome).toBe("pass");
-    expect(receipt.calls.outcomes["design.preview"].outcome).toBe("typed");
+    expect(receipt.calls.outcomes["design.preview"].outcome).toBe("pass");
+    expect(portable).toContain("OODS-N021");
     for (const [tool, outcome] of Object.entries(receipt.calls.outcomes) as Array<[string, { outcome: string; code?: string }]>) {
       if (outcome.outcome !== "typed") continue;
       expect(portable, tool).toContain(outcome.code);

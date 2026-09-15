@@ -9,6 +9,7 @@ import { isAllowed, tryAcquireSlot, releaseSlot, tryConsumeToken, timeoutMsFor }
 import { resolveToolRegistry } from './tools/registry.js';
 import { isToolError } from './errors/tool-error.js';
 import { LEGACY_CODE_MAP } from './errors/registry.js';
+import { readToolContext, type ToolContext } from './lib/tool-context.js';
 import { initTelemetry, shutdownTelemetry, startToolSpan, recordSpanError, recordAjvFailure } from './telemetry/otel.js';
 
 type ResponseMeta = { requestId: string; latency: number; timestamp: string };
@@ -17,11 +18,11 @@ function buildMeta(requestId: string, startMs: number): ResponseMeta {
 }
 
 // Tool registry
-const tools: Record<string, { handle: (input: any) => Promise<any>; inputSchema: object; outputSchema: object }> = {};
+const tools: Record<string, { handle: (input: any, context?: ToolContext) => Promise<any>; inputSchema: object; outputSchema: object }> = {};
 
 function register(
   name: string,
-  mod: { handle: (input: any) => Promise<any> },
+  mod: { handle: (input: any, context?: ToolContext) => Promise<any> },
   inputSchema: object,
   outputSchema: object
 ) {
@@ -220,7 +221,8 @@ async function stdioLoop() {
       const startMs = Date.now();
       try {
         const msg = JSON.parse(line);
-        const { id, tool, input, role: roleRaw } = msg as { id?: string | number; tool: string; input: unknown; role?: string };
+        const { id, tool, input, role: roleRaw, context: rawContext } = msg as { id?: string | number; tool: string; input: unknown; role?: string; context?: unknown };
+        const toolContext = readToolContext(rawContext);
         messageId = id;
         if (!tool || !tools[tool]) {
           process.stdout.write(JSON.stringify({ id, error: { ...err(ERROR_CODES.UNKNOWN_TOOL, `Unknown tool: ${tool}`), code: LEGACY_CODE_MAP.UNKNOWN_TOOL }, meta: buildMeta(requestId, startMs) }) + '\n');
@@ -264,7 +266,7 @@ async function stdioLoop() {
           let result: unknown;
           try {
             result = await Promise.race([
-              reg.handle(input),
+              reg.handle(input, toolContext),
               new Promise<never>((_, reject) => setTimeout(() => reject(Object.assign(err(ERROR_CODES.TIMEOUT, `Timeout after ${timeout}ms`, { timeoutMs: timeout }), { code: LEGACY_CODE_MAP.TIMEOUT })), timeout))
             ]);
           } catch (handlerErr) {

@@ -79,7 +79,7 @@ test('s196 adapter 0.3 preserves native error fields through the actual tools/ca
     const initialized = await request('initialize', {
       protocolVersion: '2024-11-05', capabilities: {}, clientInfo: { name: 's196-native-errors', version: '1.0.0' },
     });
-    assert.equal(initialized.serverInfo.version, '0.3.0');
+    assert.equal(initialized.serverInfo.version, '0.4.0');
     child.stdin.write(JSON.stringify({ jsonrpc: '2.0', method: 'notifications/initialized' }) + '\n');
     const call = argumentsValue => request('tools/call', { name: 'design_preview', arguments: argumentsValue });
 

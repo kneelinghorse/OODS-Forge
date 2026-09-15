@@ -1,0 +1,56 @@
+- main:
+  - paragraph: SUBSCRIPTION WORKSPACE
+  - heading "Team annual" [level=1]
+  - text: Local workspace
+  - navigation "Workflow screens":
+    - button "List"
+    - button "Detail"
+    - button "Edit"
+    - button "Timeline"
+  - region "Subscription screen":
+    - text: Team annual $19.99 · yearly
+    - list "Lifecycle history":
+      - listitem:
+        - strong: Billing Cycle Started
+        - time: Sep 1, 2026, 12:00 PM
+        - paragraph: Record created
+      - listitem:
+        - region "Payment event":
+          - strong: Last payment
+          - time: Sep 1, 2026, 12:00 PM
+          - paragraph: $19.99 · yearly
+      - listitem:
+        - strong: Pending Cancellation
+        - time: Sep 8, 2026, 12:00 PM
+        - paragraph: Budget changed for next year
+      - listitem:
+        - region "Payment event":
+          - strong: Next payment
+          - time: Oct 1, 2026, 12:00 PM
+          - paragraph: $19.99 · yearly
+    - article "State transitions":
+      - heading "State transitions" [level=3]
+      - list:
+        - listitem:
+          - strong: Billing Cycle Started · Active
+          - paragraph:
+            - time: Sep 1, 2026, 12:00 PM
+          - paragraph: "Reason: Record created"
+        - listitem:
+          - strong: Pending Cancellation · Active → Pending Cancellation
+          - paragraph:
+            - time: Sep 8, 2026, 12:00 PM
+          - paragraph: "Reason: Budget changed for next year"
+    - article "Cancellation event":
+      - heading "Cancellation event" [level=3]
+      - list:
+        - listitem:
+          - strong: Cancellation requested
+          - paragraph:
+            - time: Sep 8, 2026, 12:00 PM
+          - paragraph: "Reason: Budget changed for next year"
+          - paragraph: "Code: Customer Request"
+    - article "Archive events":
+      - heading "Archive events" [level=3]
+      - paragraph: No events recorded.
+  - status: Changes saved in this session.

@@ -95,17 +95,20 @@ describe('generated Forge claims remain tied to their measured sources (s196)', 
     expect(facts.portableTools).toBe(portable.length);
     const typedRows = portable.filter((row: { portableOutcome?: { outcome?: string } }) => row.portableOutcome?.outcome === 'typed');
     expect(facts).toMatchObject({ portablePass: portable.length - typedRows.length, portableTyped: typedRows.length, releaseCells: 42, releaseEqual: 42, scenarios: 110 });
-    expect(facts).toMatchObject({ portablePass: 18, portableTyped: 1, portableLimits: 'design.preview (OODS-N019)' });
+    // s201-m01: the preview host ships, so no advertised tool keeps a typed portable limit.
+    expect(facts).toMatchObject({ portablePass: 19, portableTyped: 0, portableLimits: '', portableOutcomeSentence: 'All 19 return the exercised result; no typed dependency limit remains.', portableReadmeSentence: '19 results and no typed dependency limit.' });
+    expect(documents['docs/how-forge-works.html']).toContain('All 19 return the exercised result; no typed dependency limit remains.');
     for (const file of ['docs/how-forge-works.html', 'packages/mcp-server/README.md', 'packages/mcp-bridge/README.md']) {
-      expect(documents[file]).toContain('design.preview (OODS-N019)');
+      expect(documents[file]).not.toContain('OODS-N019');
       expect(documents[file]).not.toContain('OODS-N020');
       expect(documents[file]).toContain('42');
       expect(documents[file]).not.toContain('loses the native error code');
       expect(documents[file]).not.toContain('readiness evidence files are omitted');
     }
-    const changed = renderDocuments({ ...facts, portablePass: 16, portableTyped: 3, portableTypedPhrase: 'retain typed dependency limits', releaseCells: 40 }, templates, documents);
+    for (const file of ['packages/mcp-server/README.md', 'packages/mcp-bridge/README.md']) expect(documents[file]).toContain('19 results and no typed dependency limit.');
+    const changed = renderDocuments({ ...facts, portableOutcomeSentence: '16 return the exercised result and 3 retain typed dependency limits: a (OODS-X001), b (OODS-X002) and c (OODS-X003).', releaseCells: 40 }, templates, documents);
     expect(changed['docs/how-forge-works.html']).toContain('16 return the exercised result and 3 retain typed dependency limits');
-    expect(documents['docs/how-forge-works.html']).toContain('18 return the exercised result and 1 retains a typed dependency limit');
+    expect(documents['docs/how-forge-works.html']).not.toContain('retains a typed dependency limit');
     expect(changed['packages/mcp-server/README.md']).toContain('40 cells');
   });
 
