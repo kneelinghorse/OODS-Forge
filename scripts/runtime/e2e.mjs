@@ -691,7 +691,7 @@ async function proveBridge(runtimeRoot, env, manifest, expectedToolNames, input,
       const page = await fetch(entry.url, { signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS) });
       assert(page.ok, `bridge preview page ${entry.url}`);
       const html = await page.text();
-      assert(html.includes('<script type="importmap">') && html.includes(`data-oods-preview="${bridgePreview.key}"`), 'bridge preview page shape');
+      assert(html.includes('data-oods-lineage="true"') && html.includes(`<code>${bridgePreview.compositionId}</code>`), 'bridge preview page lineage');
       const module = await fetch(entry.moduleUrl, { signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS) });
       assert(module.ok, `bridge preview module ${entry.moduleUrl}`);
       assert.equal(`sha256:${sha256(await module.text())}`, entry.compiled.sha256, 'bridge compiled module digest');
@@ -703,7 +703,7 @@ async function proveBridge(runtimeRoot, env, manifest, expectedToolNames, input,
     assert(termination.code === 0 || termination.signal === 'SIGTERM');
     await assertLoopbackPortClosed(port);
     return { revision: health.revision, tools: tools.tools, svgHash: adapterSvgHash, parity: true, termination,
-      preview: { key: bridgePreview.key, hostPort: bridgePreview.host.port, compiled: Object.fromEntries(bridgePreview.previews.map(entry => [entry.framework, entry.compiled.sha256])) } };
+      preview: { compositionId: bridgePreview.compositionId, version: bridgePreview.version, hostPort: bridgePreview.host.port, compiled: Object.fromEntries(bridgePreview.previews.map(entry => [entry.framework, entry.compiled.sha256])) } };
   } finally {
     if (child.exitCode === null && child.signalCode === null) child.kill('SIGKILL');
     await exited;
@@ -978,7 +978,9 @@ async function main() {
     // The adapter starts the preview host lazily for this call and reports its port in the result.
     const preview = await primary.callTool("design_preview", operand("design.preview"));
     assert.equal(preview.status, 'ok');
-    assert.match(preview.previewUrl, /^http:\/\/127\.0\.0\.1:\d+\/preview\/[a-f0-9]{16}\?framework=react$/);
+    assert.match(preview.previewUrl, /^http:\/\/127\.0\.0\.1:\d+\/preview\/cmp-[a-f0-9]{12}\/1\?framework=react&brand=A&theme=light$/);
+    assert.equal(preview.version, 1); assert.equal(preview.parentVersion, null); assert.equal(preview.operation, 'compose');
+    assert.equal(preview.head, manifest.commit, 'the version records the bundle head');
     assert(Number.isInteger(preview.host.port) && preview.host.port > 0, 'preview host port must be reported');
     assert.equal(preview.host.url, `http://127.0.0.1:${preview.host.port}`);
     assert.equal(preview.previews.length, 2, 'both frameworks compile from the archive');
@@ -987,12 +989,16 @@ async function main() {
     previewHostPort = preview.host.port;
     const previewStatus = await (await fetch(`${preview.host.url}/preview/status`, { signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS) })).json();
     assert.equal(previewStatus.running, true);
-    assert.equal(path.resolve(previewStatus.previewsDir), path.resolve(preview.host.previewsDir));
+    assert.equal(path.resolve(previewStatus.compositionsDir), path.resolve(preview.host.compositionsDir));
     for (const entry of preview.previews) {
       const page = await fetch(entry.url, { signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS) });
       assert(page.ok, `preview page ${entry.url}`);
-      const html = await page.text();
-      assert(html.includes('<script type="importmap">') && html.includes('data-theme="light" data-brand="A"') && html.includes(`data-oods-preview="${preview.key}"`), 'preview page shape');
+      const shell = await page.text();
+      assert(shell.includes('data-oods-lineage="true"') && shell.includes(`<code>${preview.compositionId}</code>`) && shell.includes('<code>compose</code>') && shell.includes(`<code>${manifest.commit}</code>`), 'preview page lineage');
+      const app = await fetch(entry.appUrl, { signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS) });
+      assert(app.ok, `preview app ${entry.appUrl}`);
+      const html = await app.text();
+      assert(html.includes('<script type="importmap">') && html.includes('data-theme="light" data-brand="A"') && html.includes(`data-oods-preview="${preview.compositionId}" data-oods-preview-version="1"`), 'preview app shape');
       const module = await fetch(entry.moduleUrl, { signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS) });
       assert(module.ok, `preview module ${entry.moduleUrl}`);
       const code = await module.text();
@@ -1041,7 +1047,7 @@ async function main() {
       'brand.intake': { outcome: 'pass', envelopeHash: intake.envelopeHash },
       'catalog.list': { outcome: 'pass', count: catalog.totalCount },
       'design.compose': { outcome: 'pass', schemaHash: sha256(canonicalJson(composed.schema)) },
-      'design.preview': { outcome: 'pass', key: preview.key, previewUrl: preview.previewUrl, hostPort: preview.host.port, schemaHash: preview.schemaHash,
+      'design.preview': { outcome: 'pass', compositionId: preview.compositionId, version: preview.version, previewUrl: preview.previewUrl, hostPort: preview.host.port, schemaHash: preview.schemaHash,
         compiled: Object.fromEntries(preview.previews.map(entry => [entry.framework, entry.compiled.sha256])) },
       'code.generate': { outcome: 'pass', reactHash: generated.artifact.contentHash, vueHash: generatedVue.artifact.contentHash },
       pipeline: { outcome: 'pass', contentHash: run.code.artifact.contentHash },

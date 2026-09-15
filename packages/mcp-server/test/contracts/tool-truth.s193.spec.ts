@@ -43,7 +43,7 @@ describe('tool truth derives claims without upgrading source references to runti
       expect(ledger.rows.flatMap((row: any) => row.portableLimits)).toEqual([]);
       expect(ledger.rows.find((row: any) => row.name === 'design.preview').portableOutcome).toEqual({ outcome: 'pass', receiptSha256: execution.proof.sha256 });
       expect(execution.outcomes['design.preview']).toMatchObject({ outcome: 'pass' });
-      expect(execution.outcomes['design.preview'].previewUrl).toMatch(/^http:\/\/127\.0\.0\.1:\d+\/preview\/[a-f0-9]{16}\?framework=react$/);
+      expect(execution.outcomes['design.preview'].previewUrl).toMatch(/^http:\/\/127\.0\.0\.1:\d+\/preview\/cmp-[a-f0-9]{12}\/1\?framework=react&brand=A&theme=light$/);
       expect(Object.keys(execution.outcomes['design.preview'].compiled).sort()).toEqual(['react', 'vue']);
     }
     if (ledger.mode === 's200') {

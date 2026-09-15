@@ -49,7 +49,7 @@ try {
     const started = performance.now();
     const response = await fetch(`${base}/run`, { method: 'POST', headers: { 'content-type': 'application/json', 'x-bridge-token': 's201-mount-token' },
       body: JSON.stringify({ tool: 'design_preview', input: { object: testCase.object, context: testCase.context, preferences: { brand: testCase.brand, theme: testCase.theme } } }) });
-    const run = await response.json() as { ok: boolean; result: { key: string; schemaHash: string; previews: Array<{ framework: 'react' | 'vue'; url: string; compiled: { sha256: string; bytes: number } }>; host: { port: number } } };
+    const run = await response.json() as { ok: boolean; result: { compositionId: string; version: number; schemaHash: string; previews: Array<{ framework: 'react' | 'vue'; url: string; appUrl: string; compiled: { sha256: string; bytes: number } }>; host: { port: number } } };
     assert(response.ok && run.ok, JSON.stringify(run).slice(0, 800));
     assert.equal(run.result.host.port, port, 'the bridge hosts the preview on its own port');
     for (const preview of run.result.previews) {
@@ -59,7 +59,7 @@ try {
       page.on('console', message => { if (message.type() === 'error') errors.push(`console: ${message.text()}`); });
       const failed: string[] = [];
       page.on('requestfailed', request => failed.push(request.url()));
-      await page.goto(preview.url, { waitUntil: 'networkidle' });
+      await page.goto(preview.appUrl, { waitUntil: 'networkidle' });
       await page.waitForFunction(() => document.documentElement.dataset.oodsPreviewMounted === 'true', undefined, { timeout: 15_000 });
       await page.locator('[data-oods-component]').first().waitFor({ timeout: 15_000 });
       const observed = await page.evaluate(() => ({
@@ -78,8 +78,8 @@ try {
       assert.deepEqual(failed, [], `${name}: failed requests ${failed.join(', ')}`);
       assert(observed.components > 0);
       assert.deepEqual(observed.html, { theme: testCase.theme, brand: testCase.brand });
-      assert.deepEqual((observed.identity as { key: string; framework: string; brand: string; theme: string }), { ...(observed.identity as object), key: run.result.key, framework: preview.framework, brand: testCase.brand, theme: testCase.theme });
-      receipts.push({ ...testCase, framework: preview.framework, url: preview.url, key: run.result.key, schemaHash: run.result.schemaHash, compiled: preview.compiled, observed, errors, failedRequests: failed, screenshot: `${name}.png`, durationMs: Math.round(performance.now() - started) });
+      assert.deepEqual((observed.identity as { compositionId: string; version: number; framework: string; brand: string; theme: string }), { ...(observed.identity as object), compositionId: run.result.compositionId, version: run.result.version, framework: preview.framework, brand: testCase.brand, theme: testCase.theme });
+      receipts.push({ ...testCase, framework: preview.framework, url: preview.url, appUrl: preview.appUrl, compositionId: run.result.compositionId, version: run.result.version, schemaHash: run.result.schemaHash, compiled: preview.compiled, observed, errors, failedRequests: failed, screenshot: `${name}.png`, durationMs: Math.round(performance.now() - started) });
       console.log(`${name}: ${observed.components} components, bg ${observed.bodyBackground}, ${preview.compiled.bytes} bytes compiled`);
     }
   }

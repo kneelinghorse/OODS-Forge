@@ -90,24 +90,28 @@ describe('the stdio adapter hosts the running-app preview (s201-m01)', () => {
     expect(health.status).toBe('ok');
     // Lazy: nothing about a preview host has happened yet.
     expect(rpc.stderr.join('')).not.toContain('preview host started');
-    expect(fs.existsSync(path.join(store, 'previews'))).toBe(false);
+    expect(fs.existsSync(path.join(store, 'compositions'))).toBe(false);
 
     const preview = await rpc.call('design_preview', { object: 'Subscription', context: 'card', framework: 'react' });
     expect(preview.status).toBe('ok');
     expect(Number.isInteger(preview.host.port) && preview.host.port > 0).toBe(true);
     expect(preview.host.url).toBe(`http://127.0.0.1:${preview.host.port}`);
-    expect(preview.previewUrl).toBe(`${preview.host.url}/preview/${preview.key}?framework=react`);
-    expect(preview.host.previewsDir).toBe(path.join(store, 'previews'));
+    expect(preview.compositionId).toMatch(/^cmp-[a-f0-9]{12}$/);
+    expect(preview.previewUrl).toBe(`${preview.host.url}/preview/${preview.compositionId}/1?framework=react&brand=A&theme=light`);
+    expect(preview.host.compositionsDir).toBe(path.join(store, 'compositions'));
     expect(rpc.stderr.join('')).toContain(`preview host started on ${preview.host.url}`);
     const page = await fetch(preview.previewUrl);
     expect(page.status).toBe(200);
-    expect(await page.text()).toContain(`data-oods-preview="${preview.key}"`);
+    expect(await page.text()).toContain('data-oods-lineage="true"');
+    const app = await fetch(preview.previews[0].appUrl);
+    expect(await app.text()).toContain(`data-oods-preview="${preview.compositionId}" data-oods-preview-version="1"`);
     const status = await (await fetch(`${preview.host.url}/preview/status`)).json();
-    expect(status).toMatchObject({ running: true, previewsDir: path.join(store, 'previews'), platform: { supported: true } });
+    expect(status).toMatchObject({ running: true, compositionsDir: path.join(store, 'compositions'), platform: { supported: true } });
 
     // A second call reuses the same host.
-    const again = await rpc.call('design_preview', { object: 'Subscription', context: 'card', framework: 'vue' });
+    const again = await rpc.call('design_preview', { compositionId: preview.compositionId, framework: 'vue' });
     expect(again.host.port).toBe(preview.host.port);
+    expect(again.version).toBe(1);
     expect(rpc.stderr.join('').match(/preview host started/g)).toHaveLength(1);
 
     const exit = await rpc.exit();

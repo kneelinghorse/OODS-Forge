@@ -317,6 +317,7 @@ const registry: ReadonlyMap<string, ErrorDefinition> = new Map<string, ErrorDefi
   // ── Validation: Brand/Map ───────────────────────────────────────────────
   ['OODS-V200', { code: 'OODS-V200', category: 'validation', message: 'Map validation failed', retryable: true }],
   ['OODS-V201', { code: 'OODS-V201', category: 'validation', message: 'map.apply input invalid', retryable: true }],
+  ['OODS-V203', { code: 'OODS-V203', category: 'validation', message: 'Composition id or version is not well-formed', retryable: false }],
   ['OODS-V202', { code: 'OODS-V202', category: 'validation', message: 'structuredData.fetch input invalid', retryable: true }],
 
   // ── Not Found ───────────────────────────────────────────────────────────
@@ -339,6 +340,7 @@ const registry: ReadonlyMap<string, ErrorDefinition> = new Map<string, ErrorDefi
   ['OODS-N017', { code: 'OODS-N017', category: 'not_found', message: 'Generated artifact envelope missing', retryable: false }],
   ['OODS-N018', { code: 'OODS-N018', category: 'not_found', message: 'HTML Tailwind styling unavailable', retryable: false }],
 
+  ['OODS-N022', { code: 'OODS-N022', category: 'not_found', message: 'Composition or version not found in the store', retryable: false }],
   ['OODS-N021', { code: 'OODS-N021', category: 'not_found', message: 'design.preview: no preview host is reachable; call through the HTTP bridge or the stdio adapter, or set OODS_PREVIEW_HOST_URL', retryable: true }],
   ['OODS-N020', { code: 'OODS-N020', category: 'not_found', message: 'brand.apply: canonical brand source is not shipped in this runtime', retryable: false }],
 

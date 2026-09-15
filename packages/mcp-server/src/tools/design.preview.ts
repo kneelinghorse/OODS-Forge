@@ -3,7 +3,7 @@ import path from 'node:path';
 import { validateGeneratedArtifact } from '../codegen/artifact-envelope.js';
 import { seedPreviewModel } from '../codegen/preview-model.js';
 import { ToolError } from '../errors/tool-error.js';
-import { previewKey, readForgeHead, resolvePreviewStoreDir, writePreviewRecord, type PreviewBrand, type PreviewFramework, type PreviewRecord, type PreviewTheme } from '../lib/preview-store.js';
+import { attachToVersion, latestVersion, readVersion, resolveCompositionsDir, versionPath, type CompositionVersion, type PreviewBrand, type PreviewFramework, type PreviewTheme } from '../lib/composition-store.js';
 import type { ToolContext } from '../lib/tool-context.js';
 import type { DesignPreviewInputSchema, DesignPreviewOutputSchema } from '../schemas/generated.js';
 import { handle as generate } from './code.generate.js';
@@ -16,7 +16,7 @@ const digest = (value: string) => `sha256:${createHash('sha256').update(value).d
 
 type HostStatus = {
   running: boolean;
-  previewsDir: string;
+  compositionsDir: string;
   platform: { supported: boolean; os: string; arch: string; reason?: string };
 };
 
@@ -42,71 +42,87 @@ async function probeHost(hostUrl: string): Promise<HostStatus> {
   return status;
 }
 
-/** Compose, generate and store the preview record; the host compiles and serves it as a running app. */
+/** Open a composition version (or compose a new one) as the generated app running in the preview host. */
 export async function handle(input: DesignPreviewInputSchema.DesignPreviewInput, context?: ToolContext): Promise<DesignPreviewOutputSchema.DesignPreviewOutput> {
   const started = performance.now();
   const hostUrl = resolvePreviewHostUrl(context);
   if (!hostUrl) throw unreachable('no preview host is configured; call through the HTTP bridge or the stdio adapter, which host it, or set OODS_PREVIEW_HOST_URL to a running host', { hostUrl: null });
   const status = await probeHost(hostUrl);
-  const previewsDir = resolvePreviewStoreDir();
-  if (path.resolve(status.previewsDir) !== previewsDir) {
-    throw unreachable(`the preview host reads ${status.previewsDir} but this server writes ${previewsDir}; both must resolve the same MCP_SCHEMA_STORE_ROOT`, { hostUrl, hostPreviewsDir: status.previewsDir, previewsDir });
+  const compositionsDir = resolveCompositionsDir();
+  if (path.resolve(status.compositionsDir) !== compositionsDir) {
+    throw unreachable(`the preview host reads ${status.compositionsDir} but this server writes ${compositionsDir}; both must resolve the same MCP_SCHEMA_STORE_ROOT`, { hostUrl, hostCompositionsDir: status.compositionsDir, compositionsDir });
   }
   if (status.platform && !status.platform.supported) {
     throw unreachable(`the preview host cannot compile on ${status.platform.os}-${status.platform.arch}: ${status.platform.reason ?? 'no esbuild binary shipped for this platform'}`, { hostUrl, platform: status.platform });
   }
-
-  const theme = (input.preferences?.theme ?? 'light') as PreviewTheme;
-  const brand = (input.preferences?.brand ?? 'A') as PreviewBrand;
-  const preferences = { ...(input.preferences ?? {}), theme, brand };
-  const composition = await compose({ object: input.object, context: input.context, preferences });
-  if (composition.status !== 'ok' || !composition.schema) throw new Error(`Composition failed: ${JSON.stringify(composition.errors ?? composition)}`);
-  const schemaHash = digest(JSON.stringify(composition.schema));
-  const key = previewKey(schemaHash);
-
-  let workflowSchema: PreviewRecord['schema'] | undefined;
-  if (input.context !== 'workflow' && input.object !== 'Chunk') {
-    // The preview uses the same object/trait seed records as its workflow app.
-    const workflow = await compose({ object: input.object, context: 'workflow' });
-    if (workflow.status !== 'ok' || !workflow.schema) throw new Error(`Seed composition failed: ${JSON.stringify(workflow.errors ?? workflow)}`);
-    workflowSchema = workflow.schema;
+  if (!input.compositionId && !(input.object && input.context)) {
+    throw new ToolError('OODS-V203', 'design.preview needs either compositionId (with an optional version) or object and context', { input: Object.keys(input) });
   }
-  const model = seedPreviewModel({ schema: composition.schema, context: input.context, object: input.object, workflowSchema });
 
+  // The version to open: an existing one, or the first version of a fresh composition.
+  let record: CompositionVersion;
+  if (input.compositionId) {
+    const version = input.version ?? await latestVersion(compositionsDir, input.compositionId);
+    record = await readVersion(compositionsDir, input.compositionId, version);
+  } else {
+    const theme = (input.preferences?.theme ?? 'light') as PreviewTheme;
+    const brand = (input.preferences?.brand ?? 'A') as PreviewBrand;
+    const composition = await compose({ object: input.object!, context: input.context!, preferences: { ...(input.preferences ?? {}), theme, brand } });
+    if (composition.status !== 'ok' || !composition.schema || !composition.compositionId || !composition.version) throw new Error(`Composition failed: ${JSON.stringify(composition.errors ?? composition)}`);
+    record = await readVersion(compositionsDir, composition.compositionId, composition.version);
+  }
+  const object = String(record.compose.object ?? '');
+  const viewContext = String(record.compose.context ?? '');
+  const brand = (input.preferences?.brand ?? record.brand) as PreviewBrand;
+  const theme = (input.preferences?.theme ?? record.theme) as PreviewTheme;
+
+  // The deterministic field model, seeded once per version with the same policy as the design loop.
+  let model = record.model;
+  if (!model) {
+    let workflowSchema: CompositionVersion['schema'] | undefined;
+    if (viewContext !== 'workflow' && object && object !== 'Chunk') {
+      const workflow = await compose({ object, context: 'workflow', options: { transient: true } });
+      if (workflow.status !== 'ok' || !workflow.schema) throw new Error(`Seed composition failed: ${JSON.stringify(workflow.errors ?? workflow)}`);
+      workflowSchema = workflow.schema;
+    }
+    model = seedPreviewModel({ schema: record.schema, context: viewContext, object: object || undefined, workflowSchema });
+  }
+
+  // Generate what the version does not carry yet; a version's artifacts are keyed by its schema hash.
   const frameworks: PreviewFramework[] = input.framework && input.framework !== 'both' ? [input.framework] : ['react', 'vue'];
-  const record: PreviewRecord = {
-    version: '1', key, schemaHash, createdAt: new Date().toISOString(), head: readForgeHead(),
-    compose: { object: input.object, context: input.context, ...(input.preferences ? { preferences: input.preferences } : {}) },
-    brand, theme, schema: composition.schema, model, frameworks: {},
-  };
+  const artifacts: CompositionVersion['artifacts'] = {};
   for (const framework of frameworks) {
-    const generated = await generate({ schema: composition.schema, framework, profile: 'build', options: { theme, brand } });
+    if (record.artifacts[framework]) continue;
+    const generated = await generate({ schema: record.schema, framework, profile: 'build', options: { theme: record.theme, brand: record.brand } });
     if (generated.status !== 'ok' || !generated.artifact) throw new Error(`Generation failed (${framework}): ${JSON.stringify(generated.errors)}`);
     const issues = validateGeneratedArtifact(generated.artifact);
     if (issues.length) throw new Error(issues.join('\n'));
-    record.frameworks[framework] = { artifact: generated.artifact };
+    artifacts[framework] = { artifact: generated.artifact, generatedAt: new Date().toISOString() };
   }
-  const recordPath = await writePreviewRecord(previewsDir, record);
+  if (Object.keys(artifacts).length || !record.model) record = await attachToVersion(compositionsDir, record.compositionId, record.version, { artifacts, model });
 
+  const base = `${hostUrl}/preview/${record.compositionId}/${record.version}`;
   const previews: PreviewEntry[] = [];
   for (const framework of frameworks) {
-    const url = `${hostUrl}/preview/${key}?framework=${framework}`;
-    const moduleUrl = `${hostUrl}/preview/${key}/module.js?framework=${framework}`;
+    const query = `framework=${framework}&brand=${brand}&theme=${theme}`;
+    const moduleUrl = `${base}/module.js?framework=${framework}`;
     // Compile now, so a broken artifact is this call's failure rather than a blank page later.
     const response = await fetch(moduleUrl, { signal: AbortSignal.timeout(COMPILE_TIMEOUT_MS) });
     const body = await response.text();
     if (!response.ok) throw new Error(`The preview host could not compile the ${framework} artifact (HTTP ${response.status}): ${body.slice(0, 2000)}`);
     previews.push({
-      framework, url, moduleUrl,
-      artifactContentHash: record.frameworks[framework]!.artifact.contentHash,
+      framework, url: `${base}?${query}`, appUrl: `${base}/app?${query}`, moduleUrl,
+      artifactContentHash: record.artifacts[framework]!.artifact.contentHash,
       compiled: { bytes: Buffer.byteLength(body), sha256: digest(body) },
     });
   }
 
   return {
-    status: 'ok', schemaHash, key,
+    status: 'ok',
+    compositionId: record.compositionId, version: record.version, parentVersion: record.parentVersion, operation: record.operation, head: record.head,
+    schemaHash: record.schemaHash, object, context: viewContext,
     previewUrl: previews[0]!.url, previews: previews as DesignPreviewOutputSchema.DesignPreviewOutput['previews'],
-    host: { url: hostUrl, port: Number(new URL(hostUrl).port), previewsDir },
-    brand, theme, recordPath, durationMs: performance.now() - started,
+    host: { url: hostUrl, port: Number(new URL(hostUrl).port), compositionsDir },
+    brand, theme, recordPath: versionPath(compositionsDir, record.compositionId, record.version), durationMs: performance.now() - started,
   };
 }

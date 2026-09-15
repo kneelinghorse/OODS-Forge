@@ -2,11 +2,19 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://designlab.local/schemas/design.compose.input.json",
   "title": "Design compose input",
-  "description": "Generate a complete UiSchema from an intent description and/or object definition using layout templates and component selection. Provide at least one of 'intent' or 'object'. context=workflow assembles a routed, stateful application from the object's list/detail/form/timeline compositions.",
+  "description": "Generate a complete UiSchema from an intent description and/or object definition using layout templates and component selection. Provide at least one of 'intent' or 'object'. context=workflow assembles a routed, stateful application from the object's list/detail/form/timeline compositions. Every successful composition is recorded as a durable version under the schema store (compositions/<compositionId>/versions/<n>.json); pass compositionId to record the result as that composition's next version.",
   "type": "object",
   "anyOf": [
-    { "required": ["intent"] },
-    { "required": ["object"] }
+    {
+      "required": [
+        "intent"
+      ]
+    },
+    {
+      "required": [
+        "object"
+      ]
+    }
   ],
   "properties": {
     "intent": {
@@ -21,19 +29,42 @@
     },
     "context": {
       "type": "string",
-      "enum": ["detail", "list", "form", "timeline", "card", "inline", "workflow"],
+      "enum": [
+        "detail",
+        "list",
+        "form",
+        "timeline",
+        "card",
+        "inline",
+        "workflow"
+      ],
       "description": "View context for object-aware composition. Determines which view_extensions are applied. When object is provided without layout, context infers the layout (detail→detail, list→list, form→form). workflow assembles list/detail/form/timeline screens with trait actions, routes, four UI states and generated application data."
     },
     "layout": {
       "type": "string",
-      "enum": ["dashboard", "form", "detail", "list", "card", "timeline", "landing", "auto"],
+      "enum": [
+        "dashboard",
+        "form",
+        "detail",
+        "list",
+        "card",
+        "timeline",
+        "landing",
+        "auto"
+      ],
       "default": "auto",
       "description": "Layout template to use. 'landing' is a content/marketing page (hero + sections + CTA), not bound to a data object. 'auto' infers the best template from intent keywords."
     },
     "preferences": {
       "type": "object",
       "properties": {
-        "brand": { "enum": ["A", "B"], "description": "Brand scope for data-bound charts; defaults to A." },
+        "brand": {
+          "enum": [
+            "A",
+            "B"
+          ],
+          "description": "Brand scope for data-bound charts; defaults to A."
+        },
         "theme": {
           "type": "string",
           "description": "Theme token (e.g., 'light', 'dark')."
@@ -58,12 +89,16 @@
         },
         "tabLabels": {
           "type": "array",
-          "items": { "type": "string" },
+          "items": {
+            "type": "string"
+          },
           "description": "Custom tab labels for detail layout."
         },
         "componentOverrides": {
           "type": "object",
-          "additionalProperties": { "type": "string" },
+          "additionalProperties": {
+            "type": "string"
+          },
           "description": "Slot-name → component-name overrides (e.g., { 'items': 'Table' })."
         }
       },
@@ -83,9 +118,24 @@
           "maximum": 10,
           "default": 3,
           "description": "Number of component candidates to return per slot."
+        },
+        "transient": {
+          "type": "boolean",
+          "default": false,
+          "description": "Do not record a composition version; the result then carries no compositionId. For scratch compositions only."
         }
       },
       "additionalProperties": false
+    },
+    "compositionId": {
+      "type": "string",
+      "pattern": "^cmp-[a-f0-9]{12}$",
+      "description": "Record this composition as the next version of an existing composition (operation \"recompose\") instead of creating a new one."
+    },
+    "parentVersion": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "With compositionId: the version the new one derives from; default the latest."
     }
   },
   "additionalProperties": false

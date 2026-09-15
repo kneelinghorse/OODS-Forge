@@ -39,13 +39,14 @@ try {
   child.stdin.write(JSON.stringify({ jsonrpc: '2.0', method: 'notifications/initialized', params: {} }) + '\n');
   receipt.tools = (await request('tools/list', {})).tools.length;
   const preview = await call('design_preview', { object: 'Subscription', context: 'detail' });
-  receipt.preview = { key: preview.key, schemaHash: preview.schemaHash, host: preview.host, previewUrl: preview.previewUrl, frameworks: preview.previews.map(entry => entry.framework) };
+  receipt.preview = { compositionId: preview.compositionId, version: preview.version, parentVersion: preview.parentVersion, operation: preview.operation, head: preview.head, schemaHash: preview.schemaHash, host: preview.host, previewUrl: preview.previewUrl, frameworks: preview.previews.map(entry => entry.framework) };
   receipt.status = await (await fetch(`${preview.host.url}/preview/status`)).json();
   receipt.fetched = [];
   for (const entry of preview.previews) {
-    const page = await fetch(entry.url); const html = await page.text();
+    const page = await fetch(entry.url); const shell = await page.text();
+    const app = await fetch(entry.appUrl); const html = await app.text();
     const module = await fetch(entry.moduleUrl); const code = await module.text();
-    receipt.fetched.push({ framework: entry.framework, page: page.status, pageHasImportMap: html.includes('<script type="importmap">'), module: module.status, compiledSha256Matches: sha256(code) === entry.compiled.sha256, compiledBytes: code.length });
+    receipt.fetched.push({ framework: entry.framework, page: page.status, pageHasLineage: shell.includes('data-oods-lineage="true"') && shell.includes(preview.compositionId), app: app.status, pageHasImportMap: html.includes('<script type="importmap">'), module: module.status, compiledSha256Matches: sha256(code) === entry.compiled.sha256, compiledBytes: code.length });
   }
   const runtime = await fetch(`${preview.host.url}/preview/runtime/react.js`);
   receipt.runtimeServed = runtime.status === 200;
@@ -54,7 +55,7 @@ try {
   receipt.adapterExit = exit;
   receipt.hostPortClosedAfterExit = await portClosed(preview.host.port);
   receipt.hostStartedLog = /preview host started on/.test(stderr);
-  receipt.pass = receipt.tools === 19 && receipt.fetched.every(row => row.page === 200 && row.module === 200 && row.compiledSha256Matches && row.pageHasImportMap) && receipt.runtimeServed && receipt.status.platform.supported === true && exit.code === 0 && receipt.hostPortClosedAfterExit;
+  receipt.pass = receipt.tools === 19 && receipt.fetched.every(row => row.page === 200 && row.pageHasLineage && row.app === 200 && row.module === 200 && row.compiledSha256Matches && row.pageHasImportMap) && receipt.runtimeServed && receipt.status.platform.supported === true && exit.code === 0 && receipt.hostPortClosedAfterExit;
 } catch (error) {
   receipt.pass = false; receipt.error = error.message; receipt.stderr = stderr.slice(-4000);
   if (child.exitCode === null) child.kill('SIGKILL');

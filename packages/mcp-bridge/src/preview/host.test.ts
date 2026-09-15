@@ -8,7 +8,7 @@ import { afterEach, describe, expect, it } from 'vitest';
 import { artifactEntry, compileArtifact } from './compile.js';
 import { registerPreviewHost } from './host.js';
 import { defaultRuntimeDirectory, loadPreviewRuntime, resolveEsbuildPlatform } from './runtime.js';
-import { resolvePreviewStoreDir, type PreviewArtifact, type PreviewRecord } from './store.js';
+import { resolveCompositionsDir, type CompositionVersion, type PreviewArtifact } from './store.js';
 
 const packageRoot = fileURLToPath(new URL('../../', import.meta.url));
 const runtimeDir = path.join(packageRoot, 'dist/preview-runtime');
@@ -21,22 +21,32 @@ afterEach(async () => {
   for (const dir of directories.splice(0)) rmSync(dir, { recursive: true, force: true });
 });
 
-type Fixture = Pick<PreviewRecord, 'compose' | 'brand' | 'theme' | 'schema' | 'model' | 'frameworks'>;
-function fixture(name: 'subscription-card' | 'subscription-list'): PreviewRecord {
+type Fixture = { compose: CompositionVersion['compose']; brand: CompositionVersion['brand']; theme: CompositionVersion['theme']; schema: unknown; model: Record<string, unknown>; frameworks: Record<'react' | 'vue', { artifact: PreviewArtifact }> };
+const ID = 'cmp-0123456789ab';
+function fixture(name: 'subscription-card' | 'subscription-list', overrides: Partial<CompositionVersion> = {}): CompositionVersion {
   const raw = JSON.parse(readFileSync(new URL(`./__fixtures__/${name}.json`, import.meta.url), 'utf8')) as Fixture;
   const schemaHash = `sha256:${sha256(JSON.stringify(raw.schema))}`;
-  return { version: '1', key: schemaHash.slice(7, 23), schemaHash, createdAt: '2026-09-15T00:00:00.000Z', head: null, ...raw };
+  return {
+    recordVersion: '1', compositionId: ID, version: 1, parentVersion: null, operation: 'compose', createdAt: '2026-09-15T00:00:00.000Z', head: 'a'.repeat(40),
+    compose: raw.compose, schema: raw.schema, schemaHash, brand: raw.brand, theme: raw.theme, slots: [], model: raw.model,
+    artifacts: { react: { artifact: raw.frameworks.react.artifact, generatedAt: '2026-09-15T00:00:00.000Z' }, vue: { artifact: raw.frameworks.vue.artifact, generatedAt: '2026-09-15T00:00:00.000Z' } },
+    measurements: {}, ...overrides,
+  };
 }
-function store(...records: PreviewRecord[]): string {
-  const dir = path.join(temp(), 'previews');
+function store(...records: CompositionVersion[]): string {
+  const dir = path.join(temp(), 'compositions');
+  for (const record of records) {
+    const folder = path.join(dir, record.compositionId, 'versions');
+    mkdirSync(folder, { recursive: true });
+    writeFileSync(path.join(folder, `${record.version}.json`), JSON.stringify(record));
+  }
   mkdirSync(dir, { recursive: true });
-  for (const record of records) writeFileSync(path.join(dir, `${record.key}.json`), JSON.stringify(record));
   return dir;
 }
-async function host(previewsDir: string) {
+async function host(compositionsDir: string) {
   const server = Fastify();
   servers.push(server);
-  const status = await registerPreviewHost(server, { previewsDir, runtimeDir });
+  const status = await registerPreviewHost(server, { compositionsDir, runtimeDir });
   return { server, status };
 }
 const bareImports = (code: string) => [...code.matchAll(/from\s*"([^"]+)"/g)].map(match => match[1]!).filter(specifier => !specifier.startsWith('.'));
@@ -45,7 +55,7 @@ describe('preview host runtime', () => {
   it('refuses to register without the prebuilt runtime, and never serves a partial one', async () => {
     const empty = temp();
     expect(() => loadPreviewRuntime(empty)).toThrow(/Preview host runtime is missing/);
-    await expect(registerPreviewHost(Fastify(), { previewsDir: temp(), runtimeDir: empty })).rejects.toThrow(/runtime is missing/);
+    await expect(registerPreviewHost(Fastify(), { compositionsDir: temp(), runtimeDir: empty })).rejects.toThrow(/runtime is missing/);
     const partial = temp();
     const manifest = JSON.parse(readFileSync(path.join(runtimeDir, 'manifest.json'), 'utf8'));
     writeFileSync(path.join(partial, 'manifest.json'), JSON.stringify(manifest));
@@ -66,9 +76,9 @@ describe('preview host runtime', () => {
     expect(readFileSync(path.join(runtimeDir, runtime.manifest.importMap['react/jsx-runtime']!), 'utf8')).toMatch(/Fragment/);
     expect(readFileSync(path.join(runtimeDir, runtime.manifest.importMap['react-dom/client']!), 'utf8')).toMatch(/createRoot/);
     const styles = readFileSync(path.join(runtimeDir, runtime.manifest.styles), 'utf8');
-    expect(styles).toMatch(/\[data-brand=["']?B["']?\]\[data-theme=["']?dark["']?\]/);
+    // Every brand and theme scope ships in one stylesheet, so a scope switch needs no other CSS.
+    for (const brand of ['A', 'B']) for (const theme of ['light', 'dark', 'hc']) expect(styles).toMatch(new RegExp(`\\[data-brand=["']?${brand}["']?\\]\\[data-theme=["']?${theme}["']?\\]`));
     expect(styles).toContain('--sys-surface-canvas');
-    expect(styles).not.toContain('@import');
   });
 
   it('resolves the shipped esbuild binary for this platform and names the unsupported ones', () => {
@@ -80,36 +90,37 @@ describe('preview host runtime', () => {
 
 describe('preview host routes', () => {
   it('reports its store, runtime and platform on /preview/status', async () => {
-    const previewsDir = store();
-    const { server, status } = await host(previewsDir);
+    const compositionsDir = store();
+    const { server, status } = await host(compositionsDir);
     const response = await server.inject('/preview/status');
     expect(response.statusCode).toBe(200);
     expect(response.json()).toEqual(status);
-    expect(status).toMatchObject({ running: true, base: '/preview', previewsDir, runtime: { files: 19, esbuild: '0.25.10' }, platform: { supported: true } });
+    expect(status).toMatchObject({ running: true, base: '/preview', compositionsDir, runtime: { files: 19, esbuild: '0.25.10' }, platform: { supported: true } });
   });
 
-  it.each(['subscription-card', 'subscription-list'] as const)('compiles and serves the generated React and Vue %s artifacts as one ESM module each', async (name) => {
+  it.each(['subscription-card', 'subscription-list'] as const)('compiles and serves the generated React and Vue %s artifacts of a version as one ESM module each', async (name) => {
     const record = fixture(name);
     const { server } = await host(store(record));
     const runtime = loadPreviewRuntime(runtimeDir).manifest;
     for (const framework of ['react', 'vue'] as const) {
-      const artifact = record.frameworks[framework]!.artifact;
+      const artifact = record.artifacts[framework]!.artifact;
       expect(artifactEntry(artifact)).toBe(framework === 'react' ? 'src/GeneratedUI.tsx' : 'src/GeneratedUI.vue');
-      const page = await server.inject(`/preview/${record.key}?framework=${framework}`);
-      expect(page.statusCode).toBe(200);
-      expect(page.headers['content-type']).toMatch(/text\/html/);
-      const html = page.body;
+      const app = await server.inject(`/preview/${ID}/1/app?framework=${framework}`);
+      expect(app.statusCode).toBe(200);
+      expect(app.headers['content-type']).toMatch(/text\/html/);
+      const html = app.body;
       expect(html).toContain('<script type="importmap">');
       expect(html).toContain('"react":"/preview/runtime/react.js"');
       expect(html).toContain('<link rel="stylesheet" href="/preview/runtime/styles.css">');
       expect(html).toContain('<html lang="en" data-theme="dark" data-brand="B">');
-      expect(html).toContain(`data-oods-preview="${record.key}"`);
-      expect(html).toContain(`/preview/${record.key}/module.js?framework=${framework}`);
-      expect(html).toContain(framework === 'react' ? 'createRoot(document.getElementById' : "createApp(Page, { ...model, actions }).mount('#app')");
+      expect(html).toContain(`data-oods-preview="${ID}" data-oods-preview-version="1"`);
+      expect(html).toContain(`/preview/${ID}/1/module.js?framework=${framework}`);
+      expect(html).toContain(framework === 'react' ? 'root = createRoot(document.getElementById' : "app.mount('#app')");
+      expect(html).toContain("event.data.type === 'oods-preview-scope'");
       for (const action of artifact.actions) expect(html).toContain(`${JSON.stringify(action.name)}: (...args) => window.dispatchEvent(new CustomEvent('oods-design-loop-action'`);
       expect(html).toContain(JSON.stringify(record.model).slice(0, 40));
 
-      const module = await server.inject(`/preview/${record.key}/module.js?framework=${framework}`);
+      const module = await server.inject(`/preview/${ID}/1/module.js?framework=${framework}`);
       expect(module.statusCode, module.body.slice(0, 500)).toBe(200);
       expect(module.headers['content-type']).toMatch(/text\/javascript/);
       expect(module.headers['x-oods-artifact-hash']).toBe(artifact.contentHash);
@@ -121,28 +132,71 @@ describe('preview host routes', () => {
       expect(imports.length).toBeGreaterThan(0);
       for (const specifier of imports) expect(runtime.importMap, `${specifier} must be in the import map`).toHaveProperty([specifier]);
       expect(imports).toContain(framework === 'react' ? '@oods/components-react' : '@oods/components-vue');
-      // Every generated component is mounted by name in the compiled module.
       for (const component of new Set([...artifact.files[0]!.contents.matchAll(/data-oods-component="([A-Za-z]+)"/g)].map(match => match[1]!))) expect(module.body).toContain(component);
-      const again = await server.inject(`/preview/${record.key}/module.js?framework=${framework}`);
-      expect(again.body).toBe(module.body);
+      expect((await server.inject(`/preview/${ID}/1/module.js?framework=${framework}`)).body).toBe(module.body);
     }
-    const raw = await server.inject(`/preview/${record.key}/files/src/charts/payment-001.svg?framework=react`);
-    if (record.frameworks.react!.artifact.files.some(file => file.path === 'src/charts/payment-001.svg')) {
-      expect(raw.statusCode).toBe(200);
-      expect(raw.headers['content-type']).toBe('image/svg+xml');
-    } else expect(raw.statusCode).toBe(404);
-    const stored = await server.inject(`/preview/${record.key}/record.json`);
+    const stored = await server.inject(`/preview/${ID}/1/record.json`);
     expect(stored.json()).toEqual(record);
   });
 
-  it('re-mounts with the requested brand and theme without touching the artifact', async () => {
+  it('opens one URL per version with its lineage, and the same URL answers the same after the host restarts', async () => {
+    const first = fixture('subscription-card');
+    const second = fixture('subscription-list', { version: 2, parentVersion: 1, operation: 'recompose', createdAt: '2026-09-15T01:00:00.000Z' });
+    const compositionsDir = store(first, second);
+    let { server } = await host(compositionsDir);
+    const page = await server.inject(`/preview/${ID}/2?framework=vue`);
+    expect(page.statusCode).toBe(200);
+    const html = page.body;
+    expect(html).toContain('data-oods-lineage="true"');
+    expect(html).toContain(`<code>${ID}</code>`);
+    expect(html).toContain('<strong>2</strong> of 2');
+    expect(html).toContain(`<a href="/preview/${ID}/1?framework=vue&brand=B&theme=dark">version 1</a>`);
+    expect(html).toContain('<code>recompose</code>');
+    expect(html).toContain(`<code>${'a'.repeat(40)}</code>`);
+    expect(html).toContain(`<code>${second.schemaHash.slice(7, 19)}</code>`);
+    expect(html).toContain('<li aria-current="true"><strong>v2</strong> · recompose ← v1</li>');
+    expect(html).toContain(`<a href="/preview/${ID}/1?framework=vue&brand=B&theme=dark">v1</a> · compose`);
+    expect(html).toContain(`<iframe data-oods-app="true" src="/preview/${ID}/2/app?framework=vue&brand=B&theme=dark"`);
+    for (const control of ['framework', 'brand', 'theme', 'width']) expect(html).toContain(`data-oods-controls="${control}"`);
+    expect(html).toContain('<button type="button" data-control="theme" data-value="dark" aria-pressed="true">dark</button>');
+    expect(html).toContain('<button type="button" data-control="width" data-value="1440" aria-pressed="true">1440</button>');
+    expect(html).toContain("postMessage({ type: 'oods-preview-scope', brand: state.brand, theme: state.theme }, '*')");
+    const versionOne = await server.inject(`/preview/${ID}/1`);
+    expect(versionOne.body).toContain('none (first version)');
+    expect(versionOne.body).toContain('<strong>1</strong> of 2');
+    const versions = await server.inject(`/preview/${ID}/versions.json`);
+    expect(versions.json()).toEqual({ compositionId: ID, versions: [
+      { version: 1, parentVersion: null, operation: 'compose', createdAt: first.createdAt, schemaHash: first.schemaHash, head: first.head, artifacts: ['react', 'vue'] },
+      { version: 2, parentVersion: 1, operation: 'recompose', createdAt: second.createdAt, schemaHash: second.schemaHash, head: second.head, artifacts: ['react', 'vue'] },
+    ] });
+    const latest = await server.inject(`/preview/${ID}?framework=react`);
+    expect(latest.statusCode).toBe(302);
+    expect(latest.headers.location).toBe(`/preview/${ID}/2?framework=react`);
+    // Durable: a fresh host over the same directory answers the same bytes for the same URL.
+    await server.close(); servers.splice(0);
+    ({ server } = await host(compositionsDir));
+    expect((await server.inject(`/preview/${ID}/2?framework=vue`)).body).toBe(html);
+    expect((await server.inject(`/preview/${ID}/2/module.js?framework=vue`)).statusCode).toBe(200);
+  });
+
+  it('re-mounts with the requested brand, theme and width without touching the artifact', async () => {
     const record = fixture('subscription-card');
     const { server } = await host(store(record));
-    const html = (await server.inject(`/preview/${record.key}?framework=vue&brand=A&theme=hc`)).body;
-    expect(html).toContain('<html lang="en" data-theme="hc" data-brand="A">');
-    expect(html).toContain('<body data-theme="hc" data-brand="A" style="color-scheme:light">');
-    expect((await server.inject(`/preview/${record.key}?brand=C`)).statusCode).toBe(400);
-    expect((await server.inject(`/preview/${record.key}?theme=sepia`)).statusCode).toBe(400);
+    const shell = (await server.inject(`/preview/${ID}/1?framework=vue&brand=A&theme=hc&width=390`)).body;
+    expect(shell).toContain('<html lang="en" data-theme="hc" data-brand="A">');
+    expect(shell).toContain(`src="/preview/${ID}/1/app?framework=vue&brand=A&theme=hc"`);
+    expect(shell).toContain('style="width:390px"');
+    expect(shell).toContain('<button type="button" data-control="width" data-value="390" aria-pressed="true">390</button>');
+    const free = (await server.inject(`/preview/${ID}/1?width=free`)).body;
+    expect(free).toContain('data-value="free" aria-pressed="true"');
+    expect(free).toContain('data-control="width-input">');
+    const app = (await server.inject(`/preview/${ID}/1/app?framework=vue&brand=A&theme=hc`)).body;
+    expect(app).toContain('<html lang="en" data-theme="hc" data-brand="A">');
+    expect(app).toContain('<body data-theme="hc" data-brand="A" style="color-scheme:light">');
+    expect(app).toContain('"generatedFor":{"brand":"B","theme":"dark"}');
+    expect((await server.inject(`/preview/${ID}/1?brand=C`)).statusCode).toBe(400);
+    expect((await server.inject(`/preview/${ID}/1?theme=sepia`)).statusCode).toBe(400);
+    expect((await server.inject(`/preview/${ID}/1?width=10`)).statusCode).toBe(400);
   });
 
   it('serves the runtime files the page links with their manifest digests', async () => {
@@ -158,30 +212,36 @@ describe('preview host routes', () => {
 
   it('fails the module request, not the page, when a generated artifact does not compile', async () => {
     const record = fixture('subscription-card');
-    const broken: PreviewArtifact = { ...record.frameworks.react!.artifact, contentHash: `sha256:${'f'.repeat(64)}`, files: [{ path: 'src/GeneratedUI.tsx', contents: 'export const GeneratedUI = () => <div>;\n', contentHash: `sha256:${'e'.repeat(64)}` }] };
-    const { server } = await host(store({ ...record, key: 'abcdefabcdef0123', frameworks: { react: { artifact: broken } } }));
-    const module = await server.inject('/preview/abcdefabcdef0123/module.js?framework=react');
+    const broken: PreviewArtifact = { ...record.artifacts.react!.artifact, contentHash: `sha256:${'f'.repeat(64)}`, files: [{ path: 'src/GeneratedUI.tsx', contents: 'export const GeneratedUI = () => <div>;\n', contentHash: `sha256:${'e'.repeat(64)}` }] };
+    const { server } = await host(store({ ...record, artifacts: { react: { artifact: broken, generatedAt: record.createdAt } } }));
+    const module = await server.inject(`/preview/${ID}/1/module.js?framework=react`);
     expect(module.statusCode).toBe(422);
     expect(module.body).toMatch(/react artifact failed to compile/);
     expect(module.body).toMatch(/src\/GeneratedUI\.tsx:\d+: /);
     await expect(compileArtifact(broken)).rejects.toThrow(/failed to compile/);
-    const vue = await server.inject('/preview/abcdefabcdef0123/module.js?framework=vue');
+    const vue = await server.inject(`/preview/${ID}/1/module.js?framework=vue`);
     expect(vue.statusCode).toBe(404);
     expect(vue.body).toMatch(/generated for react, not vue/);
+    expect((await server.inject(`/preview/${ID}/1?framework=react`)).statusCode).toBe(200);
   });
 
-  it('refuses unsafe keys and names a missing record', async () => {
-    const { server } = await host(store());
-    expect((await server.inject('/preview/not-a-key')).statusCode).toBe(400);
-    expect((await server.inject('/preview/ABCDEFABCDEF0123')).statusCode).toBe(400);
-    expect((await server.inject('/preview/0123456789abcdef')).statusCode).toBe(404);
-    expect((await server.inject('/preview/0123456789abcdef/module.js')).statusCode).toBe(404);
+  it('refuses unsafe ids, versions and paths, and names a missing composition or version', async () => {
+    const { server } = await host(store(fixture('subscription-card')));
+    expect((await server.inject('/preview/not-an-id/1')).statusCode).toBe(400);
+    expect((await server.inject('/preview/CMP-0123456789AB/1')).statusCode).toBe(400);
+    expect((await server.inject(`/preview/${ID}/0`)).statusCode).toBe(400);
+    expect((await server.inject(`/preview/${ID}/1.5`)).statusCode).toBe(400);
+    expect((await server.inject(`/preview/${ID}/2`)).statusCode).toBe(404);
+    expect((await server.inject('/preview/cmp-ffffffffffff/1')).statusCode).toBe(404);
+    expect((await server.inject('/preview/cmp-ffffffffffff')).statusCode).toBe(404);
+    expect((await server.inject('/preview/cmp-ffffffffffff/versions.json')).statusCode).toBe(404);
+    expect((await server.inject(`/preview/${ID}/1/files/..%2F..%2Fetc%2Fpasswd`)).statusCode).toBe(404);
   });
 
-  it('reads previews from beside the saved-schema store under the same environment the server uses', () => {
+  it('reads compositions from beside the saved-schema store under the same environment the server uses', () => {
     const serverCwd = path.join(temp(), 'packages/mcp-server');
-    expect(resolvePreviewStoreDir(serverCwd, {})).toBe(path.join(serverCwd, '.oods/previews'));
-    expect(resolvePreviewStoreDir(serverCwd, { MCP_SCHEMA_STORE_ROOT: '/tmp/root', MCP_SCHEMA_STORE_DIR: 'schemas' })).toBe(path.resolve('/tmp/root/previews'));
-    expect(resolvePreviewStoreDir(serverCwd, { MCP_SCHEMA_STORE_DIR: '/var/store/saved' })).toBe(path.resolve('/var/store/previews'));
+    expect(resolveCompositionsDir(serverCwd, {})).toBe(path.join(serverCwd, '.oods/compositions'));
+    expect(resolveCompositionsDir(serverCwd, { MCP_SCHEMA_STORE_ROOT: '/tmp/root', MCP_SCHEMA_STORE_DIR: 'schemas' })).toBe(path.resolve('/tmp/root/compositions'));
+    expect(resolveCompositionsDir(serverCwd, { MCP_SCHEMA_STORE_DIR: '/var/store/saved' })).toBe(path.resolve('/var/store/compositions'));
   });
 });

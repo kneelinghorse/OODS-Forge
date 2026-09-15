@@ -3126,7 +3126,7 @@ export type DashboardRenderOutput = DashboardRenderOutputSchema.DashboardRenderO
 // Source: design.compose.input.json
 export namespace DesignComposeInputSchema {
   /**
-   * Generate a complete UiSchema from an intent description and/or object definition using layout templates and component selection. Provide at least one of 'intent' or 'object'. context=workflow assembles a routed, stateful application from the object's list/detail/form/timeline compositions.
+   * Generate a complete UiSchema from an intent description and/or object definition using layout templates and component selection. Provide at least one of 'intent' or 'object'. context=workflow assembles a routed, stateful application from the object's list/detail/form/timeline compositions. Every successful composition is recorded as a durable version under the schema store (compositions/<compositionId>/versions/<n>.json); pass compositionId to record the result as that composition's next version.
    */
   export type DesignComposeInput = DesignComposeInput1 & DesignComposeInput2;
   export type DesignComposeInput1 = {
@@ -3191,7 +3191,19 @@ export namespace DesignComposeInputSchema {
        * Number of component candidates to return per slot.
        */
       topN?: number;
+      /**
+       * Do not record a composition version; the result then carries no compositionId. For scratch compositions only.
+       */
+      transient?: boolean;
     };
+    /**
+     * Record this composition as the next version of an existing composition (operation "recompose") instead of creating a new one.
+     */
+    compositionId?: string;
+    /**
+     * With compositionId: the version the new one derives from; default the latest.
+     */
+    parentVersion?: number;
   }
 }
 export type DesignComposeInput = DesignComposeInputSchema.DesignComposeInput;
@@ -3353,6 +3365,26 @@ export namespace DesignComposeOutputSchema {
      * ISO timestamp when the schemaRef expires.
      */
     schemaRefExpiresAt?: string;
+    /**
+     * The durable composition this result was recorded as; absent for transient compositions. Every version opens at /preview/<compositionId>/<version> on the preview host.
+     */
+    compositionId?: string;
+    /**
+     * The recorded version number (1 for a new composition).
+     */
+    version?: number;
+    /**
+     * The version this one derives from; null for the first.
+     */
+    parentVersion?: number | null;
+    /**
+     * How this version was produced.
+     */
+    operation?: 'compose' | 'recompose' | 'reorder-region' | 'swap-slot' | 'reorder-fields' | 'seed';
+    /**
+     * The Forge build head that produced it; null from a source checkout.
+     */
+    head?: string | null;
     /**
      * Component selection results per slot.
      */
@@ -3699,17 +3731,30 @@ export type DesignComposeOutput = DesignComposeOutputSchema.DesignComposeOutput;
 // Source: design.preview.input.json
 export namespace DesignPreviewInputSchema {
   /**
-   * Open a public object/context as the generated React or Vue app actually running in a browser. Compose, generate and store the preview; the preview host (in the HTTP bridge, or started by the stdio adapter) compiles the artifact and serves it at the returned URL.
+   * Open a composition version as the generated React or Vue app actually running in a browser: either an existing compositionId (and optional version) or an object and context composed now as a new composition. The preview host (in the HTTP bridge, or started by the stdio adapter) compiles the artifact and serves it at one URL per version with its lineage and brand, theme and width controls.
    */
-  export interface DesignPreviewInput {
+  export type DesignPreviewInput = DesignPreviewInput1 & DesignPreviewInput2;
+  export type DesignPreviewInput1 = {
+    [k: string]: any;
+  };
+
+  export interface DesignPreviewInput2 {
     /**
-     * Object name from the OODS registry (e.g., 'Subscription', 'User'). When provided, composition uses trait-driven component placement via view_extensions.
+     * An existing composition from design.compose; with no version, its latest version opens.
      */
-    object: string;
+    compositionId?: string;
+    /**
+     * The version of compositionId to open.
+     */
+    version?: number;
+    /**
+     * Object name from the OODS registry (e.g., 'Subscription', 'User'); with context, composes a new composition (version 1) and opens it.
+     */
+    object?: string;
     /**
      * View context for object-aware composition. Determines which view_extensions are applied. When object is provided without layout, context infers the layout (detail→detail, list→list, form→form). workflow assembles list/detail/form/timeline screens with trait actions, routes, four UI states and generated application data.
      */
-    context: 'detail' | 'list' | 'form' | 'timeline' | 'card' | 'inline' | 'workflow';
+    context?: 'detail' | 'list' | 'form' | 'timeline' | 'card' | 'inline' | 'workflow';
     /**
      * Which generated app to compile and serve; both frameworks by default, each at its own URL.
      */
@@ -3753,17 +3798,23 @@ export type DesignPreviewInput = DesignPreviewInputSchema.DesignPreviewInput;
 // Source: design.preview.output.json
 export namespace DesignPreviewOutputSchema {
   /**
-   * The URL of the generated app running in the preview host, one per compiled framework, with the stored record, the schema hash and the compiled module digests. An unreachable host throws OODS-N021 before any record is written.
+   * The URL of the composition version running in the preview host, one per compiled framework, with its lineage (composition, version, parent, operation, head), the schema hash and the compiled module digests. An unreachable host throws OODS-N021 before any record is written; an unknown composition or version throws OODS-N022.
    */
   export interface DesignPreviewOutput {
     status: 'ok';
+    compositionId: string;
+    version: number;
+    parentVersion: number | null;
+    operation: 'compose' | 'recompose' | 'reorder-region' | 'swap-slot' | 'reorder-fields' | 'seed';
+    head: string | null;
     /**
-     * Canonical hash of the composed schema; the preview key is its first sixteen hex characters.
+     * Canonical hash of the version's composed schema.
      */
     schemaHash: string;
-    key: string;
+    object: string;
+    context: string;
     /**
-     * The first compiled framework's page; open it in a browser.
+     * The first compiled framework's page with lineage and controls; open it in a browser.
      */
     previewUrl: string;
     /**
@@ -3774,7 +3825,14 @@ export namespace DesignPreviewOutputSchema {
       | [
           {
             framework: 'react' | 'vue';
+            /**
+             * The page with the lineage panel and the brand, theme and width controls around the running app.
+             */
             url: string;
+            /**
+             * The bare running app the page frames; it re-mounts on brand and theme messages.
+             */
+            appUrl: string;
             /**
              * The artifact compiled to one ESM module; fetched once here so a compile failure fails this call.
              */
@@ -3789,7 +3847,14 @@ export namespace DesignPreviewOutputSchema {
       | [
           {
             framework: 'react' | 'vue';
+            /**
+             * The page with the lineage panel and the brand, theme and width controls around the running app.
+             */
             url: string;
+            /**
+             * The bare running app the page frames; it re-mounts on brand and theme messages.
+             */
+            appUrl: string;
             /**
              * The artifact compiled to one ESM module; fetched once here so a compile failure fails this call.
              */
@@ -3802,7 +3867,14 @@ export namespace DesignPreviewOutputSchema {
           },
           {
             framework: 'react' | 'vue';
+            /**
+             * The page with the lineage panel and the brand, theme and width controls around the running app.
+             */
             url: string;
+            /**
+             * The bare running app the page frames; it re-mounts on brand and theme messages.
+             */
+            appUrl: string;
             /**
              * The artifact compiled to one ESM module; fetched once here so a compile failure fails this call.
              */
@@ -3818,9 +3890,9 @@ export namespace DesignPreviewOutputSchema {
       url: string;
       port: number;
       /**
-       * Where the record was written and where the host reads it; beside the saved-schema store.
+       * Where the version files live and where the host reads them; beside the saved-schema store.
        */
-      previewsDir: string;
+      compositionsDir: string;
     };
     brand: 'A' | 'B';
     theme: 'light' | 'dark' | 'hc';

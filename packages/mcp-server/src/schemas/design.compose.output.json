@@ -31,6 +31,15 @@
       "type": "string",
       "description": "ISO timestamp when the schemaRef expires."
     },
+    "compositionId": {
+      "type": "string",
+      "pattern": "^cmp-[a-f0-9]{12}$",
+      "description": "The durable composition this result was recorded as; absent for transient compositions. Every version opens at /preview/<compositionId>/<version> on the preview host."
+    },
+    "version": { "type": "integer", "minimum": 1, "description": "The recorded version number (1 for a new composition)." },
+    "parentVersion": { "type": ["integer", "null"], "description": "The version this one derives from; null for the first." },
+    "operation": { "type": "string", "enum": ["compose", "recompose", "reorder-region", "swap-slot", "reorder-fields", "seed"], "description": "How this version was produced." },
+    "head": { "type": ["string", "null"], "description": "The Forge build head that produced it; null from a source checkout." },
     "selections": {
       "type": "array",
       "items": { "$ref": "#/$defs/slotSelection" },

@@ -2,18 +2,24 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://designlab.local/schemas/design.preview.input.json",
   "title": "Design preview input",
-  "description": "Open a public object/context as the generated React or Vue app actually running in a browser. Compose, generate and store the preview; the preview host (in the HTTP bridge, or started by the stdio adapter) compiles the artifact and serves it at the returned URL.",
+  "description": "Open a composition version as the generated React or Vue app actually running in a browser: either an existing compositionId (and optional version) or an object and context composed now as a new composition. The preview host (in the HTTP bridge, or started by the stdio adapter) compiles the artifact and serves it at one URL per version with its lineage and brand, theme and width controls.",
   "type": "object",
-  "required": [
-    "object",
-    "context"
-  ],
   "additionalProperties": false,
   "properties": {
+    "compositionId": {
+      "type": "string",
+      "pattern": "^cmp-[a-f0-9]{12}$",
+      "description": "An existing composition from design.compose; with no version, its latest version opens."
+    },
+    "version": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "The version of compositionId to open."
+    },
     "object": {
       "type": "string",
       "minLength": 1,
-      "description": "Object name from the OODS registry (e.g., 'Subscription', 'User'). When provided, composition uses trait-driven component placement via view_extensions."
+      "description": "Object name from the OODS registry (e.g., 'Subscription', 'User'); with context, composes a new composition (version 1) and opens it."
     },
     "context": {
       "type": "string",
@@ -43,13 +49,20 @@
       "properties": {
         "theme": {
           "type": "string",
-          "enum": ["light", "dark", "hc"],
+          "enum": [
+            "light",
+            "dark",
+            "hc"
+          ],
           "default": "light",
           "description": "Theme the page mounts with (data-theme and the matching token CSS scope)."
         },
         "brand": {
           "type": "string",
-          "enum": ["A", "B"],
+          "enum": [
+            "A",
+            "B"
+          ],
           "default": "A",
           "description": "Brand the page mounts with (data-brand and the matching token CSS scope)."
         },
@@ -93,8 +106,28 @@
     {
       "object": "Subscription",
       "context": "detail",
-      "framework": "react",
-      "preferences": { "theme": "dark", "brand": "B" }
+      "preferences": {
+        "theme": "dark",
+        "brand": "B"
+      }
+    },
+    {
+      "compositionId": "cmp-0123456789ab",
+      "version": 2,
+      "framework": "vue"
+    }
+  ],
+  "anyOf": [
+    {
+      "required": [
+        "compositionId"
+      ]
+    },
+    {
+      "required": [
+        "object",
+        "context"
+      ]
     }
   ]
 }

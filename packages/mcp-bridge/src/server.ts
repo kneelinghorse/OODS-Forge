@@ -23,7 +23,7 @@ import { resolveBridgeToolSurface } from './tool-surface.js';
 import { registerBridgeHealth } from './health.js';
 import { resolveBridgeArtifacts } from './runtime-paths.js';
 import { registerPreviewHost } from './preview/host.js';
-import { resolvePreviewStoreDir } from './preview/store.js';
+import { resolveCompositionsDir } from './preview/store.js';
 
 const APPROVAL_REQUIRED_TOOLS = approvalRequiredTools;
 const APPLY_CAPABLE_TOOLS = applyCapableTools;
@@ -247,10 +247,10 @@ async function main() {
     decorateReply: false,
   });
 
-  // The running-app preview: records design.preview writes beside the saved-schema store are
-  // compiled at request time and served with the prebuilt host runtimes under /preview/.
-  const previewsDir = resolvePreviewStoreDir(mcpServerCwd);
-  await registerPreviewHost(fastify, { previewsDir });
+  // The running-app preview: composition versions design.compose writes beside the saved-schema
+  // store are compiled at request time and served with the prebuilt host runtimes under /preview/.
+  const compositionsDir = resolveCompositionsDir(mcpServerCwd);
+  await registerPreviewHost(fastify, { compositionsDir });
 
   await registerArtifactEndpoints(fastify, artifactsRoot, {
     list: bridgeConfig.rateLimit.artifacts,

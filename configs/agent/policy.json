@@ -174,7 +174,7 @@
     },
     {
       "name": "design.compose",
-      "description": "Composes UiSchema from intent or objects; workflow context assembles four routed screens with states and trait actions",
+      "description": "Composes UiSchema from intent or objects; workflow context assembles four routed screens with states and trait actions Every successful composition is recorded as a durable version and the result carries compositionId, version, parentVersion, operation and head; pass compositionId to record the next version.",
       "modes": [
         "dry-run"
       ],
@@ -265,7 +265,7 @@
     },
     {
       "name": "design.preview",
-      "description": "Open a public object/context as the generated React or Vue app actually running in a browser. Composes the screen, generates one or both frameworks, seeds the deterministic field model, stores the preview beside the saved-schema store and compiles each artifact once through the preview host; returns one URL per framework with the schema hash and the compiled module digests. The HTTP bridge hosts the preview in-process and the stdio adapter starts it on 127.0.0.1 for Claude Desktop, Claude Code and Cursor, so the extracted runtime bundle serves it with no Vite, npm install or browser automation. Typed limit: without a reachable host (a native server run on its own, a host reading another schema store root, or a platform without a bundled esbuild binary) the outcome is OODS-N021, retryable, with the host details in data. Writes only the preview record; never saves or edits a schema. A running preview is an observation, not usability certification.",
+      "description": "Open a composition version (an existing compositionId, or an object and context composed now) as the generated React or Vue app actually running in a browser, at one URL per version with its lineage (composition, version, parent, operation, head) and brand, theme and width controls. The HTTP bridge hosts the preview in-process and the stdio adapter starts it on 127.0.0.1. Without a reachable host the outcome is retryable OODS-N021; an unknown composition or version is OODS-N022. Writes only the version's artifacts and model; never saves or edits a schema.",
       "modes": [
         "dry-run"
       ],

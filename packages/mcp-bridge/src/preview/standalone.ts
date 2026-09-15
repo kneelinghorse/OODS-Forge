@@ -10,7 +10,7 @@ import Fastify from 'fastify';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { registerPreviewHost } from './host.js';
-import { resolvePreviewStoreDir } from './store.js';
+import { resolveCompositionsDir } from './store.js';
 
 function parseArgs(argv: string[]): { serverCwd: string; port: number } {
   let serverCwd = fileURLToPath(new URL('../../../mcp-server/', import.meta.url));
@@ -28,14 +28,14 @@ function parseArgs(argv: string[]): { serverCwd: string; port: number } {
 async function main() {
   const { serverCwd, port } = parseArgs(process.argv.slice(2));
   const fastify = Fastify({ logger: false });
-  const previewsDir = resolvePreviewStoreDir(serverCwd);
-  const status = await registerPreviewHost(fastify, { previewsDir });
+  const compositionsDir = resolveCompositionsDir(serverCwd);
+  const status = await registerPreviewHost(fastify, { compositionsDir });
   await fastify.listen({ port, host: '127.0.0.1' });
   const address = fastify.server.address();
   const actualPort = typeof address === 'object' && address ? address.port : port;
   const url = `http://127.0.0.1:${actualPort}`;
-  process.stdout.write(JSON.stringify({ previewHost: { url, port: actualPort, pid: process.pid, previewsDir, platform: status.platform } }) + '\n');
-  process.stderr.write(`[oods-preview-host] listening on ${url}; previews from ${previewsDir}\n`);
+  process.stdout.write(JSON.stringify({ previewHost: { url, port: actualPort, pid: process.pid, compositionsDir, platform: status.platform } }) + '\n');
+  process.stderr.write(`[oods-preview-host] listening on ${url}; compositions from ${compositionsDir}\n`);
   let stopping = false;
   const stop = () => {
     if (stopping) return;

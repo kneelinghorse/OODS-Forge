@@ -4,7 +4,7 @@
 
 This operator contract is generated from the live dispatcher, registry, adapter descriptions, JSON schemas and capability ledgers. Optional policy and usage notes belong in `docs/mcp/tool-notes/<tool>.md`.
 
-The 24 live tools declare 118 root input parameters. Conditional action parameters and output union branches are expanded below. Required flags apply only within the displayed branch; alternatives do not make every key mandatory. Nested structures remain defined by the linked dispatch schemas.
+The 24 live tools declare 122 root input parameters. Conditional action parameters and output union branches are expanded below. Required flags apply only within the displayed branch; alternatives do not make every key mandatory. Nested structures remain defined by the linked dispatch schemas.
 
 ## Registration + enablement
 
@@ -19,13 +19,13 @@ Bridge-exposed tools require both [agent policy](../../configs/agent/policy.json
 
 ## Evidence and portable outcomes
 
-Tool ledger: [packages/mcp-server/registry/tool-capability-ledger.v1.json](../../packages/mcp-server/registry/tool-capability-ledger.v1.json), recorded source head `"a93012abefc0b53ec95325bb58b30adf6b155d27"`.
+Tool ledger: [packages/mcp-server/registry/tool-capability-ledger.v1.json](../../packages/mcp-server/registry/tool-capability-ledger.v1.json), recorded source head `"68a771c421b02389ddf33b5c96aeefa278ec1347"`.
 
 Proof tier methodology: Highest location tier of a literal runtime import of a handler-bearing module in mcp-server test/spec sources. Grouped action imports roll up to their registered family. Imports are source evidence, not proof of invocation, passing execution or browser certification. Transitive imports and constructed imports/dispatch are not followed; type-only and schema-only imports do not promote a tier.
 
 README references in product-reality directories containing browser/packed/runtime/SVG/screenshot prose. Current census reports are excluded. References are discovery pointers, never verified receipts or tier promotions.
 
-Recorded portable execution: 19 pass and 0 typed dependency outcomes across 19 tools. Receipt: [artifacts/product-reality/sprint-201/m01/e2e-host.json](../../artifacts/product-reality/sprint-201/m01/e2e-host.json); SHA-256 `"sha256:f1198c1d6198ce1f6911e71414c4201743e584d343c6276ac4b858524b586a0e"`; bundle head `"a93012abefc0b53ec95325bb58b30adf6b155d27"`; dirty=`true`. This records the measured development bundle, not a later clean release.
+Recorded portable execution: 19 pass and 0 typed dependency outcomes across 19 tools. Receipt: [artifacts/product-reality/sprint-201/m01/e2e-host.json](../../artifacts/product-reality/sprint-201/m01/e2e-host.json); SHA-256 `"sha256:d7d8946d854966df15e5f9f6cf9325ef5769f813b18d66614dfcc0f1f59f5de5"`; bundle head `"68a771c421b02389ddf33b5c96aeefa278ec1347"`; dirty=`true`. This records the measured development bundle, not a later clean release.
 
 ## Current component capability counts
 
@@ -450,7 +450,7 @@ Must not match: `{"required":["artifact"]}`.
 
 ### `design.compose`
 
-Compose a complete UiSchema from a natural-language intent description. Returns schemaRef for reuse in validate/render/code.generate. schemaRef includes createdAt/expiresAt timestamps (default TTL: 30 minutes) and lives in the server process that issued it: a restarted client starts a new server that does not know earlier refs and returns OODS-N003 for them. Use schema.save to persist beyond TTL or across sessions.
+Compose a complete UiSchema from a natural-language intent description. Returns schemaRef for reuse in validate/render/code.generate. schemaRef includes createdAt/expiresAt timestamps (default TTL: 30 minutes) and lives in the server process that issued it: a restarted client starts a new server that does not know earlier refs and returns OODS-N003 for them. Use schema.save to persist beyond TTL or across sessions. Every successful composition is recorded as a durable version (compositions/<compositionId>/versions/<n>.json beside the saved-schema store) and the result carries compositionId, version, parentVersion, operation and head; pass compositionId to record the result as that composition's next version, or options.transient to record nothing. design.preview opens any version at /preview/<compositionId>/<version>.
 
 [Complete input/output reference](../api/design-compose.md). The tables below follow the actual dispatch schema paths; those paths control when the legacy API page selects a different schema.
 
@@ -462,7 +462,7 @@ Server policy: roles `"designer"`, `"maintainer"`; read-only; timeout 30000 ms; 
 
 Dispatch schema: [packages/mcp-server/src/schemas/design.compose.input.json](../../packages/mcp-server/src/schemas/design.compose.input.json).
 
-Generate a complete UiSchema from an intent description and/or object definition using layout templates and component selection. Provide at least one of 'intent' or 'object'. context=workflow assembles a routed, stateful application from the object's list/detail/form/timeline compositions.
+Generate a complete UiSchema from an intent description and/or object definition using layout templates and component selection. Provide at least one of 'intent' or 'object'. context=workflow assembles a routed, stateful application from the object's list/detail/form/timeline compositions. Every successful composition is recorded as a durable version under the schema store (compositions/<compositionId>/versions/<n>.json); pass compositionId to record the result as that composition's next version.
 
 | Parameter / field | Type | Required in this branch | Default | Description / constraints |
 |---|---|---|---|---|
@@ -472,6 +472,8 @@ Generate a complete UiSchema from an intent description and/or object definition
 | `layout` | `"dashboard"` or `"form"` or `"detail"` or `"list"` or `"card"` or `"timeline"` or `"landing"` or `"auto"` | No | `"auto"` | Layout template to use. 'landing' is a content/marketing page (hero + sections + CTA), not bound to a data object. 'auto' infers the best template from intent keywords. |
 | `preferences` | object | No | — | additionalProperties: `false` |
 | `options` | object | No | — | additionalProperties: `false` |
+| `compositionId` | string | No | — | Record this composition as the next version of an existing composition (operation "recompose") instead of creating a new one.; pattern: `"^cmp-[a-f0-9]{12}$"` |
+| `parentVersion` | integer | No | — | With compositionId: the version the new one derives from; default the latest.; minimum: `1` |
 
 Additional properties: `false`.
 
@@ -503,6 +505,11 @@ Generated UiSchema with component selections and validation result.
 | `schemaRef` | string | No | — | Server-managed reference to the generated schema for reuse in validate/render/code.generate. |
 | `schemaRefCreatedAt` | string | No | — | ISO timestamp when the schemaRef was created. |
 | `schemaRefExpiresAt` | string | No | — | ISO timestamp when the schemaRef expires. |
+| `compositionId` | string | No | — | The durable composition this result was recorded as; absent for transient compositions. Every version opens at /preview/<compositionId>/<version> on the preview host.; pattern: `"^cmp-[a-f0-9]{12}$"` |
+| `version` | integer | No | — | The recorded version number (1 for a new composition).; minimum: `1` |
+| `parentVersion` | integer or null | No | — | The version this one derives from; null for the first. |
+| `operation` | `"compose"` or `"recompose"` or `"reorder-region"` or `"swap-slot"` or `"reorder-fields"` or `"seed"` | No | — | How this version was produced. |
+| `head` | string or null | No | — | The Forge build head that produced it; null from a source checkout. |
 | `selections` | array of ref `"#/$defs/slotSelection"` | Yes | — | Component selection results per slot. |
 | `validation` | object | No | — | additionalProperties: `false` |
 | `warnings` | array of ref `"#/$defs/issue"` | Yes | — | Non-fatal issues during composition. |
@@ -516,7 +523,7 @@ Additional properties: `false`.
 
 ### `design.preview`
 
-Open a public object/context as the generated React or Vue app actually running in a browser. Composes the screen, generates one or both frameworks, seeds the deterministic field model, stores the preview beside the saved-schema store and compiles each artifact once through the preview host; returns one URL per framework with the schema hash and the compiled module digests. The HTTP bridge hosts the preview in-process and the stdio adapter starts it on 127.0.0.1 for Claude Desktop, Claude Code and Cursor, so the extracted runtime bundle serves it with no Vite, npm install or browser automation. Typed limit: without a reachable host (a native server run on its own, a host reading another schema store root, or a platform without a bundled esbuild binary) the outcome is OODS-N021, retryable, with the host details in data. Writes only the preview record; never saves or edits a schema. A running preview is an observation, not usability certification.
+Open a composition version as the generated React or Vue app actually running in a browser: an existing compositionId (and optional version) or an object and context composed now as a new composition. Generates one or both frameworks onto the version, seeds the deterministic field model, compiles each artifact once through the preview host and returns one URL per framework with the lineage (compositionId, version, parentVersion, operation, head), the schema hash and the compiled module digests; the page shows the lineage beside the running app with brand, theme and width controls, and brand and theme re-mount the app in place. The HTTP bridge hosts the preview in-process and the stdio adapter starts it on 127.0.0.1 for Claude Desktop, Claude Code and Cursor, so the extracted runtime bundle serves it with no Vite, npm install or browser automation. Typed limits: without a reachable host (a native server run on its own, a host reading another schema store root, or a platform without a bundled esbuild binary) the outcome is OODS-N021, retryable, with the host details in data; an unknown composition or version is OODS-N022. Writes only the version's artifacts and model; never saves or edits a schema. A running preview is an observation, not usability certification.
 
 [Complete input/output reference](../api/design-preview.md). The tables below follow the actual dispatch schema paths; those paths control when the legacy API page selects a different schema.
 
@@ -530,31 +537,51 @@ Documented limit (documented-limit): Requires a reachable preview host: the HTTP
 
 Dispatch schema: [packages/mcp-server/src/schemas/design.preview.input.json](../../packages/mcp-server/src/schemas/design.preview.input.json).
 
-Open a public object/context as the generated React or Vue app actually running in a browser. Compose, generate and store the preview; the preview host (in the HTTP bridge, or started by the stdio adapter) compiles the artifact and serves it at the returned URL.
+Open a composition version as the generated React or Vue app actually running in a browser: either an existing compositionId (and optional version) or an object and context composed now as a new composition. The preview host (in the HTTP bridge, or started by the stdio adapter) compiles the artifact and serves it at one URL per version with its lineage and brand, theme and width controls.
 
 | Parameter / field | Type | Required in this branch | Default | Description / constraints |
 |---|---|---|---|---|
-| `object` | string | Yes | — | Object name from the OODS registry (e.g., 'Subscription', 'User'). When provided, composition uses trait-driven component placement via view_extensions.; minLength: `1` |
-| `context` | `"detail"` or `"list"` or `"form"` or `"timeline"` or `"card"` or `"inline"` or `"workflow"` | Yes | — | View context for object-aware composition. Determines which view_extensions are applied. When object is provided without layout, context infers the layout (detail→detail, list→list, form→form). workflow assembles list/detail/form/timeline screens with trait actions, routes, four UI states and generated application data. |
+| `compositionId` | string | No | — | An existing composition from design.compose; with no version, its latest version opens.; pattern: `"^cmp-[a-f0-9]{12}$"` |
+| `version` | integer | No | — | The version of compositionId to open.; minimum: `1` |
+| `object` | string | No | — | Object name from the OODS registry (e.g., 'Subscription', 'User'); with context, composes a new composition (version 1) and opens it.; minLength: `1` |
+| `context` | `"detail"` or `"list"` or `"form"` or `"timeline"` or `"card"` or `"inline"` or `"workflow"` | No | — | View context for object-aware composition. Determines which view_extensions are applied. When object is provided without layout, context infers the layout (detail→detail, list→list, form→form). workflow assembles list/detail/form/timeline screens with trait actions, routes, four UI states and generated application data. |
 | `framework` | `"react"` or `"vue"` or `"both"` | No | `"both"` | Which generated app to compile and serve; both frameworks by default, each at its own URL. |
 | `preferences` | object | No | — | additionalProperties: `false` |
 
-Required keys in this branch: `"object"`, `"context"`.
-
 Additional properties: `false`.
+
+anyOf: at least one branch must match.
+
+##### Input anyOf[0]
+
+Shape: any.
+
+Required keys in this branch: `"compositionId"`.
+
+##### Input anyOf[1]
+
+Shape: any.
+
+Required keys in this branch: `"object"`, `"context"`.
 
 #### Output contract
 
 Dispatch schema: [packages/mcp-server/src/schemas/design.preview.output.json](../../packages/mcp-server/src/schemas/design.preview.output.json).
 
-The URL of the generated app running in the preview host, one per compiled framework, with the stored record, the schema hash and the compiled module digests. An unreachable host throws OODS-N021 before any record is written.
+The URL of the composition version running in the preview host, one per compiled framework, with its lineage (composition, version, parent, operation, head), the schema hash and the compiled module digests. An unreachable host throws OODS-N021 before any record is written; an unknown composition or version throws OODS-N022.
 
 | Parameter / field | Type | Required in this branch | Default | Description / constraints |
 |---|---|---|---|---|
 | `status` | `"ok"` | Yes | — | — |
-| `schemaHash` | string | Yes | — | Canonical hash of the composed schema; the preview key is its first sixteen hex characters.; pattern: `"^sha256:[a-f0-9]{64}$"` |
-| `key` | string | Yes | — | pattern: `"^[a-f0-9]{16}$"` |
-| `previewUrl` | string | Yes | — | The first compiled framework's page; open it in a browser.; format: `"uri"` |
+| `compositionId` | string | Yes | — | pattern: `"^cmp-[a-f0-9]{12}$"` |
+| `version` | integer | Yes | — | minimum: `1` |
+| `parentVersion` | integer or null | Yes | — | — |
+| `operation` | `"compose"` or `"recompose"` or `"reorder-region"` or `"swap-slot"` or `"reorder-fields"` or `"seed"` | Yes | — | — |
+| `head` | string or null | Yes | — | — |
+| `schemaHash` | string | Yes | — | Canonical hash of the version's composed schema.; pattern: `"^sha256:[a-f0-9]{64}$"` |
+| `object` | string | Yes | — | — |
+| `context` | string | Yes | — | — |
+| `previewUrl` | string | Yes | — | The first compiled framework's page with lineage and controls; open it in a browser.; format: `"uri"` |
 | `previews` | array of object | Yes | — | minItems: `1`; maxItems: `2` |
 | `host` | object | Yes | — | additionalProperties: `false` |
 | `brand` | `"A"` or `"B"` | Yes | — | — |
@@ -562,7 +589,7 @@ The URL of the generated app running in the preview host, one per compiled frame
 | `recordPath` | string | Yes | — | — |
 | `durationMs` | number | Yes | — | minimum: `0` |
 
-Required keys in this branch: `"status"`, `"schemaHash"`, `"key"`, `"previewUrl"`, `"previews"`, `"host"`, `"brand"`, `"theme"`, `"recordPath"`, `"durationMs"`.
+Required keys in this branch: `"status"`, `"compositionId"`, `"version"`, `"parentVersion"`, `"operation"`, `"head"`, `"schemaHash"`, `"object"`, `"context"`, `"previewUrl"`, `"previews"`, `"host"`, `"brand"`, `"theme"`, `"recordPath"`, `"durationMs"`.
 
 Additional properties: `false`.
 

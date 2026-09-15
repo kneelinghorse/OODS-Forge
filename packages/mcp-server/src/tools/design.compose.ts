@@ -36,6 +36,8 @@ import {
 import { handle as validateHandle } from './repl.validate.js';
 import type { ComponentCatalogSummary } from './types.js';
 import { createSchemaRef, describeSchemaRef } from './schema-ref.js';
+import { newCompositionId, nextVersion, readForgeHead, resolveCompositionsDir, writeVersion, type CompositionOperation, type CompositionVersion } from '../lib/composition-store.js';
+import { createHash } from 'node:crypto';
 import { resolveEntity, isResolved as isEntityResolved } from './entity-resolver.js';
 import { loadObject } from '../objects/object-loader.js';
 import { composeObject, type ComposedObject } from '../objects/trait-composer.js';
@@ -161,7 +163,13 @@ export interface DesignComposeInput {
   options?: {
     validate?: boolean;
     topN?: number;
+    /** Do not record a composition version (internal seed compositions); the result carries no compositionId. */
+    transient?: boolean;
   };
+  /** Record the result as the next version of this composition (operation "recompose") instead of a new one. */
+  compositionId?: string;
+  /** The version the new one derives from; default the latest. */
+  parentVersion?: number;
   /** Sprint 88: Stage1 BridgeSummary action_mappings — flat verb-keyed entries. */
   actionMappings?: ActionMapping[];
   /** Sprint 88.1: Stage1 BridgeSummary.actions[] — per-component action instances. Merged with actionMappings[] for trait lookup. */
@@ -235,6 +243,12 @@ export interface DesignComposeOutput {
   schemaRef?: string;
   schemaRefCreatedAt?: string;
   schemaRefExpiresAt?: string;
+  /** The durable composition this result was recorded as (absent for transient compositions). */
+  compositionId?: string;
+  version?: number;
+  parentVersion?: number | null;
+  operation?: CompositionOperation;
+  head?: string | null;
   selections: SlotSelectionEntry[];
   validation?: {
     status: 'ok' | 'invalid' | 'skipped';
@@ -1380,6 +1394,27 @@ function normalizeObjectPlanForCatalog(
 /*  Handler                                                            */
 /* ------------------------------------------------------------------ */
 
+/** Write the result as a composition version: a new composition, or the next version of the one named. */
+async function recordComposition(input: DesignComposeInput, schema: UiSchema, selections: SlotSelectionEntry[]): Promise<Pick<DesignComposeOutput, 'compositionId' | 'version' | 'parentVersion' | 'operation' | 'head'>> {
+  const directory = resolveCompositionsDir();
+  const { compositionId: _id, parentVersion: _parent, ...compose } = input;
+  const target = input.compositionId
+    ? { compositionId: input.compositionId, operation: 'recompose' as const, ...(await nextVersion(directory, input.compositionId, input.parentVersion)) }
+    : { compositionId: newCompositionId(), version: 1, parentVersion: null, operation: 'compose' as const };
+  const theme = input.preferences?.theme === 'dark' || input.preferences?.theme === 'hc' ? input.preferences.theme : 'light';
+  const brand = input.preferences?.brand === 'B' ? 'B' : 'A';
+  const record: CompositionVersion = {
+    recordVersion: '1', compositionId: target.compositionId, version: target.version, parentVersion: target.parentVersion, operation: target.operation,
+    createdAt: new Date().toISOString(), head: readForgeHead(),
+    compose: compose as unknown as Record<string, unknown>, schema, schemaHash: `sha256:${createHash('sha256').update(JSON.stringify(schema)).digest('hex')}`,
+    brand, theme,
+    slots: selections.map(selection => ({ slotName: selection.slotName, ...(selection.selectedComponent ? { selectedComponent: selection.selectedComponent } : {}), ...(selection.placedComponents ? { placedComponents: selection.placedComponents } : {}) })),
+    artifacts: {}, measurements: {},
+  };
+  await writeVersion(directory, record);
+  return { compositionId: record.compositionId, version: record.version, parentVersion: record.parentVersion, operation: record.operation, head: record.head };
+}
+
 export async function handle(input: DesignComposeInput): Promise<DesignComposeOutput> {
   const warnings: ComposeIssue[] = [];
 
@@ -2076,6 +2111,9 @@ export async function handle(input: DesignComposeInput): Promise<DesignComposeOu
     lowConfidenceSlotNames: lowConfidenceSlotNames.length > 0 ? lowConfidenceSlotNames : undefined,
   };
 
+  // The composition is durable: one version file per result, beside the saved-schema store.
+  const recorded = input.options?.transient ? undefined : await recordComposition(input, schema, explainedSelections);
+
   return {
     status: 'ok',
     layout: layoutType,
@@ -2083,6 +2121,7 @@ export async function handle(input: DesignComposeInput): Promise<DesignComposeOu
     schemaRef: schemaRefMeta.ref,
     schemaRefCreatedAt: schemaRefMeta.createdAt,
     schemaRefExpiresAt: schemaRefMeta.expiresAt,
+    ...(recorded ?? {}),
     selections: explainedSelections,
     validation,
     warnings,

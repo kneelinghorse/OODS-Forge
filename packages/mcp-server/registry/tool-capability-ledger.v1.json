@@ -27,7 +27,7 @@
       "reason": "apply:false invokes package builds and prepack in canonical package directories; no honest dry-run. Earlier probe rebuilt workspace dist but created no tags or publications."
     }
   ],
-  "head": "a93012abefc0b53ec95325bb58b30adf6b155d27",
+  "head": "68a771c421b02389ddf33b5c96aeefa278ec1347",
   "builderSelfCertified": false,
   "methodology": {
     "proofTier": "Highest location tier of a literal runtime import of a handler-bearing module in mcp-server test/spec sources. Grouped action imports roll up to their registered family. Imports are source evidence, not proof of invocation, passing execution or browser certification. Transitive imports and constructed imports/dispatch are not followed; type-only and schema-only imports do not promote a tier.",
@@ -37,8 +37,8 @@
   },
   "portableExecution": {
     "path": "artifacts/product-reality/sprint-201/m01/e2e-host.json",
-    "sha256": "sha256:f1198c1d6198ce1f6911e71414c4201743e584d343c6276ac4b858524b586a0e",
-    "bundleHead": "a93012abefc0b53ec95325bb58b30adf6b155d27",
+    "sha256": "sha256:d7d8946d854966df15e5f9f6cf9325ef5769f813b18d66614dfcc0f1f59f5de5",
+    "bundleHead": "68a771c421b02389ddf33b5c96aeefa278ec1347",
     "dirty": true,
     "tools": 19,
     "pass": 19,
@@ -152,7 +152,7 @@
       "portableLimits": [],
       "portableOutcome": {
         "outcome": "pass",
-        "receiptSha256": "sha256:f1198c1d6198ce1f6911e71414c4201743e584d343c6276ac4b858524b586a0e"
+        "receiptSha256": "sha256:d7d8946d854966df15e5f9f6cf9325ef5769f813b18d66614dfcc0f1f59f5de5"
       },
       "caveats": [
         {
@@ -247,7 +247,7 @@
       "portableLimits": [],
       "portableOutcome": {
         "outcome": "pass",
-        "receiptSha256": "sha256:f1198c1d6198ce1f6911e71414c4201743e584d343c6276ac4b858524b586a0e"
+        "receiptSha256": "sha256:d7d8946d854966df15e5f9f6cf9325ef5769f813b18d66614dfcc0f1f59f5de5"
       },
       "caveats": []
     },
@@ -367,7 +367,7 @@
       "portableLimits": [],
       "portableOutcome": {
         "outcome": "pass",
-        "receiptSha256": "sha256:f1198c1d6198ce1f6911e71414c4201743e584d343c6276ac4b858524b586a0e"
+        "receiptSha256": "sha256:d7d8946d854966df15e5f9f6cf9325ef5769f813b18d66614dfcc0f1f59f5de5"
       },
       "caveats": [
         {
@@ -446,7 +446,7 @@
       "portableLimits": [],
       "portableOutcome": {
         "outcome": "pass",
-        "receiptSha256": "sha256:f1198c1d6198ce1f6911e71414c4201743e584d343c6276ac4b858524b586a0e"
+        "receiptSha256": "sha256:d7d8946d854966df15e5f9f6cf9325ef5769f813b18d66614dfcc0f1f59f5de5"
       },
       "caveats": [
         {
@@ -533,7 +533,7 @@
       "portableLimits": [],
       "portableOutcome": {
         "outcome": "pass",
-        "receiptSha256": "sha256:f1198c1d6198ce1f6911e71414c4201743e584d343c6276ac4b858524b586a0e"
+        "receiptSha256": "sha256:d7d8946d854966df15e5f9f6cf9325ef5769f813b18d66614dfcc0f1f59f5de5"
       },
       "caveats": []
     },
@@ -1036,17 +1036,17 @@
       "portableE2ERefs": [
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 1004
+          "line": 1010
         },
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 1007
+          "line": 1013
         }
       ],
       "portableLimits": [],
       "portableOutcome": {
         "outcome": "pass",
-        "receiptSha256": "sha256:f1198c1d6198ce1f6911e71414c4201743e584d343c6276ac4b858524b586a0e"
+        "receiptSha256": "sha256:d7d8946d854966df15e5f9f6cf9325ef5769f813b18d66614dfcc0f1f59f5de5"
       },
       "caveats": [
         {
@@ -1067,12 +1067,12 @@
       "name": "design.compose",
       "registration": "auto",
       "advertisedClaim": {
-        "description": "Compose a complete UiSchema from a natural-language intent description. Returns schemaRef for reuse in validate/render/code.generate. schemaRef includes createdAt/expiresAt timestamps (default TTL: 30 minutes) and lives in the server process that issued it: a restarted client starts a new server that does not know earlier refs and returns OODS-N003 for them. Use schema.save to persist beyond TTL or across sessions.",
-        "inputSchemaDescription": "Generate a complete UiSchema from an intent description and/or object definition using layout templates and component selection. Provide at least one of 'intent' or 'object'. context=workflow assembles a routed, stateful application from the object's list/detail/form/timeline compositions."
+        "description": "Compose a complete UiSchema from a natural-language intent description. Returns schemaRef for reuse in validate/render/code.generate. schemaRef includes createdAt/expiresAt timestamps (default TTL: 30 minutes) and lives in the server process that issued it: a restarted client starts a new server that does not know earlier refs and returns OODS-N003 for them. Use schema.save to persist beyond TTL or across sessions. Every successful composition is recorded as a durable version (compositions/<compositionId>/versions/<n>.json beside the saved-schema store) and the result carries compositionId, version, parentVersion, operation and head; pass compositionId to record the result as that composition's next version, or options.transient to record nothing. design.preview opens any version at /preview/<compositionId>/<version>.",
+        "inputSchemaDescription": "Generate a complete UiSchema from an intent description and/or object definition using layout templates and component selection. Provide at least one of 'intent' or 'object'. context=workflow assembles a routed, stateful application from the object's list/detail/form/timeline compositions. Every successful composition is recorded as a durable version under the schema store (compositions/<compositionId>/versions/<n>.json); pass compositionId to record the result as that composition's next version."
       },
-      "claimHash": "sha256:0a619ebbaeac7ba6ce9833eb1265e60a0a144317a1cb7c03d80df03f560fa088",
+      "claimHash": "sha256:605c823defd2fcceb948e4ab7fccafcf060dc8a3aad579d1366b433cefca8817",
       "inputSchemaPath": "packages/mcp-server/src/schemas/design.compose.input.json",
-      "inputSchemaHash": "sha256:e25e8b5e43d5271105f0486112410c651140c1c01d30317c0b36fdc757fb39c0",
+      "inputSchemaHash": "sha256:a0480d84a54183d14fb8597a36da381ce35d4994669bbe25af0ef5e9d6d833dc",
       "proofTier": "product-reality",
       "testImports": {
         "product-reality": [
@@ -1361,6 +1361,11 @@
             "handler": "packages/mcp-server/src/tools/design.compose.ts"
           },
           {
+            "path": "packages/mcp-server/test/tools/design.preview.s201.spec.ts",
+            "line": 13,
+            "handler": "packages/mcp-server/src/tools/design.compose.ts"
+          },
+          {
             "path": "packages/mcp-server/src/tools/schema/__tests__/schema-tools.test.ts",
             "line": 8,
             "handler": "packages/mcp-server/src/tools/design.compose.ts"
@@ -1409,6 +1414,18 @@
           "line": 32,
           "kind": "readme-reference",
           "verifiedReceipt": false
+        },
+        {
+          "path": "artifacts/product-reality/sprint-201/m02/README.md",
+          "line": 8,
+          "kind": "readme-reference",
+          "verifiedReceipt": false
+        },
+        {
+          "path": "artifacts/product-reality/sprint-201/m02/README.md",
+          "line": 16,
+          "kind": "readme-reference",
+          "verifiedReceipt": false
         }
       ],
       "portableE2E": true,
@@ -1421,7 +1438,7 @@
       "portableLimits": [],
       "portableOutcome": {
         "outcome": "pass",
-        "receiptSha256": "sha256:f1198c1d6198ce1f6911e71414c4201743e584d343c6276ac4b858524b586a0e"
+        "receiptSha256": "sha256:d7d8946d854966df15e5f9f6cf9325ef5769f813b18d66614dfcc0f1f59f5de5"
       },
       "caveats": []
     },
@@ -1429,12 +1446,12 @@
       "name": "design.preview",
       "registration": "auto",
       "advertisedClaim": {
-        "description": "Open a public object/context as the generated React or Vue app actually running in a browser. Composes the screen, generates one or both frameworks, seeds the deterministic field model, stores the preview beside the saved-schema store and compiles each artifact once through the preview host; returns one URL per framework with the schema hash and the compiled module digests. The HTTP bridge hosts the preview in-process and the stdio adapter starts it on 127.0.0.1 for Claude Desktop, Claude Code and Cursor, so the extracted runtime bundle serves it with no Vite, npm install or browser automation. Typed limit: without a reachable host (a native server run on its own, a host reading another schema store root, or a platform without a bundled esbuild binary) the outcome is OODS-N021, retryable, with the host details in data. Writes only the preview record; never saves or edits a schema. A running preview is an observation, not usability certification.",
-        "inputSchemaDescription": "Open a public object/context as the generated React or Vue app actually running in a browser. Compose, generate and store the preview; the preview host (in the HTTP bridge, or started by the stdio adapter) compiles the artifact and serves it at the returned URL."
+        "description": "Open a composition version as the generated React or Vue app actually running in a browser: an existing compositionId (and optional version) or an object and context composed now as a new composition. Generates one or both frameworks onto the version, seeds the deterministic field model, compiles each artifact once through the preview host and returns one URL per framework with the lineage (compositionId, version, parentVersion, operation, head), the schema hash and the compiled module digests; the page shows the lineage beside the running app with brand, theme and width controls, and brand and theme re-mount the app in place. The HTTP bridge hosts the preview in-process and the stdio adapter starts it on 127.0.0.1 for Claude Desktop, Claude Code and Cursor, so the extracted runtime bundle serves it with no Vite, npm install or browser automation. Typed limits: without a reachable host (a native server run on its own, a host reading another schema store root, or a platform without a bundled esbuild binary) the outcome is OODS-N021, retryable, with the host details in data; an unknown composition or version is OODS-N022. Writes only the version's artifacts and model; never saves or edits a schema. A running preview is an observation, not usability certification.",
+        "inputSchemaDescription": "Open a composition version as the generated React or Vue app actually running in a browser: either an existing compositionId (and optional version) or an object and context composed now as a new composition. The preview host (in the HTTP bridge, or started by the stdio adapter) compiles the artifact and serves it at one URL per version with its lineage and brand, theme and width controls."
       },
-      "claimHash": "sha256:42e25705e8882bd20e939168c824e9248c0a0aebe20ca708812c816ef5a668eb",
+      "claimHash": "sha256:a5225780e44dadb370df2b1e2a4ba89c28021f28b6ddbec9badf2cf8d7d9395c",
       "inputSchemaPath": "packages/mcp-server/src/schemas/design.preview.input.json",
-      "inputSchemaHash": "sha256:ffacebd4e887098fb7ee9e59f92fda0a066c7abd2c0eb1cb0e65604b7a980662",
+      "inputSchemaHash": "sha256:61dfc12bcc0d0e7d9494f2ed118a8f680599d993889bc76edf78aa7efc2b7170",
       "proofTier": "product-reality",
       "testImports": {
         "product-reality": [
@@ -1454,7 +1471,7 @@
         "unit": [
           {
             "path": "packages/mcp-server/test/tools/design.preview.s201.spec.ts",
-            "line": 13,
+            "line": 14,
             "handler": "packages/mcp-server/src/tools/design.preview.ts"
           },
           {
@@ -1500,6 +1517,72 @@
           "line": 50,
           "kind": "readme-reference",
           "verifiedReceipt": false
+        },
+        {
+          "path": "artifacts/product-reality/sprint-201/m01/README.md",
+          "line": 10,
+          "kind": "readme-reference",
+          "verifiedReceipt": false
+        },
+        {
+          "path": "artifacts/product-reality/sprint-201/m01/README.md",
+          "line": 12,
+          "kind": "readme-reference",
+          "verifiedReceipt": false
+        },
+        {
+          "path": "artifacts/product-reality/sprint-201/m01/README.md",
+          "line": 19,
+          "kind": "readme-reference",
+          "verifiedReceipt": false
+        },
+        {
+          "path": "artifacts/product-reality/sprint-201/m01/README.md",
+          "line": 21,
+          "kind": "readme-reference",
+          "verifiedReceipt": false
+        },
+        {
+          "path": "artifacts/product-reality/sprint-201/m01/README.md",
+          "line": 29,
+          "kind": "readme-reference",
+          "verifiedReceipt": false
+        },
+        {
+          "path": "artifacts/product-reality/sprint-201/m01/README.md",
+          "line": 36,
+          "kind": "readme-reference",
+          "verifiedReceipt": false
+        },
+        {
+          "path": "artifacts/product-reality/sprint-201/m02/README.md",
+          "line": 7,
+          "kind": "readme-reference",
+          "verifiedReceipt": false
+        },
+        {
+          "path": "artifacts/product-reality/sprint-201/m02/README.md",
+          "line": 12,
+          "kind": "readme-reference",
+          "verifiedReceipt": false
+        },
+        {
+          "path": "artifacts/product-reality/sprint-201/m02/README.md",
+          "line": 17,
+          "kind": "readme-reference",
+          "verifiedReceipt": false
+        },
+        {
+          "path": "artifacts/product-reality/sprint-201/m02/README.md",
+          "line": 19,
+          "kind": "readme-reference",
+          "verifiedReceipt": false
+        },
+        {
+          "path": "artifacts/product-reality/sprint-201/m02/README.md",
+          "line": 25,
+          "kind": "readme-reference",
+          "verifiedReceipt": false
         }
       ],
       "portableE2E": true,
@@ -1512,7 +1595,7 @@
       "portableLimits": [],
       "portableOutcome": {
         "outcome": "pass",
-        "receiptSha256": "sha256:f1198c1d6198ce1f6911e71414c4201743e584d343c6276ac4b858524b586a0e"
+        "receiptSha256": "sha256:d7d8946d854966df15e5f9f6cf9325ef5769f813b18d66614dfcc0f1f59f5de5"
       },
       "caveats": [
         {
@@ -1624,13 +1707,13 @@
       "portableE2ERefs": [
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 1010
+          "line": 1016
         }
       ],
       "portableLimits": [],
       "portableOutcome": {
         "outcome": "pass",
-        "receiptSha256": "sha256:f1198c1d6198ce1f6911e71414c4201743e584d343c6276ac4b858524b586a0e"
+        "receiptSha256": "sha256:d7d8946d854966df15e5f9f6cf9325ef5769f813b18d66614dfcc0f1f59f5de5"
       },
       "caveats": [
         {
@@ -1741,13 +1824,13 @@
         },
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 1123
+          "line": 1129
         }
       ],
       "portableLimits": [],
       "portableOutcome": {
         "outcome": "pass",
-        "receiptSha256": "sha256:f1198c1d6198ce1f6911e71414c4201743e584d343c6276ac4b858524b586a0e"
+        "receiptSha256": "sha256:d7d8946d854966df15e5f9f6cf9325ef5769f813b18d66614dfcc0f1f59f5de5"
       },
       "caveats": [
         {
@@ -1809,13 +1892,13 @@
       "portableE2ERefs": [
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 1013
+          "line": 1019
         }
       ],
       "portableLimits": [],
       "portableOutcome": {
         "outcome": "pass",
-        "receiptSha256": "sha256:f1198c1d6198ce1f6911e71414c4201743e584d343c6276ac4b858524b586a0e"
+        "receiptSha256": "sha256:d7d8946d854966df15e5f9f6cf9325ef5769f813b18d66614dfcc0f1f59f5de5"
       },
       "caveats": [
         {
@@ -2164,7 +2247,7 @@
       "portableLimits": [],
       "portableOutcome": {
         "outcome": "pass",
-        "receiptSha256": "sha256:f1198c1d6198ce1f6911e71414c4201743e584d343c6276ac4b858524b586a0e"
+        "receiptSha256": "sha256:d7d8946d854966df15e5f9f6cf9325ef5769f813b18d66614dfcc0f1f59f5de5"
       },
       "caveats": []
     },
@@ -2305,7 +2388,7 @@
       "portableLimits": [],
       "portableOutcome": {
         "outcome": "pass",
-        "receiptSha256": "sha256:f1198c1d6198ce1f6911e71414c4201743e584d343c6276ac4b858524b586a0e"
+        "receiptSha256": "sha256:d7d8946d854966df15e5f9f6cf9325ef5769f813b18d66614dfcc0f1f59f5de5"
       },
       "caveats": []
     },
@@ -2539,7 +2622,7 @@
       "portableLimits": [],
       "portableOutcome": {
         "outcome": "pass",
-        "receiptSha256": "sha256:f1198c1d6198ce1f6911e71414c4201743e584d343c6276ac4b858524b586a0e"
+        "receiptSha256": "sha256:d7d8946d854966df15e5f9f6cf9325ef5769f813b18d66614dfcc0f1f59f5de5"
       },
       "caveats": []
     },
@@ -2589,13 +2672,13 @@
       "portableE2ERefs": [
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 1015
+          "line": 1021
         }
       ],
       "portableLimits": [],
       "portableOutcome": {
         "outcome": "pass",
-        "receiptSha256": "sha256:f1198c1d6198ce1f6911e71414c4201743e584d343c6276ac4b858524b586a0e"
+        "receiptSha256": "sha256:d7d8946d854966df15e5f9f6cf9325ef5769f813b18d66614dfcc0f1f59f5de5"
       },
       "caveats": [
         {
@@ -2740,21 +2823,21 @@
       "portableE2ERefs": [
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 1017
+          "line": 1023
         },
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 1019
+          "line": 1025
         },
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 1021
+          "line": 1027
         }
       ],
       "portableLimits": [],
       "portableOutcome": {
         "outcome": "pass",
-        "receiptSha256": "sha256:f1198c1d6198ce1f6911e71414c4201743e584d343c6276ac4b858524b586a0e"
+        "receiptSha256": "sha256:d7d8946d854966df15e5f9f6cf9325ef5769f813b18d66614dfcc0f1f59f5de5"
       },
       "caveats": [
         {
@@ -2874,21 +2957,21 @@
       "portableE2ERefs": [
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 1023
+          "line": 1029
         },
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 1025
+          "line": 1031
         },
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 1027
+          "line": 1033
         }
       ],
       "portableLimits": [],
       "portableOutcome": {
         "outcome": "pass",
-        "receiptSha256": "sha256:f1198c1d6198ce1f6911e71414c4201743e584d343c6276ac4b858524b586a0e"
+        "receiptSha256": "sha256:d7d8946d854966df15e5f9f6cf9325ef5769f813b18d66614dfcc0f1f59f5de5"
       },
       "caveats": []
     },
@@ -2994,19 +3077,25 @@
           "line": 19,
           "kind": "readme-reference",
           "verifiedReceipt": false
+        },
+        {
+          "path": "artifacts/product-reality/sprint-201/m02/README.md",
+          "line": 12,
+          "kind": "readme-reference",
+          "verifiedReceipt": false
         }
       ],
       "portableE2E": true,
       "portableE2ERefs": [
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 1029
+          "line": 1035
         }
       ],
       "portableLimits": [],
       "portableOutcome": {
         "outcome": "pass",
-        "receiptSha256": "sha256:f1198c1d6198ce1f6911e71414c4201743e584d343c6276ac4b858524b586a0e"
+        "receiptSha256": "sha256:d7d8946d854966df15e5f9f6cf9325ef5769f813b18d66614dfcc0f1f59f5de5"
       },
       "caveats": []
     },
@@ -3234,13 +3323,13 @@
       "portableE2ERefs": [
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 1031
+          "line": 1037
         }
       ],
       "portableLimits": [],
       "portableOutcome": {
         "outcome": "pass",
-        "receiptSha256": "sha256:f1198c1d6198ce1f6911e71414c4201743e584d343c6276ac4b858524b586a0e"
+        "receiptSha256": "sha256:d7d8946d854966df15e5f9f6cf9325ef5769f813b18d66614dfcc0f1f59f5de5"
       },
       "caveats": [
         {
