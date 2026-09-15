@@ -1,0 +1,1306 @@
+{
+  "status": "ok",
+  "layout": "detail",
+  "schema": {
+    "version": "2026.02",
+    "screens": [
+      {
+        "id": "screen-detail-13",
+        "component": "Stack",
+        "layout": {
+          "type": "stack",
+          "gapToken": "cluster-default"
+        },
+        "children": [
+          {
+            "id": "detail-header-1",
+            "component": "Stack",
+            "layout": {
+              "type": "stack",
+              "align": "space-between",
+              "gapToken": "stack-default"
+            },
+            "style": {
+              "spacingToken": "inset-default"
+            },
+            "children": [
+              {
+                "id": "slot-header-2",
+                "component": "Stack",
+                "meta": {
+                  "intent": "slot:header",
+                  "label": "header"
+                },
+                "children": [
+                  {
+                    "id": "ve-header-24",
+                    "component": "DetailHeader",
+                    "props": {
+                      "titleField": "name",
+                      "subtitleField": "description",
+                      "headingLevel": 1
+                    }
+                  },
+                  {
+                    "id": "ve-header-25",
+                    "component": "StatusTimeline",
+                    "props": {
+                      "field": "status",
+                      "historyField": "state_history",
+                      "statesParameter": "states",
+                      "showActorId": true,
+                      "showReason": true
+                    }
+                  },
+                  {
+                    "id": "ve-header-28",
+                    "component": "OwnershipSummary",
+                    "props": {
+                      "ownerIdField": "owner_id",
+                      "ownerTypeField": "owner_type",
+                      "roleField": "ownership_role",
+                      "transferredAtField": "ownership_transferred_at",
+                      "allowTransferParameter": "allowTransfer"
+                    }
+                  },
+                  {
+                    "id": "ve-header-29",
+                    "component": "TagSummary",
+                    "props": {
+                      "field": "tags",
+                      "countField": "tag_count",
+                      "label": "Tags"
+                    }
+                  }
+                ],
+                "layout": {
+                  "type": "stack",
+                  "gapToken": "cluster-default"
+                }
+              }
+            ]
+          },
+          {
+            "id": "detail-body-10",
+            "component": "Card",
+            "layout": {
+              "type": "stack",
+              "gapToken": "cluster-default"
+            },
+            "children": [
+              {
+                "id": "detail-tabs-9",
+                "component": "Tabs",
+                "children": [
+                  {
+                    "id": "detail-tab-panel-3",
+                    "component": "Stack",
+                    "layout": {
+                      "type": "stack",
+                      "gapToken": "cluster-default"
+                    },
+                    "props": {
+                      "label": "Details"
+                    },
+                    "children": [
+                      {
+                        "id": "slot-tab-0-4",
+                        "component": "Stack",
+                        "meta": {
+                          "intent": "slot:tab-0",
+                          "label": "tab-0",
+                          "notes": "pattern-group:status-timeline"
+                        },
+                        "layout": {
+                          "type": "stack",
+                          "gapToken": "cluster-tight"
+                        },
+                        "children": [
+                          {
+                            "id": "pg-status-timeline-32-read-field",
+                            "component": "Stack",
+                            "children": [
+                              {
+                                "id": "pg-status-timeline-32-label",
+                                "component": "Text",
+                                "props": {
+                                  "as": "strong",
+                                  "content": "Allowed transitions"
+                                }
+                              },
+                              {
+                                "id": "pg-status-timeline-32-value",
+                                "meta": {
+                                  "intent": "read-only-field"
+                                },
+                                "component": "Text",
+                                "props": {
+                                  "field": "allowed_transitions"
+                                }
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "id": "slot-tab-2-8-read-field",
+                        "component": "Stack",
+                        "children": [
+                          {
+                            "id": "slot-tab-2-8-label",
+                            "component": "Text",
+                            "props": {
+                              "as": "strong",
+                              "content": "Chunk count"
+                            }
+                          },
+                          {
+                            "id": "slot-tab-2-8-value",
+                            "meta": {
+                              "intent": "read-only-field"
+                            },
+                            "component": "Text",
+                            "props": {
+                              "field": "chunk_count"
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "id": "detail-tabs-9-created_at-read-field",
+                        "component": "Stack",
+                        "children": [
+                          {
+                            "id": "detail-tabs-9-created_at-label",
+                            "component": "Text",
+                            "props": {
+                              "as": "strong",
+                              "content": "Created at"
+                            }
+                          },
+                          {
+                            "id": "detail-tabs-9-created_at-value",
+                            "meta": {
+                              "intent": "read-only-field"
+                            },
+                            "component": "Text",
+                            "props": {
+                              "field": "created_at"
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "id": "detail-tabs-9-updated_at-read-field",
+                        "component": "Stack",
+                        "children": [
+                          {
+                            "id": "detail-tabs-9-updated_at-label",
+                            "component": "Text",
+                            "props": {
+                              "as": "strong",
+                              "content": "Updated at"
+                            }
+                          },
+                          {
+                            "id": "detail-tabs-9-updated_at-value",
+                            "meta": {
+                              "intent": "read-only-field"
+                            },
+                            "component": "Text",
+                            "props": {
+                              "field": "updated_at"
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "id": "detail-tabs-9-last_event-read-field",
+                        "component": "Stack",
+                        "children": [
+                          {
+                            "id": "detail-tabs-9-last_event-label",
+                            "component": "Text",
+                            "props": {
+                              "as": "strong",
+                              "content": "Last event"
+                            }
+                          },
+                          {
+                            "id": "detail-tabs-9-last_event-value",
+                            "meta": {
+                              "intent": "read-only-field"
+                            },
+                            "component": "Text",
+                            "props": {
+                              "field": "last_event"
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "id": "detail-tabs-9-last_event_at-read-field",
+                        "component": "Stack",
+                        "children": [
+                          {
+                            "id": "detail-tabs-9-last_event_at-label",
+                            "component": "Text",
+                            "props": {
+                              "as": "strong",
+                              "content": "Last event at"
+                            }
+                          },
+                          {
+                            "id": "detail-tabs-9-last_event_at-value",
+                            "meta": {
+                              "intent": "read-only-field"
+                            },
+                            "component": "Text",
+                            "props": {
+                              "field": "last_event_at"
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "id": "detail-tabs-9-mission_protocol_id-read-field",
+                        "component": "Stack",
+                        "children": [
+                          {
+                            "id": "detail-tabs-9-mission_protocol_id-label",
+                            "component": "Text",
+                            "props": {
+                              "as": "strong",
+                              "content": "Mission protocol id"
+                            }
+                          },
+                          {
+                            "id": "detail-tabs-9-mission_protocol_id-value",
+                            "meta": {
+                              "intent": "read-only-field"
+                            },
+                            "component": "Text",
+                            "props": {
+                              "field": "mission_protocol_id"
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "id": "detail-tabs-9-research_type-read-field",
+                        "component": "Stack",
+                        "children": [
+                          {
+                            "id": "detail-tabs-9-research_type-label",
+                            "component": "Text",
+                            "props": {
+                              "as": "strong",
+                              "content": "Research type"
+                            }
+                          },
+                          {
+                            "id": "detail-tabs-9-research_type-value",
+                            "meta": {
+                              "intent": "read-only-field"
+                            },
+                            "component": "Text",
+                            "props": {
+                              "field": "research_type"
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "id": "detail-tabs-9-methodology-read-field",
+                        "component": "Stack",
+                        "children": [
+                          {
+                            "id": "detail-tabs-9-methodology-label",
+                            "component": "Text",
+                            "props": {
+                              "as": "strong",
+                              "content": "Methodology"
+                            }
+                          },
+                          {
+                            "id": "detail-tabs-9-methodology-value",
+                            "meta": {
+                              "intent": "read-only-field"
+                            },
+                            "component": "Text",
+                            "props": {
+                              "field": "methodology"
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "id": "detail-tabs-9-quality_score-read-field",
+                        "component": "Stack",
+                        "children": [
+                          {
+                            "id": "detail-tabs-9-quality_score-label",
+                            "component": "Text",
+                            "props": {
+                              "as": "strong",
+                              "content": "Quality score"
+                            }
+                          },
+                          {
+                            "id": "detail-tabs-9-quality_score-value",
+                            "meta": {
+                              "intent": "read-only-field"
+                            },
+                            "component": "Text",
+                            "props": {
+                              "field": "quality_score"
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "id": "detail-tabs-9-last_quality_check-read-field",
+                        "component": "Stack",
+                        "children": [
+                          {
+                            "id": "detail-tabs-9-last_quality_check-label",
+                            "component": "Text",
+                            "props": {
+                              "as": "strong",
+                              "content": "Last quality check"
+                            }
+                          },
+                          {
+                            "id": "detail-tabs-9-last_quality_check-value",
+                            "meta": {
+                              "intent": "read-only-field"
+                            },
+                            "component": "Text",
+                            "props": {
+                              "field": "last_quality_check"
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "id": "detail-tabs-9-id-read-field",
+                        "component": "Stack",
+                        "children": [
+                          {
+                            "id": "detail-tabs-9-id-label",
+                            "component": "Text",
+                            "props": {
+                              "as": "strong",
+                              "content": "Id"
+                            }
+                          },
+                          {
+                            "id": "detail-tabs-9-id-value",
+                            "meta": {
+                              "intent": "read-only-field"
+                            },
+                            "component": "Text",
+                            "props": {
+                              "field": "id"
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "id": "detail-tabs-9-user_id-read-field",
+                        "component": "Stack",
+                        "children": [
+                          {
+                            "id": "detail-tabs-9-user_id-label",
+                            "component": "Text",
+                            "props": {
+                              "as": "strong",
+                              "content": "User id"
+                            }
+                          },
+                          {
+                            "id": "detail-tabs-9-user_id-value",
+                            "meta": {
+                              "intent": "read-only-field"
+                            },
+                            "component": "Text",
+                            "props": {
+                              "field": "user_id"
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "id": "detail-tabs-9-workspace_id-read-field",
+                        "component": "Stack",
+                        "children": [
+                          {
+                            "id": "detail-tabs-9-workspace_id-label",
+                            "component": "Text",
+                            "props": {
+                              "as": "strong",
+                              "content": "Workspace id"
+                            }
+                          },
+                          {
+                            "id": "detail-tabs-9-workspace_id-value",
+                            "meta": {
+                              "intent": "read-only-field"
+                            },
+                            "component": "Text",
+                            "props": {
+                              "field": "workspace_id"
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "id": "detail-tabs-9-project_id-read-field",
+                        "component": "Stack",
+                        "children": [
+                          {
+                            "id": "detail-tabs-9-project_id-label",
+                            "component": "Text",
+                            "props": {
+                              "as": "strong",
+                              "content": "Project id"
+                            }
+                          },
+                          {
+                            "id": "detail-tabs-9-project_id-value",
+                            "meta": {
+                              "intent": "read-only-field"
+                            },
+                            "component": "Text",
+                            "props": {
+                              "field": "project_id"
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "id": "detail-tabs-9-document_count-read-field",
+                        "component": "Stack",
+                        "children": [
+                          {
+                            "id": "detail-tabs-9-document_count-label",
+                            "component": "Text",
+                            "props": {
+                              "as": "strong",
+                              "content": "Document count"
+                            }
+                          },
+                          {
+                            "id": "detail-tabs-9-document_count-value",
+                            "meta": {
+                              "intent": "read-only-field"
+                            },
+                            "component": "Text",
+                            "props": {
+                              "field": "document_count"
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "id": "detail-tabs-9-report_count-read-field",
+                        "component": "Stack",
+                        "children": [
+                          {
+                            "id": "detail-tabs-9-report_count-label",
+                            "component": "Text",
+                            "props": {
+                              "as": "strong",
+                              "content": "Report count"
+                            }
+                          },
+                          {
+                            "id": "detail-tabs-9-report_count-value",
+                            "meta": {
+                              "intent": "read-only-field"
+                            },
+                            "component": "Text",
+                            "props": {
+                              "field": "report_count"
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "id": "detail-tabs-9-total_tokens-read-field",
+                        "component": "Stack",
+                        "children": [
+                          {
+                            "id": "detail-tabs-9-total_tokens-label",
+                            "component": "Text",
+                            "props": {
+                              "as": "strong",
+                              "content": "Total tokens"
+                            }
+                          },
+                          {
+                            "id": "detail-tabs-9-total_tokens-value",
+                            "meta": {
+                              "intent": "read-only-field"
+                            },
+                            "component": "Text",
+                            "props": {
+                              "field": "total_tokens"
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "id": "detail-tabs-9-last_updated-read-field",
+                        "component": "Stack",
+                        "children": [
+                          {
+                            "id": "detail-tabs-9-last_updated-label",
+                            "component": "Text",
+                            "props": {
+                              "as": "strong",
+                              "content": "Last updated"
+                            }
+                          },
+                          {
+                            "id": "detail-tabs-9-last_updated-value",
+                            "meta": {
+                              "intent": "read-only-field"
+                            },
+                            "component": "Text",
+                            "props": {
+                              "field": "last_updated"
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ],
+                "props": {
+                  "ariaLabel": "Record details"
+                }
+              }
+            ]
+          }
+        ],
+        "bindings": {
+          "onEdit": "handleEdit",
+          "onDelete": "handleDelete",
+          "onViewTimeline": "handleViewTimeline"
+        },
+        "meta": {
+          "label": "Project"
+        }
+      }
+    ],
+    "objectSchema": {
+      "label": {
+        "type": "string",
+        "required": true,
+        "description": "Display projection of name; retain the complete source field.",
+        "semanticType": "text.label"
+      },
+      "description": {
+        "type": "string",
+        "required": false,
+        "description": "Display projection of description; never truncates persisted content.",
+        "semanticType": "text.description"
+      },
+      "placeholder": {
+        "type": "string",
+        "required": false,
+        "description": "Hint copy surfaced in form fields when the label is empty.",
+        "semanticType": "text.placeholder"
+      },
+      "status": {
+        "type": "string",
+        "required": true,
+        "description": "Canonical research lifecycle. The API remains authoritative; do not coerce an unknown server value.",
+        "enum": [
+          "active",
+          "archived",
+          "completed"
+        ],
+        "semanticType": "status.state"
+      },
+      "state_history": {
+        "type": "StateTransition[]",
+        "required": false,
+        "default": [],
+        "description": "Chronological log of state transitions. Each entry records the before/after states,\ntimestamp, and (when governance is enabled) the actor, reason, and transition metadata.\nRendered by StatusTimeline in the detail and timeline views.\n\nEntry structure:\n  - from: string (previous state)\n  - to: string (new state)\n  - timestamp: ISO 8601 datetime\n  - actor_id: string (user/system who triggered the transition, optional)\n  - reason: string (human-readable justification, required when requireTransitionReason is true)\n  - transition_metadata: Record<string, unknown> (arbitrary context, optional)\n",
+        "semanticType": "timeline.state_transition"
+      },
+      "allowed_transitions": {
+        "type": "string[]",
+        "required": false,
+        "default": [],
+        "description": "Materialized list of valid next states from the current status, computed from the\ntransitionRules parameter. When transitionRules is null (open model), this contains\nall states except the current one. Used by StatusSelector to disable invalid options\nand by StatusBadge to indicate available paths.\n",
+        "semanticType": "status.navigation"
+      },
+      "created_at": {
+        "type": "datetime",
+        "required": true,
+        "description": "Created at.",
+        "semanticType": "audit.created_at"
+      },
+      "updated_at": {
+        "type": "datetime",
+        "required": true,
+        "description": "Updated at.",
+        "semanticType": "audit.updated_at"
+      },
+      "last_event": {
+        "type": "string",
+        "required": false,
+        "description": "Only from an explicit event or timestamp projection; absence is unknown, not a fabricated audit event.",
+        "semanticType": "audit.event.type"
+      },
+      "last_event_at": {
+        "type": "datetime",
+        "required": false,
+        "description": "Timestamp for the lifecycle event captured in last_event.",
+        "semanticType": "audit.event.timestamp"
+      },
+      "owner_id": {
+        "type": "uuid",
+        "required": false,
+        "description": "Authoritative nullable server owner_id. Present in this response.",
+        "semanticType": "ownership.owner.id"
+      },
+      "owner_type": {
+        "type": "string",
+        "required": false,
+        "description": "user only when an authoritative owner_id is present.",
+        "enum": [
+          "user"
+        ],
+        "semanticType": "ownership.owner.type"
+      },
+      "ownership_role": {
+        "type": "string",
+        "required": false,
+        "description": "Optional role name describing how the owner governs the entity.",
+        "semanticType": "ownership.owner.role"
+      },
+      "ownership_transferred_at": {
+        "type": "datetime",
+        "required": false,
+        "description": "Timestamp recording when ownership was last transferred.",
+        "semanticType": "ownership.owner.transferred_at"
+      },
+      "tags": {
+        "type": "string[]",
+        "required": false,
+        "default": [],
+        "description": "Ordered list of tags assigned to the entity.",
+        "semanticType": "taxonomy.tag.collection"
+      },
+      "tag_count": {
+        "type": "number",
+        "required": true,
+        "default": 0,
+        "description": "Computed number of tags assigned to the entity.",
+        "semanticType": "metric.collection.count"
+      },
+      "tag_metadata": {
+        "type": "object[]",
+        "required": false,
+        "default": [],
+        "description": "Per-tag governance metadata. Each entry corresponds to a tag in the tags array and\ntracks provenance and usage for taxonomy health monitoring.\n\nEntry structure:\n  - tag: string (the tag value, matches entry in tags array)\n  - created_at: ISO 8601 datetime\n  - created_by: string (user ID or \"system\" for allow-list tags)\n  - usage_count: number (how many entities use this tag, computed)\n  - moderation_status: \"approved\" | \"pending\" | \"rejected\" (when allowTagModeration is true)\n  - canonical_form: string (resolved synonym target, when synonymResolution is enabled)\n",
+        "semanticType": "taxonomy.tag.governance"
+      },
+      "searchQuery": {
+        "type": "string",
+        "required": false,
+        "default": "",
+        "description": "The current search query string entered by the user.",
+        "semanticType": "input.search.query"
+      },
+      "searchActive": {
+        "type": "boolean",
+        "required": false,
+        "default": false,
+        "description": "Whether the search input is currently focused or has a non-empty query.",
+        "semanticType": "state.search.active"
+      },
+      "filters": {
+        "type": "object[]",
+        "required": false,
+        "default": [],
+        "description": "Array of available filter descriptors. Each entry defines a filterable dimension:\n  - field: string (the schema field to filter on)\n  - label: string (display label)\n  - type: \"select\" | \"multi-select\" | \"range\" | \"boolean\" | \"date-range\"\n  - options: array of { value, label } for select/multi-select types\n",
+        "semanticType": "input.filter.descriptors"
+      },
+      "activeFilters": {
+        "type": "object[]",
+        "required": false,
+        "default": [],
+        "description": "Array of currently applied filter values:\n  - field: string (matches a filter descriptor field)\n  - operator: \"eq\" | \"in\" | \"range\" | \"gt\" | \"lt\" | \"between\"\n  - value: unknown (the selected filter value or values)\n",
+        "semanticType": "state.filter.active"
+      },
+      "filterCount": {
+        "type": "number",
+        "required": true,
+        "default": 0,
+        "description": "Computed count of currently active filters.",
+        "semanticType": "metric.filter.count"
+      },
+      "page": {
+        "type": "number",
+        "required": true,
+        "default": 1,
+        "description": "Current page number (1-based).",
+        "semanticType": "state.pagination.page"
+      },
+      "pageSize": {
+        "type": "number",
+        "required": true,
+        "default": 25,
+        "description": "Number of items displayed per page.",
+        "semanticType": "state.pagination.pageSize"
+      },
+      "totalItems": {
+        "type": "number",
+        "required": false,
+        "default": 0,
+        "description": "Total number of items across all pages. Used to compute total page count.",
+        "semanticType": "metric.pagination.totalItems"
+      },
+      "totalPages": {
+        "type": "number",
+        "required": false,
+        "default": 0,
+        "description": "Computed total number of pages (ceil(totalItems / pageSize)).",
+        "semanticType": "metric.pagination.totalPages"
+      },
+      "name": {
+        "type": "string",
+        "required": true,
+        "description": "Name.",
+        "semanticType": "text.label"
+      },
+      "mission_protocol_id": {
+        "type": "uuid",
+        "required": false,
+        "description": "Mission protocol id.",
+        "semanticType": "research.project.mission_protocol_id"
+      },
+      "research_type": {
+        "type": "string",
+        "required": false,
+        "description": "Research type.",
+        "semanticType": "research.project.research_type"
+      },
+      "methodology": {
+        "type": "string",
+        "required": false,
+        "description": "Methodology.",
+        "semanticType": "research.project.methodology"
+      },
+      "quality_score": {
+        "type": "number",
+        "required": false,
+        "description": "Quality score.",
+        "semanticType": "research.project.quality_score"
+      },
+      "last_quality_check": {
+        "type": "datetime",
+        "required": false,
+        "description": "Last quality check.",
+        "semanticType": "research.project.last_quality_check"
+      },
+      "id": {
+        "type": "uuid",
+        "required": true,
+        "description": "Id.",
+        "semanticType": "research.project.id"
+      },
+      "user_id": {
+        "type": "uuid",
+        "required": false,
+        "description": "User id.",
+        "semanticType": "research.project.user_id"
+      },
+      "workspace_id": {
+        "type": "uuid",
+        "required": false,
+        "description": "Workspace id.",
+        "semanticType": "research.project.workspace_id"
+      },
+      "project_id": {
+        "type": "uuid",
+        "required": true,
+        "description": "Project id.",
+        "semanticType": "research.project.project_id"
+      },
+      "document_count": {
+        "type": "number",
+        "required": true,
+        "description": "Document count.",
+        "semanticType": "research.project.document_count"
+      },
+      "chunk_count": {
+        "type": "number",
+        "required": true,
+        "description": "Chunk count.",
+        "semanticType": "research.project.chunk_count"
+      },
+      "report_count": {
+        "type": "number",
+        "required": true,
+        "description": "Report count.",
+        "semanticType": "research.project.report_count"
+      },
+      "total_tokens": {
+        "type": "number",
+        "required": true,
+        "description": "Total tokens.",
+        "semanticType": "research.project.total_tokens"
+      },
+      "last_updated": {
+        "type": "datetime",
+        "required": false,
+        "description": "Last updated.",
+        "semanticType": "research.project.last_updated"
+      }
+    }
+  },
+  "schemaRef": "compose-70a0c9b8",
+  "schemaRefCreatedAt": "2026-09-15T19:40:53.078Z",
+  "schemaRefExpiresAt": "2026-09-15T20:10:53.078Z",
+  "compositionId": "cmp-af181cf36dd5",
+  "version": 1,
+  "parentVersion": null,
+  "operation": "compose",
+  "head": null,
+  "selections": [
+    {
+      "slotName": "header",
+      "intent": "page-header",
+      "selectedComponent": "DetailHeader",
+      "confidence": 0.95,
+      "confidenceLevel": "high",
+      "explanation": "DetailHeader leads slot \"header\" because view_extension placement. The slot also renders StatusTimeline, SearchInput, OwnershipSummary, TagSummary after it, in that order. Confidence is high (0.95).",
+      "candidates": [
+        {
+          "name": "DetailHeader",
+          "score": 0.95,
+          "reason": "view_extension placement"
+        }
+      ],
+      "placedComponents": [
+        "DetailHeader",
+        "StatusTimeline",
+        "SearchInput",
+        "OwnershipSummary",
+        "TagSummary"
+      ]
+    },
+    {
+      "slotName": "metadata",
+      "intent": "metadata-display",
+      "selectedComponent": "FilterPanel",
+      "confidence": 0.95,
+      "confidenceLevel": "high",
+      "explanation": "FilterPanel leads slot \"metadata\" because view_extension placement. Confidence is high (0.95).",
+      "candidates": [
+        {
+          "name": "FilterPanel",
+          "score": 0.95,
+          "reason": "view_extension placement"
+        }
+      ],
+      "placedComponents": [
+        "FilterPanel"
+      ]
+    },
+    {
+      "slotName": "tab-0",
+      "intent": "data-display",
+      "selectedComponent": "Card",
+      "confidence": 0.5,
+      "confidenceLevel": "medium",
+      "explanation": "Card leads slot \"tab-0\" because fallback placement. Confidence is medium (0.50).",
+      "candidates": [
+        {
+          "name": "Card",
+          "score": 0.5,
+          "reason": "fallback placement"
+        }
+      ],
+      "placedComponents": [
+        "Card"
+      ]
+    },
+    {
+      "slotName": "tab-1",
+      "intent": "data-display",
+      "selectedComponent": "Card",
+      "confidence": 0.94,
+      "confidenceLevel": "high",
+      "explanation": "Card was selected for slot \"tab-1\" because preferred for \"data-display\" (rank 1); 2 tag match(es); 2 context match(es); 1 region match(es); position affinity: Card fits well in tab. Confidence is high (0.94).",
+      "candidates": [
+        {
+          "name": "Card",
+          "reason": "preferred for \"data-display\" (rank 1); 2 tag match(es); 2 context match(es); 1 region match(es); position affinity: Card fits well in tab",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 1
+        },
+        {
+          "name": "Table",
+          "reason": "preferred for \"data-display\" (rank 2); 1 tag match(es); tag match (data); 2 context match(es); 1 region match(es); position affinity: Table fits well in tab",
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.98
+        },
+        {
+          "name": "Stack",
+          "reason": "preferred for \"data-display\" (rank 3); 2 context match(es); 1 region match(es); position affinity: Stack fits well in tab",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.66
+        }
+      ]
+    },
+    {
+      "slotName": "tab-2",
+      "intent": "metadata-display",
+      "selectedComponent": "Text",
+      "confidence": 0.76,
+      "confidenceLevel": "medium",
+      "explanation": "Text was selected for slot \"tab-2\" because preferred for \"metadata-display\" (rank 2); 1 context match(es); 2 region match(es); field affinity: field type \"datetime\" (rank 3); position affinity: Text fits well in tab. Confidence is medium (0.76).",
+      "candidates": [
+        {
+          "name": "Text",
+          "reason": "preferred for \"metadata-display\" (rank 2); 1 context match(es); 2 region match(es); field affinity: field type \"datetime\" (rank 3); position affinity: Text fits well in tab",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 1
+        },
+        {
+          "name": "Stack",
+          "reason": "preferred for \"metadata-display\" (rank 1); 1 context match(es); 2 region match(es); position affinity: Stack fits well in tab",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.94
+        },
+        {
+          "name": "Card",
+          "reason": "preferred for \"metadata-display\" (rank 3); 1 context match(es); position affinity: Card fits well in tab",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.58
+        }
+      ]
+    },
+    {
+      "slotName": "tab-3",
+      "intent": "metadata-display",
+      "selectedComponent": "Stack",
+      "confidence": 0.71,
+      "confidenceLevel": "medium",
+      "explanation": "Stack was selected for slot \"tab-3\" because preferred for \"metadata-display\" (rank 1); 1 context match(es); 2 region match(es); position affinity: Stack fits well in tab. Confidence is medium (0.71).",
+      "candidates": [
+        {
+          "name": "Stack",
+          "reason": "preferred for \"metadata-display\" (rank 1); 1 context match(es); 2 region match(es); position affinity: Stack fits well in tab",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 1
+        },
+        {
+          "name": "Text",
+          "reason": "preferred for \"metadata-display\" (rank 2); 1 context match(es); 2 region match(es); position affinity: Text fits well in tab",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.9
+        },
+        {
+          "name": "Card",
+          "reason": "preferred for \"metadata-display\" (rank 3); 1 context match(es); position affinity: Card fits well in tab",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.61
+        }
+      ]
+    },
+    {
+      "slotName": "tab-4",
+      "intent": "data-display",
+      "selectedComponent": "Card",
+      "confidence": 0.94,
+      "confidenceLevel": "high",
+      "explanation": "Card was selected for slot \"tab-4\" because preferred for \"data-display\" (rank 1); 2 tag match(es); 2 context match(es); 1 region match(es); position affinity: Card fits well in tab. Confidence is high (0.94).",
+      "candidates": [
+        {
+          "name": "Card",
+          "reason": "preferred for \"data-display\" (rank 1); 2 tag match(es); 2 context match(es); 1 region match(es); position affinity: Card fits well in tab",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 1
+        },
+        {
+          "name": "Table",
+          "reason": "preferred for \"data-display\" (rank 2); 1 tag match(es); tag match (data); 2 context match(es); 1 region match(es); position affinity: Table fits well in tab",
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.98
+        },
+        {
+          "name": "Stack",
+          "reason": "preferred for \"data-display\" (rank 3); 2 context match(es); 1 region match(es); position affinity: Stack fits well in tab",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.66
+        }
+      ]
+    },
+    {
+      "slotName": "tab-5",
+      "intent": "metadata-display",
+      "selectedComponent": "Stack",
+      "confidence": 0.71,
+      "confidenceLevel": "medium",
+      "explanation": "Stack was selected for slot \"tab-5\" because preferred for \"metadata-display\" (rank 1); 1 context match(es); 2 region match(es); position affinity: Stack fits well in tab. Confidence is medium (0.71).",
+      "candidates": [
+        {
+          "name": "Stack",
+          "reason": "preferred for \"metadata-display\" (rank 1); 1 context match(es); 2 region match(es); position affinity: Stack fits well in tab",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 1
+        },
+        {
+          "name": "Text",
+          "reason": "preferred for \"metadata-display\" (rank 2); 1 context match(es); 2 region match(es); position affinity: Text fits well in tab",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.9
+        },
+        {
+          "name": "Card",
+          "reason": "preferred for \"metadata-display\" (rank 3); 1 context match(es); position affinity: Card fits well in tab",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.61
+        }
+      ]
+    },
+    {
+      "slotName": "tab-6",
+      "intent": "data-display",
+      "selectedComponent": "Card",
+      "confidence": 0.94,
+      "confidenceLevel": "high",
+      "explanation": "Card was selected for slot \"tab-6\" because preferred for \"data-display\" (rank 1); 2 tag match(es); 2 context match(es); 1 region match(es); position affinity: Card fits well in tab. Confidence is high (0.94).",
+      "candidates": [
+        {
+          "name": "Card",
+          "reason": "preferred for \"data-display\" (rank 1); 2 tag match(es); 2 context match(es); 1 region match(es); position affinity: Card fits well in tab",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 1
+        },
+        {
+          "name": "Table",
+          "reason": "preferred for \"data-display\" (rank 2); 1 tag match(es); tag match (data); 2 context match(es); 1 region match(es); position affinity: Table fits well in tab",
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.98
+        },
+        {
+          "name": "Stack",
+          "reason": "preferred for \"data-display\" (rank 3); 2 context match(es); 1 region match(es); position affinity: Stack fits well in tab",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.66
+        }
+      ]
+    },
+    {
+      "slotName": "tab-7",
+      "intent": "data-display",
+      "selectedComponent": "Card",
+      "confidence": 0.94,
+      "confidenceLevel": "high",
+      "explanation": "Card was selected for slot \"tab-7\" because preferred for \"data-display\" (rank 1); 2 tag match(es); 2 context match(es); 1 region match(es); position affinity: Card fits well in tab. Confidence is high (0.94).",
+      "candidates": [
+        {
+          "name": "Card",
+          "reason": "preferred for \"data-display\" (rank 1); 2 tag match(es); 2 context match(es); 1 region match(es); position affinity: Card fits well in tab",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 1
+        },
+        {
+          "name": "Table",
+          "reason": "preferred for \"data-display\" (rank 2); 1 tag match(es); tag match (data); 2 context match(es); 1 region match(es); position affinity: Table fits well in tab",
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.98
+        },
+        {
+          "name": "Stack",
+          "reason": "preferred for \"data-display\" (rank 3); 2 context match(es); 1 region match(es); position affinity: Stack fits well in tab",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.66
+        }
+      ]
+    }
+  ],
+  "validation": {
+    "status": "ok",
+    "errors": [],
+    "warnings": []
+  },
+  "warnings": [
+    {
+      "code": "OODS-V121",
+      "message": "Object 'Project' has maturity 'alpha' — composed output may change.",
+      "hint": "Consider using stable objects for production compositions."
+    },
+    {
+      "code": "OODS-V117",
+      "message": "Field collision: \"description\" in object schema overrides trait definition"
+    },
+    {
+      "code": "OODS-V117",
+      "message": "Field collision: \"status\" in object schema overrides trait definition"
+    },
+    {
+      "code": "OODS-V117",
+      "message": "Field collision: \"created_at\" in object schema overrides trait definition"
+    },
+    {
+      "code": "OODS-V117",
+      "message": "Field collision: \"updated_at\" in object schema overrides trait definition"
+    },
+    {
+      "code": "OODS-V117",
+      "message": "Field collision: \"owner_id\" in object schema overrides trait definition"
+    },
+    {
+      "code": "OODS-V117",
+      "message": "Field collision: \"label\" in object schema overrides trait definition"
+    },
+    {
+      "code": "OODS-V117",
+      "message": "Field collision: \"owner_type\" in object schema overrides trait definition"
+    },
+    {
+      "code": "OODS-V117",
+      "message": "Field collision: \"last_event\" in object schema overrides trait definition"
+    },
+    {
+      "code": "OODS-V120",
+      "message": "No matching slot for position \"bottom\" from lifecycle/Timestampable/AuditTimeline."
+    }
+  ],
+  "objectUsed": {
+    "name": "Project",
+    "version": "0.1.0",
+    "traits": [
+      "content/Labelled",
+      "lifecycle/Stateful",
+      "lifecycle/Timestampable",
+      "structural/Ownerable",
+      "behavioral/Taggable",
+      "behavioral/Searchable",
+      "behavioral/Filterable",
+      "behavioral/Pageable"
+    ],
+    "fieldsComposed": 41,
+    "viewExtensionsApplied": {
+      "list": 8,
+      "detail": 7,
+      "form": 3,
+      "card": 4,
+      "timeline": 3,
+      "inline": 1
+    }
+  },
+  "meta": {
+    "intentParsed": "Project detail view",
+    "layoutDetected": "context-inferred: detail (from context=\"detail\")",
+    "slotCount": 10,
+    "nodeCount": 68,
+    "intentSynthetic": true,
+    "warnings": [
+      "Object 'Project' has maturity 'alpha' — composed output may change.",
+      "Field collision: \"description\" in object schema overrides trait definition",
+      "Field collision: \"status\" in object schema overrides trait definition",
+      "Field collision: \"created_at\" in object schema overrides trait definition",
+      "Field collision: \"updated_at\" in object schema overrides trait definition",
+      "Field collision: \"owner_id\" in object schema overrides trait definition",
+      "Field collision: \"label\" in object schema overrides trait definition",
+      "Field collision: \"owner_type\" in object schema overrides trait definition",
+      "Field collision: \"last_event\" in object schema overrides trait definition",
+      "No matching slot for position \"bottom\" from lifecycle/Timestampable/AuditTimeline."
+    ],
+    "intelligence": {
+      "fieldsExpanded": true,
+      "slotsExpanded": 5,
+      "expansionReason": "Expanded from 3 to 8 tabs for 41 fields",
+      "patternsApplied": 1,
+      "patternGroups": [
+        {
+          "slotName": "tab-0",
+          "patternId": "status-timeline",
+          "compositeComponent": "StatusTimeline",
+          "matchedFields": [
+            "status",
+            "allowed_transitions"
+          ],
+          "confidence": 1
+        }
+      ],
+      "positionAffinityUsed": true,
+      "fieldAffinityUsed": true,
+      "compositionConfidence": 0.83
+    }
+  }
+}

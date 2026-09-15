@@ -1,0 +1,72 @@
+- main:
+  - heading "Transaction form" [level=1]
+  - text: Status
+  - combobox "Status":
+    - option "Pending" [selected]
+    - option "Authorized"
+    - option "Settled"
+    - option "Failed"
+    - option "Refunded"
+  - paragraph: Choose the current status.
+  - group:
+    - heading "Cancellation Form" [level=3]
+    - text: Reason Code
+    - combobox "Reason Code":
+      - option "customer_request" [selected]
+      - option "suspected_fraud"
+      - option "duplicate_charge"
+      - option "payment_method_error"
+    - paragraph: Structured reason code chosen from the allowedReasons parameter.
+    - text: Reason
+    - textbox "Reason": Consumer cancellation reason
+    - paragraph: Free-form detail describing why cancellation occurred.
+  - text: Created at
+  - textbox "Created at":
+    - /placeholder: Timestamp recording when the entity was first created.
+    - text: 2026-09-05T12:00
+  - paragraph: Timestamp recording when the entity was first created.
+  - text: Currency
+  - combobox "Currency":
+    - option "USD" [selected]
+    - option "EUR"
+    - option "GBP"
+    - option "JPY"
+    - option "AUD"
+  - paragraph: ISO currency code for the unit amount.
+  - text: Tax behavior
+  - combobox "Tax behavior":
+    - option "Enter tax behavior" [disabled]
+    - option "exclusive" [selected]
+    - option "inclusive"
+  - paragraph: Defines whether taxes are included in the displayed price.
+  - text: Last event
+  - combobox "Last event":
+    - option "Initiated" [selected]
+    - option "Authorized"
+    - option "Settled"
+    - option "Refunded"
+    - option "Failed"
+  - paragraph: Lifecycle event associated with the most recent timestamp mutation.
+  - text: Unit amount cents
+  - spinbutton "Unit amount cents": "0"
+  - paragraph: Base unit price expressed in the smallest currency denomination.
+  - text: Pricing model
+  - combobox "Pricing model":
+    - option "One Time" [selected]
+    - option "Usage Based"
+  - paragraph: Monetization model applied to the entity.
+  - text: Billing interval
+  - combobox "Billing interval":
+    - option "One Time" [selected]
+  - paragraph: Billing cadence when pricing_model indicates recurring revenue.
+  - text: Transaction id
+  - textbox "Transaction id":
+    - /placeholder: Enter transaction id
+    - text: consumer-transaction-id
+  - paragraph: Unique identifier for the transaction record.
+  - text: User id
+  - textbox "User id":
+    - /placeholder: Enter user id
+    - text: consumer-user-id
+  - paragraph: Identifier of the user associated with the transaction.
+  - button "Save"
