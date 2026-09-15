@@ -3792,7 +3792,7 @@ export type DesignComposeOutput = DesignComposeOutputSchema.DesignComposeOutput;
 // Source: design.preview.input.json
 export namespace DesignPreviewInputSchema {
   /**
-   * Open a composition version as the generated React or Vue app actually running in a browser: either an existing compositionId (and optional version) or an object and context composed now as a new composition. The preview host (in the HTTP bridge, or started by the stdio adapter) compiles the artifact and serves it at one URL per version with its lineage and brand, theme and width controls. action "compare" returns the structural what-changed between this version and `against` (regions, slots, nodes, props, field order, seed, artifact file hashes) with the side-by-side URL.
+   * Open a composition version as the generated React or Vue app actually running in a browser: either an existing compositionId (and optional version) or an object and context composed now as a new composition. The preview host (in the HTTP bridge, or started by the stdio adapter) compiles the artifact and serves it at one URL per version with its lineage and brand, theme and width controls. action "compare" returns the structural what-changed between this version and `against` (regions, slots, nodes, props, field order, seed, artifact file hashes) with the side-by-side URL. action "accept" records the version as the composition's accepted version with a snapshot of its measurements.
    */
   export type DesignPreviewInput = DesignPreviewInput1 & DesignPreviewInput2;
   export type DesignPreviewInput1 = {
@@ -3801,9 +3801,9 @@ export namespace DesignPreviewInputSchema {
 
   export interface DesignPreviewInput2 {
     /**
-     * render (default): open the version as the running app. compare: the what-changed between compositionId@version and against. edit: apply one operation to compositionId@version by re-composing through the override surface and re-generating, recording a new version with its parent, then open it. versions: list the composition's versions.
+     * render (default): open the version as the running app. compare: the what-changed between compositionId@version and against. edit: apply one operation to compositionId@version by re-composing through the override surface and re-generating, recording a new version with its parent, then open it. versions: list the composition's versions and the accepted one. accept: record compositionId@version (default its latest) in the composition's accepted.json with when, the Forge head, the schema hash and a snapshot of the version's measurements; a later accept supersedes it with lineage, and a version not generated yet or already the accepted one is refused with OODS-V205.
      */
-    action?: 'render' | 'compare' | 'edit' | 'versions';
+    action?: 'render' | 'compare' | 'edit' | 'versions' | 'accept';
     /**
      * An existing composition from design.compose; with no version, its latest version opens.
      */
@@ -3907,7 +3907,7 @@ export type DesignPreviewInput = DesignPreviewInputSchema.DesignPreviewInput;
 // Source: design.preview.output.json
 export namespace DesignPreviewOutputSchema {
   /**
-   * The URL of the composition version running in the preview host, one per compiled framework, with its lineage (composition, version, parent, operation, head), the schema hash and the compiled module digests. An unreachable host throws OODS-N021 before any record is written; an unknown composition or version throws OODS-N022. action compare returns the what-changed between two versions instead. action edit records a new version from one operation and opens it; action versions lists a composition's versions.
+   * The URL of the composition version running in the preview host, one per compiled framework, with its lineage (composition, version, parent, operation, head), the schema hash and the compiled module digests. An unreachable host throws OODS-N021 before any record is written; an unknown composition or version throws OODS-N022. action compare returns the what-changed between two versions instead. action edit records a new version from one operation and opens it; action versions lists a composition's versions and the accepted one; action accept records a version as accepted and returns the acceptance.
    */
   export type DesignPreviewOutput =
     | {
@@ -4181,6 +4181,80 @@ export namespace DesignPreviewOutputSchema {
           artifacts: string[];
           url: string;
         }[];
+        /**
+         * The standing acceptance (the last one in accepted.json), or null when no version was accepted.
+         */
+        accepted: null | {
+          version: number;
+          acceptedAt: string;
+          acceptances: number;
+        };
+        host: {
+          url: string;
+          port: number;
+          /**
+           * Where the version files live and where the host reads them; beside the saved-schema store.
+           */
+          compositionsDir: string;
+        };
+        durationMs: number;
+      }
+    | {
+        status: 'ok';
+        action: 'accept';
+        compositionId: string;
+        version: number;
+        parentVersion: number | null;
+        operation: string;
+        object: string;
+        context: string;
+        /**
+         * The acceptance just recorded in accepted.json.
+         */
+        accepted: {
+          version: number;
+          acceptedAt: string;
+          /**
+           * The Forge head that recorded the acceptance; null from a source run.
+           */
+          head: string | null;
+          /**
+           * The Forge head that produced the version.
+           */
+          versionHead: string | null;
+          schemaHash: string;
+          /**
+           * The version's stored measurements at acceptance: generation receipts, placed-chart certifications and axe-core per framework and scope.
+           */
+          measurements: {
+            [k: string]: any;
+          };
+          /**
+           * Placed-chart certifications stored for scopes other than the version's own, keyed brand/theme.
+           */
+          scopeCharts: {
+            [k: string]: any[];
+          };
+          /**
+           * The summary a render result gives as measured, taken at acceptance.
+           */
+          measured: {
+            [k: string]: any;
+          };
+          /**
+           * The acceptance this one supersedes; null for the first.
+           */
+          supersedes: null | {
+            version: number;
+            acceptedAt: string;
+          };
+        };
+        /**
+         * How many acceptances accepted.json holds now; the last is the standing one.
+         */
+        acceptances: number;
+        acceptedPath: string;
+        previewUrl: string;
         host: {
           url: string;
           port: number;

@@ -42,3 +42,28 @@ describe('the recorded slot candidates are the ones a swap can generate (s202-m0
     }
   }, 120_000);
 });
+
+describe('a version\'s own order overrides never abort recording it (s202-m04)', () => {
+  it('records a version whose field order some slot candidate cannot carry, and offers only the candidates a swap would compose', async () => {
+    // With the header slot swapped to VizAreaPreview the status timeline moves into the body, so ordering the body's fields
+    // names status; a candidate that no longer places status there is refused by that order. Recording used to fail with it.
+    const preferences = { componentOverrides: { header: 'VizAreaPreview' }, fieldOrder: { 'detail-body-10': ['cancellation_reason_code', 'status'] } };
+    const composed = await compose({ object: 'Subscription', context: 'detail', preferences });
+    expect(composed.status).toBe('ok');
+    const record = await readVersion(resolveCompositionsDir(), composed.compositionId!, composed.version!);
+    const refusedByOrder: string[] = [];
+    for (const selection of composed.selections) {
+      const offered = record.slots.find(slot => slot.slotName === selection.slotName)?.candidates ?? [];
+      const ranked = [...new Set([...selection.candidates.map(candidate => candidate.name), ...(selection.alternativeCandidates ?? []).map(candidate => candidate.name)])];
+      for (const name of ranked) {
+        if (name === selection.selectedComponent) continue;
+        const outcome = await compose({ object: 'Subscription', context: 'detail', preferences: { ...preferences, componentOverrides: { ...preferences.componentOverrides, [selection.slotName]: name } }, options: { transient: true, validate: false } })
+          .then(() => 'composed', (error: { opiCode?: string }) => error.opiCode ?? 'error');
+        // A swap the version's own order refuses is never offered; every offered swap composes.
+        if (outcome === 'OODS-V204') { refusedByOrder.push(`${selection.slotName} → ${name}`); expect(offered, `${selection.slotName} → ${name}`).not.toContain(name); }
+        else if (offered.includes(name)) expect(outcome, `${selection.slotName} → ${name}`).toBe('composed');
+      }
+    }
+    expect(refusedByOrder.length, 'the version carries a field order at least one candidate cannot').toBeGreaterThan(0);
+  }, 180_000);
+});

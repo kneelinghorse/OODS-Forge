@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://designlab.local/schemas/design.preview.input.json",
   "title": "Design preview input",
-  "description": "Open a composition version as the generated React or Vue app actually running in a browser: either an existing compositionId (and optional version) or an object and context composed now as a new composition. The preview host (in the HTTP bridge, or started by the stdio adapter) compiles the artifact and serves it at one URL per version with its lineage and brand, theme and width controls. action \"compare\" returns the structural what-changed between this version and `against` (regions, slots, nodes, props, field order, seed, artifact file hashes) with the side-by-side URL.",
+  "description": "Open a composition version as the generated React or Vue app actually running in a browser: either an existing compositionId (and optional version) or an object and context composed now as a new composition. The preview host (in the HTTP bridge, or started by the stdio adapter) compiles the artifact and serves it at one URL per version with its lineage and brand, theme and width controls. action \"compare\" returns the structural what-changed between this version and `against` (regions, slots, nodes, props, field order, seed, artifact file hashes) with the side-by-side URL. action \"accept\" records the version as the composition's accepted version with a snapshot of its measurements.",
   "type": "object",
   "additionalProperties": false,
   "properties": {
@@ -12,10 +12,11 @@
         "render",
         "compare",
         "edit",
-        "versions"
+        "versions",
+        "accept"
       ],
       "default": "render",
-      "description": "render (default): open the version as the running app. compare: the what-changed between compositionId@version and against. edit: apply one operation to compositionId@version by re-composing through the override surface and re-generating, recording a new version with its parent, then open it. versions: list the composition's versions."
+      "description": "render (default): open the version as the running app. compare: the what-changed between compositionId@version and against. edit: apply one operation to compositionId@version by re-composing through the override surface and re-generating, recording a new version with its parent, then open it. versions: list the composition's versions and the accepted one. accept: record compositionId@version (default its latest) in the composition's accepted.json with when, the Forge head, the schema hash and a snapshot of the version's measurements; a later accept supersedes it with lineage, and a version not generated yet or already the accepted one is refused with OODS-V205."
     },
     "compositionId": {
       "type": "string",
@@ -222,6 +223,11 @@
     {
       "action": "versions",
       "compositionId": "cmp-0123456789ab"
+    },
+    {
+      "action": "accept",
+      "compositionId": "cmp-0123456789ab",
+      "version": 2
     }
   ],
   "anyOf": [

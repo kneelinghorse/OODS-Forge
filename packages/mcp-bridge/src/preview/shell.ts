@@ -1,6 +1,6 @@
 import { renderMeasurementPanel } from './measurements.js';
 import { escapeHtml, scriptJson } from './page.js';
-import type { CompositionVersion, PreviewBrand, PreviewFramework, PreviewTheme, VersionSummary } from './store.js';
+import type { AcceptedSummary, CompositionVersion, PreviewBrand, PreviewFramework, PreviewTheme, VersionSummary } from './store.js';
 
 export interface PreviewShellInput {
   record: CompositionVersion;
@@ -10,6 +10,8 @@ export interface PreviewShellInput {
   theme: PreviewTheme;
   width: number | 'free';
   base: string;
+  /** The composition's standing acceptance; the lineage and the version list show it when there is one. */
+  accepted?: AcceptedSummary;
 }
 
 export const FIXED_WIDTHS = [390, 820, 1440] as const;
@@ -60,8 +62,8 @@ const short = (hash: string | null) => hash ? hash.replace(/^sha256:/, '').slice
 /** A link to another version of the same composition: an anchor on the page, a button that opens it in place in the preview app. */
 export type VersionLink = (version: number, label: string) => string;
 
-/** The lineage of one version: composition, version of how many, parent, operation, Forge head, schema, created, generated for. */
-export function renderLineage(record: CompositionVersion, versionCount: number, link: VersionLink): string {
+/** The lineage of one version: composition, version of how many, parent, operation, Forge head, schema, created, generated for, and the accepted version when the composition has one. */
+export function renderLineage(record: CompositionVersion, versionCount: number, link: VersionLink, accepted?: AcceptedSummary): string {
   const row = (term: string, value: string) => `<div class="row"><dt>${escapeHtml(term)}</dt><dd>${value}</dd></div>`;
   return [
     row('Composition', `<code>${escapeHtml(record.compositionId)}</code>`),
@@ -72,14 +74,16 @@ export function renderLineage(record: CompositionVersion, versionCount: number, 
     row('Schema', `<code>${escapeHtml(short(record.schemaHash))}</code>`),
     row('Created', escapeHtml(record.createdAt)),
     row('Generated for', `${escapeHtml(record.brand)} / ${escapeHtml(record.theme)}`),
+    ...(accepted ? [row('Accepted', `${accepted.version === record.version ? '<strong data-oods-accepted="this">this version</strong>' : `<span data-oods-accepted="other">${link(accepted.version, `version ${accepted.version}`)}</span>`} · ${escapeHtml(accepted.acceptedAt)}${accepted.acceptances > 1 ? ` · ${accepted.acceptances} acceptances` : ''}`)] : []),
   ].join('');
 }
 
-/** The composition's versions with their operation and parent, the current one marked. */
-export function renderVersionList(versions: VersionSummary[], current: number, link: VersionLink): string {
+/** The composition's versions with their operation and parent, the current one marked, and the accepted one when there is one. */
+export function renderVersionList(versions: VersionSummary[], current: number, link: VersionLink, acceptedVersion?: number): string {
+  const mark = (version: number) => version === acceptedVersion ? ' · <strong data-oods-accepted="true">accepted</strong>' : '';
   return versions.map(entry => entry.version === current
-    ? `<li aria-current="true"><strong>v${entry.version}</strong> · ${escapeHtml(entry.operation)}${entry.parentVersion === null ? '' : ` ← v${entry.parentVersion}`}</li>`
-    : `<li>${link(entry.version, `v${entry.version}`)} · ${escapeHtml(entry.operation)}${entry.parentVersion === null ? '' : ` ← v${entry.parentVersion}`}</li>`).join('');
+    ? `<li aria-current="true"><strong>v${entry.version}</strong> · ${escapeHtml(entry.operation)}${entry.parentVersion === null ? '' : ` ← v${entry.parentVersion}`}${mark(entry.version)}</li>`
+    : `<li>${link(entry.version, `v${entry.version}`)} · ${escapeHtml(entry.operation)}${entry.parentVersion === null ? '' : ` ← v${entry.parentVersion}`}${mark(entry.version)}</li>`).join('');
 }
 
 /**
@@ -87,7 +91,7 @@ export function renderVersionList(versions: VersionSummary[], current: number, l
  * beside framework, brand, theme and width controls, framing the running app. Brand and theme
  * re-mount the framed app in place through postMessage; framework and version navigate.
  */
-export function renderPreviewShell({ record, versions, framework, brand, theme, width, base }: PreviewShellInput): string {
+export function renderPreviewShell({ record, versions, framework, brand, theme, width, base, accepted }: PreviewShellInput): string {
   const versionBase = `${base}/${record.compositionId}/${record.version}`;
   const appUrl = `${versionBase}/app?framework=${framework}&brand=${brand}&theme=${theme}`;
   const label = `${record.compose.object ?? 'composition'} ${record.compose.context ?? ''}`.trim();
@@ -95,8 +99,8 @@ export function renderPreviewShell({ record, versions, framework, brand, theme, 
   const state = { compositionId: record.compositionId, version: record.version, framework, brand, theme, width, base };
   const pixelWidth = width === 'free' ? 1024 : width;
   const link: VersionLink = (version, text) => `<a href="${base}/${escapeHtml(record.compositionId)}/${version}?framework=${framework}&brand=${brand}&theme=${theme}">${text}</a>`;
-  const lineage = renderLineage(record, versions.length, link);
-  const versionList = renderVersionList(versions, record.version, link);
+  const lineage = renderLineage(record, versions.length, link, accepted);
+  const versionList = renderVersionList(versions, record.version, link, accepted?.version);
   const options = <T extends string | number>(name: string, values: readonly T[], current: T) => values.map(value => `<button type="button" data-control="${name}" data-value="${escapeHtml(String(value))}" aria-pressed="${String(value === current)}">${escapeHtml(String(value))}</button>`).join('');
   return [
     '<!doctype html>',

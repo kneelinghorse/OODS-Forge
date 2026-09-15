@@ -1475,6 +1475,8 @@ const contractIssueKeys = (schema: UiSchema): Set<string> => {
  * The composer's candidates a swap may choose from (Sprint 202 m01): every candidate is re-composed as the
  * override it would become and kept only when the target contracts accept the result in both frameworks, so
  * the page never offers a component code.generate refuses (OODS-V007). The selected component always stays.
+ * A trial keeps the version's own order overrides; when those name what the candidate does not place, the swap
+ * itself would be refused (OODS-V204), so that candidate is left out instead of failing the recording (s202-m04).
  */
 export async function swappableCandidates(input: DesignComposeInput, schema: UiSchema, selection: SlotSelectionEntry): Promise<string[]> {
   const names = [...new Set([...selection.candidates.map(candidate => candidate.name), ...(selection.alternativeCandidates ?? []).map(candidate => candidate.name)])];
@@ -1484,11 +1486,17 @@ export async function swappableCandidates(input: DesignComposeInput, schema: UiS
   for (const name of names) {
     if (name === selection.selectedComponent) { viable.push(name); continue; }
     const { compositionId: _id, parentVersion: _parent, ...compose } = input;
-    const trial = await handle({
-      ...compose,
-      preferences: { ...(input.preferences ?? {}), componentOverrides: { ...(input.preferences?.componentOverrides ?? {}), [selection.slotName]: name } },
-      options: { ...(input.options ?? {}), transient: true, validate: false },
-    });
+    let trial: Awaited<ReturnType<typeof handle>>;
+    try {
+      trial = await handle({
+        ...compose,
+        preferences: { ...(input.preferences ?? {}), componentOverrides: { ...(input.preferences?.componentOverrides ?? {}), [selection.slotName]: name } },
+        options: { ...(input.options ?? {}), transient: true, validate: false },
+      });
+    } catch (error) {
+      if (error instanceof ToolError && error.opiCode === 'OODS-V204') continue;
+      throw error;
+    }
     if (trial.status !== 'ok' || !trial.schema) continue;
     const added = [...contractIssueKeys(trial.schema)].filter(key => !baseline.has(key));
     if (!added.length) viable.push(name);

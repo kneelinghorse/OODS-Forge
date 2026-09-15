@@ -167,10 +167,11 @@ describe('preview host routes', () => {
     expect(versionOne.body).toContain('none (first version)');
     expect(versionOne.body).toContain('<strong>1</strong> of 2');
     const versions = await server.inject(`/preview/${ID}/versions.json`);
+    // s202-m04: versions.json also names the standing acceptance, null until a version is accepted.
     expect(versions.json()).toEqual({ compositionId: ID, versions: [
       { version: 1, parentVersion: null, operation: 'compose', createdAt: first.createdAt, schemaHash: first.schemaHash, head: first.head, artifacts: ['react', 'vue'] },
       { version: 2, parentVersion: 1, operation: 'recompose', createdAt: second.createdAt, schemaHash: second.schemaHash, head: second.head, artifacts: ['react', 'vue'] },
-    ] });
+    ], accepted: null });
     const latest = await server.inject(`/preview/${ID}?framework=react`);
     expect(latest.statusCode).toBe(302);
     expect(latest.headers.location).toBe(`/preview/${ID}/2?framework=react`);

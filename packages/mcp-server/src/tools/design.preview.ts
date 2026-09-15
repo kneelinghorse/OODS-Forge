@@ -4,7 +4,7 @@ import { validateGeneratedArtifact } from '../codegen/artifact-envelope.js';
 import { seedPreviewModel } from '../codegen/preview-model.js';
 import { certifyPlacedCharts } from '../lib/measurements.js';
 import { ToolError } from '../errors/tool-error.js';
-import { attachToVersion, latestVersion, listVersions, readVersion, resolveCompositionsDir, versionPath, type CompositionVersion, type PreviewBrand, type PreviewFramework, type PreviewTheme } from '../lib/composition-store.js';
+import { appendAcceptance, attachToVersion, latestVersion, listVersions, readAccepted, readForgeHead, readVersion, resolveCompositionsDir, versionPath, type CompositionVersion, type PreviewBrand, type PreviewFramework, type PreviewTheme } from '../lib/composition-store.js';
 import { fieldKeyOf } from './design.compose.js';
 import { chartNodes } from '../codegen/chart-declaration.js';
 import type { UiElement } from '../schemas/generated.js';
@@ -14,9 +14,10 @@ import { handle as generate } from './code.generate.js';
 import { handle as compose } from './design.compose.js';
 
 type DesignPreviewOutput = DesignPreviewOutputSchema.DesignPreviewOutput;
-type RenderOutput = Exclude<DesignPreviewOutput, { action: 'compare' } | { action: 'versions' }>;
+type RenderOutput = Exclude<DesignPreviewOutput, { action: 'compare' } | { action: 'versions' } | { action: 'accept' }>;
 type CompareOutput = Extract<DesignPreviewOutput, { action: 'compare' }>;
 type VersionsOutput = Extract<DesignPreviewOutput, { action: 'versions' }>;
+type AcceptOutput = Extract<DesignPreviewOutput, { action: 'accept' }>;
 type EditInput = NonNullable<DesignPreviewInputSchema.DesignPreviewInput['edit']>;
 type PreviewEntry = RenderOutput['previews'][number];
 const PROBE_TIMEOUT_MS = 3_000;
@@ -69,6 +70,7 @@ export async function handle(input: DesignPreviewInputSchema.DesignPreviewInput,
   }
   if (input.action === 'compare') return compare(input, hostUrl, compositionsDir, started);
   if (input.action === 'versions') return versions(input, hostUrl, compositionsDir, started);
+  if (input.action === 'accept') return accept(input, hostUrl, compositionsDir, started);
 
   // The version to open: an existing one, the first version of a fresh composition, or the version an edit records.
   let record: CompositionVersion;
@@ -252,9 +254,40 @@ async function applyEdit(compositionsDir: string, parent: CompositionVersion, ed
 async function versions(input: DesignPreviewInputSchema.DesignPreviewInput, hostUrl: string, compositionsDir: string, started: number): Promise<VersionsOutput> {
   if (!input.compositionId) throw new ToolError('OODS-V203', 'design.preview action versions needs compositionId', { input: Object.keys(input) });
   const entries = await listVersions(compositionsDir, input.compositionId);
+  const acceptances = (await readAccepted(compositionsDir, input.compositionId))?.acceptances ?? [];
+  const standing = acceptances.at(-1);
   return {
     status: 'ok', action: 'versions', compositionId: input.compositionId, latest: entries.at(-1)!.version,
     versions: entries.map(entry => ({ ...entry, url: `${hostUrl}/preview/${input.compositionId}/${entry.version}` })),
+    accepted: standing ? { version: standing.version, acceptedAt: standing.acceptedAt, acceptances: acceptances.length } : null,
+    host: { url: hostUrl, port: Number(new URL(hostUrl).port), compositionsDir }, durationMs: performance.now() - started,
+  };
+}
+
+const refuseAccept = (reason: string, details: Record<string, unknown>) => new ToolError('OODS-V205', `design.preview action accept: ${reason}`, details);
+
+/**
+ * Accept a version (Sprint 202 m04): recorded once in the composition's accepted.json with when, the heads, the schema
+ * hash and a snapshot of the measurements the version carries; a later acceptance supersedes the standing one with lineage.
+ * A version that was never generated has no measurements to stand on, and the standing version cannot be accepted again.
+ */
+async function accept(input: DesignPreviewInputSchema.DesignPreviewInput, hostUrl: string, compositionsDir: string, started: number): Promise<AcceptOutput> {
+  if (!input.compositionId) throw new ToolError('OODS-V203', 'design.preview action accept needs compositionId (with an optional version)', { input: Object.keys(input) });
+  const version = input.version ?? await latestVersion(compositionsDir, input.compositionId);
+  const record = await readVersion(compositionsDir, input.compositionId, version);
+  const generated = (['react', 'vue'] as const).filter(framework => record.artifacts[framework]);
+  if (!generated.length) throw refuseAccept(`${input.compositionId} version ${version} has not been generated, so it has no measurements to accept; open it with design.preview first`, { compositionId: input.compositionId, version });
+  const standing = (await readAccepted(compositionsDir, input.compositionId))?.acceptances.at(-1);
+  if (standing?.version === version) throw refuseAccept(`${input.compositionId} version ${version} is already the accepted version (since ${standing.acceptedAt})`, { compositionId: input.compositionId, version, acceptedAt: standing.acceptedAt });
+  const scopeCharts = Object.fromEntries(Object.entries(record.scopes ?? {}).filter(([, generation]) => generation?.charts?.length).map(([scope, generation]) => [scope, generation!.charts!]));
+  const { record: accepted, acceptance, file } = await appendAcceptance(compositionsDir, input.compositionId, {
+    version, acceptedAt: new Date().toISOString(), head: readForgeHead(), versionHead: record.head, schemaHash: record.schemaHash,
+    measurements: record.measurements, scopeCharts, measured: summarizeMeasurements(record),
+  });
+  return {
+    status: 'ok', action: 'accept', compositionId: input.compositionId, version, parentVersion: record.parentVersion, operation: record.operation,
+    object: String(record.compose.object ?? ''), context: String(record.compose.context ?? ''),
+    accepted: acceptance as AcceptOutput['accepted'], acceptances: accepted.acceptances.length, acceptedPath: file, previewUrl: `${hostUrl}/preview/${input.compositionId}/${version}`,
     host: { url: hostUrl, port: Number(new URL(hostUrl).port), compositionsDir }, durationMs: performance.now() - started,
   };
 }

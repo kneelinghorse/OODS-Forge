@@ -9,7 +9,7 @@ import { defaultRuntimeDirectory, loadPreviewRuntime, resolveEsbuildPlatform, ty
 import { FIXED_WIDTHS, renderPreviewShell } from './shell.js';
 import { parseAxeResult, renderMeasurementPanel, withAxeResult } from './measurements.js';
 import type { RunTool } from './native.js';
-import { hasPlacedChart, isSafeCompositionId, listVersions, parseVersion, readVersion, scopeKey, servedArtifact, writeVersionMeasurements, type CompositionVersion, type PreviewBrand, type PreviewFramework, type PreviewTheme } from './store.js';
+import { hasPlacedChart, isSafeCompositionId, listVersions, parseVersion, readAccepted, readVersion, scopeKey, servedArtifact, writeVersionMeasurements, type CompositionVersion, type PreviewBrand, type PreviewFramework, type PreviewTheme } from './store.js';
 
 export interface PreviewHostOptions {
   /** Where design.compose writes versions; resolved beside the saved-schema store. */
@@ -92,14 +92,14 @@ export async function registerPreviewHost(fastify: FastifyInstance, options: Pre
     if (!isSafeCompositionId(request.params.id)) return fail(reply, 400, 'Composition ids are cmp- plus twelve hex characters.');
     const versions = listVersions(compositionsDir, request.params.id);
     if (!versions) return fail(reply, 404, `No composition ${request.params.id} under ${compositionsDir}.`);
-    return reply.type('application/json; charset=utf-8').send(JSON.stringify({ compositionId: request.params.id, versions }));
+    return reply.type('application/json; charset=utf-8').send(JSON.stringify({ compositionId: request.params.id, versions, accepted: readAccepted(compositionsDir, request.params.id) ?? null }));
   });
 
   fastify.get<{ Params: Params; Querystring: ScopeQuery }>(`${base}/:id/:version`, async (request, reply) => {
     const record = load(request.params, reply); if (!record) return;
     const resolved = scope(record, request.query, reply); if (!resolved) return;
     const versions = listVersions(compositionsDir, record.compositionId) ?? [];
-    return reply.type('text/html; charset=utf-8').send(renderPreviewShell({ record, versions, ...resolved, base }));
+    return reply.type('text/html; charset=utf-8').send(renderPreviewShell({ record, versions, ...resolved, base, accepted: readAccepted(compositionsDir, record.compositionId) }));
   });
 
   fastify.get<{ Params: Params; Querystring: ScopeQuery }>(`${base}/:id/:version/app`, async (request, reply) => {

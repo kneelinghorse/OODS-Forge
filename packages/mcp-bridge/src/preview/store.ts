@@ -69,6 +69,18 @@ export function listVersions(directory: string, compositionId: string): VersionS
   });
 }
 
+/** The standing acceptance of a composition (the last in accepted.json, written by design.preview action accept) and how many it holds. */
+export interface AcceptedSummary { version: number; acceptedAt: string; acceptances: number; supersedes: { version: number; acceptedAt: string } | null }
+export function readAccepted(directory: string, compositionId: string): AcceptedSummary | undefined {
+  if (!isSafeCompositionId(compositionId)) throw new Error(`Unsafe composition id: ${String(compositionId)}`);
+  const file = path.join(directory, compositionId, 'accepted.json');
+  if (!fs.existsSync(file)) return undefined;
+  const record = JSON.parse(fs.readFileSync(file, 'utf8')) as { recordVersion?: string; compositionId?: string; acceptances?: Array<{ version: number; acceptedAt: string; supersedes?: { version: number; acceptedAt: string } | null }> };
+  if (record.recordVersion !== '1' || record.compositionId !== compositionId || !Array.isArray(record.acceptances) || !record.acceptances.length) throw new Error(`Malformed acceptance record: ${file}`);
+  const standing = record.acceptances.at(-1)!;
+  return { version: standing.version, acceptedAt: standing.acceptedAt, acceptances: record.acceptances.length, supersedes: standing.supersedes ?? null };
+}
+
 /** Replace a version file atomically; only measurements may change this way, the schema never does. */
 export function writeVersionMeasurements(directory: string, record: CompositionVersion): void {
   const current = readVersion(directory, record.compositionId, record.version);
