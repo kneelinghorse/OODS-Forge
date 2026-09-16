@@ -19,13 +19,13 @@ Bridge-exposed tools require both [agent policy](../../configs/agent/policy.json
 
 ## Evidence and portable outcomes
 
-Tool ledger: [packages/mcp-server/registry/tool-capability-ledger.v1.json](../../packages/mcp-server/registry/tool-capability-ledger.v1.json), recorded source head `"ad4ce343e5066e9eae2c9cd3ee24e5d3b5625ae5"`.
+Tool ledger: [packages/mcp-server/registry/tool-capability-ledger.v1.json](../../packages/mcp-server/registry/tool-capability-ledger.v1.json), recorded source head `"6513146c199d807ce52f211a74fd4bb6f0d3eeed"`.
 
 Proof tier methodology: Highest location tier of a literal runtime import of a handler-bearing module in mcp-server test/spec sources. Grouped action imports roll up to their registered family. Imports are source evidence, not proof of invocation, passing execution or browser certification. Transitive imports and constructed imports/dispatch are not followed; type-only and schema-only imports do not promote a tier.
 
 README references in product-reality directories containing browser/packed/runtime/SVG/screenshot prose. Current census reports are excluded. References are discovery pointers, never verified receipts or tier promotions.
 
-Recorded portable execution: 19 pass and 0 typed dependency outcomes across 19 tools. Receipt: [artifacts/product-reality/sprint-202/m06/pre-freeze/e2e-host.json](../../artifacts/product-reality/sprint-202/m06/pre-freeze/e2e-host.json); SHA-256 `"sha256:67194d59f88763dc4786a8ecedc58b8a68cdeb9743e80352f8ee853f1ed4ef6d"`; bundle head `"99f3d501d4290db932e73a6055d265a35fdd8da2"`; dirty=`false`. This records the measured development bundle, not a later clean release.
+Recorded portable execution: 19 pass and 0 typed dependency outcomes across 19 tools. Receipt: [artifacts/product-reality/sprint-203/m06/pre-freeze/e2e-host.json](../../artifacts/product-reality/sprint-203/m06/pre-freeze/e2e-host.json); SHA-256 `"sha256:054d26102ce9746e6684a78009cf49fcd61e0b3a77c300c308290f57d359a5f0"`; bundle head `"cd7e76a2e4d5039e2ec8430e72ea66a2537fcf5c"`; dirty=`false`. This records the measured development bundle, not a later clean release.
 
 ## Current component capability counts
 

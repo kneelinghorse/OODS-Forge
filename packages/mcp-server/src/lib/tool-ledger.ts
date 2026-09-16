@@ -11,11 +11,11 @@ type PortableOutcome = { outcome: 'pass' | 'typed'; code?: string; retryable?: b
 type PortableLimit = { tool: string; status: string; kind: string; code: string; retryable: boolean; receipt: { path: string; sha256: string; bundleHead: string } };
 type PortableExecution = { path: string; sha256: string; bundleHead: string; dirty: boolean; tools: number; pass: number; typed: number };
 type ToolRow = { portableE2E: boolean; portableOutcome?: PortableOutcome; portableLimits?: PortableLimit[]; caveats: Array<{ kind: string }>; name: string; registration: 'auto' | 'on-demand'; proofTier: Tier; testImports: Record<Exclude<Tier, 'none'>, ImportRef[]>; advertisedClaim: { description: string; inputSchemaDescription: string }; claimHash: string };
-type ToolLedger = { mode?: 's194' | 's196' | 's200' | 's201' | 's202'; portableExecution?: PortableExecution; schemaVersion: string; head: string; builderSelfCertified: false; rows: ToolRow[]; summary: { entries: number; auto: number; onDemand: number; byTier: Record<Tier, number>; autoByTier: Record<Tier, number>; onDemandByTier: Record<Tier, number>; portableE2E: number } };
+type ToolLedger = { mode?: 's194' | 's196' | 's200' | 's201' | 's202' | 's203'; portableExecution?: PortableExecution; schemaVersion: string; head: string; builderSelfCertified: false; rows: ToolRow[]; summary: { entries: number; auto: number; onDemand: number; byTier: Record<Tier, number>; autoByTier: Record<Tier, number>; onDemandByTier: Record<Tier, number>; portableE2E: number } };
 export type ToolSummary = { entries: number; byTier: Record<Tier, number>; head: string };
-/** One retained extracted-runtime receipt per bound mode; s200 ships the brand source (design.preview stays typed), s201 ships the preview host (nothing typed), s202 adds the MCP Apps resources to the same E2E (nothing typed). */
-const PORTABLE_RECEIPTS = { s196: 'artifacts/product-reality/sprint-196/m02/e2e-host.json', s200: 'artifacts/product-reality/sprint-200/m04/e2e-host.json', s201: 'artifacts/product-reality/sprint-201/m07/pre-freeze/e2e-host.json', s202: 'artifacts/product-reality/sprint-202/m06/pre-freeze/e2e-host.json' } as const;
-const PORTABLE_TYPED_CODES: Record<keyof typeof PORTABLE_RECEIPTS, Record<string, string>> = { s196: { 'brand.apply': 'OODS-N020', 'design.preview': 'OODS-N019' }, s200: { 'design.preview': 'OODS-N019' }, s201: {}, s202: {} };
+/** One retained extracted-runtime receipt per bound mode; s200 ships the brand source (design.preview stays typed), s201 ships the preview host (nothing typed), s202 adds the MCP Apps resources to the same E2E (nothing typed), s203 keeps both with 23 objects in the archive (nothing typed). */
+const PORTABLE_RECEIPTS = { s196: 'artifacts/product-reality/sprint-196/m02/e2e-host.json', s200: 'artifacts/product-reality/sprint-200/m04/e2e-host.json', s201: 'artifacts/product-reality/sprint-201/m07/pre-freeze/e2e-host.json', s202: 'artifacts/product-reality/sprint-202/m06/pre-freeze/e2e-host.json', s203: 'artifacts/product-reality/sprint-203/m06/pre-freeze/e2e-host.json' } as const;
+const PORTABLE_TYPED_CODES: Record<keyof typeof PORTABLE_RECEIPTS, Record<string, string>> = { s196: { 'brand.apply': 'OODS-N020', 'design.preview': 'OODS-N019' }, s200: { 'design.preview': 'OODS-N019' }, s201: {}, s202: {}, s203: {} };
 const counts = (rows: ToolRow[]) => Object.fromEntries(TIERS.map(tier => [tier, rows.filter(row => row.proofTier === tier).length])) as Record<Tier, number>;
 
 /** Validate the finite roster and evidence-derived tier before serving any count. */
@@ -23,8 +23,8 @@ export function projectToolSummary(value: unknown): ToolSummary {
   const ledger = value as ToolLedger;
   const reject = (reason: string): never => { throw new Error(`Tool ledger rejected: ${reason}`); };
   if (!ledger || ledger.schemaVersion !== '1.0.0' || !/^[0-9a-f]{40}$/.test(ledger.head ?? '') || ledger.builderSelfCertified !== false || !Array.isArray(ledger.rows)) reject('invalid identity or approval state');
-  if (ledger.mode !== undefined && ledger.mode !== 's194' && ledger.mode !== 's196' && ledger.mode !== 's200' && ledger.mode !== 's201' && ledger.mode !== 's202') reject('unknown mode');
-  const bound = ledger.mode === 's196' || ledger.mode === 's200' || ledger.mode === 's201' || ledger.mode === 's202' ? ledger.mode : undefined;
+  if (ledger.mode !== undefined && ledger.mode !== 's194' && ledger.mode !== 's196' && ledger.mode !== 's200' && ledger.mode !== 's201' && ledger.mode !== 's202' && ledger.mode !== 's203') reject('unknown mode');
+  const bound = ledger.mode === 's196' || ledger.mode === 's200' || ledger.mode === 's201' || ledger.mode === 's202' || ledger.mode === 's203' ? ledger.mode : undefined;
   const typedCodes = bound ? PORTABLE_TYPED_CODES[bound] : {};
   const typedCount = Object.keys(typedCodes).length;
   const execution = ledger.portableExecution;
