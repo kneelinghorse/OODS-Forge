@@ -191,7 +191,7 @@ Measured at the capture head by `closeout/census.mjs` and `closeout/runtime-cens
   `Cluster` from Hive's cohort) and the **70 cells** they added. The registry carries m06's re-sweep
   (310/310 pass, 0 typed gaps, run `d4aa535a…`, registry head `7e29ca94e`), and its moved cells are
   attributed in the golden ledger. The generation census re-composed and re-generated every row at
-  this head: **not completed in this session.** `closeout/runtime-census.ts` re-composes and re-generates all 310 rows and was still running when the session closed; it is committed so the reviewing session can run it in one command. The sweep's own 310/310 with 0 typed gaps stands (`runtime/runtime-cells.v1.json`); what is missing is the independent generation-hash re-check at the closeout head The release
+  this head: **310 compared, 310 equal, 0 unequal**, measured at `9f22e3a56` (`closeout/runtime-census.json`). Every row of the registry was re-composed and re-generated and its `artifactHash` matched, independently of the sweep's own 310/310 The release
   ledger is 42 cells, written only by a bundle-mode sweep, and did not move.
 - **Components.** 110 identities / 1,320 theme cells; Sprint 200 m02's measurement stands. No
   component identity changed this sprint. `packages/component-styles/src` changed in one file,

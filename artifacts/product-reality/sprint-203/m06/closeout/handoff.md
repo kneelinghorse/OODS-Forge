@@ -114,7 +114,7 @@ got no `_meta.ui` and kept the text result. The same archive passed in the pinne
 
 **Rosters and registries.** Canonical runtime roster **23 objects / 310 cells**, re-swept once in m06
 (310/310, 0 typed, run `d4aa535a-ca90-4639-84a1-02c659a2eea2`); the generation census at the capture
-head re-composed and re-generated every row and did NOT complete — `closeout/runtime-census.ts` was still running when the session closed and is committed for the reviewing session to run.
+head re-composed and re-generated every row and found **310 of 310** hashes equal, 0 unequal, at `9f22e3a56` (`closeout/runtime-census.json`).
 The release ledger is 42 cells and did not move. 110 component identities / 1,320 theme cells, with
 one stylesheet file changed for the heading-level fix. Viz 13 types / 78 render scopes / 23 patterns,
 with **every viz registry and the certified matrix byte-identical to the base** — there was no chart

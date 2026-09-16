@@ -44,6 +44,12 @@ Sprint 204 m01:
 - The host is uncontrolled: this run hit load average **24.6 on 8 cores**, which is why root-core ran
   2.4x its Sprint 202 time of 16 minutes.
 
+## The runtime generation census did complete
+
+Separately from the capture, `closeout/runtime-census.ts` finished: **310 compared, 310 equal, 0
+unequal** at `9f22e3a56`. Every registry row was re-composed and re-generated and its `artifactHash`
+matched. That is independent of the sweep's own 310/310 and of the missing suites.
+
 ## What the reviewing session owes this sprint
 
 Run `root-core` and `component-packages` alone against `9f22e3a56` and assemble the five counts from
