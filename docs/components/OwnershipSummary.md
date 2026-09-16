@@ -84,9 +84,9 @@ Source: [packages/component-contracts/src/scenarios.ts](../../packages/component
 
 Interaction: `none`. OwnershipSummary presents content and owns no focusable control or action; authored child actions remain the consumer's responsibility.
 
-Expectation `render`: mount → a real h3 names the description list; owner id, type and role remain associated terms.
+Expectation `render`: mount → a real h2 names the description list; owner id, type and role remain associated terms.
 
-- a real h3 names the description list
+- a real h2 names the description list
 - owner id, type and role remain associated terms
 
 | Trigger | Target | Input | Expected effect |

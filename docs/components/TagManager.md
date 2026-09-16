@@ -86,9 +86,9 @@ Source: [packages/component-contracts/src/scenarios.ts](../../packages/component
 
 Interaction: `interactive`.
 
-Expectation `render`: mount → h3 heading, two visible tag items and an unwired Add Tag text input.
+Expectation `render`: mount → h2 heading, two visible tag items and an unwired Add Tag text input.
 
-- title is a real h3 heading
+- title is a real h2 heading
 - data-form-type is tag-manager
 - each tag is visible text
 - the add control is a labelled text input

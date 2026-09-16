@@ -1,6 +1,6 @@
 # object
 
-> Grouped object-registry tool. Set `action` to list (filter OODS objects) or show (full object definition incl. composed traits and view extensions). Consolidates the former object.* tools with identical per-action behavior.
+> Run one object-registry operation. Set `action` to list (filter OODS objects) or show (full object definition incl. composed traits and view extensions). Consolidates the former object.* tools with identical per-action behavior.
 
 **Registration:** auto
 

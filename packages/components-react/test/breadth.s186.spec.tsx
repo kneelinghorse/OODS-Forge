@@ -23,7 +23,7 @@ describe('Sprint 186 React wave-2 components', () => {
     const panel = container.querySelector('[data-oods-component="ClassificationPanel"]')!;
     expect(panel.tagName).toBe('SECTION');
     expect(panel.getAttribute('data-panel-type')).toBe('classification');
-    expect(screen.getByRole('heading', { level: 3, name: 'Classification' })).toBeTruthy();
+    expect(screen.getByRole('heading', { level: 2, name: 'Classification' })).toBeTruthy();
     expect(panel.querySelector('[data-panel-subtitle]')).toBeNull();
     expect(panel.querySelector('[data-panel-content]')?.childNodes).toHaveLength(0);
   });
@@ -36,7 +36,7 @@ describe('Sprint 186 React wave-2 components', () => {
     [{ title: ' ', label: 'Blank title falls through' }, 'Blank title falls through'],
   ] as const)('ClassificationPanel resolves the heading from %o in title/label/heading/name order', (props, expected) => {
     const { container } = render(<ClassificationPanel {...props} />);
-    expect(screen.getByRole('heading', { level: 3 }).textContent).toBe(expected);
+    expect(screen.getByRole('heading', { level: 2 }).textContent).toBe(expected);
     for (const attribute of ['title', 'label', 'heading', 'name']) {
       expect(container.querySelector('section')?.hasAttribute(attribute)).toBe(false);
     }
@@ -109,7 +109,7 @@ describe('Sprint 186 React wave-2 components', () => {
     const summary = container.querySelector('[data-oods-component="PriceSummary"]')!;
     expect(summary.tagName).toBe('SECTION');
     expect(summary.getAttribute('data-summary-type')).toBe('price');
-    expect(screen.getByRole('heading', { level: 3, name: 'Price Summary' }).getAttribute('data-summary-title')).toBe('true');
+    expect(screen.getByRole('heading', { level: 2, name: 'Price Summary' }).getAttribute('data-summary-title')).toBe('true');
     expect(summary.querySelector('dl')?.childNodes).toHaveLength(0);
     expect(summary.querySelector('[data-summary-fallback]')).toBeNull();
   });
@@ -126,7 +126,7 @@ describe('Sprint 186 React wave-2 components', () => {
     rerender(<PriceSummary amount="29.00" amountCents={2500} />);
     expect(items()).toEqual([['Amount', '29.00']]);
     rerender(<PriceSummary label="Plan pricing" heading="Ignored" text="No price recorded" />);
-    expect(screen.getByRole('heading', { level: 3 }).textContent).toBe('Plan pricing');
+    expect(screen.getByRole('heading', { level: 2 }).textContent).toBe('Plan pricing');
     expect(container.querySelector('dl')).toBeNull();
     expect(container.querySelector('p[data-summary-fallback]')?.textContent).toBe('No price recorded');
     rerender(<PriceSummary amount={1} summary="Unused fallback"><dl><div data-summary-item="true"><dt>Authored</dt><dd>Value</dd></div></dl></PriceSummary>);
@@ -144,10 +144,10 @@ describe('Sprint 186 React wave-2 components', () => {
     expect(panel.tagName).toBe('SECTION');
     expect(panel.id).toBe('panel');
     expect(panel.getAttribute('data-panel-type')).toBe(panelType);
-    expect(screen.getByRole('heading', { level: 3, name: defaultTitle })).toBeTruthy();
+    expect(screen.getByRole('heading', { level: 2, name: defaultTitle })).toBeTruthy();
     expect(panel.querySelector('[data-panel-content]')?.childNodes).toHaveLength(0);
     rerender(<Panel name="By name" metadata="Meta" emptyMessage="Empty" />);
-    expect(screen.getByRole('heading', { level: 3, name: 'By name' })).toBeTruthy();
+    expect(screen.getByRole('heading', { level: 2, name: 'By name' })).toBeTruthy();
     expect(container.querySelector('[data-panel-subtitle]')?.textContent).toBe('Meta');
     expect(container.querySelector('[data-panel-summary]')?.textContent).toBe('Empty');
     rerender(<Panel title="Title" summary="Summary"><p>Authored</p></Panel>);
@@ -164,7 +164,7 @@ describe('Sprint 186 React wave-2 components', () => {
     expect(form.tagName).toBe('FORM');
     expect(form.id).toBe('tags');
     expect(form.getAttribute('data-form-type')).toBe('tag-manager');
-    expect(screen.getByRole('heading', { level: 3, name: 'Tag Manager' })).toBeTruthy();
+    expect(screen.getByRole('heading', { level: 2, name: 'Tag Manager' })).toBeTruthy();
     expect(form.querySelector('[data-form-subtitle]')).toBeNull();
     expect(form.querySelectorAll('[data-tag-list] > [data-tag-item]')).toHaveLength(0);
     const input = screen.getByRole('textbox', { name: 'Add Tag' }) as HTMLInputElement;
@@ -174,12 +174,12 @@ describe('Sprint 186 React wave-2 components', () => {
     expect(onSubmit.mock.calls[0][0].defaultPrevented).toBe(true);
     expect(input.value).toBe('gamma');
     rerender(<TagManager heading="By heading" hint="Hint" tags={['alpha', { label: 'beta' }, { name: 'gamma' }, { role: 'delta' }, { value: 'epsilon' }, { id: 'zeta' }, 7, true, null, undefined, { other: 'ignored' }, '']} />);
-    expect(screen.getByRole('heading', { level: 3, name: 'By heading' })).toBeTruthy();
+    expect(screen.getByRole('heading', { level: 2, name: 'By heading' })).toBeTruthy();
     expect(container.querySelector('[data-form-subtitle]')?.textContent).toBe('Hint');
     expect([...container.querySelectorAll('[data-tag-item]')].map(item => item.textContent))
       .toEqual(['alpha', 'beta', 'gamma', 'delta', 'epsilon', 'zeta', '7', 'true']);
     rerender(<TagManager label="By label" description="Description" hint="Hint" value={['from value']} />);
-    expect(screen.getByRole('heading', { level: 3, name: 'By label' })).toBeTruthy();
+    expect(screen.getByRole('heading', { level: 2, name: 'By label' })).toBeTruthy();
     expect(container.querySelector('[data-form-subtitle]')?.textContent).toBe('Description');
     expect([...container.querySelectorAll('[data-tag-item]')].map(item => item.textContent)).toEqual(['from value']);
     rerender(<TagManager tags={['alpha']}><ul><li>Authored tags</li></ul></TagManager>);
@@ -256,16 +256,16 @@ describe('Sprint 186 React wave-2 components', () => {
     expect(log().getAttribute('role')).toBe('log');
     expect(log().id).toBe('log');
     expect(log().getAttribute('data-timeline-type')).toBe('message');
-    expect(screen.getByRole('heading', { level: 3, name: 'Message Timeline' })).toBeTruthy();
+    expect(screen.getByRole('heading', { level: 2, name: 'Message Timeline' })).toBeTruthy();
     // messages precede statuses in the renderer's event keys, so statuses are ignored here.
     expect(labels()).toEqual(['Welcome email']);
     expect(log().querySelector('time[data-timeline-time]')?.getAttribute('datetime')).toBe('2026-09-01T09:00:00Z');
     rerender(<MessageEventTimeline name="By name" heading="By heading" statuses={[{ state: 'queued', updatedAt: '2026-09-01T10:00:00Z', from: 'a', to: 'b' }, 7, null, 'plain']} />);
-    expect(screen.getByRole('heading', { level: 3, name: 'By heading' })).toBeTruthy();
+    expect(screen.getByRole('heading', { level: 2, name: 'By heading' })).toBeTruthy();
     expect(labels()).toEqual(['queued', '7', 'plain']);
     expect(log().querySelector('[data-timeline-detail]')?.textContent).toBe('a');
     rerender(<AddressValidationTimeline validations={[]} />);
-    expect(screen.getByRole('heading', { level: 3, name: 'Address Validation Timeline' })).toBeTruthy();
+    expect(screen.getByRole('heading', { level: 2, name: 'Address Validation Timeline' })).toBeTruthy();
     expect(container.querySelector('[data-timeline-empty]')?.textContent).toBe('No events');
     expect(container.querySelectorAll('[data-timeline-events] > li')).toHaveLength(1);
     rerender(<PreferenceTimeline title="Authored" changes={[{ event: 'x' }]}><li>Authored event</li></PreferenceTimeline>);
@@ -357,7 +357,7 @@ describe('Sprint 186 React wave-2 components', () => {
   it('AddressEditor resolves street/region/postal aliases in renderer order and emits the whole record from any input', () => {
     const onChange = vi.fn();
     render(<AddressEditor line1="L1" state="CA" zip="90210" onChange={onChange} />);
-    expect(screen.getByRole('heading', { level: 3, name: 'Address Editor' })).toBeTruthy();
+    expect(screen.getByRole('heading', { level: 2, name: 'Address Editor' })).toBeTruthy();
     expect((screen.getByLabelText('Street') as HTMLInputElement).value).toBe('L1');
     expect((screen.getByLabelText('Region') as HTMLInputElement).value).toBe('CA');
     expect((screen.getByLabelText('Postal Code') as HTMLInputElement).value).toBe('90210');
@@ -367,13 +367,13 @@ describe('Sprint 186 React wave-2 components', () => {
 
   it('PreferenceEditor, RoleAssignmentForm and TemplatePicker default their titles and options and let children replace the body', () => {
     const { container, rerender } = render(<PreferenceEditor />);
-    expect(screen.getByRole('heading', { level: 3, name: 'Preference Editor' })).toBeTruthy();
+    expect(screen.getByRole('heading', { level: 2, name: 'Preference Editor' })).toBeTruthy();
     expect([...(screen.getByLabelText('Namespace') as HTMLSelectElement).options].map(option => option.value)).toEqual(['default']);
     expect((screen.getByLabelText('Preference Document') as HTMLTextAreaElement).value).toBe('');
     rerender(<PreferenceEditor json='{"a":1}' namespaces={['x']} />);
     expect((screen.getByLabelText('Preference Document') as HTMLTextAreaElement).value).toBe('{"a":1}');
     rerender(<RoleAssignmentForm />);
-    expect(screen.getByRole('heading', { level: 3, name: 'Role Assignment' })).toBeTruthy();
+    expect(screen.getByRole('heading', { level: 2, name: 'Role Assignment' })).toBeTruthy();
     expect([...(screen.getByLabelText('Role') as HTMLSelectElement).options].map(option => option.textContent)).toEqual(['Select...']);
     rerender(<RoleAssignmentForm roles={['admin']} availableRoles={['viewer']} defaultRoleId="admin" member="m@example.test" />);
     const role = screen.getByLabelText('Role') as HTMLSelectElement;

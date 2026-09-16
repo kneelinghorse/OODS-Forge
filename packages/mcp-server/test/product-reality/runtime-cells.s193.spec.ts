@@ -30,10 +30,10 @@ describe('s193 runtime population accountability', () => {
   });
   it('requires all 206 distinct object/context/framework identities', () => {
     const ledger = population();
-    expect(ledger.rows).toHaveLength(206);
+    expect(ledger.rows).toHaveLength(266);
     expect(validateRuntimeLedger(ledger)).toEqual([]);
     ledger.rows[1] = structuredClone(ledger.rows[0]!);
-    expect(validateRuntimeLedger(ledger)).toContain('population must contain exactly 206 distinct current cells');
+    expect(validateRuntimeLedger(ledger)).toContain('population must contain exactly 266 distinct current cells');
   });
   it('never substitutes historical or same-head earlier-run receipts for current execution', () => {
     const ledger = population(); ledger.rows[0]!.runId = 'old-sweep';

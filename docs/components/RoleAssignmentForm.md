@@ -87,7 +87,7 @@ Interaction: `interactive`.
 
 Expectation `render`: mount → a Role select listing Owner and viewer with viewer selected and an Assignee input holding the address.
 
-- title is a real h3 heading
+- title is a real h2 heading
 - role select lists records and scalars
 - assignee input is prefilled
 - controls are unwired

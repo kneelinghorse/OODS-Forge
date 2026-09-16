@@ -87,7 +87,7 @@ Interaction: `none`. PreferenceTimeline presents content and owns no focusable c
 
 Expectation `render`: mount → one change event with its updatedAt time and description detail in the preference timeline type.
 
-- region has role log and an h3 title
+- region has role log and an h2 title
 - event alias is the label
 - updatedAt is the timestamp
 - description is the detail

@@ -1,0 +1,45 @@
+{
+  "note": "Real rows from Derek own CMOS store, fetched the way an agent would (cmos_decisions search) and passed to design.preview as contextItems. Forge opened no store of its own: the rows were read here, in the caller, exactly as the settled decision requires.",
+  "query": "Supersedable OR delivery objects",
+  "source": "cmos.decisions",
+  "items": [
+    {
+      "source": "cmos.decisions",
+      "id": "2161",
+      "title": "s203-m02",
+      "body": "s203-m02: the delivery objects model what CMOS actually writes and nothing it does not, which is a sharper rule than 'model the schema'. Columns that are declared but dead in the live store are not modelled: strategic_decisions.last_reviewed_at and author_user_id are null on all 1,933 rows, sessions.user_id and author_user_id on all 499, and context_id holds one value ('master_context') on every row — a screen cannot show a field that has never been written, and composing structural/Ownerable on an always-null author column would have invented an owner. Counters that exist but are not maintained are replaced by derivation: sprints.total_missions and completed_missions are null on 176 and 177 of 186 rows, so Sprint carries mission_count and completed_mission_count counted from the missions table. Shapes that are heterogeneous are declared as they are, not normalised into a false promise: sprint ids are both 'sprint-203' and 'Sprint 22' so sprint_id is opaque and never parsed, and start_date/end_date are declared as text because some rows hold a date and others a full timestamp. Where the trait engine's contract forced a change — its state identifiers are lowercase while CMOS writes sprint and mission states capitalised — the object declares the canonical lowercase identifier and leaves display casing to the component, which is a casing normalisation of a fully enumerated vocabulary rather than a coercion of an unknown value. Session models its actor as an `agent` (assistant, codex, claude-opus-5) rather than a user because that is what the store records.",
+      "timestamp": "2026-09-16T03:54:28.736Z",
+      "query": "Supersedable OR delivery objects",
+      "fetchedAt": "2026-09-16T07:03:51.155Z",
+      "object": "Decision"
+    },
+    {
+      "source": "cmos.decisions",
+      "id": "2158",
+      "title": "s203-m02",
+      "body": "s203-m02: lifecycle/Supersedable is authored once and serves both stores that already hold the shape, which record it from opposite ends. Supersession is a self-referencing lineage, not a workflow — a record is not moved through supersession, it is replaced by a later record and both stay readable — so it is its own trait rather than a Stateful state set. Its field is supersession_status, NOT status, so an object can carry a lifecycle through Stateful (which owns status and is the most-composed trait in the system) and a supersession through this trait without collision; a trait that silently collided with Stateful would be a bad trait regardless of how well it modelled supersession. Derek's CMOS writes the FORWARD pointer (strategic_decisions.superseded_by, populated on exactly the 45 rows whose status is superseded — a clean 1:1) beside a four-state vocabulary active|superseded|archived|stale. Forge's own composition acceptances write the BACKWARD pointer (CompositionAcceptance.supersedes: {version, acceptedAt} | null) and leave the standing acceptance implicit. The trait therefore declares both pointers plus a recordedDirection parameter (forward|backward|both) naming which one the source of truth actually writes; the other is derived only where a store can derive it and is otherwise absent, because an absent pointer means unknown and never 'nothing was superseded'. Forge's acceptance record is deliberately NOT rewritten in m02: it is read by the preview page, compare and accept paths and its schema belongs to m05, so the trait covers that shape and adopting it there is a later decision.",
+      "timestamp": "2026-09-16T03:54:28.736Z",
+      "query": "Supersedable OR delivery objects",
+      "fetchedAt": "2026-09-16T07:03:51.155Z",
+      "object": "Decision"
+    },
+    {
+      "source": "cmos.decisions",
+      "id": "2151",
+      "title": "Lock Sprint 203 — Objects born from use and context beside the design (Phase E, ",
+      "body": "Lock Sprint 203 — Objects born from use and context beside the design (Phase E, first sprint; near.md §8 slices 1 and 2), six serial missions on codex/sprint-203-objects-and-context from base a5d1ba084 (the Sprint 202 merge, served by the bridge). Derek 2026-09-15: \"lets lock s203 and the missions needed to get the work complete.\" Grounded in session by direct reads, not research: Forge's registry holds 18 objects / 240 runtime cells across 7 contexts and 21 non-viz traits in 8 families; Derek's CMOS store (cmos/db/cmos.sqlite) holds 1,927 strategic_decisions, 185 sprints, 498 sessions and 1,076 missions with their real columns read; Hive is a read-only MCP surface with NO screens at all (740 people rows, 307 active across 331 feeds, 427 articles in 14 days, 26 multi-person clusters); Forge has no code path to CMOS, TraceLab or Hive (structuredData.fetch reads local datasets and a Stage1 run directory from a filesystem path only); objects are authored as YAML under objects/<domain>/ with docs/authoring-objects.md, pnpm generate:objects and a per-domain spec, the TraceLab seven-object PR being the precedent, whose README already establishes reuse (\"Space and User reuse the universal Organization and User objects\"). Settled: (1) objects are born from the live record, never from a specification, and no object lands without the screen that needed it, composed and certified in the same mission; (2) reuse is proven before anything new is authored — CMOS's mission is largely a subset of the existing research/Mission, and each mission states per field reused / born / not modelled with a reason; (3) Decision's supersession (superseded_by plus status active|superseded|archived|stale) is a self-referencing lineage no existing trait expresses and is the same shape Forge already uses for composition versions and accepted.json, so lifecycle/Supersedable is authored once for both or the sprint types why not; (4) Hive's article is not assumed to be the CMS content/Article — the question is settled by a measured field comparison; (5) context enters through the caller and Forge reaches into no other product's store, because a direct reader would couple the bundle to CMOS 3.0.0's schema and break it for anyone who is not Derek; (6) context is provenanced and durable or it is not shown — source, query and fetched-at on every item, stored on the version record beside measurements, items older than the head marked, an empty search stating what it searched, never a placeholder; (7) one renderer, two surfaces — shell.ts gains renderContext used by the browser page and the conversation app, in the Sprint 202 callback pattern; (8) the Sprint 202 carries close first in m01. Missions: m01 carries · m02 CMOS objects born · m03 Hive objects born · m04 the new screens certified usable · m05 context beside the design · m06 closeout. Descope ladder: Hive's Cluster object → the Session object → the context panel inside the conversation app (the browser page keeps it) → staleness marking on context items. Never cut: every object justified by a screen composed and certified in the same mission; the fit read stating reused / born / not modelled; the context panel with provenance on the browser page; the carries closed or typed; the five-suite capture. Out of scope by name: Forge reading CMOS, TraceLab or Hive directly and the aquex pass-through; writing into any other project's repo and all consumer notices; Stage1 observation against intent (slice 3, Sprint 204–205); decisions checked against compositions and conflict detection (slice 4, research in 205); the identity binding table; Figma; release, tag or publish; the #2059 chart items and the outside-individual run. Memo cmos/planning/forge-s203-objects-and-context-decision-memo.md; handoff cmos/planning/forge-s203-build-handoff.md; worktree ~/.codex/worktrees/s203/OODS-Forge.",
+      "timestamp": "2026-09-16T00:44:49.250Z",
+      "query": "Supersedable OR delivery objects",
+      "fetchedAt": "2026-09-16T07:03:51.155Z",
+      "object": "Decision"
+    }
+  ],
+  "searched": [
+    {
+      "source": "tracelab.evidence",
+      "query": "Decision object",
+      "fetchedAt": "2026-09-16T07:03:51.155Z",
+      "found": 0
+    }
+  ]
+}

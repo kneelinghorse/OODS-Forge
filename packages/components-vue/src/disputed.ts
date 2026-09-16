@@ -6,7 +6,7 @@ export const AuditSummaryCard = defineComponent({
   name: 'AuditSummaryCard', props: { id: String, title: { type: String, default: 'Audit summary' }, auditLog: Array as PropType<readonly unknown[]>, lastN: { type: Number, default: 5 }, showTransitionCount: { type: Boolean, default: true }, showLastTransitionTime: { type: Boolean, default: true }, showLastActor: { type: Boolean, default: true } },
   setup: props => () => {
     const summary = auditSummary(props);
-    return h('section', { id: props.id, class: 'oods-audit-summary', 'data-oods-component': 'AuditSummaryCard', 'aria-label': props.title }, [h('h3', props.title), h('dl', [
+    return h('section', { id: props.id, class: 'oods-audit-summary', 'data-oods-component': 'AuditSummaryCard', 'aria-label': props.title }, [h('h2', props.title), h('dl', [
       ...(props.showTransitionCount ? [h('dt', 'Transitions'), h('dd', summary.count)] : []),
       ...(props.showLastActor ? [h('dt', 'Last actor'), h('dd', summary.actor)] : []),
       ...(props.showLastTransitionTime ? [h('dt', 'Last transition'), h('dd', summary.at ? h('time', { datetime: summary.at }, summary.timestamp) : summary.timestamp)] : []),

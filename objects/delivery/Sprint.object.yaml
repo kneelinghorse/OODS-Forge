@@ -1,0 +1,140 @@
+object:
+  name: Sprint
+  version: 0.1.0
+  domain: delivery.sprint
+  description: >-
+    A bounded run of work with a stated focus and the missions that carried it. Born from the sprints
+    table of Derek's CMOS store (186 rows read 2026-09-16); the field mapping and every column this
+    object does not model are stated in the m02 fit read.
+  tags:
+    - delivery
+    - cmos
+    - sprint
+
+traits:
+  - name: content/Labelled
+    alias: SprintLabel
+    parameters:
+      maxLabelLength: 255
+      maxDescriptionLength: 1000
+  - name: lifecycle/Stateful
+    parameters:
+      # CMOS writes these capitalised (Active, Completed, Archived, Reverted); the trait engine's
+      # contract is a lowercase identifier vocabulary, so the object declares the canonical identifier
+      # and leaves the display casing to the component. This is a casing normalisation of a fully
+      # enumerated vocabulary, not a coercion of an unknown server value: Reverted has no counterpart
+      # in any existing object's state set, which is why the four are declared here rather than borrowed.
+      states:
+        - active
+        - completed
+        - archived
+        - reverted
+      initialState: active
+  - name: lifecycle/Timestampable
+    parameters:
+      recordedEvents:
+        - started
+        - ended
+      timezone: UTC
+  - name: behavioral/Searchable
+    parameters:
+      placeholder: Search sprints
+  - name: behavioral/Filterable
+  - name: behavioral/Pageable
+    parameters:
+      defaultPageSize: 20
+      pageSizeOptions:
+        - 10
+        - 20
+        - 50
+
+schema:
+  sprint_id:
+    type: string
+    required: true
+    description: >-
+      The sprint's identifier, treated as opaque and never parsed: the live store holds both
+      "sprint-203" and "Sprint 22" and both are authoritative.
+    validation:
+      minLength: 1
+      maxLength: 64
+  title:
+    type: string
+    required: true
+    description: The sprint's title, present on all 186 rows.
+    validation:
+      minLength: 1
+      maxLength: 255
+  focus:
+    type: string
+    required: false
+    description: >-
+      What the sprint is for, in the author's own words. Present on all 186 rows and long free text,
+      so it carries the same readability risk as a decision.
+  start_date:
+    type: string
+    required: false
+    description: >-
+      When the sprint began. Null on 54 of 186 rows, and not uniformly shaped: some rows carry a date
+      and some a full timestamp, so it is declared as text and never reformatted as if it were known
+      to be one or the other.
+  end_date:
+    type: string
+    required: false
+    description: When the sprint ended, on the same terms. Null on 47 of 186 rows.
+  mission_count:
+    type: number
+    required: false
+    description: >-
+      How many missions the sprint carries, counted from the missions table. CMOS also declares
+      total_missions and completed_missions columns, but they are null on 176 and 177 of 186 rows, so
+      this object counts rather than reading a counter that is almost always blank.
+    validation:
+      minimum: 0
+  completed_mission_count:
+    type: number
+    required: false
+    description: How many of those missions are completed, counted the same way.
+    validation:
+      minimum: 0
+  project_id:
+    type: string
+    required: true
+    description: The project the sprint belongs to. A slug, never a uuid.
+
+semantics:
+  sprint_id:
+    semantic_type: delivery.sprint.id
+    token_mapping: tokenMap(text.body.*)
+  title:
+    semantic_type: text.label
+    token_mapping: tokenMap(text.label.*)
+  focus:
+    semantic_type: delivery.sprint.focus
+    token_mapping: tokenMap(text.body.*)
+  start_date:
+    semantic_type: delivery.sprint.start_date
+    token_mapping: tokenMap(text.body.*)
+  end_date:
+    semantic_type: delivery.sprint.end_date
+    token_mapping: tokenMap(text.body.*)
+  mission_count:
+    semantic_type: delivery.sprint.mission_count
+    token_mapping: tokenMap(metric.count.primary)
+  completed_mission_count:
+    semantic_type: delivery.sprint.completed_mission_count
+    token_mapping: tokenMap(metric.count.primary)
+  project_id:
+    semantic_type: delivery.sprint.project_id
+    token_mapping: tokenMap(text.body.*)
+
+metadata:
+  maturity: alpha
+  owners:
+    - Forge
+  references:
+    - "artifacts/product-reality/sprint-203/m02/fit-read.json"
+  changelog:
+    - version: 0.1.0
+      date: "2026-09-16"
+      description: Born from the live sprints table, 186 rows.

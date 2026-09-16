@@ -87,7 +87,7 @@ Interaction: `none`. AddressValidationTimeline presents content and owns no focu
 
 Expectation `render`: mount → a log region titled Address checks with two ordered events, the first timestamped and detailed.
 
-- region has role log and an h3 title
+- region has role log and an h2 title
 - events are ordered list items
 - the timestamp is a time element
 - scalar entries render as text

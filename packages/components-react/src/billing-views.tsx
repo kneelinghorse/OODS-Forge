@@ -5,7 +5,7 @@ export interface CycleProgressCardProps extends BillingCycleValues { id?: string
 export function CycleProgressCard({ id, title = 'Billing cycle', ...values }: CycleProgressCardProps) {
   const cycle = billingCycle(values);
   return <section id={id} className="oods-billing-cycle" data-oods-component="CycleProgressCard" aria-label={title}>
-    <h3>{title}</h3><p>{cycle.announcement}</p>
+    <h2>{title}</h2><p>{cycle.announcement}</p>
     {cycle.percent !== undefined && <progress max={100} value={cycle.percent} aria-label={cycle.announcement} />}
     {values.interval && <p className="oods-billing-muted">{values.interval}</p>}
   </section>;
@@ -15,7 +15,7 @@ export interface PaymentTimelineProps extends BillingPaymentValues { id?: string
 function BillingTimeline({ id, title, component, includeMethod, ...values }: PaymentTimelineProps & { component: string; includeMethod: boolean }) {
   const heading = title ?? (includeMethod ? 'Payments' : 'Payment events');
   return <section id={id} className="oods-payment-timeline" data-oods-component={component} role="log" aria-label={heading}>
-    <h3>{heading}</h3><p>{billingPaymentSummary(values)}</p>
+    <h2>{heading}</h2><p>{billingPaymentSummary(values)}</p>
     {includeMethod && <p className="oods-billing-muted">{`Payment method: ${values.paymentMethod ?? 'Not provided'}`}</p>}
     <ol>{billingPaymentRows(values).map((row) => <li key={row.kind} data-payment-kind={row.kind}><strong>{row.label}</strong>{row.at ? <time dateTime={row.at}>{row.text}</time> : <span>{row.text}</span>}</li>)}</ol>
   </section>;
@@ -23,7 +23,9 @@ function BillingTimeline({ id, title, component, includeMethod, ...values }: Pay
 export function PaymentTimeline(props: PaymentTimelineProps) { return <BillingTimeline {...props} component="PaymentTimeline" includeMethod />; }
 export type PaymentEventTimelineProps = Omit<PaymentTimelineProps, 'paymentMethod'> & { event?: CollectionEvent };
 export function PaymentEventTimeline(props: PaymentEventTimelineProps) {
-  if (props.event) return <section id={props.id} data-oods-component="PaymentEventTimeline" aria-label="Payment event"><strong>{props.event.title}</strong><time dateTime={props.event.at}>{formatDateTime(props.event.at)}</time><p>{props.event.description}</p></section>;
+  // The accessible name comes from the event itself: two sibling "Payment event" regions collide as
+  // duplicate landmarks (axe landmark-unique), and "Last payment" / "Next payment" is what tells them apart.
+  if (props.event) return <section id={props.id} data-oods-component="PaymentEventTimeline" aria-label={props.event.title ?? 'Payment event'}><strong>{props.event.title}</strong><time dateTime={props.event.at}>{formatDateTime(props.event.at)}</time><p>{props.event.description}</p></section>;
   return <BillingTimeline {...props} component="PaymentEventTimeline" includeMethod={false} />; }
 
 export interface BillingCardMetaProps { id?: string; amount?: number; currency?: string; minorUnits?: number; interval?: string }

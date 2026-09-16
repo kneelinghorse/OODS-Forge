@@ -1,0 +1,122 @@
+{
+  "mission": "s203-m03",
+  "readAt": "2026-09-16T03:54:46Z",
+  "surface": "Hive — Design Intelligence Loop, read-only MCP surface over the aquex hub. Local dev only; not deployed. NO screens of any kind: Derek reads his cohort only through an agent. Only read tools were called (hive_overview, cohort_list, person_detail, clusters_top, articles_get); the three write tools (feed_deactivate, index_generate, article_mark) were never called.",
+  "reuses": {
+    "Person as core/User": {
+      "question": "Can the universal User carry a Hive cohort member, as the research README's \"Space and User reuse the universal Organization and User objects\" precedent would suggest?",
+      "candidate": "User",
+      "candidateFields": 7,
+      "traits": [
+        "lifecycle/Stateful",
+        "lifecycle/Timestampable",
+        "behavioral/Taggable",
+        "core/Addressable",
+        "core/Preferenceable",
+        "core/Authable",
+        "core/Communicable"
+      ],
+      "blockers": [
+        {
+          "field": "user_id",
+          "why": "declares type uuid; Hive's person_id is 213 (number)"
+        },
+        {
+          "field": "role",
+          "why": "value \"Datasette; daily LLM posts\" is outside the declared enum [end_user, admin, owner, billing]"
+        }
+      ],
+      "requiredFieldsHiveCannotFill": [
+        "primary_email (email)"
+      ],
+      "answer": "No. A cohort member is someone Derek follows, not an account holder: User requires a uuid identity and a primary_email, and composes Authable, Preferenceable, Addressable and Communicable — authentication, preferences, addresses and a communication channel that do not exist for any of the 740 people rows. Hive's person_id is an integer surrogate key."
+    },
+    "co-talkers as core/Relationship": {
+      "question": "Are Hive's co-talkers the existing Relationship object?",
+      "candidate": "Relationship",
+      "candidateFields": 9,
+      "traits": [
+        "content/Labelled",
+        "lifecycle/Stateful",
+        "lifecycle/Timestampable",
+        "structural/Ownerable",
+        "behavioral/Taggable",
+        "viz/MarkGraph"
+      ],
+      "blockers": [
+        {
+          "field": "source_id",
+          "why": "declares type uuid; Hive's person_id is 641 (number)"
+        }
+      ],
+      "requiredFieldsHiveCannotFill": [
+        "relationship_id (uuid)",
+        "target_id (uuid)",
+        "relationship_type (string)",
+        "direction (string)",
+        "is_bidirectional (boolean)"
+      ],
+      "answer": "No. Relationship is a stored graph edge with uuid endpoints, a required relationship_type, direction and is_bidirectional, its own lifecycle (Stateful) and an owner (Ownerable). A co-talker pair is none of those: it is derived per query window (the days argument), symmetric, unowned, has no lifecycle, and carries two independent counts — shared_entity_clusters and shared_semantic_clusters, which disagree (Alex Volkov shares 0 entity clusters and 2 semantic ones with Simon Willison) and cannot both be expressed by Relationship's single string `strength`.",
+      "note": "Co-talkers are therefore carried on Person as a derived list, with both counts kept separate and the window they were derived for stated. Nothing is stored as an edge."
+    },
+    "tracking_status as lifecycle/Stateful": {
+      "question": "Is Person's tracking_status a lifecycle/Stateful shape?",
+      "vocabulary": [
+        "active",
+        "tracked_unfeeded",
+        "dormant"
+      ],
+      "answer": "Yes, and this one holds. active | tracked_unfeeded | dormant is an ordered lifecycle of one record — a person is tracked with a live feed, tracked deliberately without one, or had a feed that lapsed — and Hive documents it as exactly that (src/store/tracking_status.py). It is the one reuse of the three that survives measurement, and Person composes lifecycle/Stateful with those three states.",
+      "reused": true
+    }
+  },
+  "articleQuestion": {
+    "question": "Does objects/content/Article carry Hive's articles, or is Hive's article a distinct thing?",
+    "candidate": "Article",
+    "candidateFields": 10,
+    "traits": [
+      "content/Labelled",
+      "lifecycle/Stateful",
+      "lifecycle/Timestampable",
+      "core/Classifiable"
+    ],
+    "blockers": [
+      {
+        "field": "article_id",
+        "why": "declares type uuid; Hive's article_id is 14624 (number)"
+      },
+      {
+        "field": "label",
+        "why": "Article has no field label"
+      }
+    ],
+    "requiredFieldsHiveCannotFill": [
+      "author_id (uuid)",
+      "content_type (string)",
+      "body_markdown (string)"
+    ],
+    "hiveArticleFields": 18,
+    "fieldsWithNoHomeInContentArticle": [
+      "url",
+      "fetched_at",
+      "feed_name",
+      "feed_url",
+      "word_count",
+      "is_paywalled",
+      "paywall_confidence",
+      "keywords",
+      "marks",
+      "content_truncated",
+      "content_byte_length",
+      "author",
+      "person",
+      "processing.summary",
+      "processing.key_entities",
+      "processing.sentiment",
+      "processing.subcategories",
+      "processing.model_name",
+      "processing.processed_at"
+    ],
+    "answer": "No — they are different things, and the field sets say so. content/Article is an editorial CMS record: a uuid article_id, a required slug, a required author_id, a required content_type and a required body_markdown, under a publication lifecycle the editor drives. Hive's article is an ingested external signal: an integer surrogate key, identified by its url with no slug, attributed to a cohort person rather than an author_id (author is null on the sampled row), with plain-text content capped at 64KB that may be truncated or absent entirely when the source is paywalled — so requiring body_markdown would refuse a real and common row. Nineteen of its fields, including the whole processing overlay Hive exists to produce, have nowhere to go."
+  }
+}

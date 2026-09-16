@@ -11,7 +11,7 @@ const implementations: Readonly<Record<string, Component>> = {
 };
 
 describe('Sprint 185 Vue component breadth', () => {
-  for (const [component, fallback, label] of [[DetailHeader, 'h2', 'Details'], [CardHeader, 'h3', 'Card']] as const) {
+  for (const [component, fallback, label] of [[DetailHeader, 'h2', 'Details'], [CardHeader, 'h2', 'Card']] as const) {
     it(`${label} defaults to a real heading and applies as before bounded level`, async () => {
       const wrapper = mount(component);
       try {
@@ -111,7 +111,7 @@ describe('Sprint 185 Vue component breadth', () => {
       props: { text: 'Card text', supporting: ' ', supportingText: 'Supporting text', subtitle: 'Subtitle', description: 'Description' },
     });
     try {
-      expect(wrapper.get('h3').text()).toBe('Card text');
+      expect(wrapper.get('h2').text()).toBe('Card text');
       expect(wrapper.get('[data-oods-supporting]').text()).toBe('Supporting text');
       await wrapper.setProps({ supportingText: undefined });
       expect(wrapper.get('[data-oods-supporting]').text()).toBe('Subtitle');

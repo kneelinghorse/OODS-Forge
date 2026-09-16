@@ -18,7 +18,7 @@ describe('Sprint 185 React component breadth', () => {
   it('uses real default headings and lets as take precedence over level', () => {
     const { rerender } = render(<><DetailHeader /><CardHeader /></>);
     expect(screen.getByRole('heading', { level: 2, name: 'Details' })).toBeTruthy();
-    expect(screen.getByRole('heading', { level: 3, name: 'Card' })).toBeTruthy();
+    expect(screen.getByRole('heading', { level: 2, name: 'Card' })).toBeTruthy();
     rerender(<><DetailHeader level={4} /><CardHeader as="h6" level={2} /></>);
     expect(screen.getByRole('heading', { level: 4, name: 'Details' })).toBeTruthy();
     expect(screen.getByRole('heading', { level: 6, name: 'Card' })).toBeTruthy();
@@ -51,7 +51,7 @@ describe('Sprint 185 React component breadth', () => {
     expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('Bound plan name');
     expect(container.querySelector('[data-oods-subtitle]')?.textContent).toBe('Details');
     rerender(<CardHeader title="Static title">{['Plan ', 2]}</CardHeader>);
-    expect(screen.getByRole('heading', { level: 3 }).textContent).toBe('Plan 2');
+    expect(screen.getByRole('heading', { level: 2 }).textContent).toBe('Plan 2');
     rerender(<DetailHeader title="Ignored"><h5>Authored title</h5><p>Authored copy</p></DetailHeader>);
     expect(screen.getAllByRole('heading')).toHaveLength(1);
     expect(screen.getByRole('heading', { level: 5 }).textContent).toBe('Authored title');
@@ -71,7 +71,7 @@ describe('Sprint 185 React component breadth', () => {
 
   it.each([
     ['DetailHeader', DetailHeader, 'h2'],
-    ['CardHeader', CardHeader, 'h3'],
+    ['CardHeader', CardHeader, 'h2'],
     ['ColorSwatch', ColorSwatch, '[data-oods-swatch-label]'],
     ['ColorizedBadge', ColorizedBadge, '[data-oods-badge-label]'],
   ] as const)('preserves authored word separators in %s while blank content falls back', (_name, Component, selector) => {
@@ -85,8 +85,8 @@ describe('Sprint 185 React component breadth', () => {
 
   it('flattens scalar fragments and ignores empty fragments when choosing heading and preview content', () => {
     const { container, rerender } = render(<><DetailHeader><>{'Plan '}{2}</></DetailHeader><CardHeader><>{' '}</></CardHeader></>);
-    expect(screen.getByRole('heading', { level: 2 }).textContent).toBe('Plan 2');
-    expect(screen.getByRole('heading', { level: 3 }).textContent).toBe('Card');
+    expect(screen.getByRole('heading', { level: 2, name: 'Plan 2' })).toBeTruthy();
+    expect(screen.getByRole('heading', { level: 2, name: 'Card' })).toBeTruthy();
     rerender(<VizAreaPreview><>{false}{' '}<></></></VizAreaPreview>);
     expect(container.querySelector('[data-viz-preview-placeholder]')?.textContent).toBe('Area preview (640 x 360)');
     rerender(<ColorSwatch color="default" />);

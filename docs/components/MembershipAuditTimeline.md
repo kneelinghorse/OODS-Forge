@@ -87,7 +87,7 @@ Interaction: `none`. MembershipAuditTimeline presents content and owns no focusa
 
 Expectation `render`: mount without events → a log region titled Membership history whose only list item names the empty state.
 
-- region has role log and an h3 title
+- region has role log and an h2 title
 - the empty item reads No events
 
 | Trigger | Target | Input | Expected effect |

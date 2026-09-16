@@ -151,14 +151,14 @@ describe('@oods/components-react shared scenarios', () => {
         }
         case 'card-header-supporting-text': {
           expect(component?.tagName).toBe('HEADER');
-          expect(screen.getByRole('heading', { level: 3, name: 'Account summary' })).toBeTruthy();
+          expect(screen.getByRole('heading', { level: 2, name: 'Account summary' })).toBeTruthy();
           expect(component?.querySelector('[data-oods-supporting]')?.textContent).toBe('Current subscription');
           break;
         }
         case 'classification-panel-title-and-summary': {
           expect(component?.tagName).toBe('SECTION');
           expect(component?.getAttribute('data-panel-type')).toBe('classification');
-          expect(screen.getByRole('heading', { level: 3, name: 'Classification' })).toBeTruthy();
+          expect(screen.getByRole('heading', { level: 2, name: 'Classification' })).toBeTruthy();
           expect(component?.querySelector('[data-panel-header] > [data-panel-subtitle]')?.textContent).toBe('Taxonomy and tags');
           expect(component?.querySelector('[data-panel-content] > [data-panel-summary]')?.textContent).toBe('Electronics > Mobile > Android');
           expect(component?.querySelector('button, a, input')).toBeNull();
@@ -174,7 +174,7 @@ describe('@oods/components-react shared scenarios', () => {
           }[scenario.id];
           expect(component?.tagName).toBe('SECTION');
           expect(component?.getAttribute('data-panel-type')).toBe(expected.type);
-          expect(screen.getByRole('heading', { level: 3, name: expected.title })).toBeTruthy();
+          expect(screen.getByRole('heading', { level: 2, name: expected.title })).toBeTruthy();
           expect(component?.querySelector('[data-panel-header] > [data-panel-subtitle]')?.textContent).toBe(expected.subtitle);
           expect(component?.querySelector('[data-panel-content] > [data-panel-summary]')?.textContent).toBe(expected.summary);
           expect(component?.querySelector('button, a, input')).toBeNull();
@@ -183,7 +183,7 @@ describe('@oods/components-react shared scenarios', () => {
         case 'tag-manager-list-and-add-control': {
           expect(component?.tagName).toBe('FORM');
           expect(component?.getAttribute('data-form-type')).toBe('tag-manager');
-          expect(screen.getByRole('heading', { level: 3, name: 'Tags' })).toBeTruthy();
+          expect(screen.getByRole('heading', { level: 2, name: 'Tags' })).toBeTruthy();
           expect([...component!.querySelectorAll('[data-tag-list] > [data-tag-item]')].map(item => item.textContent)).toEqual(['alpha', 'beta']);
           const input = screen.getByRole('textbox', { name: 'Add Tag' }) as HTMLInputElement;
           expect(input.name).toBe('newTag');
@@ -229,7 +229,7 @@ describe('@oods/components-react shared scenarios', () => {
         case 'address-validation-timeline-events': {
           expect(screen.getByRole('log', { name: 'Address checks' })).toBe(component);
           expect(component?.getAttribute('data-timeline-type')).toBe('address-validation');
-          expect(screen.getByRole('heading', { level: 3, name: 'Address checks' })).toBeTruthy();
+          expect(screen.getByRole('heading', { level: 2, name: 'Address checks' })).toBeTruthy();
           const items = [...component!.querySelectorAll('[data-timeline-events] > li')];
           expect(items).toHaveLength(2);
           expect(items[0]!.querySelector('[data-timeline-label]')?.textContent).toBe('Postal code verified');
@@ -272,7 +272,7 @@ describe('@oods/components-react shared scenarios', () => {
         case 'address-editor-fields-and-change': {
           expect(component?.tagName).toBe('FORM');
           expect(component?.getAttribute('data-form-type')).toBe('address-editor');
-          expect(screen.getByRole('heading', { level: 3, name: 'Shipping address' })).toBeTruthy();
+          expect(screen.getByRole('heading', { level: 2, name: 'Shipping address' })).toBeTruthy();
           expect((screen.getByLabelText('Street') as HTMLInputElement).value).toBe('1 Main St');
           expect((screen.getByLabelText('Region') as HTMLInputElement).value).toBe('IL');
           expect((screen.getByLabelText('Postal Code') as HTMLInputElement).value).toBe('62701');
@@ -287,7 +287,7 @@ describe('@oods/components-react shared scenarios', () => {
         case 'preference-editor-namespace-and-document': {
           expect(component?.tagName).toBe('FORM');
           expect(component?.getAttribute('data-form-type')).toBe('preference-editor');
-          expect(screen.getByRole('heading', { level: 3, name: 'Preferences' })).toBeTruthy();
+          expect(screen.getByRole('heading', { level: 2, name: 'Preferences' })).toBeTruthy();
           const namespace = screen.getByLabelText('Namespace') as HTMLSelectElement;
           expect([...namespace.options].map(option => option.textContent)).toEqual(['notifications', 'billing']);
           expect(namespace.value).toBe('billing');
@@ -298,7 +298,7 @@ describe('@oods/components-react shared scenarios', () => {
         case 'role-assignment-form-roles': {
           expect(component?.tagName).toBe('FORM');
           expect(component?.getAttribute('data-form-type')).toBe('role-assignment');
-          expect(screen.getByRole('heading', { level: 3, name: 'Assign role' })).toBeTruthy();
+          expect(screen.getByRole('heading', { level: 2, name: 'Assign role' })).toBeTruthy();
           const role = screen.getByLabelText('Role') as HTMLSelectElement;
           expect([...role.options].map(option => [option.value, option.textContent])).toEqual([['owner', 'Owner'], ['viewer', 'viewer']]);
           expect(role.value).toBe('viewer');
@@ -356,7 +356,7 @@ describe('@oods/components-react shared scenarios', () => {
         case 'price-summary-terms': {
           expect(component?.tagName).toBe('SECTION');
           expect(component?.getAttribute('data-summary-type')).toBe('price');
-          expect(screen.getByRole('heading', { level: 3, name: 'Price Summary' })).toBeTruthy();
+          expect(screen.getByRole('heading', { level: 2, name: 'Price Summary' })).toBeTruthy();
           expect([...component!.querySelectorAll('[data-summary-item]')].map(item => (
             [item.querySelector('dt')?.textContent, item.querySelector('dd')?.textContent]
           ))).toEqual([['Amount', '129900'], ['Currency', 'USD'], ['Model', 'recurring'], ['Interval', 'month']]);
@@ -602,7 +602,7 @@ describe('@oods/components-react shared scenarios', () => {
           break;
         }
         case 'classification-editor-presentational-controls': {
-          expect(component?.querySelector('h3')?.textContent).toBe('Product classification');
+          expect(component?.querySelector('h2')?.textContent).toBe('Product classification');
           expect((component?.querySelector('[name="category"]') as HTMLInputElement).value).toBe('Electronics');
           expect((component?.querySelector('[name="tags"]') as HTMLInputElement).value).toBe('["alpha","beta"]');
           expect((component?.querySelector('[name="mode"]') as HTMLSelectElement).value).toBe('flexible');
@@ -614,7 +614,7 @@ describe('@oods/components-react shared scenarios', () => {
           break;
         }
         case 'ownership-summary-terms': {
-          expect(component?.querySelector('h3')?.textContent).toBe('Ownership Summary');
+          expect(component?.querySelector('h2')?.textContent).toBe('Ownership Summary');
           expect([...component!.querySelectorAll('dd')].map((node) => node.textContent)).toEqual(['user-7', 'person', 'administrator']);
           expect(component?.hasAttribute('role')).toBe(false);
           break;

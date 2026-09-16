@@ -109,7 +109,7 @@ describe('Sprint 185 component breadth contracts', () => {
     expect(detail.assertions).toContain('as takes precedence over level');
     const card = sharedScenarios.find(({ oodsComponentId }) => oodsComponentId === 'CardHeader')!;
     expect(card.props.supportingText).toBeTruthy();
-    expect(card.initialState).toEqual({ heading: 'h3' });
+    expect(card.initialState).toEqual({ heading: 'h2' });
   });
 
   it('keeps color supplementary to visible text and preserves Badge status semantics', () => {

@@ -2,7 +2,11 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-export const OBJECTS = ['Article', 'Chunk', 'Collection', 'Document', 'Evidence', 'Invoice', 'Media', 'Mission', 'Organization', 'Plan', 'Product', 'Project', 'Relationship', 'Report', 'Subscription', 'Transaction', 'Usage', 'User'] as const;
+/**
+ * Every object the runtime sweep proves. Sprint 203 adds five born from Derek's own stores: Decision,
+ * Sprint and Session from CMOS's record (m02) and Person and Cluster from Hive's cohort (m03).
+ */
+export const OBJECTS = ['Article', 'Chunk', 'Cluster', 'Collection', 'Decision', 'Document', 'Evidence', 'Invoice', 'Media', 'Mission', 'Organization', 'Person', 'Plan', 'Product', 'Project', 'Relationship', 'Report', 'Session', 'Sprint', 'Subscription', 'Transaction', 'Usage', 'User'] as const;
 export const CONTEXTS = ['card', 'detail', 'form', 'inline', 'list', 'timeline'] as const;
 export const FRAMEWORKS = ['react', 'vue'] as const;
 export const BROWSER_IMAGE = 'mcr.microsoft.com/playwright@sha256:f1e7e01021efd65dd1a2c56064be399f3e4de00fd021ac561325f2bfbb2b837a';

@@ -279,14 +279,14 @@ describe('@oods/components-vue shared scenarios', () => {
           }
           case 'card-header-supporting-text': {
             expect(component.element.tagName).toBe('HEADER');
-            expect(component.get('h3').text()).toBe('Account summary');
+            expect(component.get('h2').text()).toBe('Account summary');
             expect(component.get('[data-oods-supporting]').text()).toBe('Current subscription');
             break;
           }
           case 'classification-panel-title-and-summary': {
             expect(component.element.tagName).toBe('SECTION');
             expect(component.attributes('data-panel-type')).toBe('classification');
-            expect(component.get('[data-panel-header] > h3').text()).toBe('Classification');
+            expect(component.get('[data-panel-header] > h2').text()).toBe('Classification');
             expect(component.get('[data-panel-header] > [data-panel-subtitle]').text()).toBe('Taxonomy and tags');
             expect(component.get('[data-panel-content] > [data-panel-summary]').text()).toBe('Electronics > Mobile > Android');
             expect(component.find('button, a, input').exists()).toBe(false);
@@ -302,7 +302,7 @@ describe('@oods/components-vue shared scenarios', () => {
             }[scenario.id]!;
             expect(component.element.tagName).toBe('SECTION');
             expect(component.attributes('data-panel-type')).toBe(expected.type);
-            expect(component.get('[data-panel-header] > h3').text()).toBe(expected.title);
+            expect(component.get('[data-panel-header] > h2').text()).toBe(expected.title);
             expect(component.get('[data-panel-header] > [data-panel-subtitle]').text()).toBe(expected.subtitle);
             expect(component.get('[data-panel-content] > [data-panel-summary]').text()).toBe(expected.summary);
             expect(component.find('button, a, input').exists()).toBe(false);
@@ -311,7 +311,7 @@ describe('@oods/components-vue shared scenarios', () => {
           case 'tag-manager-list-and-add-control': {
             expect(component.element.tagName).toBe('FORM');
             expect(component.attributes('data-form-type')).toBe('tag-manager');
-            expect(component.get('[data-form-header] > h3').text()).toBe('Tags');
+            expect(component.get('[data-form-header] > h2').text()).toBe('Tags');
             expect(component.findAll('[data-tag-list] > [data-tag-item]').map((item) => item.text())).toEqual(['alpha', 'beta']);
             const input = component.get('input[name="newTag"]');
             expect(input.attributes('type')).toBe('text');
@@ -359,7 +359,7 @@ describe('@oods/components-vue shared scenarios', () => {
           case 'address-validation-timeline-events': {
             expect(component.attributes('role')).toBe('log');
             expect(component.attributes('data-timeline-type')).toBe('address-validation');
-            expect(component.get('h3[data-timeline-title]').text()).toBe('Address checks');
+            expect(component.get('h2[data-timeline-title]').text()).toBe('Address checks');
             const items = component.findAll('[data-timeline-events] > li');
             expect(items).toHaveLength(2);
             expect(items[0]!.get('[data-timeline-label]').text()).toBe('Postal code verified');
@@ -380,21 +380,21 @@ describe('@oods/components-vue shared scenarios', () => {
           case 'membership-audit-timeline-empty': {
             expect(component.attributes('role')).toBe('log');
             expect(component.attributes('data-timeline-type')).toBe('membership');
-            expect(component.get('h3[data-timeline-title]').text()).toBe('Membership history');
+            expect(component.get('h2[data-timeline-title]').text()).toBe('Membership history');
             expect(component.findAll('[data-timeline-events] > li')).toHaveLength(1);
             expect(component.get('[data-timeline-empty]').text()).toBe('No events');
             break;
           }
           case 'message-event-timeline-statuses': {
             expect(component.attributes('data-timeline-type')).toBe('message');
-            expect(component.get('h3[data-timeline-title]').text()).toBe('Delivery');
+            expect(component.get('h2[data-timeline-title]').text()).toBe('Delivery');
             expect(component.get('[data-timeline-label]').text()).toBe('delivered');
             expect(component.get('time[data-timeline-time]').attributes('datetime')).toBe('2026-09-02T09:00:00Z');
             break;
           }
           case 'preference-timeline-changes': {
             expect(component.attributes('data-timeline-type')).toBe('preference');
-            expect(component.get('h3[data-timeline-title]').text()).toBe('Preference changes');
+            expect(component.get('h2[data-timeline-title]').text()).toBe('Preference changes');
             expect(component.get('[data-timeline-label]').text()).toBe('notifications.email');
             expect(component.get('time[data-timeline-time]').attributes('datetime')).toBe('2026-09-03T08:00:00Z');
             expect(component.get('[data-timeline-detail]').text()).toBe('Enabled');
@@ -403,7 +403,7 @@ describe('@oods/components-vue shared scenarios', () => {
           case 'address-editor-fields-and-change': {
             expect(component.element.tagName).toBe('FORM');
             expect(component.attributes('data-form-type')).toBe('address-editor');
-            expect(component.get('[data-form-header] > h3').text()).toBe('Shipping address');
+            expect(component.get('[data-form-header] > h2').text()).toBe('Shipping address');
             expect((component.get('input[name="street"]').element as HTMLInputElement).value).toBe('1 Main St');
             expect((component.get('input[name="postalCode"]').element as HTMLInputElement).value).toBe('62701');
             await component.get('input[name="city"]').setValue('Shelbyville');
@@ -416,7 +416,7 @@ describe('@oods/components-vue shared scenarios', () => {
           case 'preference-editor-namespace-and-document': {
             expect(component.element.tagName).toBe('FORM');
             expect(component.attributes('data-form-type')).toBe('preference-editor');
-            expect(component.get('[data-form-header] > h3').text()).toBe('Preferences');
+            expect(component.get('[data-form-header] > h2').text()).toBe('Preferences');
             const namespace = component.get('select[name="namespace"]').element as HTMLSelectElement;
             expect([...namespace.options].map((option) => option.textContent)).toEqual(['notifications', 'billing']);
             expect(namespace.value).toBe('billing');
@@ -427,7 +427,7 @@ describe('@oods/components-vue shared scenarios', () => {
           case 'role-assignment-form-roles': {
             expect(component.element.tagName).toBe('FORM');
             expect(component.attributes('data-form-type')).toBe('role-assignment');
-            expect(component.get('[data-form-header] > h3').text()).toBe('Assign role');
+            expect(component.get('[data-form-header] > h2').text()).toBe('Assign role');
             const role = component.get('select[name="role"]').element as HTMLSelectElement;
             expect([...role.options].map((option) => [option.value, option.textContent])).toEqual([['owner', 'Owner'], ['viewer', 'viewer']]);
             expect(role.value).toBe('viewer');
@@ -486,7 +486,7 @@ describe('@oods/components-vue shared scenarios', () => {
           case 'price-summary-terms': {
             expect(component.element.tagName).toBe('SECTION');
             expect(component.attributes('data-summary-type')).toBe('price');
-            expect(component.get('h3[data-summary-title]').text()).toBe('Price Summary');
+            expect(component.get('h2[data-summary-title]').text()).toBe('Price Summary');
             expect(component.findAll('[data-summary-item]').map((item) => [item.get('dt').text(), item.get('dd').text()]))
               .toEqual([['Amount', '129900'], ['Currency', 'USD'], ['Model', 'recurring'], ['Interval', 'month']]);
             expect(component.find('button, a, input').exists()).toBe(false);
@@ -755,7 +755,7 @@ describe('@oods/components-vue shared scenarios', () => {
           break;
         }
         case 'classification-editor-presentational-controls': {
-          expect(component.element?.querySelector('h3')?.textContent).toBe('Product classification');
+          expect(component.element?.querySelector('h2')?.textContent).toBe('Product classification');
           expect((component.element?.querySelector('[name="category"]') as HTMLInputElement).value).toBe('Electronics');
           expect((component.element?.querySelector('[name="tags"]') as HTMLInputElement).value).toBe('["alpha","beta"]');
           expect((component.element?.querySelector('[name="mode"]') as HTMLSelectElement).value).toBe('flexible');
@@ -767,7 +767,7 @@ describe('@oods/components-vue shared scenarios', () => {
           break;
         }
         case 'ownership-summary-terms': {
-          expect(component.element?.querySelector('h3')?.textContent).toBe('Ownership Summary');
+          expect(component.element?.querySelector('h2')?.textContent).toBe('Ownership Summary');
           expect([...component.element!.querySelectorAll('dd')].map((node) => node.textContent)).toEqual(['user-7', 'person', 'administrator']);
           expect(component.element?.hasAttribute('role')).toBe(false);
           break;

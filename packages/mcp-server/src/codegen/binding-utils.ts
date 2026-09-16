@@ -1326,6 +1326,11 @@ export function resolveFrameworkRecipeProps(
 }
 
 /** Only producer-authored read fields opt into scalar display formatting. */
+/**
+ * Whether the emitted module will call `formatReadOnlyValue`, and therefore has to import it. This
+ * has to track the emitters' formatting branch exactly: a Sprint 203 m04 attempt to widen that branch
+ * without widening this guard had a Decision card call a symbol it had not imported, and render blank.
+ */
 export function hasReadOnlyFields(nodes: readonly UiElement[]): boolean {
   return nodes.some(node => node.meta?.intent === 'read-only-field' || hasReadOnlyFields(node.children ?? []));
 }

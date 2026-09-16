@@ -1,0 +1,546 @@
+{
+  "mission": "s203-m02",
+  "readAt": "2026-09-16T03:07:10.562Z",
+  "store": "cmos/db/cmos.sqlite, read with sqlite3 -readonly; nothing written",
+  "rowCounts": {
+    "strategic_decisions": 1933,
+    "sprints": 186,
+    "sessions": 499,
+    "missions": 1082
+  },
+  "forgeRegistryAtRead": {
+    "objects": 18,
+    "nonVizTraits": 21
+  },
+  "summary": {
+    "strategic_decisions": {
+      "born": 8,
+      "not-modelled": 11,
+      "reused-trait": 2,
+      "new-trait": 2
+    },
+    "sprints": {
+      "born": 3,
+      "reused-trait": 4,
+      "not-modelled": 8
+    },
+    "sessions": {
+      "born": 7,
+      "reused-trait": 5,
+      "not-modelled": 8
+    }
+  },
+  "tables": {
+    "strategic_decisions": {
+      "rows": 1933,
+      "object": "Decision",
+      "domain": "delivery.decision",
+      "columnCount": 23,
+      "unmapped": [],
+      "columns": {
+        "id": {
+          "disposition": "born",
+          "field": "decision_id",
+          "note": "The record identity. CMOS uses an integer; the object declares a string so the same object can carry another store's ids.",
+          "nulls": 0,
+          "distinct": 1933
+        },
+        "context_id": {
+          "disposition": "not-modelled",
+          "reason": "One value (\"master_context\") on every row: a CMOS partition key with no design meaning.",
+          "nulls": 0,
+          "distinct": 1
+        },
+        "decision_text": {
+          "disposition": "born",
+          "field": "decision_text",
+          "note": "The decision itself, and the sprint's long-free-text risk: 61 to 8,418 characters, 197 rows over 2,000.",
+          "nulls": 0,
+          "distinct": 1933
+        },
+        "created_at": {
+          "disposition": "reused-trait",
+          "trait": "lifecycle/Timestampable",
+          "note": "Recorded as the \"captured\" event.",
+          "nulls": 0,
+          "distinct": 1156
+        },
+        "sprint_id": {
+          "disposition": "born",
+          "field": "sprint_id",
+          "note": "The link to Sprint; every non-null value resolves against sprints.id, 0 dangling.",
+          "nulls": 148,
+          "distinct": 114
+        },
+        "snapshot_id": {
+          "disposition": "not-modelled",
+          "reason": "CMOS context-snapshot pointer, null on 1,868 of 1,933 rows; internal bookkeeping.",
+          "nulls": 1868,
+          "distinct": 5
+        },
+        "project_domain": {
+          "disposition": "born",
+          "field": "project_domain",
+          "note": "Sparse (1,850 null, 6 distinct).",
+          "nulls": 1850,
+          "distinct": 6
+        },
+        "mission_id": {
+          "disposition": "born",
+          "field": "mission_id",
+          "note": "The mission that captured it. Stored loosely in CMOS (often a bare \"m02\" rather than \"s203-m02\"), so it is shown as a label, never as a resolved link.",
+          "nulls": 620,
+          "distinct": 525
+        },
+        "category": {
+          "disposition": "reused-trait",
+          "trait": "core/Classifiable",
+          "note": "Sparse in practice (1,928 of 1,933 null, 6 distinct values including null), so the screen must read correctly when it is absent.",
+          "nulls": 1928,
+          "distinct": 1
+        },
+        "superseded_by": {
+          "disposition": "new-trait",
+          "trait": "lifecycle/Supersedable",
+          "note": "The self-referencing lineage pointer. Populated on exactly the 45 rows whose status is superseded — a clean 1:1.",
+          "nulls": 1888,
+          "distinct": 36
+        },
+        "status": {
+          "disposition": "new-trait",
+          "trait": "lifecycle/Supersedable",
+          "note": "active | superseded | archived | stale is the supersession lifecycle, not a generic workflow, so Supersedable owns it rather than Stateful.",
+          "nulls": 0,
+          "distinct": 3
+        },
+        "evidence": {
+          "disposition": "born",
+          "field": "evidence",
+          "note": "An array of {type, id} references. Sparse (1,923 of 1,933 null) but real, and it is what m05 will show beside a design.",
+          "nulls": 1923,
+          "distinct": 8
+        },
+        "content_hash": {
+          "disposition": "not-modelled",
+          "reason": "CMOS de-duplication hash, null on 889 rows; internal bookkeeping.",
+          "nulls": 889,
+          "distinct": 1044
+        },
+        "last_reviewed_at": {
+          "disposition": "not-modelled",
+          "reason": "Entirely null across all 1,933 rows: the staleness-review date has never been written, so there is nothing to show.",
+          "nulls": 1933,
+          "distinct": 0
+        },
+        "author_session_id": {
+          "disposition": "born",
+          "field": "session_id",
+          "note": "The link to Session.",
+          "nulls": 838,
+          "distinct": 341
+        },
+        "project_id": {
+          "disposition": "born",
+          "field": "project_id",
+          "note": "The project scope. A slug (\"forge\"), never a uuid — which is one of the reasons research/Mission cannot be reused.",
+          "nulls": 0,
+          "distinct": 2
+        },
+        "stable_event_id": {
+          "disposition": "not-modelled",
+          "reason": "CMOS replication envelope: the event id that carries this row between stores.",
+          "nulls": 0,
+          "distinct": 1933
+        },
+        "occurred_at": {
+          "disposition": "not-modelled",
+          "reason": "CMOS replication envelope: the event clock, not a date the record shows.",
+          "nulls": 0,
+          "distinct": 1704
+        },
+        "origin_seq": {
+          "disposition": "not-modelled",
+          "reason": "CMOS replication envelope: per-origin ordering.",
+          "nulls": 0,
+          "distinct": 1933
+        },
+        "event_type": {
+          "disposition": "not-modelled",
+          "reason": "CMOS replication envelope: one value across every row of the table.",
+          "nulls": 0,
+          "distinct": 1
+        },
+        "schema_version": {
+          "disposition": "not-modelled",
+          "reason": "CMOS replication envelope: the row format version.",
+          "nulls": 0,
+          "distinct": 1
+        },
+        "author_user_id": {
+          "disposition": "not-modelled",
+          "reason": "Declared but entirely null in the live store, so there is no owner to render; Ownerable is not composed on a field that has never been written.",
+          "nulls": 1933,
+          "distinct": 0
+        },
+        "last_embedded_hash": {
+          "disposition": "not-modelled",
+          "reason": "CMOS embedding bookkeeping for its vector index.",
+          "nulls": 413,
+          "distinct": 1520
+        }
+      }
+    },
+    "sprints": {
+      "rows": 186,
+      "object": "Sprint",
+      "domain": "delivery.sprint",
+      "columnCount": 15,
+      "unmapped": [],
+      "columns": {
+        "id": {
+          "disposition": "born",
+          "field": "sprint_id",
+          "note": "Heterogeneous in the live store (\"Sprint 22\" beside \"sprint-203\"), so it is treated as an opaque identifier and never parsed.",
+          "nulls": 0,
+          "distinct": 186
+        },
+        "title": {
+          "disposition": "reused-trait",
+          "trait": "content/Labelled",
+          "note": "The display label.",
+          "nulls": 0,
+          "distinct": 186
+        },
+        "focus": {
+          "disposition": "born",
+          "field": "focus",
+          "note": "The sprint's stated purpose; present on all 186 rows and long free text.",
+          "nulls": 0,
+          "distinct": 186
+        },
+        "status": {
+          "disposition": "reused-trait",
+          "trait": "lifecycle/Stateful",
+          "note": "Active | Completed | Archived | Reverted, measured from the live store. Reverted has no counterpart in any existing object's state set and is why the states are declared here rather than borrowed.",
+          "nulls": 0,
+          "distinct": 4
+        },
+        "start_date": {
+          "disposition": "reused-trait",
+          "trait": "lifecycle/Timestampable",
+          "note": "Null on 54 of 186 rows.",
+          "nulls": 54,
+          "distinct": 73
+        },
+        "end_date": {
+          "disposition": "reused-trait",
+          "trait": "lifecycle/Timestampable",
+          "note": "Null on 47 rows, and not always a date: some rows carry a full timestamp.",
+          "nulls": 47,
+          "distinct": 131
+        },
+        "total_missions": {
+          "disposition": "not-modelled",
+          "reason": "Null on 176 of 186 rows. The real count is the missions table, so a screen that showed this counter would be blank or wrong almost always; Sprint carries mission_count as a derived field instead.",
+          "nulls": 176,
+          "distinct": 4
+        },
+        "completed_missions": {
+          "disposition": "not-modelled",
+          "reason": "Null on 177 of 186 rows, for the same reason.",
+          "nulls": 177,
+          "distinct": 2
+        },
+        "project_id": {
+          "disposition": "born",
+          "field": "project_id",
+          "note": "The project scope.",
+          "nulls": 0,
+          "distinct": 2
+        },
+        "stable_event_id": {
+          "disposition": "not-modelled",
+          "reason": "CMOS replication envelope: the event id that carries this row between stores.",
+          "nulls": 0,
+          "distinct": 186
+        },
+        "occurred_at": {
+          "disposition": "not-modelled",
+          "reason": "CMOS replication envelope: the event clock, not a date the record shows.",
+          "nulls": 0,
+          "distinct": 124
+        },
+        "origin_seq": {
+          "disposition": "not-modelled",
+          "reason": "CMOS replication envelope: per-origin ordering.",
+          "nulls": 0,
+          "distinct": 186
+        },
+        "event_type": {
+          "disposition": "not-modelled",
+          "reason": "CMOS replication envelope: one value across every row of the table.",
+          "nulls": 0,
+          "distinct": 1
+        },
+        "schema_version": {
+          "disposition": "not-modelled",
+          "reason": "CMOS replication envelope: the row format version.",
+          "nulls": 0,
+          "distinct": 1
+        },
+        "author_user_id": {
+          "disposition": "not-modelled",
+          "reason": "Declared but entirely null in the live store, so there is no owner to render; Ownerable is not composed on a field that has never been written.",
+          "nulls": 186,
+          "distinct": 0
+        }
+      }
+    },
+    "sessions": {
+      "rows": 499,
+      "object": "Session",
+      "domain": "delivery.session",
+      "columnCount": 20,
+      "unmapped": [],
+      "columns": {
+        "id": {
+          "disposition": "born",
+          "field": "session_id",
+          "note": "E.g. \"PS-2026-09-16-002\".",
+          "nulls": 0,
+          "distinct": 499
+        },
+        "type": {
+          "disposition": "reused-trait",
+          "trait": "core/Classifiable",
+          "note": "review | planning | custom | check-in | research, measured from the live store — a classification, not a lifecycle.",
+          "nulls": 0,
+          "distinct": 5
+        },
+        "title": {
+          "disposition": "reused-trait",
+          "trait": "content/Labelled",
+          "note": "The display label; present on all 499 rows.",
+          "nulls": 0,
+          "distinct": 492
+        },
+        "sprint_id": {
+          "disposition": "born",
+          "field": "sprint_id",
+          "note": "The link to Sprint; 301 resolve, 0 dangling, 198 null.",
+          "nulls": 198,
+          "distinct": 138
+        },
+        "started_at": {
+          "disposition": "reused-trait",
+          "trait": "lifecycle/Timestampable",
+          "note": "Present on all 499 rows.",
+          "nulls": 0,
+          "distinct": 499
+        },
+        "completed_at": {
+          "disposition": "reused-trait",
+          "trait": "lifecycle/Timestampable",
+          "note": "Present on all 499 rows.",
+          "nulls": 0,
+          "distinct": 499
+        },
+        "agent": {
+          "disposition": "born",
+          "field": "agent",
+          "note": "Which agent held the session (assistant, codex, claude-opus-5, ...). No existing object models the actor as a non-user agent.",
+          "nulls": 0,
+          "distinct": 20
+        },
+        "summary": {
+          "disposition": "born",
+          "field": "summary",
+          "note": "Long free text, present on all 499 rows.",
+          "nulls": 0,
+          "distinct": 499
+        },
+        "status": {
+          "disposition": "reused-trait",
+          "trait": "lifecycle/Stateful",
+          "note": "Every one of the 499 rows is \"completed\"; the state set is declared from what CMOS can write, not from what the rows happen to show.",
+          "nulls": 0,
+          "distinct": 1
+        },
+        "captures": {
+          "disposition": "born",
+          "field": "captures",
+          "note": "An array of {timestamp, category, content}: what the session recorded as it ran.",
+          "nulls": 0,
+          "distinct": 454
+        },
+        "next_steps": {
+          "disposition": "born",
+          "field": "next_steps",
+          "note": "The same shape; null on 45 rows.",
+          "nulls": 45,
+          "distinct": 454
+        },
+        "metadata": {
+          "disposition": "not-modelled",
+          "reason": "Null on 498 of 499 rows.",
+          "nulls": 498,
+          "distinct": 1
+        },
+        "project_id": {
+          "disposition": "born",
+          "field": "project_id",
+          "note": "The project scope.",
+          "nulls": 0,
+          "distinct": 2
+        },
+        "stable_event_id": {
+          "disposition": "not-modelled",
+          "reason": "CMOS replication envelope: the event id that carries this row between stores.",
+          "nulls": 0,
+          "distinct": 499
+        },
+        "occurred_at": {
+          "disposition": "not-modelled",
+          "reason": "CMOS replication envelope: the event clock, not a date the record shows.",
+          "nulls": 0,
+          "distinct": 499
+        },
+        "origin_seq": {
+          "disposition": "not-modelled",
+          "reason": "CMOS replication envelope: per-origin ordering.",
+          "nulls": 0,
+          "distinct": 499
+        },
+        "event_type": {
+          "disposition": "not-modelled",
+          "reason": "CMOS replication envelope: one value across every row of the table.",
+          "nulls": 0,
+          "distinct": 1
+        },
+        "schema_version": {
+          "disposition": "not-modelled",
+          "reason": "CMOS replication envelope: the row format version.",
+          "nulls": 0,
+          "distinct": 1
+        },
+        "author_user_id": {
+          "disposition": "not-modelled",
+          "reason": "Declared but entirely null in the live store, so there is no owner to render; Ownerable is not composed on a field that has never been written.",
+          "nulls": 499,
+          "distinct": 0
+        },
+        "user_id": {
+          "disposition": "not-modelled",
+          "reason": "Entirely null across all 499 rows.",
+          "nulls": 499,
+          "distinct": 0
+        }
+      }
+    },
+    "missions": {
+      "rows": 1082,
+      "object": null,
+      "columnCount": 24,
+      "disposition": "not-modelled-this-sprint",
+      "reason": "No screen in this sprint needs a standalone CMOS mission, and the registry is keyed by object name, so a second object named Mission cannot exist beside TraceLab's research/Mission. A CMOS mission reaches the screens this sprint builds as Sprint's derived mission_count and as the mission_id a Decision names. The reuse test against research/Mission is recorded under reuseProof and it fails.",
+      "columns": {
+        "id": {
+          "nulls": 0,
+          "distinct": 1082
+        },
+        "sprint_id": {
+          "nulls": 0,
+          "distinct": 186
+        },
+        "name": {
+          "nulls": 0,
+          "distinct": 1056
+        },
+        "status": {
+          "nulls": 0,
+          "distinct": 5
+        },
+        "completed_at": {
+          "nulls": 57,
+          "distinct": 1018
+        },
+        "notes": {
+          "nulls": 55,
+          "distinct": 1019
+        },
+        "objective": {
+          "nulls": 74,
+          "distinct": 1005
+        },
+        "context": {
+          "nulls": 770,
+          "distinct": 307
+        },
+        "success_criteria": {
+          "nulls": 241,
+          "distinct": 841
+        },
+        "deliverables": {
+          "nulls": 530,
+          "distinct": 552
+        },
+        "reference_docs": {
+          "nulls": 582,
+          "distinct": 401
+        },
+        "domain_fields": {
+          "nulls": 982,
+          "distinct": 95
+        },
+        "metadata": {
+          "nulls": 963,
+          "distinct": 118
+        },
+        "created_at": {
+          "nulls": 406,
+          "distinct": 676
+        },
+        "started_at": {
+          "nulls": 443,
+          "distinct": 639
+        },
+        "updated_at": {
+          "nulls": 405,
+          "distinct": 676
+        },
+        "project_id": {
+          "nulls": 0,
+          "distinct": 2
+        },
+        "stable_event_id": {
+          "nulls": 0,
+          "distinct": 1082
+        },
+        "occurred_at": {
+          "nulls": 0,
+          "distinct": 1039
+        },
+        "origin_seq": {
+          "nulls": 0,
+          "distinct": 1082
+        },
+        "event_type": {
+          "nulls": 0,
+          "distinct": 1
+        },
+        "schema_version": {
+          "nulls": 0,
+          "distinct": 1
+        },
+        "author_user_id": {
+          "nulls": 1082,
+          "distinct": 0
+        },
+        "last_embedded_hash": {
+          "nulls": 530,
+          "distinct": 552
+        }
+      }
+    }
+  }
+}

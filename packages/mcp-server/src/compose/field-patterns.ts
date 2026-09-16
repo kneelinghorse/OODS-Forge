@@ -116,6 +116,12 @@ const PATTERN_RULES: PatternRule[] = [
       ]);
       if (!statusField) return null;
 
+      // NOTE (s203-m04): /transition/i also matches Stateful's `allowed_transitions`, a list of state
+      // names and an internal field, so every detail of every object composing Stateful carries an
+      // "Allowed transitions: None recorded" row. Requiring this field to be a real date removes it —
+      // and also re-pairs Subscription's group with `updated_at`, which reshapes that detail's tabs and
+      // breaks what billing-placement.s188 and design.compose.s202 pinned about an already-certified
+      // screen. It is recorded as a measured finding in the m04 receipt rather than changed here.
       const timestampField = hasFieldMatching(fields, [
         /updated.?at$/i, /changed.?at$/i, /modified.?at$/i,
         /status.?updated/i, /state.?changed/i, /last.?modified/i,
@@ -454,3 +460,12 @@ export function buildPatternGroups(
 export function getPatternRuleCount(): number {
   return PATTERN_RULES.length;
 }
+
+/**
+ * Every composite component a pattern group can name, read from the rules themselves so the target
+ * contracts cannot fall behind the composer: until Sprint 203 the Stack contract admitted only
+ * StatusTimeline, and the first object with both a start and an end date composed a DateRange group
+ * that generation then refused.
+ */
+export const PATTERN_COMPOSITE_COMPONENTS: readonly string[] =
+  [...new Set(PATTERN_RULES.map(rule => rule.compositeComponent))].sort();

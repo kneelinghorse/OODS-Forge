@@ -66,15 +66,17 @@ describe('generated Forge claims remain tied to their measured sources (s196)', 
   });
 
   it('distinguishes definitions from public identities and includes the formerly missing visualization traits', () => {
-    expect(facts).toMatchObject({ traits: 46, vizTraits: 21, objectDefinitions: 19, objectNames: 18 });
+    // 46 / 19 / 18 through Sprint 202. Sprint 203 adds lifecycle/Supersedable (m02) and five objects
+    // born from Derek's own stores: Decision, Sprint and Session from CMOS, Person and Cluster from Hive.
+    expect(facts).toMatchObject({ traits: 47, vizTraits: 21, objectDefinitions: 24, objectNames: 23 });
     const html = documents['docs/how-forge-works.html'];
     for (const name of ['EncodingOpacity', 'EncodingShape', 'ScatterPlot', 'Geocodable', 'MarkGraph']) expect(String(facts.traitRows)).toContain(`<td>${name} `);
     expect(String(facts.objectRows)).toContain('objects/core/Subscription.object.yaml');
     expect(String(facts.objectRows)).toContain('domains/saas-billing/objects/Subscription.object.yaml');
-    expect(html).toContain('19 object definitions / 18 unique names');
+    expect(html).toContain('24 object definitions / 23 unique names');
     expect(html).not.toContain('~100 catalogued components');
-    expect(String(facts.traitRows).match(/<tr><td>/g)).toHaveLength(46);
-    expect(String(facts.objectRows).match(/<tr><td>/g)).toHaveLength(19);
+    expect(String(facts.traitRows).match(/<tr><td>/g)).toHaveLength(47);
+    expect(String(facts.objectRows).match(/<tr><td>/g)).toHaveLength(24);
   });
 
   it('pins the Product example including its s198 read-only field summaries', () => {

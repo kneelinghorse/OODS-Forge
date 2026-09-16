@@ -87,7 +87,7 @@ Interaction: `none`. MessageEventTimeline presents content and owns no focusable
 
 Expectation `render`: mount with statuses only → statuses supply the events when messages are absent, in the message timeline type.
 
-- region has role log and an h3 title
+- region has role log and an h2 title
 - status doubles as the event label
 - data-timeline-type is message
 

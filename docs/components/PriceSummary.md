@@ -85,9 +85,9 @@ Source: [packages/component-contracts/src/scenarios.ts](../../packages/component
 
 Interaction: `none`. PriceSummary presents content and owns no focusable control or action; authored child actions remain the consumer's responsibility.
 
-Expectation `render`: mount → h3 heading and a four-term description list.
+Expectation `render`: mount → h2 heading and a four-term description list.
 
-- title is a real h3 heading
+- title is a real h2 heading
 - data-summary-type is price
 - each term names its value
 - amount is visible text

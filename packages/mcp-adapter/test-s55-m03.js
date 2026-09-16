@@ -67,14 +67,15 @@ test('Adapter code does not hardcode "Proxy to" as description', () => {
 
 test('Descriptions start with an action verb', () => {
   const actionVerbs = ['Build', 'Fetch', 'Validate', 'Render', 'Apply', 'List', 'Generate',
-    'Compose', 'Create', 'Resolve', 'Capture', 'Run', 'Verify', 'Switch', 'Audit', 'Execute', 'Show', 'Check', 'Delete', 'Load', 'Persist', 'Update', 'Return'];
-  for (const [tool, desc] of Object.entries(DESCRIPTIONS)) {
-    const firstWord = desc.split(/\s/)[0];
-    assert.ok(
-      actionVerbs.includes(firstWord),
-      `${tool}: description starts with "${firstWord}", expected an action verb`
-    );
-  }
+    'Compose', 'Create', 'Resolve', 'Capture', 'Run', 'Verify', 'Switch', 'Audit', 'Execute', 'Show', 'Check', 'Delete', 'Load', 'Persist', 'Update', 'Return',
+    // Verbs later sprints introduced: `health` reads, `design.preview` opens, `artifact.certify` certifies.
+    'Read', 'Open', 'Certify'];
+  // Report every offender: asserting inside the loop stopped at the first one and hid the rest for three sprints.
+  const offenders = Object.entries(DESCRIPTIONS)
+    .map(([tool, desc]) => [tool, desc.split(/\s/)[0]])
+    .filter(([, firstWord]) => !actionVerbs.includes(firstWord))
+    .map(([tool, firstWord]) => `${tool}: starts with "${firstWord}"`);
+  assert.deepStrictEqual(offenders, [], `descriptions must open with an action verb — ${offenders.join('; ')}`);
 });
 
 test('Descriptions explain what the tool returns or does', () => {

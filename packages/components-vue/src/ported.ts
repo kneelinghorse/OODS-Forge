@@ -351,7 +351,7 @@ function timelineComponent(configuration: TimelineConfiguration) {
           'data-oods-component': configuration.componentId,
           'data-timeline-type': configuration.timelineType,
         }, [
-          h('h3', { 'data-timeline-title': 'true' }, title),
+          h('h2', { 'data-timeline-title': 'true' }, title),
           props.status
             ? h('p', { 'data-timeline-current': 'true' }, `Current status: ${statusLabel(props.status)}`)
             : null,
@@ -454,7 +454,7 @@ export const CancellationSummary = defineComponent({
           ? undefined
           : String(props.cancelAtPeriodEnd),
       }, [
-        h('h3', { 'data-summary-title': 'true' }, props.title ?? props.label ?? 'Cancellation Summary'),
+        h('h2', { 'data-summary-title': 'true' }, props.title ?? props.label ?? 'Cancellation Summary'),
         h('dl', rows),
       ]);
     };

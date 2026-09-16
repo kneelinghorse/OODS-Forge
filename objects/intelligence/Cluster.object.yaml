@@ -1,0 +1,180 @@
+object:
+  name: Cluster
+  version: 0.1.0
+  domain: intelligence.cohort
+  description: >-
+    A conversation several people in the cohort are having at once: the article that leads it, who is
+    in it and how wide it reaches. Born from Hive's read-only MCP surface (26 multi-person clusters in
+    the 14-day window, read 2026-09-16); the field mapping and every field this object does not model
+    are stated in the m03 fit read.
+  tags:
+    - intelligence
+    - hive
+    - cohort
+
+traits:
+  - name: content/Labelled
+    alias: ClusterLabel
+    parameters:
+      maxLabelLength: 255
+      maxDescriptionLength: 1000
+  - name: lifecycle/Timestampable
+    parameters:
+      recordedEvents:
+        - updated
+      timezone: UTC
+  - name: core/Classifiable
+    alias: ClusterCategory
+  - name: behavioral/Searchable
+    parameters:
+      placeholder: Search conversations
+  - name: behavioral/Filterable
+  - name: behavioral/Pageable
+    parameters:
+      defaultPageSize: 20
+      pageSizeOptions:
+        - 10
+        - 20
+        - 50
+
+schema:
+  cluster_id:
+    type: string
+    required: true
+    description: >-
+      Hive's identifier for the cluster, an integer surrogate key declared as a string. Present on the
+      entity lens; the semantic lens computes clusters on the fly and does not persist one.
+    validation:
+      minLength: 1
+      maxLength: 64
+  lead_title:
+    type: string
+    required: true
+    description: The title of the article that leads the conversation.
+    validation:
+      minLength: 1
+      maxLength: 255
+  lead_url:
+    type: string
+    required: false
+    description: Where that article is.
+  lens:
+    type: string
+    required: true
+    description: >-
+      Which clusterer produced this record. Not a detail: the two lenses answer different questions and
+      disagree by design — entity is the persisted entity-and-title-token clusterer that the co-talker
+      counts are built from, semantic is an on-the-fly pgvector cosine at threshold 0.80 that finds two
+      people writing about one idea in different vocabulary. A cluster is only meaningful beside the
+      lens that produced it.
+    validation:
+      enum:
+        - entity
+        - semantic
+  member_count:
+    type: number
+    required: false
+    description: How many articles are in the conversation.
+    validation:
+      minimum: 0
+  member_people_count:
+    type: number
+    required: false
+    description: >-
+      How many distinct cohort members are in it — the number that makes a cluster worth reading, since
+      Hive's default is the multi-person cluster its own signal uniquely produces.
+    validation:
+      minimum: 0
+  dominant_category:
+    type: string
+    required: false
+    description: >-
+      The category most of its articles carry. Deliberately unconstrained: the server is authoritative
+      and an unknown category is not coerced into the cohort's topic vocabulary, which is a different
+      list serving a different purpose.
+  is_trending:
+    type: boolean
+    required: false
+    description: Whether Hive marks the conversation as trending.
+  window_days:
+    type: number
+    required: false
+    description: The lookback this record was read for. Every count here is only true of a window.
+    validation:
+      minimum: 1
+  max_similarity:
+    type: number
+    required: false
+    description: >-
+      Semantic lens only: the strongest cosine similarity in the cluster. Absent on the entity lens,
+      where it does not exist — absence means the lens did not produce it, never a similarity of zero.
+  mean_similarity:
+    type: number
+    required: false
+    description: Semantic lens only, on the same terms.
+  people:
+    type: object[]
+    required: false
+    description: >-
+      The cohort members in the conversation, as {person_id, name, primary_topic,
+      article_count_in_cluster}. primary_topic travels with each of them so a cluster that spans
+      several slices of the cohort can be read without a second lookup.
+  members:
+    type: object[]
+    required: false
+    description: >-
+      The articles themselves, as {article_id, title, url, published_at, category, person_id,
+      person_name}.
+
+semantics:
+  cluster_id:
+    semantic_type: intelligence.cluster.id
+    token_mapping: tokenMap(text.body.*)
+  lead_title:
+    semantic_type: text.label
+    token_mapping: tokenMap(text.label.*)
+  lead_url:
+    semantic_type: intelligence.cluster.lead_url
+    token_mapping: tokenMap(text.body.*)
+  lens:
+    semantic_type: intelligence.cluster.lens
+    token_mapping: tokenMap(text.body.*)
+  member_count:
+    semantic_type: intelligence.cluster.member_count
+    token_mapping: tokenMap(metric.count.primary)
+  member_people_count:
+    semantic_type: intelligence.cluster.member_people_count
+    token_mapping: tokenMap(metric.count.primary)
+  dominant_category:
+    semantic_type: intelligence.cluster.dominant_category
+    token_mapping: tokenMap(text.body.*)
+  is_trending:
+    semantic_type: intelligence.cluster.is_trending
+    token_mapping: tokenMap(text.body.*)
+  window_days:
+    semantic_type: intelligence.cluster.window_days
+    token_mapping: tokenMap(text.body.*)
+  max_similarity:
+    semantic_type: intelligence.cluster.max_similarity
+    token_mapping: tokenMap(metric.count.primary)
+  mean_similarity:
+    semantic_type: intelligence.cluster.mean_similarity
+    token_mapping: tokenMap(metric.count.primary)
+  people:
+    semantic_type: intelligence.cluster.people
+    token_mapping: tokenMap(text.body.*)
+  members:
+    semantic_type: intelligence.cluster.members
+    token_mapping: tokenMap(text.body.*)
+
+metadata:
+  maturity: alpha
+  owners:
+    - Forge
+  references:
+    - "artifacts/product-reality/sprint-203/m03/fit-read.json"
+    - "artifacts/product-reality/sprint-203/m03/reuse-proof.json"
+  changelog:
+    - version: 0.1.0
+      date: "2026-09-16"
+      description: Born from Hive's live cluster surface, 26 multi-person clusters in the 14-day window.

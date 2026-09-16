@@ -45,7 +45,7 @@ describe('Sprint 186 built package export cells', () => {
     expect(root!.textContent!.trim().length).toBeGreaterThan(0);
     if (component === 'ClassificationPanel') {
       expect(root!.getAttribute('data-panel-type')).toBe('classification');
-      expect(root!.querySelector('[data-panel-header] > h3')?.textContent).toBe('Classification');
+      expect(root!.querySelector('[data-panel-header] > h2')?.textContent).toBe('Classification');
       expect(root!.querySelector('[data-panel-content] > [data-panel-summary]')?.textContent).toBe('Electronics > Mobile > Android');
     } else if (component === 'FilterPanel') {
       expect(root!.getAttribute('aria-label')).toBe('Filters');
@@ -56,7 +56,7 @@ describe('Sprint 186 built package export cells', () => {
     } else if (component === 'AddressCollectionPanel' || component === 'MembershipPanel' || component === 'PreferencePanel') {
       const expected = { AddressCollectionPanel: ['address', 'Addresses'], MembershipPanel: ['membership', 'Membership'], PreferencePanel: ['preference', 'Preferences'] }[component];
       expect(root!.getAttribute('data-panel-type')).toBe(expected[0]);
-      expect(root!.querySelector('[data-panel-header] > h3')?.textContent).toBe(expected[1]);
+      expect(root!.querySelector('[data-panel-header] > h2')?.textContent).toBe(expected[1]);
       expect(root!.querySelector('[data-panel-content] > [data-panel-summary]')?.textContent?.length).toBeGreaterThan(0);
     } else if (component === 'AddressSummaryBadge' || component === 'MessageStatusBadge' || component === 'PreferenceSummaryBadge') {
       const expected = { AddressSummaryBadge: ['Billing address', 'billing', 'address'], MessageStatusBadge: ['delivered', 'delivered', 'message'], PreferenceSummaryBadge: ['notifications', 'v3', 'preference'] }[component];
@@ -78,7 +78,7 @@ describe('Sprint 186 built package export cells', () => {
       }[component];
       expect(root!.getAttribute('role')).toBe('log');
       expect(root!.getAttribute('data-timeline-type')).toBe(expected[0]);
-      expect(root!.querySelector('h3[data-timeline-title]')?.textContent).toBe(expected[1]);
+      expect(root!.querySelector('h2[data-timeline-title]')?.textContent).toBe(expected[1]);
       if (expected[2]) expect(root!.querySelector('[data-timeline-label]')?.textContent).toBe(expected[2]);
       else expect(root!.querySelector('[data-timeline-empty]')?.textContent).toBe('No events');
     } else if (component === 'AuditEvent') {
@@ -88,20 +88,20 @@ describe('Sprint 186 built package export cells', () => {
     } else if (component === 'AddressEditor') {
       expect(root!.tagName).toBe('FORM');
       expect(root!.getAttribute('data-form-type')).toBe('address-editor');
-      expect(root!.querySelector('[data-form-header] > h3')?.textContent).toBe('Shipping address');
+      expect(root!.querySelector('[data-form-header] > h2')?.textContent).toBe('Shipping address');
       expect(root!.querySelector('input[name="street"]')?.getAttribute('value')).toBe('1 Main St');
       expect(root!.querySelector('input[name="postalCode"]')?.getAttribute('value')).toBe('62701');
     } else if (component === 'PreferenceEditor') {
       expect(root!.tagName).toBe('FORM');
       expect(root!.getAttribute('data-form-type')).toBe('preference-editor');
-      expect(root!.querySelector('[data-form-header] > h3')?.textContent).toBe('Preferences');
+      expect(root!.querySelector('[data-form-header] > h2')?.textContent).toBe('Preferences');
       expect([...root!.querySelectorAll('select[name="namespace"] > option')].map((option) => option.textContent)).toEqual(['notifications', 'billing']);
       expect(root!.querySelector('select[name="namespace"] > option[selected]')?.textContent).toBe('billing');
       expect(root!.querySelector('textarea[name="preferenceDocument"]')?.textContent).toBe('{"email":true}');
     } else if (component === 'RoleAssignmentForm') {
       expect(root!.tagName).toBe('FORM');
       expect(root!.getAttribute('data-form-type')).toBe('role-assignment');
-      expect(root!.querySelector('[data-form-header] > h3')?.textContent).toBe('Assign role');
+      expect(root!.querySelector('[data-form-header] > h2')?.textContent).toBe('Assign role');
       expect([...root!.querySelectorAll('select[name="role"] > option')].map((option) => option.textContent)).toEqual(['Owner', 'viewer']);
       expect(root!.querySelector('select[name="role"] > option[selected]')?.textContent).toBe('viewer');
       expect(root!.querySelector('input[name="assignee"]')?.getAttribute('value')).toBe('ada@example.test');
@@ -127,12 +127,12 @@ describe('Sprint 186 built package export cells', () => {
     } else if (component === 'TagManager') {
       expect(root!.tagName).toBe('FORM');
       expect(root!.getAttribute('data-form-type')).toBe('tag-manager');
-      expect(root!.querySelector('[data-form-header] > h3')?.textContent).toBe('Tags');
+      expect(root!.querySelector('[data-form-header] > h2')?.textContent).toBe('Tags');
       expect([...root!.querySelectorAll('[data-tag-item]')].map((item) => item.textContent)).toEqual(['alpha', 'beta']);
       expect(root!.querySelector('input[name="newTag"]')).not.toBeNull();
     } else {
       expect(root!.getAttribute('data-summary-type')).toBe('price');
-      expect(root!.querySelector('h3[data-summary-title]')?.textContent).toBe('Price Summary');
+      expect(root!.querySelector('h2[data-summary-title]')?.textContent).toBe('Price Summary');
       expect([...root!.querySelectorAll('[data-summary-item]')].map((item) => (
         [item.querySelector('dt')?.textContent, item.querySelector('dd')?.textContent]
       ))).toEqual([['Amount', '129900'], ['Currency', 'USD'], ['Model', 'recurring'], ['Interval', 'month']]);

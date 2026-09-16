@@ -29,6 +29,19 @@ export interface CompositionVersion {
   measurements: Record<string, unknown>;
   /** Per-scope re-generation (brand/theme → artifacts and chart certifications) when the placed charts were rendered for another scope. */
   scopes?: Record<string, { artifacts: Partial<Record<PreviewFramework, { artifact: PreviewArtifact; generatedAt: string }>>; charts?: unknown[] }>;
+  /**
+   * The decisions and evidence the caller supplied about this object (s203 m05), keyed to it and stored
+   * on the version so they travel with the lineage. Forge fetched none of it and reads no other
+   * product's store; the panel shows each item's provenance because that is the only reason to trust it.
+   */
+  context?: {
+    object: string;
+    urn: string;
+    attachedAt: string;
+    attachedToVersion: number;
+    items: Array<{ source: string; id: string; title: string; body?: string; excerpt?: string; url?: string; timestamp?: string; query: string; fetchedAt: string; staleForVersion: boolean }>;
+    searched: Array<{ source: string; query: string; fetchedAt: string; found: number }>;
+  };
 }
 export interface VersionSummary { version: number; parentVersion: number | null; operation: string; createdAt: string; schemaHash: string; head: string | null; artifacts: PreviewFramework[] }
 

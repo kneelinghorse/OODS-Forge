@@ -93,7 +93,7 @@ describe('Sprint 185 legacy CardHeader recipe fields retain their data meaning',
     expect(result.code).toContain(framework === 'react' ? 'supporting={supportCopy}' : ':supporting="supportCopy"');
     for (const heading of ['Account summary', 'Updated account']) {
       const html = await renderGenerated(result.code, framework, { headingLabel: heading, supportCopy: 'Current plan' });
-      expect(html).toMatch(new RegExp(`<h3[^>]*>${heading}</h3>`));
+      expect(html).toMatch(new RegExp(`<h2[^>]*>${heading}</h2>`));
       expect(html).toMatch(/data-oods-supporting[^>]*>Current plan<\/span>/);
       expect(html).not.toContain('titleField');
       expect(html).not.toContain('supportingField');
@@ -107,7 +107,7 @@ describe('Sprint 185 legacy CardHeader recipe fields retain their data meaning',
     const result = await generate({ schema: input, framework: 'html', profile: 'build' });
     expect(result.errors ?? []).toEqual([]);
     expect(result.status).toBe('ok');
-    expect(result.code).toMatch(/<h3[^>]*>\[headingLabel\]<\/h3>/);
+    expect(result.code).toMatch(/<h2[^>]*>\[headingLabel\]<\/h2>/);
     expect(result.code).toMatch(/data-oods-supporting[^>]*>\[supportCopy\]<\/span>/);
     expect(result.code).not.toContain('titleField');
     expect(result.code).not.toContain('supportingField');
@@ -122,7 +122,7 @@ describe('Sprint 185 legacy CardHeader recipe fields retain their data meaning',
     const result = await generate({ schema: input, framework, profile: 'build' });
     expect(result.errors ?? []).toEqual([]);
     const html = framework === 'html' ? result.code : await renderGenerated(result.code, framework, { headingLabel: 'Data title', supportCopy: 'Data support' });
-    expect(html).toMatch(/<h3[^>]*>Authored title<\/h3>/);
+    expect(html).toMatch(/<h2[^>]*>Authored title<\/h2>/);
     expect(html).toMatch(/data-oods-supporting[^>]*>Authored support<\/span>/);
   });
 
@@ -132,7 +132,7 @@ describe('Sprint 185 legacy CardHeader recipe fields retain their data meaning',
     const html = framework === 'html' ? result.code : await renderGenerated(result.code, framework, {
       headingLabel: 'Recipe title', supportCopy: 'Current plan', alternateTitle: 'Bound title',
     });
-    expect(html).toMatch(framework === 'html' ? /<h3[^>]*>\[alternateTitle\]<\/h3>/ : /<h3[^>]*>Bound title<\/h3>/);
+    expect(html).toMatch(framework === 'html' ? /<h2[^>]*>\[alternateTitle\]<\/h2>/ : /<h2[^>]*>Bound title<\/h2>/);
     expect(html).toMatch(framework === 'html' ? /data-oods-supporting[^>]*>\[supportCopy\]<\/span>/ : /data-oods-supporting[^>]*>Current plan<\/span>/);
   });
 

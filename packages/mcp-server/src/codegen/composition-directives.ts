@@ -7,16 +7,33 @@ function executeNode(node: UiElement): UiElement {
     ? { ...node.props }
     : undefined;
 
-  if (
-    node.component !== 'Stack'
-    || props?.patternComponent !== 'StatusTimeline'
-    || !Array.isArray(props.fields)
-    || props.fields.length === 0
-    || !props.fields.every((field) => typeof field === 'string' && field.length > 0)
-  ) {
+  const isPatternGroup = node.component === 'Stack'
+    && typeof props?.patternComponent === 'string'
+    && Array.isArray(props.fields)
+    && props.fields.length > 0
+    && props.fields.every((field) => typeof field === 'string' && field.length > 0);
+
+  if (!isPatternGroup) {
     return {
       ...node,
       ...(props ? { props } : {}),
+      ...(children ? { children } : {}),
+    };
+  }
+
+  // Only StatusTimeline lowers into a component of its own. Every other pattern group — DateRange on
+  // the first object with both a start and an end date, and the six the composer can emit beside it —
+  // has already presented its fields as children, so the Stack stays a layout container and its
+  // directives are consumed here. Leaving them on would emit `<Stack patternComponent=… fields=…>`,
+  // which no Stack accepts: the generated React artifact fails strict typecheck, which is the gate the
+  // runtime sweep runs and nothing earlier does.
+  if (props!.patternComponent !== 'StatusTimeline') {
+    const consumed = { ...props } as Record<string, unknown>;
+    delete consumed.patternComponent;
+    delete consumed.fields;
+    return {
+      ...node,
+      ...(Object.keys(consumed).length > 0 ? { props: consumed } : { props: undefined }),
       ...(children ? { children } : {}),
     };
   }

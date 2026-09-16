@@ -328,7 +328,7 @@ function renderCycleProgressCard(node: UiElement): string {
   const props = node.props ?? {};
   const title = asString(props.title) ?? 'Billing cycle';
   const cycle = billingCycle({ progress: typeof props.progress === 'number' ? props.progress : undefined, periodStart: asString(props.periodStart), periodEnd: asString(props.periodEnd), interval: asString(props.interval), now: asString(props.now) });
-  return `<section id="${escapeHtml(asString(props.id) ?? node.id)}" class="oods-billing-cycle" data-oods-component="CycleProgressCard" aria-label="${escapeHtml(title)}"><h3>${escapeHtml(title)}</h3><p>${escapeHtml(cycle.announcement)}</p>${cycle.percent === undefined ? '' : `<progress max="100" value="${cycle.percent}" aria-label="${escapeHtml(cycle.announcement)}"></progress>`}${props.interval ? `<p class="oods-billing-muted">${escapeHtml(asString(props.interval) ?? '')}</p>` : ''}</section>`;
+  return `<section id="${escapeHtml(asString(props.id) ?? node.id)}" class="oods-billing-cycle" data-oods-component="CycleProgressCard" aria-label="${escapeHtml(title)}"><h2>${escapeHtml(title)}</h2><p>${escapeHtml(cycle.announcement)}</p>${cycle.percent === undefined ? '' : `<progress max="100" value="${cycle.percent}" aria-label="${escapeHtml(cycle.announcement)}"></progress>`}${props.interval ? `<p class="oods-billing-muted">${escapeHtml(asString(props.interval) ?? '')}</p>` : ''}</section>`;
 }
 
 function renderBillingTimeline(node: UiElement, includeMethod: boolean): string {
@@ -336,7 +336,7 @@ function renderBillingTimeline(node: UiElement, includeMethod: boolean): string 
   const title = asString(props.title) ?? (includeMethod ? 'Payments' : 'Payment events');
   const values = { lastPayment: asString(props.lastPayment), nextPayment: asString(props.nextPayment), paymentStatus: asString(props.paymentStatus), paymentMethod: asString(props.paymentMethod), amount: typeof props.amount === 'number' ? props.amount : undefined, currency: asString(props.currency), minorUnits: typeof props.minorUnits === 'number' ? props.minorUnits : undefined };
   const rows = billingPaymentRows(values).map((row) => `<li data-payment-kind="${row.kind}"><strong>${row.label}</strong>${row.at ? `<time datetime="${escapeHtml(row.at)}">${escapeHtml(row.text)}</time>` : `<span>${escapeHtml(row.text)}</span>`}</li>`).join('');
-  return `<section id="${escapeHtml(asString(props.id) ?? node.id)}" class="oods-payment-timeline" data-oods-component="${node.component}" role="log" aria-label="${escapeHtml(title)}"><h3>${escapeHtml(title)}</h3><p>${escapeHtml(billingPaymentSummary(values))}</p>${includeMethod ? `<p class="oods-billing-muted">Payment method: ${escapeHtml(values.paymentMethod ?? 'Not provided')}</p>` : ''}<ol>${rows}</ol></section>`;
+  return `<section id="${escapeHtml(asString(props.id) ?? node.id)}" class="oods-payment-timeline" data-oods-component="${node.component}" role="log" aria-label="${escapeHtml(title)}"><h2>${escapeHtml(title)}</h2><p>${escapeHtml(billingPaymentSummary(values))}</p>${includeMethod ? `<p class="oods-billing-muted">Payment method: ${escapeHtml(values.paymentMethod ?? 'Not provided')}</p>` : ''}<ol>${rows}</ol></section>`;
 }
 function renderPaymentTimeline(node: UiElement): string { return renderBillingTimeline(node, true); }
 function renderPaymentEventTimeline(node: UiElement): string { return renderBillingTimeline(node, false); }
@@ -685,6 +685,12 @@ function renderRoleBadgeList(node: UiElement, childrenHtml = ''): string {
   return `<span${attrs}>${content}</span>`;
 }
 
+/** Supporting copy that merely repeats the heading is dropped: the reader learns nothing from it twice. */
+function notEcho(supporting: string | undefined, heading: string | undefined): string | undefined {
+  if (!supporting || !heading) return supporting;
+  return supporting.trim() === heading.trim() ? undefined : supporting;
+}
+
 function renderCardHeader(node: UiElement, childrenHtml = ''): string {
   const props = isRecord(node.props) ? node.props : {};
   const attrs = buildAttributes(node, {
@@ -696,8 +702,8 @@ function renderCardHeader(node: UiElement, childrenHtml = ''): string {
   }
 
   const title = firstString(props, ['title', 'label', 'text']) ?? node.meta?.label ?? 'Card';
-  const supporting = firstString(props, ['supporting', 'supportingText', 'subtitle', 'description']);
-  const titleTag = headingTag(props.level, 3);
+  const supporting = notEcho(firstString(props, ['supporting', 'supportingText', 'subtitle', 'description']), title);
+  const titleTag = headingTag(props.level, 2);
   const supportingHtml = supporting ? `<span data-oods-supporting="true">${escapeHtml(supporting)}</span>` : '';
   return `<header${attrs}><${titleTag}>${escapeHtml(title)}</${titleTag}>${supportingHtml}</header>`;
 }
@@ -723,7 +729,7 @@ function renderDetailHeader(node: UiElement, childrenHtml = ''): string {
   }
 
   const title = firstString(props, ['title', 'label', 'text']) ?? node.meta?.label ?? 'Details';
-  const subtitle = firstString(props, ['subtitle', 'sublabel', 'description']);
+  const subtitle = notEcho(firstString(props, ['subtitle', 'sublabel', 'description']), title);
   const metadata = firstString(props, ['metadata', 'meta']);
   const titleTag = headingTag(props.level, 2);
   const subtitleHtml = subtitle ? `<span data-oods-subtitle="true">${escapeHtml(subtitle)}</span>` : '';
@@ -781,7 +787,8 @@ function renderLabelCell(node: UiElement, childrenHtml = ''): string {
   }
 
   const rawLabel = firstString(props, ['label', 'text', 'value']) ?? node.meta?.label ?? '';
-  const rawDescription = firstString(props, ['description', 'subtitle', 'sublabel', 'supporting']);
+  // A description that only repeats the label prints the same words twice in a list row; see notEcho.
+  const rawDescription = notEcho(firstString(props, ['description', 'subtitle', 'sublabel', 'supporting']), rawLabel);
   const maxLength = Boolean(props.truncate) ? props.maxLength ?? 40 : props.maxLength;
   const label = truncateText(rawLabel, maxLength);
   const description = rawDescription ? truncateText(rawDescription, maxLength) : undefined;
@@ -811,7 +818,7 @@ function renderPanelSection(node: UiElement, childrenHtml: string, options: Pane
     dataOverrides: { 'data-panel-type': options.panelType },
   });
 
-  const headerHtml = `<header data-panel-header="true"><h3>${escapeHtml(title)}</h3>${
+  const headerHtml = `<header data-panel-header="true"><h2>${escapeHtml(title)}</h2>${
     subtitle ? `<span data-panel-subtitle="true">${escapeHtml(subtitle)}</span>` : ''
   }</header>`;
   const contentHtml = hasChildrenHtml(childrenHtml)
@@ -908,7 +915,7 @@ function renderFormContainer(node: UiElement, childrenHtml: string, generatedBod
   });
   const heading =
     options.tag === 'form'
-      ? `<header data-form-header="true"><h3>${escapeHtml(title)}</h3>${subtitle ? `<span data-form-subtitle="true">${escapeHtml(subtitle)}</span>` : ''}</header>`
+      ? `<header data-form-header="true"><h2>${escapeHtml(title)}</h2>${subtitle ? `<span data-form-subtitle="true">${escapeHtml(subtitle)}</span>` : ''}</header>`
       : `<legend>${escapeHtml(title)}</legend>${subtitle ? `<span data-form-subtitle="true">${escapeHtml(subtitle)}</span>` : ''}`;
   return `<${options.tag}${attrs}>${heading}<div data-form-content="true">${content}</div></${options.tag}>`;
 }
@@ -1127,7 +1134,7 @@ function renderTimelineContainer(node: UiElement, childrenHtml: string, options:
 
   const statusHtml = options.timelineType === 'status' && props.status ? `<p>Current status: ${escapeHtml(String(props.status).split(/[_-]/).filter(Boolean).map(part => part.charAt(0).toUpperCase() + part.slice(1)).join(' '))}</p>` : '';
   const transitionsHtml = lifecycle && Array.isArray(props.allowedTransitions) && props.allowedTransitions.length ? `<p>Allowed transitions: ${escapeHtml(props.allowedTransitions.join(', '))}</p>` : '';
-  return `<div${attrs}><h3 data-timeline-title="true">${escapeHtml(title)}</h3>${statusHtml}${transitionsHtml}<ol data-timeline-events="true">${eventHtml}</ol></div>`;
+  return `<div${attrs}><h2 data-timeline-title="true">${escapeHtml(title)}</h2>${statusHtml}${transitionsHtml}<ol data-timeline-events="true">${eventHtml}</ol></div>`;
 }
 
 type EventOptions = {
@@ -1212,7 +1219,7 @@ function renderAuditSummaryCard(node: UiElement): string {
   const actor = props.showLastActor === false ? '' : `<dt>Last actor</dt><dd>${escapeHtml(summary.actor)}</dd>`;
   const time = props.showLastTransitionTime === false ? '' : `<dt>Last transition</dt><dd>${summary.at ? `<time datetime="${escapeHtml(summary.at)}">${escapeHtml(summary.timestamp)}</time>` : summary.timestamp}</dd>`;
   const recent = summary.recent.length ? `<ol aria-label="Recent transitions">${summary.recent.map(entry => `<li>${escapeHtml(String(entry.to_state ?? 'Transition'))}</li>`).join('')}</ol>` : '';
-  return `<section${attrs}><h3>${escapeHtml(title)}</h3><dl>${count}${actor}${time}</dl>${recent}</section>`;
+  return `<section${attrs}><h2>${escapeHtml(title)}</h2><dl>${count}${actor}${time}</dl>${recent}</section>`;
 }
 
 function renderSortIndicator(node: UiElement): string {
@@ -1291,7 +1298,7 @@ function renderSummarySection(node: UiElement, childrenHtml: string, options: Su
   });
 
   if (hasChildrenHtml(childrenHtml)) {
-    return `<section${attrs}><h3 data-summary-title="true">${escapeHtml(title)}</h3>${childrenHtml}</section>`;
+    return `<section${attrs}><h2 data-summary-title="true">${escapeHtml(title)}</h2>${childrenHtml}</section>`;
   }
 
   const entries = options.fields
@@ -1315,7 +1322,7 @@ function renderSummarySection(node: UiElement, childrenHtml: string, options: Su
     .join('');
   const fallback = firstSerialized(props, ['summary', 'text', 'description']);
   const body = entries ? `<dl>${entries}</dl>` : fallback ? `<p data-summary-fallback="true">${escapeHtml(fallback)}</p>` : '<dl></dl>';
-  return `<section${attrs}><h3 data-summary-title="true">${escapeHtml(title)}</h3>${body}</section>`;
+  return `<section${attrs}><h2 data-summary-title="true">${escapeHtml(title)}</h2>${body}</section>`;
 }
 
 /** Placeholder convention for a field bound by name without a value: one mark, machine-readable. */
@@ -1539,7 +1546,7 @@ function renderStatusColorLegend(node: UiElement, childrenHtml = ''): string {
     })
     .filter((entry) => entry.length > 0)
     .join('');
-  return `<section${attrs}><h3 data-summary-title="true">${escapeHtml(node.meta?.label ?? 'Status Color Legend')}</h3><dl>${legendItems}</dl></section>`;
+  return `<section${attrs}><h2 data-summary-title="true">${escapeHtml(node.meta?.label ?? 'Status Color Legend')}</h2><dl>${legendItems}</dl></section>`;
 }
 
 function renderVizPreview(node: UiElement, childrenHtml: string, previewType: string, defaultLabel: string): string {

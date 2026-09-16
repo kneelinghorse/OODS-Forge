@@ -87,7 +87,7 @@ Interaction: `interactive`.
 
 Expectation `change`: type into the City input → change emitted with the current street/city/region/postalCode record.
 
-- title is a real h3 heading
+- title is a real h2 heading
 - four labelled inputs are prefilled
 - change carries the whole address record
 - submitting is a no-op
