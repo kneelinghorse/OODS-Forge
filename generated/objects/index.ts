@@ -5,6 +5,7 @@
  */
 export type { Article } from './Article';
 export type { Chunk } from './Chunk';
+export type { Cluster } from './Cluster';
 export type { Collection } from './Collection';
 export type { Decision } from './Decision';
 export type { Document } from './Document';
@@ -12,6 +13,7 @@ export type { Evidence } from './Evidence';
 export type { Media } from './Media';
 export type { Mission } from './Mission';
 export type { Organization } from './Organization';
+export type { Person } from './Person';
 export type { Product } from './Product';
 export type { Project } from './Project';
 export type { Relationship } from './Relationship';

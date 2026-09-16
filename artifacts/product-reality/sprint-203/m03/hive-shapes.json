@@ -1,0 +1,72 @@
+{
+  "readAt": "2026-09-16T03:54:46Z",
+  "surface": "Hive — Design Intelligence Loop, read-only MCP surface over the aquex hub. Local dev only; not deployed. NO screens of any kind: Derek reads his cohort only through an agent. Only read tools were called (hive_overview, cohort_list, person_detail, clusters_top, articles_get); the three write tools (feed_deactivate, index_generate, article_mark) were never called.",
+  "freshness": {
+    "total_people_rows": 740,
+    "active_cohort_size": 307,
+    "active_feeds": 331,
+    "articles_in_14d_window": 426,
+    "multi_person_clusters_in_14d": 26,
+    "wrote_in_30d_total": 93,
+    "last_article_fetched_at": "2026-09-16T00:23:40.215582+00:00"
+  },
+  "primary_topics": [
+    { "value": "ai_research", "person_count": 167 },
+    { "value": "design", "person_count": 152 },
+    { "value": "ai_engineering", "person_count": 119 },
+    { "value": "writers", "person_count": 85 },
+    { "value": "meaning_layer", "person_count": 71 },
+    { "value": "founders", "person_count": 68 },
+    { "value": "other", "person_count": 39 },
+    { "value": "product", "person_count": 39 }
+  ],
+  "coverage_by_topic": {
+    "ai_engineering": { "total_people": 119, "active_people": 42, "wrote_in_30d": 10 },
+    "ai_research": { "total_people": 167, "active_people": 46, "wrote_in_30d": 9 },
+    "design": { "total_people": 152, "active_people": 65, "wrote_in_30d": 16 },
+    "founders": { "total_people": 68, "active_people": 26, "wrote_in_30d": 2 },
+    "meaning_layer": { "total_people": 71, "active_people": 40, "wrote_in_30d": 16 },
+    "other": { "total_people": 39, "active_people": 15, "wrote_in_30d": 3 },
+    "product": { "total_people": 39, "active_people": 16, "wrote_in_30d": 3 },
+    "writers": { "total_people": 85, "active_people": 57, "wrote_in_30d": 34 }
+  },
+  "person": {
+    "tool": "person_detail(\"Simon Willison\", days=30)",
+    "person_id": 213,
+    "name": "Simon Willison",
+    "primary_topic": "ai_engineering",
+    "tracking_status": "active",
+    "trackingStatusVocabulary": ["active", "tracked_unfeeded", "dormant"],
+    "role": "Datasette; daily LLM posts",
+    "org": null,
+    "x_handle": "@simonw",
+    "blurb": "The single best feed for \"what just happened.\"",
+    "article_count": 20,
+    "articleFields": ["article_id", "title", "url", "published_at", "category"],
+    "topClusterFields": ["cluster_id", "lead_title", "member_count", "member_people_count", "dominant_category", "person_article_count_in_cluster"],
+    "coTalkerFields": ["person_id", "name", "shared_entity_clusters", "shared_semantic_clusters", "shared_cluster_count"],
+    "coTalkerSample": [
+      { "name": "Pete Huang", "person_id": 641, "shared_entity_clusters": 2, "shared_semantic_clusters": 2, "shared_cluster_count": 2 },
+      { "name": "Alex Volkov", "person_id": 636, "shared_entity_clusters": 0, "shared_semantic_clusters": 2, "shared_cluster_count": 0 }
+    ],
+    "note": "org is null and role is free text, not a reference to an organisation record. co_talkers are derived for the requested window (days), not stored."
+  },
+  "cluster": {
+    "tool": "clusters_top(days=14, limit=3)",
+    "lens": "entity",
+    "fields": ["cluster_id", "lead_title", "lead_url", "member_count", "member_people_count", "dominant_category", "is_trending", "updated_at", "people[]", "members[]"],
+    "semanticLensAlsoReturns": ["max_similarity", "mean_similarity"],
+    "sample": { "cluster_id": 1499, "lead_title": "GPT-6 Astra: The System Card, Alignment and What Comes Next", "member_count": 8, "member_people_count": 6, "dominant_category": "ai_research", "is_trending": false, "updated_at": "2026-09-10T18:24:46.449830+00:00" },
+    "peopleFields": ["person_id", "name", "primary_topic", "article_count_in_cluster"],
+    "memberFields": ["article_id", "title", "url", "published_at", "category", "person_id", "person_name"]
+  },
+  "article": {
+    "tool": "articles_get(14624, include_processing=true)",
+    "article_id": 14624,
+    "idType": "integer surrogate key",
+    "fields": ["article_id", "url", "title", "content", "content_truncated", "content_byte_length", "author", "published_at", "fetched_at", "feed_name", "feed_url", "keywords", "word_count", "is_paywalled", "paywall_confidence", "marks", "person", "processing"],
+    "processingOverlay": ["category", "subcategories", "key_entities", "sentiment", "summary", "model_name", "processed_at"],
+    "sample": { "title": "Gemini Live audio", "url": "https://simonwillison.net/2026/Sep/15/gemini-live/", "author": null, "word_count": 161, "content_byte_length": 1092, "content_truncated": false, "is_paywalled": false, "keywords": [], "feed_name": "Simon Willison (blog)" },
+    "note": "author is null on this row; attribution is the cohort person, carried in the person block. content is capped at 64KB and may be truncated or absent when paywalled."
+  }
+}

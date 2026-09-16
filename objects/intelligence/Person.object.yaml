@@ -1,0 +1,186 @@
+object:
+  name: Person
+  version: 0.1.0
+  domain: intelligence.cohort
+  description: >-
+    Someone in the cohort Derek follows: who they are, whether their feed is live, what they have
+    published in a window, and who they keep turning up beside. Born from Hive's read-only MCP
+    surface (740 people rows, 307 active across 331 feeds, read 2026-09-16); the field mapping and
+    every field this object does not model are stated in the m03 fit read.
+  tags:
+    - intelligence
+    - hive
+    - cohort
+
+traits:
+  - name: content/Labelled
+    alias: PersonLabel
+    parameters:
+      maxLabelLength: 255
+      maxDescriptionLength: 1000
+  - name: lifecycle/Stateful
+    parameters:
+      # Hive's own tracking_status, documented in src/store/tracking_status.py: a person is tracked
+      # with a live feed, tracked deliberately without one, or had a feed that lapsed. This is the one
+      # reuse of the three the memo named that survived measurement.
+      states:
+        - active
+        - tracked_unfeeded
+        - dormant
+      initialState: active
+  - name: core/Classifiable
+    alias: PersonTopic
+  - name: behavioral/Searchable
+    parameters:
+      placeholder: Search the cohort
+  - name: behavioral/Filterable
+  - name: behavioral/Pageable
+    parameters:
+      defaultPageSize: 20
+      pageSizeOptions:
+        - 10
+        - 20
+        - 50
+        - 100
+
+schema:
+  person_id:
+    type: string
+    required: true
+    description: >-
+      Hive's identifier for the person. An integer surrogate key in the store, declared as a string
+      here so it is never treated as arithmetic and so the same shape carries another cohort's ids.
+    validation:
+      minLength: 1
+      maxLength: 64
+  name:
+    type: string
+    required: true
+    description: The person's name, as the cohort records it. Present on every row.
+    validation:
+      minLength: 1
+      maxLength: 255
+  primary_topic:
+    type: string
+    required: true
+    description: >-
+      Which slice of the cohort they belong to. Measured from cohort_list, which is the slice-discovery
+      authority: ai_research 167, design 152, ai_engineering 119, writers 85, meaning_layer 71,
+      founders 68, other 39, product 39.
+    validation:
+      enum:
+        - ai_research
+        - design
+        - ai_engineering
+        - writers
+        - meaning_layer
+        - founders
+        - other
+        - product
+  role:
+    type: string
+    required: false
+    description: >-
+      What they do, in free text as the cohort records it ("Datasette; daily LLM posts"). Deliberately
+      unconstrained: it is a description, not a membership role, which is why core/User cannot carry a
+      cohort member — User's role is an enum of account roles (end_user, admin, owner, billing).
+  org:
+    type: string
+    required: false
+    description: >-
+      Where they are, when the cohort knows. Free text and frequently absent — null for Simon Willison
+      on the sampled read — and never a reference to an organisation record.
+  x_handle:
+    type: string
+    required: false
+    description: Their handle, with the leading @ as the cohort stores it.
+  blurb:
+    type: string
+    required: false
+    description: >-
+      Why they are worth following, in Derek's own words. Unbounded free text and one of the two
+      readability risks this sprint carries into the craft pass.
+  article_count:
+    type: number
+    required: false
+    description: How many articles they published in the window this record was read for.
+    validation:
+      minimum: 0
+  window_days:
+    type: number
+    required: false
+    description: >-
+      The lookback the counts and lists on this record were derived for. Every derived field here is
+      only true of a window, so the window travels with them rather than being implied.
+    validation:
+      minimum: 1
+  articles:
+    type: object[]
+    required: false
+    description: What they published in the window, as {article_id, title, url, published_at, category}.
+  top_clusters:
+    type: object[]
+    required: false
+    description: >-
+      The conversations they turned up in, as {cluster_id, lead_title, member_count,
+      member_people_count, dominant_category, person_article_count_in_cluster}.
+  co_talkers:
+    type: object[]
+    required: false
+    description: >-
+      Who else was in those conversations, as {person_id, name, shared_entity_clusters,
+      shared_semantic_clusters}. Derived for the window, not a stored edge, which is why the universal
+      Relationship object does not carry it: Relationship needs uuid endpoints, a relationship_type, a
+      direction and an is_bidirectional flag, has its own lifecycle and an owner, and expresses
+      strength as one string — while these are two independent counts that disagree (a person can
+      share 0 entity clusters and 2 semantic ones with the same peer).
+
+semantics:
+  person_id:
+    semantic_type: intelligence.person.id
+    token_mapping: tokenMap(text.body.*)
+  name:
+    semantic_type: text.label
+    token_mapping: tokenMap(text.label.*)
+  primary_topic:
+    semantic_type: intelligence.person.primary_topic
+    token_mapping: tokenMap(text.body.*)
+  role:
+    semantic_type: intelligence.person.role
+    token_mapping: tokenMap(text.body.*)
+  org:
+    semantic_type: intelligence.person.org
+    token_mapping: tokenMap(text.body.*)
+  x_handle:
+    semantic_type: intelligence.person.x_handle
+    token_mapping: tokenMap(text.body.*)
+  blurb:
+    semantic_type: intelligence.person.blurb
+    token_mapping: tokenMap(text.body.*)
+  article_count:
+    semantic_type: intelligence.person.article_count
+    token_mapping: tokenMap(metric.count.primary)
+  window_days:
+    semantic_type: intelligence.person.window_days
+    token_mapping: tokenMap(text.body.*)
+  articles:
+    semantic_type: intelligence.person.articles
+    token_mapping: tokenMap(text.body.*)
+  top_clusters:
+    semantic_type: intelligence.person.top_clusters
+    token_mapping: tokenMap(text.body.*)
+  co_talkers:
+    semantic_type: intelligence.person.co_talkers
+    token_mapping: tokenMap(text.body.*)
+
+metadata:
+  maturity: alpha
+  owners:
+    - Forge
+  references:
+    - "artifacts/product-reality/sprint-203/m03/fit-read.json"
+    - "artifacts/product-reality/sprint-203/m03/reuse-proof.json"
+  changelog:
+    - version: 0.1.0
+      date: "2026-09-16"
+      description: Born from Hive's live cohort surface, 740 people rows.

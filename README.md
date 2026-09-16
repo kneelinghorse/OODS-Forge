@@ -3,13 +3,13 @@
 <!-- forge-claim:what-forge-is -->
 OODS Forge is a design-system engine that an AI assistant drives over MCP. You name a screen by its object and its context; Forge composes the screen from governed components and tokens, generates it as React, Vue or HTML, renders charts and dashboards from your data, and certifies what it produced against accuracy, accessibility, contrast and determinism rules. It ships as a runtime bundle you extract and connect to Claude Desktop, Claude Code or Cursor.
 
-Today it knows 21 objects, 47 traits and 110 governed components, renders 13 chart types under a taxonomy of 23 named patterns, and advertises 19 tools by default (24 in all).
+Today it knows 23 objects, 47 traits and 110 governed components, renders 13 chart types under a taxonomy of 23 named patterns, and advertises 19 tools by default (24 in all).
 <!-- /forge-claim:what-forge-is -->
 
 ## Three words
 
 <!-- forge-claim:three-words -->
-- **Object**: a thing your product has, described once with its fields and behaviours. `Subscription` is an object: a plan, a status, a billing interval and a payment history. Forge ships 21 objects, each defined in YAML; you add your own the same way.
+- **Object**: a thing your product has, described once with its fields and behaviours. `Subscription` is an object: a plan, a status, a billing interval and a payment history. Forge ships 23 objects, each defined in YAML; you add your own the same way.
 - **Trait**: a capability an object composes in, bringing its fields, states and screen contributions with it. `Subscription` composes `Stateful` (a status with allowed transitions) and `Billable`; `User` and `Organization` compose `Addressable`. There are 47 traits, 21 of them chart traits.
 - **Context**: the kind of screen an object is shown in. The same `Subscription` produces a different but consistent screen for each of detail, list, form, timeline, card, inline, workflow; a trait's view extension says what it contributes to which context.
 <!-- /forge-claim:three-words -->
