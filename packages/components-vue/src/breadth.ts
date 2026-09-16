@@ -63,7 +63,8 @@ export const DetailHeader = defineComponent({
       const content = authoredContent(slots.default?.());
       const scalar = scalarContent(content);
       const title = scalar ?? firstText(props.title, props.label, props.text) ?? 'Details';
-      const subtitle = firstText(props.subtitle, props.sublabel, props.description);
+      // See the React twin: supporting copy that only repeats the heading is the doubled-field defect.
+      const subtitle = notEcho(firstText(props.subtitle, props.sublabel, props.description), title);
       const metadata = firstText(props.metadata, props.meta);
       return h('header', { class: 'oods-detail-header', 'data-oods-component': 'DetailHeader' },
         content.length && scalar === undefined ? content : [
@@ -74,6 +75,12 @@ export const DetailHeader = defineComponent({
     };
   },
 });
+
+/** Supporting copy that merely repeats the heading is dropped: the reader learns nothing from it twice. */
+function notEcho(supporting: string | undefined, heading: string | undefined): string | undefined {
+  if (!supporting || !heading) return supporting;
+  return supporting.trim() === heading.trim() ? undefined : supporting;
+}
 
 export const CardHeader = defineComponent({
   name: 'OodsCardHeader',
@@ -88,7 +95,7 @@ export const CardHeader = defineComponent({
       const content = authoredContent(slots.default?.());
       const scalar = scalarContent(content);
       const title = scalar ?? firstText(props.title, props.label, props.text) ?? 'Card';
-      const supporting = firstText(props.supporting, props.supportingText, props.subtitle, props.description);
+      const supporting = notEcho(firstText(props.supporting, props.supportingText, props.subtitle, props.description), title);
       return h('header', { class: 'oods-card-header', 'data-oods-component': 'CardHeader' },
         content.length && scalar === undefined ? content : [
           h(headingElement(props.as, props.level, 2), title),
@@ -902,7 +909,8 @@ export const LabelCell = defineComponent({
     return () => {
       const content = authoredContent(slots.default?.());
       const limit = props.truncate ? props.maxLength ?? 40 : props.maxLength;
-      const description = firstText(props.description, props.subtitle, props.sublabel, props.supporting);
+      // A description that only repeats the label prints the same words twice in a list row; see notEcho.
+      const description = notEcho(firstText(props.description, props.subtitle, props.sublabel, props.supporting), firstText(props.label, props.text, props.value));
       return h('span', { class: 'oods-label-cell', 'data-oods-component': 'LabelCell' },
         content.length ? content : [
           h('span', { 'data-oods-label-cell-primary': 'true' }, truncateLabel(firstText(props.label, props.text, props.value) ?? '', limit)),

@@ -46,7 +46,7 @@ import type { FieldDefinition, SemanticMapping, StateMachineDefinition, TraitAct
 import { resolveIntentObject, fuzzyMatchObject } from '../compose/intent-object-resolver.js';
 import { populateCollections, populateListStates } from '../compose/collections.js';
 import { reconcileFormDetail } from '../compose/form-detail.js';
-import { populateObjectSchema, populateBindings, fillSlotsWithObject, wireFieldProps, applySelectionsToSchema } from '../compose/object-slot-filler.js';
+import { populateObjectSchema, populateBindings, fillSlotsWithObject, wireFieldProps, applySelectionsToSchema, dropUnfilledInteractiveSlots } from '../compose/object-slot-filler.js';
 import { isTraitRecipe } from '../compose/trait-recipes.js';
 import { collectDashboardViewExtensions, collectViewExtensions } from '../compose/view-extension-collector.js';
 import type { SlotPlan } from '../compose/view-extension-collector.js';
@@ -2116,6 +2116,8 @@ export async function handle(input: DesignComposeInput): Promise<DesignComposeOu
     };
     schema.screens.forEach(applyChartBrand);
   }
+  // A slot nothing filled must not leave a focusable control with no accessible name on the page.
+  dropUnfilledInteractiveSlots(schema);
   // Every screen root is named after its object and context: the generated shell's heading when the screen places none.
   labelScreens(schema, effectiveObject, effectiveContext);
 

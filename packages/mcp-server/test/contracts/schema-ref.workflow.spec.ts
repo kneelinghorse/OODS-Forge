@@ -43,7 +43,10 @@ describe('schemaRef workflow', () => {
       status: 'ok',
       framework: 'react',
       warnings: [],
-      meta: { nodeCount: 9, componentCount: 6 },
+      // 9 / 6 through Sprint 202. Sprint 203 m04 drops slot placeholders nothing filled when the
+      // placeholder is an interactive control, so this bare list — composed with no object, and so
+      // with no filters or sort to offer — no longer emits two empty, nameless form controls.
+      meta: { nodeCount: 7, componentCount: 4 },
     });
     expect(codegen.errors).toBeUndefined();
     expect(codegen.code.length).toBeGreaterThan(0);

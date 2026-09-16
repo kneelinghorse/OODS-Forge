@@ -1078,3 +1078,48 @@ function applyToSchema(
 
   schema.screens.forEach(walk);
 }
+
+/**
+ * Drop slot placeholders nothing ever filled, when the placeholder would be visible on the page.
+ *
+ * A template declares its slots by putting a placeholder element in the tree and letting the filler
+ * replace it. Where nothing fills a slot the placeholder survives, which is harmless for a layout
+ * container — an empty `Stack` renders an empty div — but not for a control: the card template's
+ * footer placeholder is a `Button`, so every object whose card footer stays empty shipped a focusable
+ * button with no text and no accessible name at all (axe `button-name`, found on Article, Media,
+ * Invoice and Usage in Sprint 203 m01 and reproduced by Person in m03, which is what identified the
+ * card template rather than those objects as the cause).
+ *
+ * An empty control is worse than no control, so the placeholder is removed rather than given invented
+ * copy: naming it would put a button on the page that does nothing.
+ *
+ * Container placeholders are deliberately left alone, even when they draw something. The card
+ * template's body placeholder is a `Card` that nothing fills for any object in the registry, so every
+ * card screen draws an empty bordered box under its header — but that placeholder is also the slot a
+ * `componentOverrides` preference and a `design.preview` slot swap target, and dropping it breaks both
+ * along with the fragment-anchor contract. It is recorded as a measured finding in the m04 receipt
+ * instead of being removed here.
+ */
+export function dropUnfilledInteractiveSlots(schema: UiSchema): number {
+  /**
+   * Placeholders that draw something. Controls a keyboard or screen-reader user can reach, and
+   * surfaces that paint a border or background; an empty one of either is a defect, not a layout gap.
+   */
+  const INTERACTIVE = new Set(['Button', 'Input', 'Select', 'Checkbox', 'Textarea', 'DatePicker']);
+  let dropped = 0;
+  const unfilled = (el: UiElement): boolean =>
+    isSlotElement(el)
+    && INTERACTIVE.has(el.component)
+    && !el.children?.length
+    && Object.keys(el.props ?? {}).length === 0;
+  const walk = (el: UiElement): void => {
+    if (el.children?.length) {
+      const kept = el.children.filter(child => !unfilled(child));
+      dropped += el.children.length - kept.length;
+      el.children = kept;
+      el.children.forEach(walk);
+    }
+  };
+  schema.screens.forEach(walk);
+  return dropped;
+}

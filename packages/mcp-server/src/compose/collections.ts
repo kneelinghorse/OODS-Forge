@@ -80,7 +80,13 @@ export function populateCollections(schema: UiSchema, context: string, objectNam
       const billing = nodes.find(node => node.component === 'BillingSummaryBadge');
       const content: UiElement[] = [
         ...(rowNodes.some(node => node.component === 'LabelCell' && node.props?.field === labelField) ? [] : [{ id: `${items.id}-title`, component: 'Text', props: { field: labelField } }]),
-        ...rowNodes.filter(node => node !== overlay && rowShowsRecordValue(node, fields)),
+        // `label` is content/Labelled's display projection of the record's title, so a row that already
+        // shows the title field itself prints the same words twice — "Anika Bhatt Anika Bhatt" on the
+        // Person list, and the same on Sprint, Session and five of the research objects. Where `label`
+        // IS the title (an object with no name or title of its own, such as Organization or Cluster)
+        // it is the one that stays: this drops the projection, never the record's own field.
+        ...rowNodes.filter(node => node !== overlay && rowShowsRecordValue(node, fields)
+          && !(labelField !== 'label' && node.props?.field === 'label')),
         ...(billing && !rowNodes.includes(billing) ? [billing] : []),
       ];
       for (const node of content) {

@@ -22,7 +22,7 @@ function renderBillingTimeline(props: BillingPaymentValues & { id?: string; titl
 }
 export const PaymentTimeline = defineComponent({ name: 'PaymentTimeline', props: { ...paymentProps, paymentMethod: String }, setup: (props) => () => renderBillingTimeline(props, 'PaymentTimeline', true) });
 export const PaymentEventTimeline = defineComponent({ name: 'PaymentEventTimeline', props: { ...paymentProps, event: Object as PropType<CollectionEvent> }, setup: (props) => () => props.event
-  ? h('section', { id: props.id, 'data-oods-component': 'PaymentEventTimeline', 'aria-label': 'Payment event' }, [h('strong', props.event.title), h('time', { datetime: props.event.at }, formatDateTime(props.event.at)), h('p', props.event.description)])
+  ? h('section', { id: props.id, 'data-oods-component': 'PaymentEventTimeline', 'aria-label': props.event.title ?? 'Payment event' }, [h('strong', props.event.title), h('time', { datetime: props.event.at }, formatDateTime(props.event.at)), h('p', props.event.description)])
   : renderBillingTimeline(props, 'PaymentEventTimeline', false) });
 
 export const BillingCardMeta = defineComponent({

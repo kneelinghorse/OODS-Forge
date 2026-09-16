@@ -23,7 +23,9 @@ function BillingTimeline({ id, title, component, includeMethod, ...values }: Pay
 export function PaymentTimeline(props: PaymentTimelineProps) { return <BillingTimeline {...props} component="PaymentTimeline" includeMethod />; }
 export type PaymentEventTimelineProps = Omit<PaymentTimelineProps, 'paymentMethod'> & { event?: CollectionEvent };
 export function PaymentEventTimeline(props: PaymentEventTimelineProps) {
-  if (props.event) return <section id={props.id} data-oods-component="PaymentEventTimeline" aria-label="Payment event"><strong>{props.event.title}</strong><time dateTime={props.event.at}>{formatDateTime(props.event.at)}</time><p>{props.event.description}</p></section>;
+  // The accessible name comes from the event itself: two sibling "Payment event" regions collide as
+  // duplicate landmarks (axe landmark-unique), and "Last payment" / "Next payment" is what tells them apart.
+  if (props.event) return <section id={props.id} data-oods-component="PaymentEventTimeline" aria-label={props.event.title ?? 'Payment event'}><strong>{props.event.title}</strong><time dateTime={props.event.at}>{formatDateTime(props.event.at)}</time><p>{props.event.description}</p></section>;
   return <BillingTimeline {...props} component="PaymentEventTimeline" includeMethod={false} />; }
 
 export interface BillingCardMetaProps { id?: string; amount?: number; currency?: string; minorUnits?: number; interval?: string }

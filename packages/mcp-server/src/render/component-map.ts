@@ -685,6 +685,12 @@ function renderRoleBadgeList(node: UiElement, childrenHtml = ''): string {
   return `<span${attrs}>${content}</span>`;
 }
 
+/** Supporting copy that merely repeats the heading is dropped: the reader learns nothing from it twice. */
+function notEcho(supporting: string | undefined, heading: string | undefined): string | undefined {
+  if (!supporting || !heading) return supporting;
+  return supporting.trim() === heading.trim() ? undefined : supporting;
+}
+
 function renderCardHeader(node: UiElement, childrenHtml = ''): string {
   const props = isRecord(node.props) ? node.props : {};
   const attrs = buildAttributes(node, {
@@ -696,7 +702,7 @@ function renderCardHeader(node: UiElement, childrenHtml = ''): string {
   }
 
   const title = firstString(props, ['title', 'label', 'text']) ?? node.meta?.label ?? 'Card';
-  const supporting = firstString(props, ['supporting', 'supportingText', 'subtitle', 'description']);
+  const supporting = notEcho(firstString(props, ['supporting', 'supportingText', 'subtitle', 'description']), title);
   const titleTag = headingTag(props.level, 2);
   const supportingHtml = supporting ? `<span data-oods-supporting="true">${escapeHtml(supporting)}</span>` : '';
   return `<header${attrs}><${titleTag}>${escapeHtml(title)}</${titleTag}>${supportingHtml}</header>`;
@@ -723,7 +729,7 @@ function renderDetailHeader(node: UiElement, childrenHtml = ''): string {
   }
 
   const title = firstString(props, ['title', 'label', 'text']) ?? node.meta?.label ?? 'Details';
-  const subtitle = firstString(props, ['subtitle', 'sublabel', 'description']);
+  const subtitle = notEcho(firstString(props, ['subtitle', 'sublabel', 'description']), title);
   const metadata = firstString(props, ['metadata', 'meta']);
   const titleTag = headingTag(props.level, 2);
   const subtitleHtml = subtitle ? `<span data-oods-subtitle="true">${escapeHtml(subtitle)}</span>` : '';
@@ -781,7 +787,8 @@ function renderLabelCell(node: UiElement, childrenHtml = ''): string {
   }
 
   const rawLabel = firstString(props, ['label', 'text', 'value']) ?? node.meta?.label ?? '';
-  const rawDescription = firstString(props, ['description', 'subtitle', 'sublabel', 'supporting']);
+  // A description that only repeats the label prints the same words twice in a list row; see notEcho.
+  const rawDescription = notEcho(firstString(props, ['description', 'subtitle', 'sublabel', 'supporting']), rawLabel);
   const maxLength = Boolean(props.truncate) ? props.maxLength ?? 40 : props.maxLength;
   const label = truncateText(rawLabel, maxLength);
   const description = rawDescription ? truncateText(rawDescription, maxLength) : undefined;

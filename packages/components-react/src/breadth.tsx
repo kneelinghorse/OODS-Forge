@@ -66,12 +66,21 @@ function headingElement(as: HeaderElement | undefined, level: HeaderLevel | unde
   return `h${bounded}` as HeaderElement;
 }
 
+/** Supporting copy that merely repeats the heading is dropped: the reader learns nothing from it twice. */
+function notEcho(supporting: string | undefined, heading: string | undefined): string | undefined {
+  if (!supporting || !heading) return supporting;
+  return supporting.trim() === heading.trim() ? undefined : supporting;
+}
+
 export const DetailHeader = React.forwardRef<HTMLElement, DetailHeaderProps>(
   ({ title, label, text, subtitle, sublabel, description, metadata, meta, level, as, children, className, ...rest }, ref) => {
     const Heading = headingElement(as, level, 2);
     const content = childContent(children);
     const heading = content.scalar ?? firstText(title, label, text) ?? 'Details';
-    const supporting = firstText(subtitle, sublabel, description);
+    // A supporting line that only repeats the heading is the doubled-field defect of #2046: every
+    // object composing Labelled seeds `description` from its own title, so the record's name printed
+    // twice, once as the heading and once beneath it. Saying it once is the whole fix.
+    const supporting = notEcho(firstText(subtitle, sublabel, description), heading);
     const metadataText = firstText(metadata, meta);
     return (
       <header ref={ref} className={classes('oods-detail-header', className)} data-oods-component="DetailHeader" {...rest}>
@@ -91,7 +100,7 @@ export const CardHeader = React.forwardRef<HTMLElement, CardHeaderProps>(
     const Heading = headingElement(as, level, 2);
     const content = childContent(children);
     const heading = content.scalar ?? firstText(title, label, text) ?? 'Card';
-    const supportingLabel = firstText(supporting, supportingText, subtitle, description);
+    const supportingLabel = notEcho(firstText(supporting, supportingText, subtitle, description), heading);
     return (
       <header ref={ref} className={classes('oods-card-header', className)} data-oods-component="CardHeader" {...rest}>
         {content.authored ? children : <>
@@ -966,7 +975,8 @@ export const LabelCell = React.forwardRef<HTMLSpanElement, LabelCellProps>(
     const content = childContent(children);
     const limit = truncate ? maxLength ?? 40 : maxLength;
     const primary = truncateLabel(firstText(label, text, value) ?? '', limit);
-    const detail = firstText(description, subtitle, sublabel, supporting);
+    // A description that only repeats the label prints the same words twice in a list row; see notEcho.
+    const detail = notEcho(firstText(description, subtitle, sublabel, supporting), firstText(label, text, value));
     return <span ref={ref} className={classes('oods-label-cell', className)} data-oods-component="LabelCell" {...rest}>
       {content.authored || content.scalar !== undefined ? children : <>
         <span data-oods-label-cell-primary="true">{primary}</span>
