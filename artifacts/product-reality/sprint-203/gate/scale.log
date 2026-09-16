@@ -1,0 +1,22 @@
+
+> @oods/mcp-server@0.1.0 test:scale /Users/systemsystems/.codex/worktrees/s203/OODS-Forge/packages/mcp-server
+> vitest run --config vitest.scale.config.ts
+
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s203/OODS-Forge/packages/mcp-server
+
+ ✓ test/scale/determinism.spec.ts (9 tests) 51ms
+ ✓ test/scale/viz-determinism.spec.ts (42 tests) 396ms
+ ✓ test/scale/dashboard-determinism.spec.ts (6 tests) 385ms
+ ✓ test/scale/map.apply.scale.spec.ts (5 tests) 12261ms
+   ✓ map.apply at scale (dry-run) > tier=100: dry-run handler returns, diff totals match, registry unchanged  474ms
+   ✓ map.apply at scale (dry-run) > tier=500: dry-run handler returns, diff totals match, registry unchanged  2111ms
+   ✓ map.apply at scale (dry-run) > tier=1000: dry-run handler returns, diff totals match, registry unchanged  8526ms
+   ✓ map.apply at scale (apply=true at 100-tier only) > apply=true persists the create count; snapshot reflects the mutation  518ms
+   ✓ map.apply determinism across runs > tier=100: two consecutive dry-runs with the same seed produce identical diff summaries  631ms
+
+ Test Files  4 passed (4)
+      Tests  62 passed (62)
+   Start at  09:08:34
+   Duration  15.57s (transform 2.48s, setup 270ms, collect 7.23s, tests 13.09s, environment 1ms, prepare 1.79s)
+

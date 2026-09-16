@@ -34,9 +34,17 @@ export function commands(directory = root) {
   ];
 }
 
-export function verify(output = 'artifacts/product-reality/sprint-202/gate') {
+/**
+ * The sprint whose receipts this gate may write into. It moves with the sprint, and the guard below is
+ * why: the default pointed at sprint-202 after that sprint's receipts were sealed, so running the gate
+ * in Sprint 203 wrote into a sealed directory. The guard was doing its job — keeping receipts out of
+ * arbitrary paths — while naming a sprint that had since closed.
+ */
+const UNSEALED_SPRINT = 'sprint-203';
+
+export function verify(output = `artifacts/product-reality/${UNSEALED_SPRINT}/gate`) {
   const directory = path.resolve(root, output);
-  if (!directory.startsWith(path.join(root, 'artifacts/product-reality/sprint-202') + path.sep)) throw new Error('Chart gate receipts must be under unsealed sprint-202');
+  if (!directory.startsWith(path.join(root, `artifacts/product-reality/${UNSEALED_SPRINT}`) + path.sep)) throw new Error(`Chart gate receipts must be under unsealed ${UNSEALED_SPRINT}`);
   mkdirSync(directory, { recursive: true });
   const reports = [];
   const plan = commands();
