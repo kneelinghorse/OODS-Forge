@@ -943,7 +943,10 @@ async function main() {
         traits: health.registry.traits,
         objects: health.registry.objects,
       },
-      { components: 110, traits: 46, objects: 18 },
+      // Sprint 203 adds five objects born from Derek's own stores: Decision, Sprint and Session from
+      // CMOS's record, Person and Cluster from Hive's cohort. health.registry.traits counts the
+      // non-viz families and is unchanged by lifecycle/Supersedable's family already being present.
+      { components: 110, traits: 46, objects: 23 },
     );
     assert.deepEqual(health.warnings ?? [], []);
     const builtScopes = await loadJson(path.join(runtimeRoot, 'packages/tokens/dist/css-variables-by-scope.json'));
