@@ -1,0 +1,208 @@
+{
+  "kind": "five-suite accounting, assembled by the Sprint 203 review",
+  "builderSelfCertified": false,
+  "assembledBy": "PS-2026-09-16-005",
+  "status": "RED \u2014 root-core failed 3 files",
+  "heads": {
+    "vizCoreVizRenderMcpServer": "9f22e3a56552bcbf8aeadcebca0554b8e6c4d90a",
+    "rootCoreComponentPackages": "8e813757eb465e24cf1e1c416edc4c3a61b8a52c",
+    "note": "The two heads differ only under artifacts/; git diff 9f22e3a56..8e813757e touches no source, test, config or package file, so the five counts are of one tree. Verified by the review, not assumed."
+  },
+  "fiveSuiteTotals": {
+    "passedAssertions": 17978,
+    "failedAssertions": 3,
+    "skipped": 32,
+    "failedFiles": 3,
+    "uncollectedFiles": 0
+  },
+  "comparison": {
+    "sprint202": {
+      "passedAssertions": 17849,
+      "failedAssertions": 0,
+      "skipped": 32,
+      "failedFiles": 0,
+      "uncollectedFiles": 0
+    }
+  },
+  "suites": [
+    {
+      "suite": "viz-core",
+      "status": "passed",
+      "exitCode": 0,
+      "durationMs": 64138.488583,
+      "counts": {
+        "passedAssertions": 1546,
+        "failedAssertions": 0,
+        "skipped": 0,
+        "failedFiles": 0,
+        "uncollectedFiles": 0
+      },
+      "totalAssertions": 1546,
+      "todo": 0,
+      "failedFiles": [],
+      "skipped": [],
+      "rawReport": "run-1/viz-core.vitest.json"
+    },
+    {
+      "suite": "viz-render",
+      "status": "passed",
+      "exitCode": 0,
+      "durationMs": 37662.807041,
+      "counts": {
+        "passedAssertions": 72,
+        "failedAssertions": 0,
+        "skipped": 0,
+        "failedFiles": 0,
+        "uncollectedFiles": 0
+      },
+      "totalAssertions": 72,
+      "todo": 0,
+      "failedFiles": [],
+      "skipped": [],
+      "rawReport": "run-1/viz-render.vitest.json"
+    },
+    {
+      "suite": "mcp-server",
+      "status": "passed",
+      "exitCode": 0,
+      "durationMs": 2248667.940292,
+      "counts": {
+        "passedAssertions": 7247,
+        "failedAssertions": 0,
+        "skipped": 16,
+        "failedFiles": 0,
+        "uncollectedFiles": 0
+      },
+      "totalAssertions": 7263,
+      "todo": 0,
+      "failedFiles": [],
+      "skipped": [
+        {
+          "file": "packages/mcp-server/test/e2e/action-mappings.e2e.spec.ts",
+          "test": "E2E \u2014 real Stage1 linear.app BridgeSummary (post-S40 run 5e3a5dbf) bridge_summary.json is on disk and has expected top-level shape"
+        },
+        {
+          "file": "packages/mcp-server/test/e2e/action-mappings.e2e.spec.ts",
+          "test": "E2E \u2014 real Stage1 linear.app BridgeSummary (post-S40 run 5e3a5dbf) accepts Stage1 alias fields (orcaVerb, suggestedAction) without crashing"
+        },
+        {
+          "file": "packages/mcp-server/test/e2e/action-mappings.e2e.spec.ts",
+          "test": "E2E \u2014 real Stage1 linear.app BridgeSummary (post-S40 run 5e3a5dbf) resolves at least one real Stage1 targetEntity to an OODS object and retains at least one as unresolved"
+        },
+        {
+          "file": "packages/mcp-server/test/e2e/action-mappings.e2e.spec.ts",
+          "test": "E2E \u2014 real Stage1 linear.app BridgeSummary (post-S40 run 5e3a5dbf) meta.unresolvedEntity is stamped on composed nodes matching an unresolved sourceComponent"
+        },
+        {
+          "file": "packages/mcp-server/test/e2e/action-mappings.e2e.spec.ts",
+          "test": "E2E \u2014 real Stage1 linear.app BridgeSummary (post-S40 run 5e3a5dbf) merging real actionInstances with a synthetic vocabulary that includes Subscription traits produces per-slot actions"
+        },
+        {
+          "file": "packages/mcp-server/test/e2e/action-mappings.e2e.spec.ts",
+          "test": "E2E \u2014 real Stage1 linear.app BridgeSummary (post-S40 run 5e3a5dbf) post-S40 reconciliation_report exposes the new ORCA role vocabulary (page, svg-primitive, media) covered by orca-role-mapper"
+        },
+        {
+          "file": "packages/mcp-server/test/e2e/action-mappings.e2e.spec.ts",
+          "test": "E2E \u2014 real Stage1 stripe.com BridgeSummary (post-S40 run 09145d03) cross-target bridge_summary.json reads cleanly and targetEntity descriptors normalize"
+        },
+        {
+          "file": "packages/mcp-server/test/e2e/action-mappings.e2e.spec.ts",
+          "test": "E2E \u2014 real Stage1 stripe.com BridgeSummary (post-S40 run 09145d03) stripe targetEntity ids that are neither aliased nor slug-resolvable are retained as unresolved (Path B)"
+        },
+        {
+          "file": "packages/mcp-server/test/e2e/action-mappings.e2e.spec.ts",
+          "test": "E2E \u2014 real Stage1 stripe.com BridgeSummary (post-S40 run 09145d03) stripe cross-target action vocabulary (submit/navigate/open) passes through without crashing and respects trait filtering"
+        },
+        {
+          "file": "packages/mcp-server/test/e2e/stage1-rollups.e2e.spec.ts",
+          "test": "s94-m04 Stage1 v1.6.0 rollup real-data gate (a0300dc0 + 7adc1d79) structuredData.fetch returns shape-valid v1.6.0 rollups for all 3 kinds on both fixtures"
+        },
+        {
+          "file": "packages/mcp-server/test/e2e/stage1-rollups.e2e.spec.ts",
+          "test": "s94-m04 Stage1 v1.6.0 rollup real-data gate (a0300dc0 + 7adc1d79) every v1.6.0 projection_variant carries a ConfidenceDecomposition (total + method + signals[])"
+        },
+        {
+          "file": "packages/mcp-server/test/e2e/stage1-rollups.e2e.spec.ts",
+          "test": "s94-m04 Stage1 v1.6.0 rollup real-data gate (a0300dc0 + 7adc1d79) fetch ETag is stable across repeat calls for all 3 rollup kinds"
+        },
+        {
+          "file": "packages/mcp-server/test/e2e/stage1-rollups.e2e.spec.ts",
+          "test": "s94-m04 Stage1 v1.6.0 rollup real-data gate (a0300dc0 + 7adc1d79) rejects a rollup with a forged schema_version via ifNoneMatch-free fast-fail"
+        },
+        {
+          "file": "packages/mcp-server/test/e2e/stage1-rollups.e2e.spec.ts",
+          "test": "s94-m04 Stage1 v1.6.0 rollup real-data gate (a0300dc0 + 7adc1d79) normalizer output is byte-identical across repeat runs for both fixtures (determinism gate)"
+        },
+        {
+          "file": "packages/mcp-server/test/e2e/stage1-rollups.e2e.spec.ts",
+          "test": "s94-m04 Stage1 v1.6.0 rollup real-data gate (a0300dc0 + 7adc1d79) normalizer threads capability_id on every presentation, unwraps confidence to scalar, covers all canonical_ids"
+        },
+        {
+          "file": "packages/mcp-server/test/e2e/stage1-rollups.e2e.spec.ts",
+          "test": "s94-m04 Stage1 v1.6.0 rollup real-data gate (a0300dc0 + 7adc1d79) writes a gate report to cmos/reports/s94-m04-rollup-regate-2026-04-17.json"
+        }
+      ],
+      "rawReport": "run-1/mcp-server.vitest.json"
+    },
+    {
+      "suite": "root-core",
+      "status": "failed",
+      "exitCode": 1,
+      "durationMs": 3362880.451958,
+      "counts": {
+        "passedAssertions": 7628,
+        "failedAssertions": 3,
+        "skipped": 16,
+        "failedFiles": 3,
+        "uncollectedFiles": 0
+      },
+      "totalAssertions": 7647,
+      "failedFiles": [
+        "packages/mcp-server/test/codegen/collections.s189.spec.ts",
+        "packages/mcp-server/test/contracts/viz-recipes.s190.spec.ts",
+        "packages/mcp-server/test/product-reality/runtime-bite-selector.s196.spec.ts"
+      ],
+      "measuredHead": "8e813757eb465e24cf1e1c416edc4c3a61b8a52c",
+      "measuredBy": "sprint-203 review PS-2026-09-16-005",
+      "loadAverageBefore": [
+        31.828125,
+        38.19189453125,
+        33.880859375
+      ],
+      "loadAverageAfter": [
+        11.0859375,
+        13.22119140625,
+        15.40576171875
+      ],
+      "rawReport": "run-1/root-core.vitest.json"
+    },
+    {
+      "suite": "component-packages",
+      "status": "passed",
+      "exitCode": 0,
+      "durationMs": 192254.828084,
+      "counts": {
+        "passedAssertions": 1485,
+        "failedAssertions": 0,
+        "skipped": 0,
+        "failedFiles": 0,
+        "uncollectedFiles": 0
+      },
+      "totalAssertions": 1485,
+      "failedFiles": [],
+      "measuredHead": "8e813757eb465e24cf1e1c416edc4c3a61b8a52c",
+      "measuredBy": "sprint-203 review PS-2026-09-16-005",
+      "loadAverageBefore": [
+        11.4365234375,
+        13.15771484375,
+        15.33154296875
+      ],
+      "loadAverageAfter": [
+        16.236328125,
+        15.0634765625,
+        15.73681640625
+      ],
+      "rawReport": "run-1/component-packages.vitest.json"
+    }
+  ]
+}
