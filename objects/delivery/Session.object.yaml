@@ -1,0 +1,160 @@
+object:
+  name: Session
+  version: 0.1.0
+  domain: delivery.session
+  description: >-
+    One working sitting: who held it, what it was for, what it captured and what it left for next
+    time. Born from the sessions table of Derek's CMOS store (499 rows read 2026-09-16); the field
+    mapping and every column this object does not model are stated in the m02 fit read.
+  tags:
+    - delivery
+    - cmos
+    - session
+
+traits:
+  - name: content/Labelled
+    alias: SessionLabel
+    parameters:
+      maxLabelLength: 255
+      maxDescriptionLength: 1000
+  - name: lifecycle/Stateful
+    parameters:
+      states:
+        - active
+        - completed
+        - abandoned
+      initialState: active
+  - name: lifecycle/Timestampable
+    parameters:
+      recordedEvents:
+        - started
+        - completed
+      timezone: UTC
+  - name: core/Classifiable
+    alias: SessionType
+  - name: behavioral/Searchable
+    parameters:
+      placeholder: Search sessions
+  - name: behavioral/Filterable
+  - name: behavioral/Pageable
+    parameters:
+      defaultPageSize: 20
+      pageSizeOptions:
+        - 10
+        - 20
+        - 50
+
+schema:
+  session_id:
+    type: string
+    required: true
+    description: The session's identifier, such as "PS-2026-09-16-002".
+    validation:
+      minLength: 1
+      maxLength: 64
+  title:
+    type: string
+    required: true
+    description: What the session was called, present on all 499 rows.
+    validation:
+      minLength: 1
+      maxLength: 255
+  session_type:
+    type: string
+    required: true
+    description: >-
+      What kind of sitting it was. The live store holds review, planning, custom, check-in and
+      research — a classification, not a lifecycle, so it is Classifiable rather than a second state
+      set.
+    validation:
+      enum:
+        - review
+        - planning
+        - custom
+        - check-in
+        - research
+  agent:
+    type: string
+    required: true
+    description: >-
+      Who held the session — an agent rather than a user: assistant, codex, claude-opus-5 and others
+      in the live store. No existing object models the actor as a non-user agent, which is why this
+      is a field of its own rather than Ownerable.
+  summary:
+    type: string
+    required: false
+    description: What the session amounted to, in its own words. Present on all 499 rows and long free text.
+  sprint_id:
+    type: string
+    required: false
+    description: The sprint the session belongs to. 301 of 499 rows resolve against a sprint, none dangling, 198 null.
+  started_at:
+    type: datetime
+    required: true
+    description: When the session opened. Present on all 499 rows.
+    validation:
+      format: date-time
+  completed_at:
+    type: datetime
+    required: false
+    description: When it closed. Present on all 499 rows in the live store, but declared optional because an open session has none.
+    validation:
+      format: date-time
+  captures:
+    type: object[]
+    required: false
+    description: What the session recorded as it ran, as {timestamp, category, content} entries.
+  next_steps:
+    type: object[]
+    required: false
+    description: What it left for next time, in the same shape. Null on 45 of 499 rows.
+  project_id:
+    type: string
+    required: true
+    description: The project the session belongs to. A slug, never a uuid.
+
+semantics:
+  session_id:
+    semantic_type: delivery.session.id
+    token_mapping: tokenMap(text.body.*)
+  title:
+    semantic_type: text.label
+    token_mapping: tokenMap(text.label.*)
+  session_type:
+    semantic_type: delivery.session.type
+    token_mapping: tokenMap(text.body.*)
+  agent:
+    semantic_type: delivery.session.agent
+    token_mapping: tokenMap(text.body.*)
+  summary:
+    semantic_type: delivery.session.summary
+    token_mapping: tokenMap(text.body.*)
+  sprint_id:
+    semantic_type: delivery.session.sprint_id
+    token_mapping: tokenMap(text.body.*)
+  started_at:
+    semantic_type: delivery.session.started_at
+    token_mapping: tokenMap(text.body.*)
+  completed_at:
+    semantic_type: delivery.session.completed_at
+    token_mapping: tokenMap(text.body.*)
+  captures:
+    semantic_type: delivery.session.captures
+    token_mapping: tokenMap(text.body.*)
+  next_steps:
+    semantic_type: delivery.session.next_steps
+    token_mapping: tokenMap(text.body.*)
+  project_id:
+    semantic_type: delivery.session.project_id
+    token_mapping: tokenMap(text.body.*)
+
+metadata:
+  maturity: alpha
+  owners:
+    - Forge
+  references:
+    - "artifacts/product-reality/sprint-203/m02/fit-read.json"
+  changelog:
+    - version: 0.1.0
+      date: "2026-09-16"
+      description: Born from the live sessions table, 499 rows.

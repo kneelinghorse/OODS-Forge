@@ -5,7 +5,8 @@ import { wire, retain } from '../helpers/wire-boundary.js';
 it('object discovers the real registry and exposes composed traits and context-filtered view extensions', async () => {
   const call = async (input: any): Promise<any> => { wire('object', 'input', input); const result = await object(input); wire('object', 'output', result); return result; };
   const listed = await call({ action: 'list' });
-  expect(listed.totalCount).toBe(18);
+  // 18 through Sprint 202; Sprint 203 m02 adds the three delivery objects born from CMOS's own record.
+  expect(listed.totalCount).toBe(21);
   const details = [];
   for (const entry of listed.objects) {
     const full = await call({ action: 'show', name: entry.name });

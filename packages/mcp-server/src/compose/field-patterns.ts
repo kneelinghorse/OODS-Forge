@@ -454,3 +454,12 @@ export function buildPatternGroups(
 export function getPatternRuleCount(): number {
   return PATTERN_RULES.length;
 }
+
+/**
+ * Every composite component a pattern group can name, read from the rules themselves so the target
+ * contracts cannot fall behind the composer: until Sprint 203 the Stack contract admitted only
+ * StatusTimeline, and the first object with both a start and an end date composed a DateRange group
+ * that generation then refused.
+ */
+export const PATTERN_COMPOSITE_COMPONENTS: readonly string[] =
+  [...new Set(PATTERN_RULES.map(rule => rule.compositeComponent))].sort();

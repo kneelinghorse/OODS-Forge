@@ -1,0 +1,85 @@
+{
+  "mission": "s203-m02",
+  "question": "Can objects/research/Mission carry a CMOS mission, as the Sprint 203 memo assumed?",
+  "answer": "No. Four independent blockers, each measured against the live store.",
+  "candidate": {
+    "object": "Mission",
+    "domain": "research.job",
+    "owners": [
+      "TraceLab"
+    ],
+    "fields": 53,
+    "statusEnum": [
+      "draft",
+      "queued",
+      "in_progress",
+      "completed",
+      "blocked",
+      "cancelled",
+      "validation_failed"
+    ]
+  },
+  "cmos": {
+    "table": "missions",
+    "rows": 1082
+  },
+  "blockers": [
+    {
+      "id": "status-vocabulary",
+      "detail": "CMOS mission statuses vs the object's declared enum",
+      "cmosValues": [
+        "Completed",
+        "Dropped",
+        "Deferred",
+        "In Progress",
+        "Queued"
+      ],
+      "outsideTheEnum": [
+        "Dropped",
+        "Deferred"
+      ],
+      "note": "Dropped and Deferred have no counterpart in the research state set at all; the other three differ in case and spacing, and the object's own field description forbids coercing an unknown value (\"The API remains authoritative; do not coerce an unknown server value\")."
+    },
+    {
+      "id": "identity-type",
+      "detail": "research/Mission declares id as a uuid with format uuid",
+      "cmosUuidShapedIds": 0,
+      "cmosRows": 1082,
+      "note": "Not one CMOS mission id is a uuid; they are slugs such as s203-m06."
+    },
+    {
+      "id": "project-identity",
+      "detail": "research/Mission declares project_id as a uuid",
+      "cmosSample": [
+        "forge",
+        "oods-foundry-mcp"
+      ],
+      "note": "CMOS project ids are slugs."
+    },
+    {
+      "id": "required-fields-cmos-cannot-fill",
+      "fields": [
+        "id (uuid)",
+        "materialization_pending (boolean)",
+        "search_ready (boolean)",
+        "label (string)",
+        "description (string)"
+      ],
+      "note": "materialization_pending and search_ready are TraceLab pipeline internals; a CMOS mission has no value for either."
+    }
+  ],
+  "shape": {
+    "researchMissionFields": 53,
+    "fieldsACmosMissionCouldFill": 12,
+    "fieldsThatWouldRenderEmpty": 41,
+    "cmosColumnsWithNoHome": [
+      "sprint_id",
+      "notes",
+      "reference_docs"
+    ],
+    "note": "sprint_id is the link that organises the whole of CMOS and research/Mission has nowhere to put it."
+  },
+  "governance": "objects/research/Mission.object.yaml is TraceLab-owned (metadata.owners: TraceLab) and its README states the YAML \"does not add columns to TraceLab\". Widening its enum or adding CMOS columns would edit another team's object to fit ours.",
+  "registry": "The object registry is keyed by name (Map<string, ObjectDefinition>), so a second object named Mission cannot exist beside it either.",
+  "conclusion": "research/Mission is TraceLab's research job, not a delivery mission that happens to look like it. The reuse is refused on measurement, and this sprint authors Decision, Sprint and Session only; a CMOS mission reaches these screens as Sprint's derived mission_count and as the mission_id a Decision names. Authoring a competing Mission object is out of scope: no screen in this sprint needs one."
+}

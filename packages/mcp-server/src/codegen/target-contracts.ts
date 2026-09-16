@@ -5,6 +5,7 @@ import {
   type GovernedComponentId,
 } from '@oods/component-contracts';
 
+import { PATTERN_COMPOSITE_COMPONENTS } from '../compose/field-patterns.js';
 import type { FieldSchemaEntry, UiElement, UiSchema } from '../schemas/generated.js';
 import {
   FIELD_CONSUMED_UNBOUND,
@@ -794,7 +795,7 @@ const PROP_VALUE_CONTRACTS: Readonly<
     align: STRING_VALUE,
     justify: STRING_VALUE,
     wrap: BOOLEAN_VALUE,
-    patternComponent: enumContract(['StatusTimeline']),
+    patternComponent: enumContract([...PATTERN_COMPOSITE_COMPONENTS]),
     fields: NON_EMPTY_STRING_ARRAY_VALUE,
   },
   StatusBadge: {
@@ -1073,7 +1074,7 @@ function compositionDirectiveIssues(node: UiElement, schema: UiSchema): CodegenI
       node,
     )];
   }
-  if (patternComponent !== 'StatusTimeline' || !Array.isArray(fields)) return [];
+  if (typeof patternComponent !== 'string' || !PATTERN_COMPOSITE_COMPONENTS.includes(patternComponent) || !Array.isArray(fields)) return [];
 
   return fields.flatMap((field) => (
     typeof field === 'string' && !ownFieldSchemaEntry(schema.objectSchema, field)
