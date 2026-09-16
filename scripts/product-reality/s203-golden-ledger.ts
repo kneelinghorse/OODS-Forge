@@ -38,16 +38,21 @@ const MUST_NOT_MOVE = [
   'artifacts/product-reality/sprint-196/m06/package-shapes-baseline.json',
 ];
 /**
- * m01 moves the advertised tool descriptions and the generated docs over them; m02–m04 add runtime cells for the
- * objects born this sprint and may move existing ones; m05 moves design.preview's advertised schema. The tool
- * capability ledger is a generated registry (re-bound per sprint mode at closeout), not a golden pin.
+ * m01 moves the advertised tool descriptions and the agent policy layer that mirrors them; m02–m04 add runtime
+ * cells for the objects born this sprint and may move existing ones; m05 moves design.preview's advertised schema.
+ *
+ * Generated documentation is deliberately NOT pinned here. `docs/api/*`, `docs/mcp/Tool-Specs.md`,
+ * `docs/components/*`, the Forge claims and the tool capability ledger are rewritten by their own generators
+ * every time the census they report moves — which is every mission that adds an object — and they are gated by
+ * `docs:check` with `--check`, not by a move-once pin. Sprint 202 treated the tool capability ledger the same way.
+ * Pinning them as may-move-once asserts something untrue of a generated file and fires on the second honest
+ * regeneration, which is exactly what it did here in m02.
  */
 const MAY_MOVE_ONCE = [
   'packages/mcp-server/registry/runtime-cells.v1.json', 'packages/mcp-server/registry/release-cells.v1.json',
   'packages/component-contracts/fixtures/viz-preview-samples.v1.json',
   'packages/mcp-adapter/tool-descriptions.json', 'configs/agent/policy.json',
-  'docs/api/README.md', 'docs/api/map.md', 'docs/api/schema.md', 'docs/api/object.md', 'docs/api/repl.md',
-  'docs/mcp/Tool-Specs.md', ...CHROME_SNAPSHOTS,
+  ...CHROME_SNAPSHOTS,
 ];
 const SEALED = ['sprint-195', 'sprint-196', 'sprint-197', 'sprint-198', 'sprint-199', 'sprint-200', 'sprint-201', 'sprint-202'].map(sprint => `artifacts/product-reality/${sprint}`);
 
