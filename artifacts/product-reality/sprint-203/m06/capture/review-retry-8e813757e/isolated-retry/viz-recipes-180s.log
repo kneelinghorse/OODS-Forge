@@ -1,0 +1,32 @@
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s203/OODS-Forge
+
+ ❯ |core| packages/mcp-server/test/contracts/viz-recipes.s190.spec.ts (3 tests | 1 failed) 60427ms
+   ✓ one executable visualization registry (s190 m05) > measures through public contracts only; no private implementation/registry imports 4ms
+   ✓ one executable visualization registry (s190 m05) > inventories actual chart nodes and preserves the public request without mistaking source metadata for runtime proof 15ms
+   × one executable visualization registry (s190 m05) > the exported registry equals every live census cell after canonicalization 60405ms
+     → Test timed out in 60000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |core| packages/mcp-server/test/contracts/viz-recipes.s190.spec.ts > one executable visualization registry (s190 m05) > the exported registry equals every live census cell after canonicalization
+Error: Test timed out in 60000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ packages/mcp-server/test/contracts/viz-recipes.s190.spec.ts:32:3
+     30|   });
+     31| 
+     32|   it('the exported registry equals every live census cell after canoni…
+       |   ^
+     33|     const source = JSON.parse(read('packages/viz-core/src/registry/viz…
+     34|     const result = await measureVizCensus();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 2 passed (3)
+   Start at  14:19:55
+   Duration  69.20s (transform 2.73s, setup 0ms, collect 5.04s, tests 60.43s, environment 0ms, prepare 143ms)
+
+JSON report written to /private/tmp/claude-501/-Users-systemsystems-portfolio-Design-Tools-OODS-Forge/3178b158-79ce-467d-bb1c-4e16580f847b/scratchpad/capture/isolated-retry/viz-recipes-180s.vitest.json
