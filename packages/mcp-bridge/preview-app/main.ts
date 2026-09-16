@@ -185,7 +185,7 @@ function renderPanel(): void {
     `<form class="act" data-act="request-changes"><label for="oods-request-changes">Request changes to v${record.version}</label><textarea id="oods-request-changes" name="text" rows="2" required></textarea><button type="submit">Send to the conversation</button> ${actStatus('request-changes')}</form>`,
     '</details>',
     `<details open data-oods-edit-panel="true"><summary>Edit</summary><div class="edit" data-oods-edit="true">${renderEditControls(record)}</div><p class="note">${actStatus('edit')}</p></details>`,
-    `<details open data-oods-measurements-panel="true"><summary>Measurements</summary>${renderMeasurementPanel(record)}<p class="note">axe-core runs in the browser preview page; this view shows the results the version has stored.</p></details>`,
+    `<details open data-oods-measurements-panel="true"><summary>Measurements</summary>${renderMeasurementPanel(record)}<p class="note" data-oods-axe-scope="stored-document-run">Every axe-core result above was measured by the browser preview page, which runs the engine over the whole generated page as its own document, and stored on this version; this view shows those stored results and re-runs nothing. Here the design is mounted beside this app's own chrome in one document, so neither scope would measure it honestly: a run scoped to the mounted design cannot evaluate the nine document-level rules — including <code>landmark-one-main</code>, <code>page-has-heading-one</code> and <code>region</code>, the three the generated shell exists to satisfy — and a run over this whole document would report this app's chrome as the design's findings.</p></details>`,
   ].join('');
 }
 

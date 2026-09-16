@@ -87,7 +87,7 @@ Interaction: `interactive`.
 
 Expectation `render`: mount → a Namespace select with billing selected and a Preference Document textarea holding the document text.
 
-- title is a real h3 heading
+- title is a real h2 heading
 - namespace select lists the namespaces
 - document textarea shows the text
 - controls are unwired

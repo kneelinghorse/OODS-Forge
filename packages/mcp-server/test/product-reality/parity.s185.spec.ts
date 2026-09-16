@@ -125,14 +125,14 @@ describe('Sprint 185 computed React/Vue SSR parity', () => {
       expect(react.visibleText).toContain('Pro plan');
       expect(react.visibleText).toContain('Renews monthly');
     } else if (component === 'CardHeader') {
-      expect(react.headings).toEqual([{ level: 'h3', text: 'Account summary' }]);
+      expect(react.headings).toEqual([{ level: 'h2', text: 'Account summary' }]);
       expect(react.visibleText).toContain('Current subscription');
     } else if (component === 'ColorSwatch') {
       expect(react.visibleText).toContain('Ocean blue');
     } else if (component === 'ColorizedBadge') {
       expect(react.visibleText).toContain('Approved');
     } else if (component === 'ClassificationPanel') {
-      expect(react.headings).toEqual([{ level: 'h3', text: 'Classification' }]);
+      expect(react.headings).toEqual([{ level: 'h2', text: 'Classification' }]);
       expect(react.visibleText).toContain('Taxonomy and tags');
       expect(react.visibleText).toContain('Electronics > Mobile > Android');
     } else if (component === 'FilterPanel') {
@@ -144,7 +144,7 @@ describe('Sprint 185 computed React/Vue SSR parity', () => {
         MembershipPanel: ['Membership', 'Roles and permissions', 'Owner of 2 workspaces'],
         PreferencePanel: ['Preferences', 'Namespace: notifications', 'No preferences saved'],
       }[component];
-      expect(react.headings).toEqual([{ level: 'h3', text: expected[0] }]);
+      expect(react.headings).toEqual([{ level: 'h2', text: expected[0] }]);
       for (const text of expected.slice(1)) expect(react.visibleText).toContain(text);
     } else if (component === 'AddressSummaryBadge' || component === 'MessageStatusBadge' || component === 'PreferenceSummaryBadge') {
       expect(react.headings).toEqual([]);
@@ -162,7 +162,7 @@ describe('Sprint 185 computed React/Vue SSR parity', () => {
         MessageEventTimeline: ['Delivery', ['delivered', '2026-09-02T09:00:00Z']],
         PreferenceTimeline: ['Preference changes', ['notifications.email', '2026-09-03T08:00:00Z', 'Enabled']],
       }[component] as [string, string[]];
-      expect(react.headings).toEqual([{ level: 'h3', text: expected[0] }]);
+      expect(react.headings).toEqual([{ level: 'h2', text: expected[0] }]);
       for (const text of expected[1]) expect(react.visibleText).toContain(text);
     } else if (component === 'AuditEvent') {
       expect(react.headings).toEqual([]);
@@ -173,7 +173,7 @@ describe('Sprint 185 computed React/Vue SSR parity', () => {
         PreferenceEditor: ['Preferences', ['Namespace', 'notifications', 'billing', 'Preference Document', '{"email":true}']],
         RoleAssignmentForm: ['Assign role', ['Role', 'Owner', 'viewer', 'Assignee']],
       }[component] as [string, string[]];
-      expect(react.headings).toEqual([{ level: 'h3', text: expected[0] }]);
+      expect(react.headings).toEqual([{ level: 'h2', text: expected[0] }]);
       for (const text of expected[1]) expect(react.visibleText).toContain(text);
     } else if (component === 'StatusSelector' || component === 'TagInput' || component === 'TemplatePicker') {
       // Legends and labels are visible text, never headings.
@@ -185,7 +185,7 @@ describe('Sprint 185 computed React/Vue SSR parity', () => {
       expect(react.headings).toEqual([]);
       for (const text of expected) expect(react.visibleText).toContain(text);
     } else if (component === 'TagManager') {
-      expect(react.headings).toEqual([{ level: 'h3', text: 'Tags' }]);
+      expect(react.headings).toEqual([{ level: 'h2', text: 'Tags' }]);
       for (const text of ['alpha', 'beta', 'Add Tag']) expect(react.visibleText).toContain(text);
     } else if (component === 'LabelCell' || component === 'InlineLabel' || component === 'FormLabelGroup' || component === 'ClassificationBadge' || component === 'ClassificationEditor') {
       expect(react.markers).toContain(component);
@@ -194,7 +194,7 @@ describe('Sprint 185 computed React/Vue SSR parity', () => {
     } else if (['ArchiveSummary', 'ArchivePill', 'CancellationBadge', 'CancellationForm', 'PriceCardMeta'].includes(component)) {
       expect(react.markers).toContain(component);
     } else if (component === 'PriceSummary') {
-      expect(react.headings).toEqual([{ level: 'h3', text: 'Price Summary' }]);
+      expect(react.headings).toEqual([{ level: 'h2', text: 'Price Summary' }]);
       for (const text of ['Amount', '129900', 'Currency', 'USD', 'Model', 'recurring', 'Interval', 'month']) expect(react.visibleText).toContain(text);
     } else {
       expect(react.placeholderText).toBe(omitSlot ? 'Area preview (640 x 360)' : null);
@@ -215,7 +215,7 @@ describe('Sprint 185 computed React/Vue SSR parity', () => {
   it.each(['DetailHeader', 'CardHeader'] as const)('preserves scalar whitespace separators in %s headings', async (component) => {
     const { react, vue } = await renderPair(component, {}, ['Alpha', ' ', 'Beta'], ['Alpha', ' ', 'Beta']);
     expect(differences(react, vue), JSON.stringify({ react, vue })).toEqual([]);
-    expect(react.headings).toEqual([{ level: component === 'DetailHeader' ? 'h2' : 'h3', text: 'Alpha Beta' }]);
+    expect(react.headings).toEqual([{ level: 'h2', text: 'Alpha Beta' }]);
   });
 
   it.each(['DetailHeader', 'CardHeader', 'VizAreaPreview'] as const)(

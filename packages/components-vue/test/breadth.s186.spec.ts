@@ -20,26 +20,26 @@ describe('Sprint 186 Vue wave-2 components', () => {
       expect(wrapper.attributes('id')).toBe('panel');
       expect(wrapper.classes()).toContain('consumer');
       expect(wrapper.attributes('data-panel-type')).toBe('classification');
-      expect(wrapper.get('[data-panel-header] > h3').text()).toBe('Classification');
+      expect(wrapper.get('[data-panel-header] > h2').text()).toBe('Classification');
       expect(wrapper.find('[data-panel-subtitle]').exists()).toBe(false);
       expect(wrapper.get('[data-panel-content]').element.childNodes).toHaveLength(0);
       await wrapper.setProps({ name: 'By name', metadata: 'Meta', emptyMessage: 'Empty' });
-      expect(wrapper.get('h3').text()).toBe('By name');
+      expect(wrapper.get('h2').text()).toBe('By name');
       expect(wrapper.get('[data-panel-subtitle]').text()).toBe('Meta');
       expect(wrapper.get('[data-panel-content] > [data-panel-summary]').text()).toBe('Empty');
       await wrapper.setProps({ heading: 'By heading', description: 'Description', body: 'Body' });
-      expect(wrapper.get('h3').text()).toBe('By heading');
+      expect(wrapper.get('h2').text()).toBe('By heading');
       expect(wrapper.get('[data-panel-subtitle]').text()).toBe('Description');
       expect(wrapper.get('[data-panel-summary]').text()).toBe('Body');
       await wrapper.setProps({ label: 'By label', subtitle: 'Subtitle', text: 'Text' });
-      expect(wrapper.get('h3').text()).toBe('By label');
+      expect(wrapper.get('h2').text()).toBe('By label');
       expect(wrapper.get('[data-panel-subtitle]').text()).toBe('Subtitle');
       expect(wrapper.get('[data-panel-summary]').text()).toBe('Text');
       await wrapper.setProps({ title: 'By title', summary: 'Summary' });
-      expect(wrapper.get('h3').text()).toBe('By title');
+      expect(wrapper.get('h2').text()).toBe('By title');
       expect(wrapper.get('[data-panel-summary]').text()).toBe('Summary');
       await wrapper.setProps({ title: ' ' });
-      expect(wrapper.get('h3').text()).toBe('By label');
+      expect(wrapper.get('h2').text()).toBe('By label');
       for (const attribute of ['title', 'label', 'heading', 'name']) expect(wrapper.attributes(attribute)).toBeUndefined();
     } finally { wrapper.unmount(); }
   });
@@ -124,10 +124,10 @@ describe('Sprint 186 Vue wave-2 components', () => {
         expect(wrapper.attributes('id')).toBe('panel');
         expect(wrapper.attributes('data-oods-component')).toBe(name);
         expect(wrapper.attributes('data-panel-type')).toBe(panelType);
-        expect(wrapper.get('[data-panel-header] > h3').text()).toBe(defaultTitle);
+        expect(wrapper.get('[data-panel-header] > h2').text()).toBe(defaultTitle);
         expect(wrapper.get('[data-panel-content]').element.childNodes).toHaveLength(0);
         await wrapper.setProps({ name: 'By name', metadata: 'Meta', emptyMessage: 'Empty' });
-        expect(wrapper.get('h3').text()).toBe('By name');
+        expect(wrapper.get('h2').text()).toBe('By name');
         expect(wrapper.get('[data-panel-subtitle]').text()).toBe('Meta');
         expect(wrapper.get('[data-panel-summary]').text()).toBe('Empty');
         for (const attribute of ['name', 'metadata', 'emptyMessage']) expect(wrapper.attributes(attribute)).toBeUndefined();
@@ -146,7 +146,7 @@ describe('Sprint 186 Vue wave-2 components', () => {
       expect(wrapper.element.tagName).toBe('FORM');
       expect(wrapper.attributes('id')).toBe('tags');
       expect(wrapper.attributes('data-form-type')).toBe('tag-manager');
-      expect(wrapper.get('[data-form-header] > h3').text()).toBe('Tag Manager');
+      expect(wrapper.get('[data-form-header] > h2').text()).toBe('Tag Manager');
       expect(wrapper.find('[data-form-subtitle]').exists()).toBe(false);
       expect(wrapper.findAll('[data-tag-item]')).toHaveLength(0);
       const input = wrapper.get('input[name="newTag"]');
@@ -157,11 +157,11 @@ describe('Sprint 186 Vue wave-2 components', () => {
       expect(submit.defaultPrevented).toBe(true);
       expect((input.element as HTMLInputElement).value).toBe('gamma');
       await wrapper.setProps({ heading: 'By heading', hint: 'Hint', tags: ['alpha', { label: 'beta' }, { name: 'gamma' }, { role: 'delta' }, { value: 'epsilon' }, { id: 'zeta' }, 7, true, null, undefined, { other: 'ignored' }, ''] });
-      expect(wrapper.get('h3').text()).toBe('By heading');
+      expect(wrapper.get('h2').text()).toBe('By heading');
       expect(wrapper.get('[data-form-subtitle]').text()).toBe('Hint');
       expect(wrapper.findAll('[data-tag-item]').map((item) => item.text())).toEqual(['alpha', 'beta', 'gamma', 'delta', 'epsilon', 'zeta', '7', 'true']);
       await wrapper.setProps({ label: 'By label', description: 'Description', tags: undefined, value: ['from value'] });
-      expect(wrapper.get('h3').text()).toBe('By label');
+      expect(wrapper.get('h2').text()).toBe('By label');
       expect(wrapper.get('[data-form-subtitle]').text()).toBe('Description');
       expect(wrapper.findAll('[data-tag-item]').map((item) => item.text())).toEqual(['from value']);
       for (const attribute of ['tags', 'value', 'label', 'heading', 'hint']) expect(wrapper.attributes(attribute)).toBeUndefined();
@@ -258,12 +258,12 @@ describe('Sprint 186 Vue wave-2 components', () => {
       expect(wrapper.attributes('role')).toBe('log');
       expect(wrapper.attributes('id')).toBe('log');
       expect(wrapper.attributes('data-timeline-type')).toBe('message');
-      expect(wrapper.get('h3[data-timeline-title]').text()).toBe('Message Timeline');
+      expect(wrapper.get('h2[data-timeline-title]').text()).toBe('Message Timeline');
       // messages precede statuses in the renderer's event keys, so statuses are ignored here.
       expect(labels()).toEqual(['Welcome email']);
       expect(wrapper.get('time[data-timeline-time]').attributes('datetime')).toBe('2026-09-01T09:00:00Z');
       await wrapper.setProps({ name: 'By name', heading: 'By heading', messages: undefined, statuses: [{ state: 'queued', updatedAt: '2026-09-01T10:00:00Z', from: 'a', to: 'b' }, 7, null, 'plain'] });
-      expect(wrapper.get('h3').text()).toBe('By heading');
+      expect(wrapper.get('h2').text()).toBe('By heading');
       expect(labels()).toEqual(['queued', '7', 'plain']);
       expect(wrapper.get('[data-timeline-detail]').text()).toBe('a');
       await wrapper.setProps({ statuses: [] });
@@ -278,13 +278,13 @@ describe('Sprint 186 Vue wave-2 components', () => {
     const membership = mount(MembershipAuditTimeline, { props: { history: [{ name: 'Joined workspace', createdAt: '2026-08-01T00:00:00Z', reason: 'Invited' }] } });
     try {
       expect(membership.attributes('data-timeline-type')).toBe('membership');
-      expect(membership.get('h3').text()).toBe('Membership Timeline');
+      expect(membership.get('h2').text()).toBe('Membership Timeline');
       expect(membership.get('[data-timeline-label]').text()).toBe('Joined workspace');
       expect(membership.get('[data-timeline-detail]').text()).toBe('Invited');
     } finally { membership.unmount(); }
     const address = mount(AddressValidationTimeline, { props: { validations: [] } });
     try {
-      expect(address.get('h3').text()).toBe('Address Validation Timeline');
+      expect(address.get('h2').text()).toBe('Address Validation Timeline');
       expect(address.get('[data-timeline-empty]').text()).toBe('No events');
     } finally { address.unmount(); }
   });
@@ -320,7 +320,7 @@ describe('Sprint 186 Vue wave-2 components', () => {
       expect(wrapper.attributes('id')).toBe('summary');
       expect(wrapper.attributes('lang')).toBe('en');
       expect(wrapper.attributes('data-summary-type')).toBe('price');
-      expect(wrapper.get('h3[data-summary-title]').text()).toBe('Price Summary');
+      expect(wrapper.get('h2[data-summary-title]').text()).toBe('Price Summary');
       expect(wrapper.get('dl').element.childNodes).toHaveLength(0);
       await wrapper.setProps({ unitAmountCents: 0, currencyCode: 'eur', pricingModel: 'tiered', billingInterval: 'year' });
       expect(items()).toEqual([['Amount', '0'], ['Currency', 'eur'], ['Model', 'tiered'], ['Interval', 'year']]);
@@ -330,7 +330,7 @@ describe('Sprint 186 Vue wave-2 components', () => {
       expect(items()[0]).toEqual(['Amount', '29.00']);
       expect(items()[1]).toEqual(['Currency', 'usd']);
       await wrapper.setProps({ label: 'Plan pricing', heading: 'Ignored' });
-      expect(wrapper.get('h3').text()).toBe('Plan pricing');
+      expect(wrapper.get('h2').text()).toBe('Plan pricing');
       for (const attribute of ['label', 'heading', 'amount', 'currency', 'model', 'interval']) expect(wrapper.attributes(attribute)).toBeUndefined();
     } finally { wrapper.unmount(); }
     const fallback = mount(PriceSummary, { props: { text: 'No price recorded' } });
@@ -389,7 +389,7 @@ describe('Sprint 186 Vue wave-2 components', () => {
 
   it('AddressEditor resolves street/region/postal aliases in renderer order and emits the whole record from any input', async () => {
     const wrapper = mount(AddressEditor, { props: { line1: 'L1', state: 'CA', zip: '90210' } });
-    expect(wrapper.get('[data-form-header] > h3').text()).toBe('Address Editor');
+    expect(wrapper.get('[data-form-header] > h2').text()).toBe('Address Editor');
     expect((wrapper.get('input[name="street"]').element as HTMLInputElement).value).toBe('L1');
     expect((wrapper.get('input[name="region"]').element as HTMLInputElement).value).toBe('CA');
     expect((wrapper.get('input[name="postalCode"]').element as HTMLInputElement).value).toBe('90210');
@@ -399,13 +399,13 @@ describe('Sprint 186 Vue wave-2 components', () => {
 
   it('PreferenceEditor, RoleAssignmentForm and TemplatePicker default their titles and options and let the slot replace the body', async () => {
     const preference = mount(PreferenceEditor);
-    expect(preference.get('[data-form-header] > h3').text()).toBe('Preference Editor');
+    expect(preference.get('[data-form-header] > h2').text()).toBe('Preference Editor');
     expect([...(preference.get('select[name="namespace"]').element as HTMLSelectElement).options].map((option) => option.value)).toEqual(['default']);
     expect((preference.get('textarea').element as HTMLTextAreaElement).value).toBe('');
     await preference.setProps({ json: '{"a":1}', namespaces: ['x'] });
     expect((preference.get('textarea').element as HTMLTextAreaElement).value).toBe('{"a":1}');
     const role = mount(RoleAssignmentForm);
-    expect(role.get('[data-form-header] > h3').text()).toBe('Role Assignment');
+    expect(role.get('[data-form-header] > h2').text()).toBe('Role Assignment');
     expect([...(role.get('select[name="role"]').element as HTMLSelectElement).options].map((option) => option.textContent)).toEqual(['Select...']);
     await role.setProps({ roles: ['admin'], availableRoles: ['viewer'], defaultRoleId: 'admin', member: 'm@example.test' });
     expect([...(role.get('select[name="role"]').element as HTMLSelectElement).options].map((option) => option.value)).toEqual(['admin']);

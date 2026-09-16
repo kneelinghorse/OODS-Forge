@@ -88,7 +88,7 @@ DetailHeader.displayName = 'OODS.DetailHeader';
 
 export const CardHeader = React.forwardRef<HTMLElement, CardHeaderProps>(
   ({ title, label, text, supporting, supportingText, subtitle, description, level, as, children, className, ...rest }, ref) => {
-    const Heading = headingElement(as, level, 3);
+    const Heading = headingElement(as, level, 2);
     const content = childContent(children);
     const heading = content.scalar ?? firstText(title, label, text) ?? 'Card';
     const supportingLabel = firstText(supporting, supportingText, subtitle, description);
@@ -234,7 +234,7 @@ function createPanelSection(component: string, className: string, panelType: str
           {...rest}
         >
           <header data-panel-header="true">
-            <h3>{resolvedTitle}</h3>
+            <h2>{resolvedTitle}</h2>
             {resolvedSubtitle ? <span data-panel-subtitle="true">{resolvedSubtitle}</span> : null}
           </header>
           <div data-panel-content="true">
@@ -316,7 +316,7 @@ export const PriceSummary = React.forwardRef<HTMLElement, PriceSummaryProps>(
         data-summary-type="price"
         {...rest}
       >
-        <h3 data-summary-title="true">{resolvedTitle}</h3>
+        <h2 data-summary-title="true">{resolvedTitle}</h2>
         {authored
           ? children
           : terms.length > 0
@@ -374,7 +374,7 @@ export const TagManager = React.forwardRef<HTMLFormElement, TagManagerProps>(
         {...rest}
       >
         <header data-form-header="true">
-          <h3>{resolvedTitle}</h3>
+          <h2>{resolvedTitle}</h2>
           {resolvedSubtitle ? <span data-form-subtitle="true">{resolvedSubtitle}</span> : null}
         </header>
         <div data-form-content="true">
@@ -586,7 +586,7 @@ function createTimelineFamily<Props extends object>(options: TimelineFamilyOptio
         aria-label={title}
         {...(domRest as React.HTMLAttributes<HTMLDivElement>)}
       >
-        <h3 data-timeline-title="true">{title}</h3>
+        <h2 data-timeline-title="true">{title}</h2>
         <ol data-timeline-events="true">
           {authored
             ? children
@@ -690,7 +690,7 @@ const preventSubmit = (event: React.FormEvent<HTMLFormElement>): void => { event
 
 const formHeader = (title: string, subtitle: string | undefined): React.ReactNode => (
   <header data-form-header="true">
-    <h3>{title}</h3>
+    <h2>{title}</h2>
     {subtitle ? <span data-form-subtitle="true">{subtitle}</span> : null}
   </header>
 );
@@ -1022,7 +1022,7 @@ export const OwnershipSummary = React.forwardRef<HTMLElement, OwnershipSummaryPr
     const terms = ([['Owner ID', firstScalar(ownerId, owner_id)], ['Owner Type', firstScalar(ownerType, owner_type)], ['Role', firstScalar(role, ownershipRole)]] as Array<[string, string | undefined]>).filter((entry): entry is [string, string] => entry[1] !== undefined);
     const fallback = firstText(summary, text, description);
     return <section ref={ref} className={classes('oods-ownership-summary', className)} data-oods-component="OwnershipSummary" data-summary-type="ownership" {...rest}>
-      <h3 data-summary-title="true">{firstText(title, label, heading, name) ?? 'Ownership Summary'}</h3>
+      <h2 data-summary-title="true">{firstText(title, label, heading, name) ?? 'Ownership Summary'}</h2>
       {content.authored || content.scalar !== undefined ? children : terms.length
         ? <dl>{terms.map(([term, value]) => <div key={term} data-summary-item="true"><dt>{term}</dt><dd>{value}</dd></div>)}</dl>
         : fallback ? <p data-summary-fallback="true">{fallback}</p> : <dl />}
@@ -1038,7 +1038,7 @@ export const TagSummary = React.forwardRef<HTMLElement, TagSummaryProps>(
     const terms = ([['Tag Count', firstScalar(tagCount, count)], ['Tags', tagText]] as Array<[string, string | undefined]>).filter((entry): entry is [string, string] => entry[1] !== undefined);
     const fallback = firstText(summary, text, description);
     return <section ref={ref} className={classes('oods-tags-summary', className)} data-oods-component="TagSummary" data-summary-type="tags" {...rest}>
-      <h3 data-summary-title="true">{firstText(title, label, heading, name) ?? 'Tag Summary'}</h3>
+      <h2 data-summary-title="true">{firstText(title, label, heading, name) ?? 'Tag Summary'}</h2>
       {content.authored || content.scalar !== undefined ? children : terms.length
         ? <dl>{terms.map(([term, value]) => <div key={term} data-summary-item="true"><dt>{term}</dt><dd>{value}</dd></div>)}</dl>
         : fallback ? <p data-summary-fallback="true">{fallback}</p> : <dl />}
@@ -1078,7 +1078,7 @@ export const ArchiveSummary = React.forwardRef<HTMLElement, ArchiveSummaryProps>
     const terms = ([['Archived', summaryValue(isArchived ?? archived ?? status)], ['Archived At', archivedAt ? formatDateTime(archivedAt) : undefined], ['Reason', firstText(reason, archiveReason)]] as Array<[string, string | undefined]>).filter((entry): entry is [string, string] => entry[1] !== undefined);
     const fallback = firstText(summary, text, description);
     return <section ref={ref} className={classes('oods-archive-summary', className)} data-oods-component="ArchiveSummary" data-summary-type="archive" {...rest}>
-      <h3 data-summary-title="true">{firstText(title, label, heading, name) ?? 'Archive Summary'}</h3>
+      <h2 data-summary-title="true">{firstText(title, label, heading, name) ?? 'Archive Summary'}</h2>
       {content.authored || content.scalar !== undefined ? children : terms.length
         ? <dl>{terms.map(([term, value]) => <div key={term} data-summary-item="true"><dt>{term}</dt><dd>{value}</dd></div>)}</dl>
         : fallback ? <p data-summary-fallback="true">{fallback}</p> : <dl />}

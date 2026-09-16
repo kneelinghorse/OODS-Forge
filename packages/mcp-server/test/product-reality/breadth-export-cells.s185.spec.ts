@@ -48,7 +48,7 @@ describe('Sprint 185 built package export cells', () => {
     if (component === 'DetailHeader') {
       expect(root!.querySelector('h1')?.textContent).toBe('Subscription details');
     } else if (component === 'CardHeader') {
-      expect(root!.querySelector('h3')?.textContent).toBe('Account summary');
+      expect(root!.querySelector('h2')?.textContent).toBe('Account summary');
     } else if (component === 'ColorSwatch') {
       expect(root!.getAttribute('data-swatch-color')).toBe('#2563eb');
       expect(root!.textContent).toContain('Ocean blue');

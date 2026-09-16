@@ -26,7 +26,7 @@ function summary(id: VizSummaryId) {
       const rows = vizSummaryRows(id, props.value ?? {}, props.channel);
       if (id === 'VizEncodingBadge' || id === 'VizRoleBadge') return h('span', { id: props.id, 'data-oods-component': id }, [h(Badge, { content: rows.map(([label, text]) => `${label}: ${text}`).join(' · ') })]);
       const title = props.title ?? id.replace(/^Viz/, '').replace(/Summary$/, '') + ' summary';
-      return h('section', { id: props.id, class: 'oods-trait-recipe', 'data-oods-component': id, 'aria-label': title }, [h('h3', title), h('dl', rows.map(([label, text]) => h('div', { key: label }, [h('dt', label), h('dd', [h(Text, { content: text })])])))]);
+      return h('section', { id: props.id, class: 'oods-trait-recipe', 'data-oods-component': id, 'aria-label': title }, [h('h2', title), h('dl', rows.map(([label, text]) => h('div', { key: label }, [h('dt', label), h('dd', [h(Text, { content: text })])])))]);
     };
   } });
 }

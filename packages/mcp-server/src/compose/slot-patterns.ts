@@ -150,7 +150,7 @@ export function fieldGroupPattern(
       {
         id: uid('fg-heading'),
         component: 'Text',
-        props: { as: 'h3' },
+        props: { as: 'h2' },
         meta: { label: groupLabel },
       },
       ...fieldPairs.map(fp => fp.element),

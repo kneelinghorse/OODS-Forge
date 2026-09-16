@@ -85,9 +85,9 @@ Source: [packages/component-contracts/src/scenarios.ts](../../packages/component
 
 Interaction: `none`. PreferencePanel presents content and owns no focusable control or action; authored child actions remain the consumer's responsibility.
 
-Expectation `render`: mount without authored children → h3 heading from the label alias, visible metadata subtitle and the empty message inside the content area.
+Expectation `render`: mount without authored children → h2 heading from the label alias, visible metadata subtitle and the empty message inside the content area.
 
-- title is a real h3 heading
+- title is a real h2 heading
 - data-panel-type is preference
 - summary text is visible
 - panel is noninteractive

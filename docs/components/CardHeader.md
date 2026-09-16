@@ -84,9 +84,9 @@ Source: [packages/component-contracts/src/scenarios.ts](../../packages/component
 
 Interaction: `none`. CardHeader presents content and owns no focusable control or action; authored child actions remain the consumer's responsibility.
 
-Expectation `render`: mount → h3 heading and visible supporting text.
+Expectation `render`: mount → h2 heading and visible supporting text.
 
-- title is a real h3 heading
+- title is a real h2 heading
 - supporting text is visible
 
 | Trigger | Target | Input | Expected effect |

@@ -5,7 +5,7 @@ export interface CycleProgressCardProps extends BillingCycleValues { id?: string
 export function CycleProgressCard({ id, title = 'Billing cycle', ...values }: CycleProgressCardProps) {
   const cycle = billingCycle(values);
   return <section id={id} className="oods-billing-cycle" data-oods-component="CycleProgressCard" aria-label={title}>
-    <h3>{title}</h3><p>{cycle.announcement}</p>
+    <h2>{title}</h2><p>{cycle.announcement}</p>
     {cycle.percent !== undefined && <progress max={100} value={cycle.percent} aria-label={cycle.announcement} />}
     {values.interval && <p className="oods-billing-muted">{values.interval}</p>}
   </section>;
@@ -15,7 +15,7 @@ export interface PaymentTimelineProps extends BillingPaymentValues { id?: string
 function BillingTimeline({ id, title, component, includeMethod, ...values }: PaymentTimelineProps & { component: string; includeMethod: boolean }) {
   const heading = title ?? (includeMethod ? 'Payments' : 'Payment events');
   return <section id={id} className="oods-payment-timeline" data-oods-component={component} role="log" aria-label={heading}>
-    <h3>{heading}</h3><p>{billingPaymentSummary(values)}</p>
+    <h2>{heading}</h2><p>{billingPaymentSummary(values)}</p>
     {includeMethod && <p className="oods-billing-muted">{`Payment method: ${values.paymentMethod ?? 'Not provided'}`}</p>}
     <ol>{billingPaymentRows(values).map((row) => <li key={row.kind} data-payment-kind={row.kind}><strong>{row.label}</strong>{row.at ? <time dateTime={row.at}>{row.text}</time> : <span>{row.text}</span>}</li>)}</ol>
   </section>;

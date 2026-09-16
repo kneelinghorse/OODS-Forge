@@ -1279,7 +1279,7 @@ Additional properties: `false`.
 
 ### `map`
 
-Grouped mapping-registry tool. Set `action` to one of apply|create|list|resolve|update|delete to select the operation; the remaining fields match that action's contract. Consolidates the former map.* tools with identical per-action behavior. Records and resolves mappings for external consumers; no composer or generator consumes them. preferred_terms and disambiguation_decisions are preserved and surfaced, not consumed by resolution.
+Run one mapping-registry operation. Set `action` to one of apply|create|list|resolve|update|delete to select the operation; the remaining fields match that action's contract. Consolidates the former map.* tools with identical per-action behavior. Records and resolves mappings for external consumers; no composer or generator consumes them. preferred_terms and disambiguation_decisions are preserved and surfaced, not consumed by resolution.
 
 [Complete input/output reference](../api/map.md). The tables below follow the actual dispatch schema paths; those paths control when the legacy API page selects a different schema.
 
@@ -1524,7 +1524,7 @@ Additional properties: `false`.
 
 ### `schema`
 
-Grouped schema-store tool. Set `action` to one of save|load|list|delete. Consolidates the former schema.* tools with identical per-action behavior. Use action=save to persist a composed UiSchema beyond the 30-minute schemaRef TTL. Saved schemas expose monotonic versions and schemaRef identity, not ETags or conditional requests.
+Run one schema-store operation. Set `action` to one of save|load|list|delete. Consolidates the former schema.* tools with identical per-action behavior. Use action=save to persist a composed UiSchema beyond the 30-minute schemaRef TTL. Saved schemas expose monotonic versions and schemaRef identity, not ETags or conditional requests.
 
 [Complete input/output reference](../api/schema.md). The tables below follow the actual dispatch schema paths; those paths control when the legacy API page selects a different schema.
 
@@ -1681,7 +1681,7 @@ Additional properties: `false`.
 
 ### `object`
 
-Grouped object-registry tool. Set `action` to list (filter OODS objects) or show (full object definition incl. composed traits and view extensions). Consolidates the former object.* tools with identical per-action behavior.
+Run one object-registry operation. Set `action` to list (filter OODS objects) or show (full object definition incl. composed traits and view extensions). Consolidates the former object.* tools with identical per-action behavior.
 
 [Complete input/output reference](../api/object.md). The tables below follow the actual dispatch schema paths; those paths control when the legacy API page selects a different schema.
 
@@ -1774,7 +1774,7 @@ Additional properties: `false`.
 
 ### `repl`
 
-Grouped Design Lab REPL tool. Set `action` to validate (check a UiSchema/patch against the DSL+registry) or render (produce HTML/CSS preview; apply=true to emit). Consolidates the former repl.* tools with identical per-action behavior. BRAND (s169 m04): pass brand:'A'|'B' to render a specific brand's palette; omit it for the previous behaviour, byte-identical. On dashboard.render the brand drives both the tokens inlined into the output.html export and the palette output.contrastScan grades, so what is painted and what is checked are always the same brand. Fragment output diagnoses ignored brand/output.tokenOverlay/output.skinOverlay with OODS-W001. Non-strict fragments expose OODS-W002 when OODS-V006 is reclassified per node. Document output applies scope options. validate.apply is an ignored bridge-parity key. Fragment depth and request-level dslVersion are not supported. output.payloadMode file writes the rendered document as index.html (or fragments.json and css.json) beside the saved-schema store (<store>/../payloads/repl.render-<digest>/) and returns a payload block of file references instead of html, fragments and css; a directory that cannot be written is OODS-S020.
+Run one Design Lab REPL operation. Set `action` to validate (check a UiSchema/patch against the DSL+registry) or render (produce HTML/CSS preview; apply=true to emit). Consolidates the former repl.* tools with identical per-action behavior. BRAND (s169 m04): pass brand:'A'|'B' to render a specific brand's palette; omit it for the previous behaviour, byte-identical. On dashboard.render the brand drives both the tokens inlined into the output.html export and the palette output.contrastScan grades, so what is painted and what is checked are always the same brand. Fragment output diagnoses ignored brand/output.tokenOverlay/output.skinOverlay with OODS-W001. Non-strict fragments expose OODS-W002 when OODS-V006 is reclassified per node. Document output applies scope options. validate.apply is an ignored bridge-parity key. Fragment depth and request-level dslVersion are not supported. output.payloadMode file writes the rendered document as index.html (or fragments.json and css.json) beside the saved-schema store (<store>/../payloads/repl.render-<digest>/) and returns a payload block of file references instead of html, fragments and css; a directory that cannot be written is OODS-S020.
 
 [Complete input/output reference](../api/repl.md). The tables below follow the actual dispatch schema paths; those paths control when the legacy API page selects a different schema.
 

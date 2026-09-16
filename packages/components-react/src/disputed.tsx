@@ -7,7 +7,7 @@ export interface AuditSummaryCardProps extends AuditSummaryValues { id?: string;
 export function AuditSummaryCard({ id, title = 'Audit summary', showTransitionCount = true, showLastTransitionTime = true, showLastActor = true, ...values }: AuditSummaryCardProps) {
   const summary = auditSummary(values);
   return <section id={id} className="oods-audit-summary" data-oods-component="AuditSummaryCard" aria-label={title}>
-    <h3>{title}</h3><dl>
+    <h2>{title}</h2><dl>
       {showTransitionCount && <><dt>Transitions</dt><dd>{summary.count}</dd></>}
       {showLastActor && <><dt>Last actor</dt><dd>{summary.actor}</dd></>}
       {showLastTransitionTime && <><dt>Last transition</dt><dd>{summary.at ? <time dateTime={summary.at}>{summary.timestamp}</time> : summary.timestamp}</dd></>}

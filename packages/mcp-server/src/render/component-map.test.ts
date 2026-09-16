@@ -400,7 +400,7 @@ describe('component map coverage', () => {
 
     expect(html.startsWith('<header')).toBe(true);
     expect(html).toContain('<h5>Slot Title</h5>');
-    expect(html).not.toContain('<h3>Ignored</h3>');
+    expect(html).not.toContain('<h2>Ignored</h2>');
   });
 
   it('renders DetailHeader with semantic heading, subtitle, and metadata', () => {
@@ -538,7 +538,7 @@ describe('component map coverage', () => {
     expect(html).toContain(`data-oods-component="${component}"`);
     expect(html).toContain(`data-panel-type="${panelType}"`);
     expect(html).toContain('<header data-panel-header="true">');
-    expect(html).toContain(`<h3>${expectedTitle}</h3>`);
+    expect(html).toContain(`<h2>${expectedTitle}</h2>`);
     expect(html).toContain('<div data-panel-content="true">');
     expect(html).toContain(expectedDataProp);
     if (expectedSummary) {

@@ -322,7 +322,7 @@ const TimelinePrimitive = React.forwardRef<HTMLDivElement, TimelinePrimitiveProp
         data-timeline-type={kind}
         {...rest}
       >
-        <h3 className="oods-timeline__title">{title}</h3>
+        <h2 className="oods-timeline__title">{title}</h2>
         {kind === 'status' && status ? (
           <p className="oods-timeline__current" data-timeline-current="true">
             Current status: {humanize(status)}
@@ -437,7 +437,7 @@ export const CancellationSummary = React.forwardRef<HTMLElement, CancellationSum
         data-cancellation-state={cancelAtPeriodEnd === undefined ? undefined : String(cancelAtPeriodEnd)}
         {...rest}
       >
-        <h3>{title}</h3>
+        <h2>{title}</h2>
         <dl>
           {cancelAtPeriodEnd !== undefined ? (
             <div data-summary-item="true">

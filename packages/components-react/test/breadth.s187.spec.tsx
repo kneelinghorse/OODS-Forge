@@ -42,7 +42,7 @@ describe('Sprint 187 naming and classification semantics', () => {
   });
   it('ClassificationEditor labels native editable controls but prevents unwired submission', () => {
     const root = mountFamily('ClassificationEditor', { name: 'Heading', hint: 'Hint', primaryCategory: 'Category', tags: ['a'], modes: [{ value: 'strict', label: 'Strict' }, { value: 'flexible', label: 'Flexible' }], classificationMode: 'flexible' });
-    expect(root.querySelector('h3')?.textContent).toBe('Heading');
+    expect(root.querySelector('h2')?.textContent).toBe('Heading');
     expect(root.querySelector('[data-form-subtitle]')?.textContent).toBe('Hint');
     const category = root.querySelector<HTMLInputElement>('input[name="category"]')!;
     expect(category.value).toBe('Category');
@@ -78,14 +78,14 @@ describe('Sprint 187 ownership and summary semantics', () => {
   });
   it('OwnershipSummary associates owner data with terms and consumes role as data, not ARIA', () => {
     const root = mountFamily('OwnershipSummary', { name: 'By name', owner_id: 'legacy-id', ownerId: 'current-id', owner_type: 'team', ownerType: 'person', ownershipRole: 'legacy-role', role: 'custodian' });
-    expect(root.querySelector('h3')?.textContent).toBe('By name');
+    expect(root.querySelector('h2')?.textContent).toBe('By name');
     expect(values(root)).toEqual(['current-id', 'person', 'custodian']);
     expect(root.hasAttribute('role')).toBe(false);
     expect(values(mountFamily('OwnershipSummary', { owner_id: 'legacy', owner_type: 'team', ownershipRole: 'steward' }))).toEqual(['legacy', 'team', 'steward']);
     expect(mountFamily('OwnershipSummary', { text: 'Fallback', description: 'Ignored' }).querySelector('[data-summary-fallback]')?.textContent).toBe('Fallback');
     expect(mountFamily('OwnershipSummary').querySelector('dl')?.childNodes).toHaveLength(0);
     const authored = mountFamily('OwnershipSummary', { title: 'Owner', ownerId: 'Hidden' }, 'Authored');
-    expect(authored.querySelector('h3')?.textContent).toBe('Owner');
+    expect(authored.querySelector('h2')?.textContent).toBe('Owner');
     expect(authored.querySelector('dl')).toBeNull();
     expect(authored.textContent).toBe('OwnerAuthored');
   });
@@ -151,7 +151,7 @@ describe('Sprint 187 lifecycle and financial semantics', () => {
   });
   it('CancellationForm initializes and labels native controls, supports local input, and prevents unwired submission', () => {
     const root = mountFamily('CancellationForm', { heading: 'End subscription', hint: 'Only a request', reason: 'Primary', cancellationReason: 'Alias', reasonCode: 'b', allowedReasons: [{ value: 'a', label: 'Alpha' }, { value: 'b', label: 'Beta' }] });
-    expect(root.querySelector('h3')?.textContent).toBe('End subscription');
+    expect(root.querySelector('h2')?.textContent).toBe('End subscription');
     expect(root.querySelector('[data-form-subtitle]')?.textContent).toBe('Only a request');
     const select = root.querySelector<HTMLSelectElement>('select[name="reasonCode"]')!;
     const textarea = root.querySelector<HTMLTextAreaElement>('textarea[name="reason"]')!;

@@ -38,7 +38,7 @@ function summary(id: VizSummaryId) {
     const rows = vizSummaryRows(id, value, channel);
     if (id === 'VizEncodingBadge' || id === 'VizRoleBadge') return <span id={htmlId} data-oods-component={id}><Badge content={rows.map(([label, text]) => `${label}: ${text}`).join(' · ')} /></span>;
     const heading = title ?? id.replace(/^Viz/, '').replace(/Summary$/, '') + ' summary';
-    return <section id={htmlId} className="oods-trait-recipe" data-oods-component={id} aria-label={heading}><h3>{heading}</h3><dl>{rows.map(([label, text]) => <div key={label}><dt>{label}</dt><dd><Text content={text} /></dd></div>)}</dl></section>;
+    return <section id={htmlId} className="oods-trait-recipe" data-oods-component={id} aria-label={heading}><h2>{heading}</h2><dl>{rows.map(([label, text]) => <div key={label}><dt>{label}</dt><dd><Text content={text} /></dd></div>)}</dl></section>;
   };
 }
 

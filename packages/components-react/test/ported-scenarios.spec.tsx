@@ -53,7 +53,7 @@ describe('@oods/components-react ported scenarios', () => {
   it('renders the cancellation field as a named value rather than the literal boolean', () => {
     render(<CancellationSummary label="Cancellation schedule" cancelAtPeriodEnd />);
     const summary = document.querySelector('[data-oods-component="CancellationSummary"]');
-    expect(summary?.querySelector('h3')?.textContent).toBe('Cancellation schedule');
+    expect(summary?.querySelector('h2')?.textContent).toBe('Cancellation schedule');
     expect(summary?.querySelector('dt')?.textContent).toBe('Cancel at period end');
     expect(summary?.querySelector('dd')?.textContent).toBe('Yes');
     expect(summary?.innerHTML).not.toContain('<dd>true</dd>');

@@ -6,7 +6,7 @@ export const CycleProgressCard = defineComponent({
   setup: (props) => () => {
     const cycle = billingCycle(props);
     return h('section', { id: props.id, class: 'oods-billing-cycle', 'data-oods-component': 'CycleProgressCard', 'aria-label': props.title }, [
-      h('h3', props.title), h('p', cycle.announcement), cycle.percent !== undefined ? h('progress', { max: 100, value: cycle.percent, 'aria-label': cycle.announcement }) : null,
+      h('h2', props.title), h('p', cycle.announcement), cycle.percent !== undefined ? h('progress', { max: 100, value: cycle.percent, 'aria-label': cycle.announcement }) : null,
       props.interval ? h('p', { class: 'oods-billing-muted' }, props.interval) : null,
     ]);
   },
@@ -16,7 +16,7 @@ const paymentProps = { id: String, title: String, lastPayment: String, nextPayme
 function renderBillingTimeline(props: BillingPaymentValues & { id?: string; title?: string }, component: string, includeMethod: boolean) {
   const heading = props.title ?? (includeMethod ? 'Payments' : 'Payment events');
   return h('section', { id: props.id, class: 'oods-payment-timeline', 'data-oods-component': component, role: 'log', 'aria-label': heading }, [
-    h('h3', heading), h('p', billingPaymentSummary(props)), includeMethod ? h('p', { class: 'oods-billing-muted' }, `Payment method: ${props.paymentMethod ?? 'Not provided'}`) : null,
+    h('h2', heading), h('p', billingPaymentSummary(props)), includeMethod ? h('p', { class: 'oods-billing-muted' }, `Payment method: ${props.paymentMethod ?? 'Not provided'}`) : null,
     h('ol', billingPaymentRows(props).map((row) => h('li', { key: row.kind, 'data-payment-kind': row.kind }, [h('strong', row.label), row.at ? h('time', { datetime: row.at }, row.text) : h('span', row.text)]))),
   ]);
 }

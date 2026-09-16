@@ -91,7 +91,7 @@ export const CardHeader = defineComponent({
       const supporting = firstText(props.supporting, props.supportingText, props.subtitle, props.description);
       return h('header', { class: 'oods-card-header', 'data-oods-component': 'CardHeader' },
         content.length && scalar === undefined ? content : [
-          h(headingElement(props.as, props.level, 3), title),
+          h(headingElement(props.as, props.level, 2), title),
           supporting ? h('span', { 'data-oods-supporting': 'true' }, supporting) : null,
         ]);
     };
@@ -242,7 +242,7 @@ function createPanelSection(component: string, className: string, panelType: str
           'data-panel-type': panelType,
         }, [
           h('header', { 'data-panel-header': 'true' }, [
-            h('h3', title),
+            h('h2', title),
             subtitle ? h('span', { 'data-panel-subtitle': 'true' }, subtitle) : null,
           ]),
           h('div', { 'data-panel-content': 'true' }, content.length
@@ -325,7 +325,7 @@ export const PriceSummary = defineComponent({
         'data-oods-component': 'PriceSummary',
         'data-summary-type': 'price',
       }, [
-        h('h3', { 'data-summary-title': 'true' }, title),
+        h('h2', { 'data-summary-title': 'true' }, title),
         ...(content.length
           ? content
           : terms.length
@@ -376,7 +376,7 @@ export const TagManager = defineComponent({
         onSubmit: (event: Event) => event.preventDefault(),
       }, [
         h('header', { 'data-form-header': 'true' }, [
-          h('h3', title),
+          h('h2', title),
           subtitle ? h('span', { 'data-form-subtitle': 'true' }, subtitle) : null,
         ]),
         h('div', { 'data-form-content': 'true' }, content.length ? content : [
@@ -569,7 +569,7 @@ function createTimelineFamily(options: TimelineFamilyOptions) {
           role: 'log',
           'aria-label': title,
         }, [
-          h('h3', { 'data-timeline-title': 'true' }, title),
+          h('h2', { 'data-timeline-title': 'true' }, title),
           h('ol', { 'data-timeline-events': 'true' }, content.length
             ? content
             : events.length
@@ -666,7 +666,7 @@ const FORM_SHELL_PROPS = {
 
 function formHeader(title: string, subtitle: string | undefined): VNodeChild {
   return h('header', { 'data-form-header': 'true' }, [
-    h('h3', title),
+    h('h2', title),
     subtitle ? h('span', { 'data-form-subtitle': 'true' }, subtitle) : null,
   ]);
 }
@@ -968,7 +968,7 @@ export const OwnershipSummary = defineComponent({
       const terms = ([['Owner ID', firstScalar(props.ownerId, props.owner_id)], ['Owner Type', firstScalar(props.ownerType, props.owner_type)], ['Role', firstScalar(props.role, props.ownershipRole)]] as Array<[string, string | undefined]>).filter((entry): entry is [string, string] => entry[1] !== undefined);
       const fallback = firstText(props.summary, props.text, props.description);
       return h('section', { class: 'oods-ownership-summary', 'data-oods-component': 'OwnershipSummary', 'data-summary-type': 'ownership' }, [
-        h('h3', { 'data-summary-title': 'true' }, firstText(props.title, props.label, props.heading, props.name) ?? 'Ownership Summary'),
+        h('h2', { 'data-summary-title': 'true' }, firstText(props.title, props.label, props.heading, props.name) ?? 'Ownership Summary'),
         ...(content.length ? content : terms.length
           ? [h('dl', terms.map(([term, value]) => h('div', { key: term, 'data-summary-item': 'true' }, [h('dt', term), h('dd', value)])))]
           : fallback ? [h('p', { 'data-summary-fallback': 'true' }, fallback)] : [h('dl')]),
@@ -986,7 +986,7 @@ export const TagSummary = defineComponent({
       const terms = ([['Tag Count', firstScalar(props.tagCount, props.count)], ['Tags', tagText]] as Array<[string, string | undefined]>).filter((entry): entry is [string, string] => entry[1] !== undefined);
       const fallback = firstText(props.summary, props.text, props.description);
       return h('section', { class: 'oods-tags-summary', 'data-oods-component': 'TagSummary', 'data-summary-type': 'tags' }, [
-        h('h3', { 'data-summary-title': 'true' }, firstText(props.title, props.label, props.heading, props.name) ?? 'Tag Summary'),
+        h('h2', { 'data-summary-title': 'true' }, firstText(props.title, props.label, props.heading, props.name) ?? 'Tag Summary'),
         ...(content.length ? content : terms.length
           ? [h('dl', terms.map(([term, value]) => h('div', { key: term, 'data-summary-item': 'true' }, [h('dt', term), h('dd', value)])))]
           : fallback ? [h('p', { 'data-summary-fallback': 'true' }, fallback)] : [h('dl')]),
@@ -1028,7 +1028,7 @@ export const ArchiveSummary = defineComponent({
       const terms = ([['Archived', summaryValue(props.isArchived ?? props.archived ?? props.status)], ['Archived At', props.archivedAt ? formatDateTime(props.archivedAt) : undefined], ['Reason', firstText(props.reason, props.archiveReason)]] as Array<[string, string | undefined]>).filter((entry): entry is [string, string] => entry[1] !== undefined);
       const fallback = firstText(props.summary, props.text, props.description);
       return h('section', { class: 'oods-archive-summary', 'data-oods-component': 'ArchiveSummary', 'data-summary-type': 'archive' }, [
-        h('h3', { 'data-summary-title': 'true' }, firstText(props.title, props.label, props.heading, props.name) ?? 'Archive Summary'),
+        h('h2', { 'data-summary-title': 'true' }, firstText(props.title, props.label, props.heading, props.name) ?? 'Archive Summary'),
         ...(content.length ? content : terms.length
           ? [h('dl', terms.map(([term, value]) => h('div', { key: term, 'data-summary-item': 'true' }, [h('dt', term), h('dd', value)])))]
           : fallback ? [h('p', { 'data-summary-fallback': 'true' }, fallback)] : [h('dl')]),
