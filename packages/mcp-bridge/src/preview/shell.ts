@@ -1,6 +1,6 @@
 import { renderMeasurementPanel } from './measurements.js';
 import { escapeHtml, scriptJson } from './page.js';
-import type { CompositionVersion, PreviewBrand, PreviewFramework, PreviewTheme, VersionSummary } from './store.js';
+import type { AcceptedSummary, CompositionVersion, PreviewBrand, PreviewFramework, PreviewTheme, VersionSummary } from './store.js';
 
 export interface PreviewShellInput {
   record: CompositionVersion;
@@ -10,6 +10,8 @@ export interface PreviewShellInput {
   theme: PreviewTheme;
   width: number | 'free';
   base: string;
+  /** The composition's standing acceptance; the lineage and the version list show it when there is one. */
+  accepted?: AcceptedSummary;
 }
 
 export const FIXED_WIDTHS = [390, 820, 1440] as const;
@@ -57,32 +59,48 @@ export function renderEditControls(record: CompositionVersion): string {
 }
 const short = (hash: string | null) => hash ? hash.replace(/^sha256:/, '').slice(0, 12) : 'none';
 
+/** A link to another version of the same composition: an anchor on the page, a button that opens it in place in the preview app. */
+export type VersionLink = (version: number, label: string) => string;
+
+/** The lineage of one version: composition, version of how many, parent, operation, Forge head, schema, created, generated for, and the accepted version when the composition has one. */
+export function renderLineage(record: CompositionVersion, versionCount: number, link: VersionLink, accepted?: AcceptedSummary): string {
+  const row = (term: string, value: string) => `<div class="row"><dt>${escapeHtml(term)}</dt><dd>${value}</dd></div>`;
+  return [
+    row('Composition', `<code>${escapeHtml(record.compositionId)}</code>`),
+    row('Version', `<strong>${record.version}</strong> of ${versionCount}`),
+    row('Parent', record.parentVersion === null ? 'none (first version)' : link(record.parentVersion, `version ${record.parentVersion}`)),
+    row('Operation', `<code>${escapeHtml(record.operation)}</code>`),
+    row('Forge head', `<code>${escapeHtml(record.head ?? 'source checkout')}</code>`),
+    row('Schema', `<code>${escapeHtml(short(record.schemaHash))}</code>`),
+    row('Created', escapeHtml(record.createdAt)),
+    row('Generated for', `${escapeHtml(record.brand)} / ${escapeHtml(record.theme)}`),
+    ...(accepted ? [row('Accepted', `${accepted.version === record.version ? '<strong data-oods-accepted="this">this version</strong>' : `<span data-oods-accepted="other">${link(accepted.version, `version ${accepted.version}`)}</span>`} · ${escapeHtml(accepted.acceptedAt)}${accepted.acceptances > 1 ? ` · ${accepted.acceptances} acceptances` : ''}`)] : []),
+  ].join('');
+}
+
+/** The composition's versions with their operation and parent, the current one marked, and the accepted one when there is one. */
+export function renderVersionList(versions: VersionSummary[], current: number, link: VersionLink, acceptedVersion?: number): string {
+  const mark = (version: number) => version === acceptedVersion ? ' · <strong data-oods-accepted="true">accepted</strong>' : '';
+  return versions.map(entry => entry.version === current
+    ? `<li aria-current="true"><strong>v${entry.version}</strong> · ${escapeHtml(entry.operation)}${entry.parentVersion === null ? '' : ` ← v${entry.parentVersion}`}${mark(entry.version)}</li>`
+    : `<li>${link(entry.version, `v${entry.version}`)} · ${escapeHtml(entry.operation)}${entry.parentVersion === null ? '' : ` ← v${entry.parentVersion}`}${mark(entry.version)}</li>`).join('');
+}
+
 /**
  * The page a URL opens: the lineage of the version (composition, version, parent, operation, head)
  * beside framework, brand, theme and width controls, framing the running app. Brand and theme
  * re-mount the framed app in place through postMessage; framework and version navigate.
  */
-export function renderPreviewShell({ record, versions, framework, brand, theme, width, base }: PreviewShellInput): string {
+export function renderPreviewShell({ record, versions, framework, brand, theme, width, base, accepted }: PreviewShellInput): string {
   const versionBase = `${base}/${record.compositionId}/${record.version}`;
   const appUrl = `${versionBase}/app?framework=${framework}&brand=${brand}&theme=${theme}`;
   const label = `${record.compose.object ?? 'composition'} ${record.compose.context ?? ''}`.trim();
   const frameworks = (Object.keys(record.artifacts) as PreviewFramework[]).filter(name => record.artifacts[name]);
   const state = { compositionId: record.compositionId, version: record.version, framework, brand, theme, width, base };
   const pixelWidth = width === 'free' ? 1024 : width;
-  const row = (term: string, value: string) => `<div class="row"><dt>${escapeHtml(term)}</dt><dd>${value}</dd></div>`;
-  const lineage = [
-    row('Composition', `<code>${escapeHtml(record.compositionId)}</code>`),
-    row('Version', `<strong>${record.version}</strong> of ${versions.length}`),
-    row('Parent', record.parentVersion === null ? 'none (first version)' : `<a href="${base}/${escapeHtml(record.compositionId)}/${record.parentVersion}?framework=${framework}&brand=${brand}&theme=${theme}">version ${record.parentVersion}</a>`),
-    row('Operation', `<code>${escapeHtml(record.operation)}</code>`),
-    row('Forge head', `<code>${escapeHtml(record.head ?? 'source checkout')}</code>`),
-    row('Schema', `<code>${escapeHtml(short(record.schemaHash))}</code>`),
-    row('Created', escapeHtml(record.createdAt)),
-    row('Generated for', `${escapeHtml(record.brand)} / ${escapeHtml(record.theme)}`),
-  ].join('');
-  const versionList = versions.map(entry => entry.version === record.version
-    ? `<li aria-current="true"><strong>v${entry.version}</strong> · ${escapeHtml(entry.operation)}${entry.parentVersion === null ? '' : ` ← v${entry.parentVersion}`}</li>`
-    : `<li><a href="${base}/${escapeHtml(record.compositionId)}/${entry.version}?framework=${framework}&brand=${brand}&theme=${theme}">v${entry.version}</a> · ${escapeHtml(entry.operation)}${entry.parentVersion === null ? '' : ` ← v${entry.parentVersion}`}</li>`).join('');
+  const link: VersionLink = (version, text) => `<a href="${base}/${escapeHtml(record.compositionId)}/${version}?framework=${framework}&brand=${brand}&theme=${theme}">${text}</a>`;
+  const lineage = renderLineage(record, versions.length, link, accepted);
+  const versionList = renderVersionList(versions, record.version, link, accepted?.version);
   const options = <T extends string | number>(name: string, values: readonly T[], current: T) => values.map(value => `<button type="button" data-control="${name}" data-value="${escapeHtml(String(value))}" aria-pressed="${String(value === current)}">${escapeHtml(String(value))}</button>`).join('');
   return [
     '<!doctype html>',

@@ -31,7 +31,7 @@ const BREADTH_CONTRACTS = {
     scenario: 'detail-header-heading-level',
   },
   VizAreaPreview: {
-    props: ['svg', 'title', 'description', 'width', 'height'],
+    props: ['svg', 'svgNarrow', 'title', 'description', 'width', 'height'],
     renderer: 'renderVizAreaPreview',
     scenario: 'viz-area-preview-frame-placeholder-and-slot',
   },

@@ -16,7 +16,7 @@ The retained portable adapter E2E exercises 19 advertised tools: 19 results and 
 | `catalog.list` | product-reality |
 | `code.generate` | product-reality |
 | `design.compose` | product-reality |
-| `design.preview` (`render`/`compare`/`edit`/`versions`) | product-reality |
+| `design.preview` (`render`/`compare`/`edit`/`versions`/`accept`) | product-reality |
 | `pipeline` | product-reality |
 | `health` | product-reality |
 | `registry.snapshot` | product-reality |

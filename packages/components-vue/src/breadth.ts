@@ -160,6 +160,8 @@ export const VizAreaPreview = defineComponent({
   name: 'OodsVizAreaPreview',
   props: {
     svg: String,
+    /** The same chart rendered at the narrow size; the figure shows it instead of svg when its own inline size is at most 600px. */
+    svgNarrow: String,
     title: String,
     description: String,
     width: { type: Number, default: 640 },
@@ -172,11 +174,13 @@ export const VizAreaPreview = defineComponent({
         class: 'oods-viz-area-preview', 'data-oods-component': 'VizAreaPreview',
         'data-viz-preview-type': 'area', 'data-viz-rendered': 'true',
         'data-viz-width': props.width, 'data-viz-height': props.height,
+        ...(props.svgNarrow !== undefined ? { 'data-viz-narrow': 'true' } : {}),
         role: 'img', 'aria-label': props.title ?? props.description ?? 'Payment amounts',
         style: { '--oods-viz-width': `${props.width}px` },
       }, [
         ...(props.title && !svgCarriesTitle(props.svg, props.title) ? [h('figcaption', props.title)] : []),
         h('div', { 'data-viz-svg': 'true', innerHTML: assertStaticSvg(props.svg) }),
+        ...(props.svgNarrow !== undefined ? [h('div', { 'data-viz-svg-narrow': 'true', innerHTML: assertStaticSvg(props.svgNarrow) })] : []),
         ...(props.description ? [h('p', { 'data-viz-description': 'true' }, props.description)] : []),
       ]);
       return h('div', {

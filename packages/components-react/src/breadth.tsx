@@ -158,15 +158,16 @@ export const ColorizedBadge = React.forwardRef<HTMLSpanElement, ColorizedBadgePr
 ColorizedBadge.displayName = 'OODS.ColorizedBadge';
 
 export const VizAreaPreview = React.forwardRef<HTMLElement, VizAreaPreviewProps>(
-  ({ width = 640, height = 360, svg, title, description, children, className, style, ...rest }, ref) => {
+  ({ width = 640, height = 360, svg, svgNarrow, title, description, children, className, style, ...rest }, ref) => {
     const content = childContent(children);
     if (svg !== undefined) {
       return <figure ref={ref} className={classes('oods-viz-area-preview', className)}
         data-oods-component="VizAreaPreview" data-viz-preview-type="area" data-viz-rendered="true"
-        data-viz-width={width} data-viz-height={height} role="img" aria-label={title ?? description ?? 'Payment amounts'}
+        data-viz-width={width} data-viz-height={height} data-viz-narrow={svgNarrow !== undefined ? 'true' : undefined} role="img" aria-label={title ?? description ?? 'Payment amounts'}
         style={{ '--oods-viz-width': `${width}px`, ...style } as React.CSSProperties} {...rest}>
         {title && !svgCarriesTitle(svg, title) ? <figcaption>{title}</figcaption> : null}
         <div data-viz-svg="true" dangerouslySetInnerHTML={{ __html: assertStaticSvg(svg) }} />
+        {svgNarrow !== undefined ? <div data-viz-svg-narrow="true" dangerouslySetInnerHTML={{ __html: assertStaticSvg(svgNarrow) }} /> : null}
         {description ? <p data-viz-description="true">{description}</p> : null}
       </figure>;
     }

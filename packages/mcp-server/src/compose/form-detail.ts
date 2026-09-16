@@ -126,7 +126,7 @@ export function reconcileFormDetail(schema: UiSchema, context: string, composed:
       if (node.component === 'AuditTimeline' && !(typeof node.props?.auditLogField === 'string' && fields[node.props.auditLogField])) return undefined;
       // A pattern's scalar children are values, not an additional history log.
       if (node.component === 'Stack' && node.props?.patternComponent === 'StatusTimeline') node.props = undefined;
-      if (node.component === 'DetailHeader' && labelField) node.props = { titleField: labelField, ...(fields.description ? { subtitleField: 'description' } : {}), headingLevel: 2 };
+      if (node.component === 'DetailHeader' && labelField) node.props = { titleField: labelField, ...(fields.description ? { subtitleField: 'description' } : {}), headingLevel: 1 };
       const field = node.props?.field;
       if (['Text', 'StatusBadge'].includes(node.component) && typeof field === 'string' && fields[field]) {
         if (covered.has(field)) return undefined;
@@ -144,11 +144,11 @@ export function reconcileFormDetail(schema: UiSchema, context: string, composed:
     walk(screen, node => { if (node.id.includes('detail-header')) header = node; if (node.component === 'Tabs') tabs = node; });
     if (header) header.layout = { ...header.layout, type: 'stack', gapToken: 'stack-default' };
     if (header && labelField && !header.children?.some(child => child.component === 'DetailHeader' || child.children?.some(item => item.component === 'DetailHeader'))) {
-      header.children = [{ id: `${header.id}-record-title`, component: 'DetailHeader', props: { titleField: labelField, headingLevel: 2 } }, ...(header.children ?? [])];
+      header.children = [{ id: `${header.id}-record-title`, component: 'DetailHeader', props: { titleField: labelField, headingLevel: 1 } }, ...(header.children ?? [])];
     }
     if (labelField) {
       covered.add(labelField);
-      if (!header && !screen.children?.some(node => node.component === 'DetailHeader')) screen.children = [{ id: `${screen.id}-record-title`, component: 'DetailHeader', props: { titleField: labelField, headingLevel: 2 } }, ...(screen.children ?? [])];
+      if (!header && !screen.children?.some(node => node.component === 'DetailHeader')) screen.children = [{ id: `${screen.id}-record-title`, component: 'DetailHeader', props: { titleField: labelField, headingLevel: 1 } }, ...(screen.children ?? [])];
     }
     const remaining = Object.keys(fields).filter(name => isScalar(name) && summaryField(name) && !covered.has(name) && !isInternalField(name, fields));
     if (remaining.length && !tabs) {

@@ -29,6 +29,7 @@ import { getVizScaleTokens } from '../../tokens/scale-token-mapper.js';
 import { applyHcEchartsChrome, resolveOodsEchartsChrome } from '../../tokens/oods-echarts-chrome.js';
 
 import { resolveTokenToColor, type TokenScope } from './token-resolver.js';
+import { paintedTitle } from '../../spec/title-placement.js';
 
 // Fallback colors if tokens aren't available (matches the categorical scale used
 // by the sibling network/flow adapters).
@@ -150,7 +151,7 @@ export function adaptChordToECharts(spec: NormalizedVizSpec, input: SankeyInput,
     // and is visible to the jsonSafe golden (a function would be dropped by both).
     tooltip: { trigger: 'item', formatter: '{b}: {c}' },
     aria: { enabled: true, description: chordSpec.a11y?.description },
-    title: chordSpec.name ? { text: chordSpec.name, textStyle: { color: chrome.title } } : undefined,
+    title: paintedTitle(chordSpec) ? { text: paintedTitle(chordSpec), textStyle: { color: chrome.title } } : undefined,
     usermeta: {
       oods: pruneUndefined({
         specId: chordSpec.id,

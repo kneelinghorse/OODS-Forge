@@ -117,6 +117,8 @@ export interface ColorizedBadgeProps extends React.HTMLAttributes<HTMLSpanElemen
 
 export interface VizAreaPreviewProps extends React.HTMLAttributes<HTMLElement> {
   readonly svg?: string;
+  /** The same chart rendered at the narrow size; the figure shows it instead of svg when its own inline size is at most 600px. */
+  readonly svgNarrow?: string;
   readonly description?: string;
   readonly width?: number;
   readonly height?: number;

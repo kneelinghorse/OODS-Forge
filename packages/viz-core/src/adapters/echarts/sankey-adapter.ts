@@ -15,6 +15,7 @@ import { applyHcEchartsChrome, resolveOodsEchartsChrome } from '../../tokens/ood
 
 import { resolveTokenToColor, type TokenScope } from './token-resolver.js';
 import { transformLinks, transformNodes, validateSankeyInput } from './sankey-utils.js';
+import { paintedTitle } from '../../spec/title-placement.js';
 
 // Fallback colors if tokens aren't available (matches categorical scale)
 const FALLBACK_PALETTE = [
@@ -147,7 +148,7 @@ export function adaptSankeyToECharts(spec: NormalizedVizSpec, input: SankeyInput
     series: [series],
     tooltip: generateSankeyTooltip(),
     aria: { enabled: true, description: sankeySpec.a11y?.description },
-    title: sankeySpec.name ? { text: sankeySpec.name, left: 'center', top: TITLE_TOP, textStyle: { color: chrome.title, fontSize: TITLE_FONT_SIZE, fontWeight: TITLE_FONT_WEIGHT } } : undefined,
+    title: paintedTitle(sankeySpec) ? { text: paintedTitle(sankeySpec), left: 'center', top: TITLE_TOP, textStyle: { color: chrome.title, fontSize: TITLE_FONT_SIZE, fontWeight: TITLE_FONT_WEIGHT } } : undefined,
     usermeta: {
       oods: pruneUndefined({
         specId: sankeySpec.id,

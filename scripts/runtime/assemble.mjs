@@ -45,6 +45,8 @@ const PACKAGE_RUNTIME_DIRECTORIES = Object.freeze({
 const ADAPTER_RUNTIME_FILES = [
   "index.js",
   "sanitize-schema.js",
+  // Sprint 202: the MCP Apps helpers (resources, negotiation, structuredContent).
+  "mcp-apps.js",
   "tool-descriptions.json",
   "package.json",
 ];
@@ -581,6 +583,8 @@ function allowedCmosProvenance(relative) {
     relative === "packages/component-contracts/dist/index.js" ||
     // The preview host's prebuilt runtime bundles the component-contracts dist and its provenance string.
     relative === "packages/mcp-bridge/dist/preview-runtime/oods-component-contracts.js" ||
+    // Sprint 202: the MCP App inlines that same runtime, so it carries the same provenance string.
+    relative === "packages/mcp-bridge/dist/preview-app/app.html" ||
     relative ===
       "packages/component-contracts/registry/component-reconciliation.proposed.v1.json" ||
     relative === "packages/component-contracts/registry/component-reconciliation.proposed.v2.json" ||

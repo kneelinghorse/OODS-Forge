@@ -13,6 +13,7 @@ import { getAjv } from '../../src/lib/ajv.js';
 import { CASES, SALES } from '../../src/tools/__fixtures__/cartesian-render.js';
 import type { UiElement, UiSchema } from '../../src/schemas/generated.js';
 import type { CodeGenerateInput } from '../../src/tools/types.js';
+import { PLACED_CHART_NARROW_OUTPUT, PLACED_CHART_OUTPUT, narrowChartPath } from '../../src/codegen/chart-assets.js';
 
 vi.setConfig({ testTimeout: 60_000 });
 afterEach(() => vi.restoreAllMocks());
@@ -54,15 +55,24 @@ describe('declared charts use actual records and public SVG (s195-m06)', () => {
       const request = wire<CodeGenerateInput>('code.generate', 'input', { schema: composition.schema, framework, profile: 'build', options: { theme: 'dark', brand: 'B' } });
       const result = wire('code.generate', 'output', await generate(request));
       expect(result.status, JSON.stringify(result.errors)).toBe('ok');
-      expect(rendered).toHaveBeenCalledTimes(1);
+      // Sprint 202 m01: the design-size render and the narrow render, both without a painted title.
+      expect(rendered).toHaveBeenCalledTimes(2);
       const renderRequest = wire('viz.render', 'input', rendered.mock.calls[0]![0]);
       const publicOutput = wire('viz.render', 'output', await rendered.mock.results[0]!.value);
+      const narrowOutput = wire('viz.render', 'output', await rendered.mock.results[1]!.value);
+      // The wired request carries the boundary defaults; the producer's own output block is the placed-chart one.
+      expect(renderRequest.output).toMatchObject(PLACED_CHART_OUTPUT);
+      expect(rendered.mock.calls[1]![0].output).toMatchObject(PLACED_CHART_NARROW_OUTPUT);
+      expect(rendered.mock.calls[1]![0].rows).toEqual(rows);
       expect(renderRequest).toMatchObject({ rows, chartType: placement.chartType, theme: 'dark', brand: 'B', name: nodes[0]!.props!.title, description: nodes[0]!.props!.description, encodings: nodes[0]!.chart!.source === 'record-array' ? nodes[0]!.chart!.encodings : undefined });
-      const asset = result.artifact!.files.find(file => file.path.endsWith('.svg'))!;
-      expect(asset.path).toBe(`src/charts/${placement.chartType}-001.svg`);
+      const asset = result.artifact!.files.find(file => file.path === `src/charts/${placement.chartType}-001.svg`)!;
       expect(asset.contents).toBe(publicOutput.svg);
       expect(asset.contentHash).toBe(`sha256:${sha256(publicOutput.svg!)}`);
       expect(asset.contents).toContain('role="graphics-object"');
+      expect(asset.contents).not.toContain('role-title-text');
+      const narrowAsset = result.artifact!.files.find(file => file.path === narrowChartPath(asset.path))!;
+      expect(narrowAsset.contents).toBe(narrowOutput.svg);
+      expect(narrowAsset.contents).toMatch(/viewBox="0 0 370 230"/);
       expect(result.code).not.toContain('No rendered chart supplied');
       if (framework === 'html') {
         expect(result.code).toContain(asset.contents);
@@ -87,15 +97,18 @@ describe('declared charts use actual records and public SVG (s195-m06)', () => {
       const result = wire('code.generate', 'output', await generate(request));
       expect(result.status, JSON.stringify(result.errors)).toBe('ok');
       const records = workflowSampleRecords(composition.schema);
-      expect(rendered).toHaveBeenCalledTimes(records.length);
+      expect(rendered).toHaveBeenCalledTimes(records.length * 2);
       for (const [index, record] of records.entries()) {
-        expect(rendered.mock.calls[index]![0].rows).toEqual(record[placement.dataField]);
+        expect(rendered.mock.calls[index * 2]![0].rows).toEqual(record[placement.dataField]);
+        expect(rendered.mock.calls[index * 2 + 1]![0].output).toMatchObject(PLACED_CHART_NARROW_OUTPUT);
+        expect(rendered.mock.calls[index * 2 + 1]![0].rows).toEqual(record[placement.dataField]);
         expect(record[placement.dataField]).toEqual(placement.rows);
         expect(record).not.toHaveProperty('payment_history');
       }
       const files = result.artifact!.files;
-      expect(files.filter(file => file.path.endsWith('.svg'))).toHaveLength(records.length);
+      expect(files.filter(file => file.path.endsWith('.svg'))).toHaveLength(records.length * 2);
       expect(files.find(file => file.path === 'src/store.ts')!.contents).toContain('svg: chartSvgByRecord[String(record[idField])]');
+      expect(files.find(file => file.path === 'src/store.ts')!.contents).toContain('svgNarrow: chartSvgNarrowByRecord[String(record[idField])]');
       expect(files.find(file => file.path === 'src/store.ts')!.contents).not.toContain('payment_history:');
       expect(files.find(file => file.path === 'src/sample-data.ts')!.contents).toContain(JSON.stringify(placement.rows[0].timestamp ?? placement.rows[0].description));
       const checked = typecheckWorkflow(result.artifact!);
@@ -120,9 +133,9 @@ describe('declared charts use actual records and public SVG (s195-m06)', () => {
     const rendered = vi.spyOn(viz, 'handle');
     const result = await generate({ schema, framework: 'html', profile: 'build' });
     expect(result.status, JSON.stringify(result.errors)).toBe('ok');
-    expect(rendered).toHaveBeenCalledTimes(1);
+    expect(rendered).toHaveBeenCalledTimes(2);
     expect(result.code.match(/data-viz-rendered="true"/g)).toHaveLength(2);
-    expect(result.artifact!.files.filter(file => file.path.endsWith('.svg'))).toHaveLength(1);
+    expect(result.artifact!.files.filter(file => file.path.endsWith('.svg'))).toHaveLength(2);
   });
 
   it.each([
@@ -174,8 +187,8 @@ describe('declared charts use actual records and public SVG (s195-m06)', () => {
     expect(result.status, JSON.stringify(result.errors)).toBe('ok');
     const before = previous.result.artifact.files.filter((file: any) => file.path.endsWith('.svg'));
     const after = result.artifact!.files.filter(file => file.path.endsWith('.svg'));
-    expect(after.map(file => file.path)).toEqual(before.map((file: any) => file.path));
-    for (const asset of after) {
+    expect(after.map(file => file.path).sort()).toEqual(before.flatMap((file: any) => [file.path, narrowChartPath(file.path)]).sort());
+    for (const asset of after.filter(file => !file.path.endsWith('.narrow.svg'))) {
       const prior = before.find((file: any) => file.path === asset.path);
       const receipt = migration.rows.find((row: any) => row.source === source && row.path === asset.path);
       expect(receipt).toMatchObject({ case: `Subscription-detail-${framework}`, beforeHash: prior.contentHash, sourceSha256: `sha256:${sha256(previousBytes)}`, sameOperand: true, crossTimezoneEqual: true, changed: true });
@@ -194,7 +207,17 @@ describe('declared charts use actual records and public SVG (s195-m06)', () => {
       expect(grown).toMatchObject({ beforeHash: moved.afterHash, sameOperand: true, chainedFrom: `${paletteRoot}/migration.json`, beforeWidth: 370, afterWidth: 730, changed: true });
       const frame = fs.readFileSync(path.join(repositoryRoot, resizedRoot, grown.raw), 'utf8');
       expect(grown.afterHash).toBe(`sha256:${sha256(frame)}`);
-      expect(asset).toEqual({ ...prior, contents: frame, contentHash: grown.afterHash });
+      // Sprint 202 m01: the title band left the SVG for the figure heading and a narrow render joined it; the migration chains from the frame layer.
+      const figureRoot = 'artifacts/product-reality/sprint-202/m01/placement';
+      const figure = JSON.parse(fs.readFileSync(path.join(repositoryRoot, figureRoot, 'migration.json'), 'utf8'));
+      const untitled = figure.placements.find((row: any) => row.case === `Subscription-detail-${framework}-hc` && row.path === asset.path);
+      expect(untitled).toMatchObject({ beforeHash: grown.afterHash, sameOperand: true, chainedFrom: `${resizedRoot}/migration.json`, beforeWidth: 730, afterWidth: 730, titleInSvgBefore: true, titleInSvgAfter: false, changed: true, narrow: { path: narrowChartPath(asset.path), width: 370 } });
+      const untitledBytes = fs.readFileSync(path.join(repositoryRoot, figureRoot, untitled.raw), 'utf8');
+      expect(untitled.afterHash).toBe(`sha256:${sha256(untitledBytes)}`);
+      expect(asset).toEqual({ ...prior, contents: untitledBytes, contentHash: untitled.afterHash });
+      const narrowAsset = after.find(file => file.path === untitled.narrow.path)!;
+      expect(narrowAsset.contentHash).toBe(untitled.narrow.afterHash);
+      expect(narrowAsset.contents).toBe(fs.readFileSync(path.join(repositoryRoot, figureRoot, untitled.narrow.raw), 'utf8'));
     }
     retain(`legacy-${framework}`, { before, after, unchanged: false, migration: `${migrationRoot}/migration.json` });
   });

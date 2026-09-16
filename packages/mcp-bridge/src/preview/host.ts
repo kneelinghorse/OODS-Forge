@@ -9,7 +9,7 @@ import { defaultRuntimeDirectory, loadPreviewRuntime, resolveEsbuildPlatform, ty
 import { FIXED_WIDTHS, renderPreviewShell } from './shell.js';
 import { parseAxeResult, renderMeasurementPanel, withAxeResult } from './measurements.js';
 import type { RunTool } from './native.js';
-import { isSafeCompositionId, listVersions, parseVersion, readVersion, writeVersionMeasurements, type CompositionVersion, type PreviewBrand, type PreviewFramework, type PreviewTheme } from './store.js';
+import { hasPlacedChart, isSafeCompositionId, listVersions, parseVersion, readAccepted, readVersion, scopeKey, servedArtifact, writeVersionMeasurements, type CompositionVersion, type PreviewBrand, type PreviewFramework, type PreviewTheme } from './store.js';
 
 export interface PreviewHostOptions {
   /** Where design.compose writes versions; resolved beside the saved-schema store. */
@@ -40,7 +40,7 @@ function fail(reply: FastifyReply, status: number, message: string) {
 }
 
 type Params = { id: string; version: string };
-type ScopeQuery = { framework?: string; brand?: string; theme?: string; width?: string };
+type ScopeQuery = { framework?: string; brand?: string; theme?: string; width?: string; format?: string };
 
 /** Register the preview host on a Fastify instance; the runtime must exist or registration fails. */
 export async function registerPreviewHost(fastify: FastifyInstance, options: PreviewHostOptions): Promise<PreviewHostStatus> {
@@ -92,32 +92,73 @@ export async function registerPreviewHost(fastify: FastifyInstance, options: Pre
     if (!isSafeCompositionId(request.params.id)) return fail(reply, 400, 'Composition ids are cmp- plus twelve hex characters.');
     const versions = listVersions(compositionsDir, request.params.id);
     if (!versions) return fail(reply, 404, `No composition ${request.params.id} under ${compositionsDir}.`);
-    return reply.type('application/json; charset=utf-8').send(JSON.stringify({ compositionId: request.params.id, versions }));
+    return reply.type('application/json; charset=utf-8').send(JSON.stringify({ compositionId: request.params.id, versions, accepted: readAccepted(compositionsDir, request.params.id) ?? null }));
   });
 
   fastify.get<{ Params: Params; Querystring: ScopeQuery }>(`${base}/:id/:version`, async (request, reply) => {
     const record = load(request.params, reply); if (!record) return;
     const resolved = scope(record, request.query, reply); if (!resolved) return;
     const versions = listVersions(compositionsDir, record.compositionId) ?? [];
-    return reply.type('text/html; charset=utf-8').send(renderPreviewShell({ record, versions, ...resolved, base }));
+    return reply.type('text/html; charset=utf-8').send(renderPreviewShell({ record, versions, ...resolved, base, accepted: readAccepted(compositionsDir, record.compositionId) }));
   });
 
   fastify.get<{ Params: Params; Querystring: ScopeQuery }>(`${base}/:id/:version/app`, async (request, reply) => {
     const record = load(request.params, reply); if (!record) return;
     const resolved = scope(record, request.query, reply); if (!resolved) return;
-    return reply.type('text/html; charset=utf-8').send(renderPreviewAppPage({ record, framework: resolved.framework, brand: resolved.brand, theme: resolved.theme, runtime: runtime.manifest, base }));
+    const served = servedArtifact(record, resolved.framework, resolved.brand, resolved.theme)!;
+    return reply.type('text/html; charset=utf-8').send(renderPreviewAppPage({ record, framework: resolved.framework, brand: resolved.brand, theme: resolved.theme, runtime: runtime.manifest, base, generatedFor: { ...served.generatedFor, chartScoped: hasPlacedChart(record.schema) }, artifactContentHash: served.entry.artifact.contentHash }));
   });
 
+  // The module for a scope: the scoped generation when the placed chart needed one, else the version's own artifact.
+  // format=esm (default) for the page's import map; format=iife for the MCP app, bound to the inlined runtime globals.
   fastify.get<{ Params: Params; Querystring: ScopeQuery }>(`${base}/:id/:version/module.js`, async (request, reply) => {
     const record = load(request.params, reply); if (!record) return;
     const resolved = scope(record, request.query, reply); if (!resolved) return;
+    const format = request.query.format ?? 'esm';
+    if (format !== 'esm' && format !== 'iife') return fail(reply, 400, 'format must be esm or iife.');
+    const served = servedArtifact(record, resolved.framework, resolved.brand, resolved.theme)!;
     try {
-      const compiled = await compileArtifact(record.artifacts[resolved.framework]!.artifact);
-      return reply.type('text/javascript; charset=utf-8').header('x-oods-artifact-hash', compiled.artifactContentHash).header('x-oods-compiled-sha256', compiled.sha256).header('x-oods-externals', compiled.externals.join(',')).send(compiled.code);
+      const compiled = await compileArtifact(served.entry.artifact, { format });
+      return reply.type('text/javascript; charset=utf-8').header('x-oods-artifact-hash', compiled.artifactContentHash).header('x-oods-compiled-sha256', compiled.sha256).header('x-oods-externals', compiled.externals.join(',')).header('x-oods-generated-for', scopeKey(served.generatedFor.brand, served.generatedFor.theme)).header('x-oods-format', compiled.format).header('x-oods-global-name', compiled.globalName ?? '').send(compiled.code);
     } catch (error) {
       if (error instanceof PreviewCompileError) return fail(reply, 422, error.message);
       return fail(reply, 500, `Preview host cannot compile: ${error instanceof Error ? error.message : String(error)}`);
     }
+  });
+
+  // The artifact's own stylesheets for the MCP app (the runtime CSS is inlined in the app itself); empty when the artifact carries none.
+  fastify.get<{ Params: Params; Querystring: ScopeQuery }>(`${base}/:id/:version/styles.css`, async (request, reply) => {
+    const record = load(request.params, reply); if (!record) return;
+    const resolved = scope(record, request.query, reply); if (!resolved) return;
+    const served = servedArtifact(record, resolved.framework, resolved.brand, resolved.theme)!;
+    const css = served.entry.artifact.files.filter(file => file.path.endsWith('.css')).map(file => `/* ${file.path} */\n${file.contents}`).join('\n');
+    return reply.type('text/css; charset=utf-8').header('x-oods-artifact-hash', served.entry.artifact.contentHash).header('x-oods-generated-for', scopeKey(served.generatedFor.brand, served.generatedFor.theme)).send(css);
+  });
+
+  // What a brand or theme switch mounts (Sprint 202 m01): a version with a placed chart is generated and certified for the
+  // requested scope on first use, through the native server this host owns; the answer names the scope the module was generated for.
+  let scopeQueue: Promise<unknown> = Promise.resolve();
+  fastify.get<{ Params: Params; Querystring: ScopeQuery }>(`${base}/:id/:version/scope.json`, async (request, reply) => {
+    let record = load(request.params, reply); if (!record) return;
+    const resolved = scope(record, request.query, reply); if (!resolved) return;
+    const chartScoped = hasPlacedChart(record.schema);
+    const key = scopeKey(resolved.brand, resolved.theme);
+    const identity = { compositionId: record.compositionId, version: record.version, framework: resolved.framework, brand: resolved.brand, theme: resolved.theme, chartScoped };
+    const send = (body: Record<string, unknown>, status = 200) => reply.code(status).type('application/json; charset=utf-8').send(JSON.stringify(body));
+    if (chartScoped && key !== scopeKey(record.brand, record.theme) && !record.scopes?.[key]?.artifacts[resolved.framework]) {
+      if (!options.runTool) return send({ ...identity, available: false, generatedFor: { brand: record.brand, theme: record.theme, chartScoped }, reason: 'This preview host has no native server to re-generate with; ask design.preview for this brand and theme.' });
+      // Generations run one at a time: design.preview holds one native call per tool.
+      const run = scopeQueue.then(() => options.runTool!('design.preview', { compositionId: record!.compositionId, version: record!.version, framework: resolved.framework, preferences: { brand: resolved.brand, theme: resolved.theme } }));
+      scopeQueue = run.catch(() => undefined);
+      try { await run; } catch (error) {
+        const native = (error as { nativeError?: { code?: string; message?: string } }).nativeError;
+        return send({ ...identity, available: false, generatedFor: { brand: record.brand, theme: record.theme, chartScoped }, error: native ?? { message: error instanceof Error ? error.message : String(error) } }, native?.code?.startsWith('OODS-V') ? 422 : 500);
+      }
+      record = readVersion(compositionsDir, record.compositionId, record.version)!;
+    }
+    const served = servedArtifact(record, resolved.framework, resolved.brand, resolved.theme)!;
+    const charts = chartScoped ? (key === scopeKey(record.brand, record.theme) ? record.measurements.charts : record.scopes?.[key]?.charts) ?? null : [];
+    return send({ ...identity, available: true, generatedFor: { ...served.generatedFor, chartScoped }, artifactContentHash: served.entry.artifact.contentHash, moduleUrl: `${base}/${record.compositionId}/${record.version}/module.js?framework=${resolved.framework}&brand=${resolved.brand}&theme=${resolved.theme}`, charts });
   });
 
   // Edits from the page: one operation → design.preview action edit on the native server → a new version to open.

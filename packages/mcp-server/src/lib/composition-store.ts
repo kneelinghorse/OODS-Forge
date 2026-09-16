@@ -14,6 +14,14 @@ export type CompositionOperation = 'compose' | 'recompose' | 'reorder-region' | 
 export type PreviewFramework = 'react' | 'vue';
 export type PreviewTheme = 'light' | 'dark' | 'hc';
 export type PreviewBrand = 'A' | 'B';
+export type PreviewScope = `${PreviewBrand}/${PreviewTheme}`;
+
+/** Artifacts and placed-chart certifications generated for a brand and theme other than the version's own (Sprint 202 m01). */
+export interface ScopedGeneration {
+  artifacts: Partial<Record<PreviewFramework, { artifact: GeneratedArtifact; generatedAt: string }>>;
+  /** certifyPlacedCharts for this scope, stored once. */
+  charts?: unknown[];
+}
 
 export interface CompositionVersion {
   recordVersion: typeof COMPOSITION_RECORD_VERSION;
@@ -40,6 +48,8 @@ export interface CompositionVersion {
   artifacts: Partial<Record<PreviewFramework, { artifact: GeneratedArtifact; generatedAt: string }>>;
   /** Attached by measurement (m04). */
   measurements: Record<string, unknown>;
+  /** Attached when a brand or theme switch needs the placed charts rendered for that scope, keyed brand/theme. */
+  scopes?: Partial<Record<PreviewScope, ScopedGeneration>>;
 }
 
 export interface CompositionVersionSummary { version: number; parentVersion: number | null; operation: CompositionOperation; createdAt: string; schemaHash: string; head: string | null; artifacts: PreviewFramework[] }
@@ -116,14 +126,66 @@ export async function nextVersion(directory: string, compositionId: string, pare
  * Attach derived, deterministic data (artifacts, model, measurements) to an existing version. The
  * schema is asserted unchanged; the file is replaced atomically.
  */
-export async function attachToVersion(directory: string, compositionId: string, version: number, patch: Partial<Pick<CompositionVersion, 'artifacts' | 'model' | 'measurements'>>): Promise<CompositionVersion> {
+export async function attachToVersion(directory: string, compositionId: string, version: number, patch: Partial<Pick<CompositionVersion, 'artifacts' | 'model' | 'measurements' | 'scopes'>>): Promise<CompositionVersion> {
   const record = await readVersion(directory, compositionId, version);
-  const updated: CompositionVersion = { ...record, ...(patch.model ? { model: patch.model } : {}), artifacts: { ...record.artifacts, ...(patch.artifacts ?? {}) }, measurements: { ...record.measurements, ...(patch.measurements ?? {}) } };
+  const scopes = { ...(record.scopes ?? {}) } as NonNullable<CompositionVersion['scopes']>;
+  for (const [key, generation] of Object.entries(patch.scopes ?? {}) as Array<[PreviewScope, ScopedGeneration]>) {
+    const existing = scopes[key];
+    scopes[key] = { artifacts: { ...(existing?.artifacts ?? {}), ...generation.artifacts }, ...(generation.charts ?? existing?.charts ? { charts: generation.charts ?? existing?.charts } : {}) };
+  }
+  const updated: CompositionVersion = { ...record, ...(patch.model ? { model: patch.model } : {}), artifacts: { ...record.artifacts, ...(patch.artifacts ?? {}) }, measurements: { ...record.measurements, ...(patch.measurements ?? {}) }, ...(Object.keys(scopes).length ? { scopes } : {}) };
   const file = versionPath(directory, compositionId, version);
   const temporary = `${file}.${process.pid}.tmp`;
   await fsp.writeFile(temporary, JSON.stringify(updated, null, 2) + '\n');
   await fsp.rename(temporary, file);
   return updated;
+}
+
+/** One acceptance of a composition version (Sprint 202 m04): what was accepted, when, by which head, and what it measured then. */
+export interface CompositionAcceptance {
+  version: number;
+  acceptedAt: string;
+  /** The Forge head that recorded the acceptance, null from a source run. */
+  head: string | null;
+  /** The Forge head that produced the version. */
+  versionHead: string | null;
+  schemaHash: string;
+  /** The version's stored measurements at acceptance: generation receipts, placed-chart certifications, axe-core per framework and scope. */
+  measurements: Record<string, unknown>;
+  /** Placed-chart certifications stored for scopes other than the version's own, keyed brand/theme. */
+  scopeCharts: Record<string, unknown[]>;
+  /** The summary design.preview reports as measured, at acceptance. */
+  measured: unknown;
+  /** The acceptance this one supersedes; null for the first. */
+  supersedes: { version: number; acceptedAt: string } | null;
+}
+export interface AcceptedRecord { recordVersion: typeof COMPOSITION_RECORD_VERSION; compositionId: string; acceptances: CompositionAcceptance[] }
+
+/** <compositions>/<id>/accepted.json, beside versions/ and never listed as a version. */
+export function acceptedPath(directory: string, compositionId: string): string {
+  return path.join(path.dirname(path.dirname(versionPath(directory, compositionId, 1))), 'accepted.json');
+}
+
+export async function readAccepted(directory: string, compositionId: string): Promise<AcceptedRecord | null> {
+  const file = acceptedPath(directory, compositionId);
+  let raw: string;
+  try { raw = await fsp.readFile(file, 'utf8'); } catch (error) { if ((error as NodeJS.ErrnoException).code === 'ENOENT') return null; throw error; }
+  const record = JSON.parse(raw) as AcceptedRecord;
+  if (record.recordVersion !== COMPOSITION_RECORD_VERSION || record.compositionId !== compositionId || !Array.isArray(record.acceptances)) throw new Error(`Malformed acceptance record: ${file}`);
+  return record;
+}
+
+/** Record one acceptance: appended to accepted.json, replaced atomically; the previous acceptance stays and is named as superseded. */
+export async function appendAcceptance(directory: string, compositionId: string, entry: Omit<CompositionAcceptance, 'supersedes'>): Promise<{ record: AcceptedRecord; acceptance: CompositionAcceptance; file: string }> {
+  const file = acceptedPath(directory, compositionId);
+  const current = await readAccepted(directory, compositionId);
+  const previous = current?.acceptances.at(-1);
+  const acceptance: CompositionAcceptance = { ...entry, supersedes: previous ? { version: previous.version, acceptedAt: previous.acceptedAt } : null };
+  const record: AcceptedRecord = { recordVersion: COMPOSITION_RECORD_VERSION, compositionId, acceptances: [...(current?.acceptances ?? []), acceptance] };
+  const temporary = `${file}.${process.pid}.tmp`;
+  await fsp.writeFile(temporary, JSON.stringify(record, null, 2) + '\n');
+  await fsp.rename(temporary, file);
+  return { record, acceptance, file };
 }
 
 /** The packaged build head, when this module runs from dist; a source checkout reports null. */

@@ -7,7 +7,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { chromium, type Browser, type Page } from 'playwright';
 import { handle as listObjects } from '../../packages/mcp-server/src/tools/object.list.js';
-import { PLACED_CHART_SIZE, edgeArrayToNetwork } from '../../packages/mcp-server/src/codegen/chart-assets.js';
+import { PLACED_CHART_OUTPUT, edgeArrayToNetwork } from '../../packages/mcp-server/src/codegen/chart-assets.js';
 import { workflowSampleRecords } from '../../packages/mcp-server/src/codegen/workflow-data-emitter.js';
 import { runVizThemeProof } from './component-theme-proof.mjs';
 import { validateGeneratedArtifact } from '../../packages/mcp-server/src/codegen/artifact-envelope.js';
@@ -241,10 +241,11 @@ async function runCell(output: string, object: string, context: Context, framewo
           const renderRequest = { chartType: chart.chartType, ...(chart.source === 'edge-array' ? { network: edgeArrayToNetwork(rows, chart.edges) } : { rows, encodings: chart.encodings }), brand, theme,
             name: String(chartNode.props?.title ?? `${chart.chartType} chart`),
             ...(typeof chartNode.props?.description === 'string' ? { description: chartNode.props.description } : {}),
-            output: { svg: true, ...PLACED_CHART_SIZE, includeNormalizedSpec: true } };
+            output: { ...PLACED_CHART_OUTPUT, includeNormalizedSpec: true } };
           const rendered = await renderChart(renderRequest);
           assert.equal(rendered.status, 'ok', JSON.stringify(rendered.errors));
-          assert.equal(generated.artifact!.files.find(file => file.path.endsWith('.svg'))?.contents, rendered.svg, 'The consumer must carry the actual public SVG');
+          // The design-size render is the public SVG; the narrow render (Sprint 202 m01) travels beside it.
+          assert.equal(generated.artifact!.files.find(file => file.path.endsWith('.svg') && !file.path.endsWith('.narrow.svg'))?.contents, rendered.svg, 'The consumer must carry the actual public SVG');
           const certification = await certifyChart({ spec: rendered.normalizedSpec!, brand, theme, ...('network' in renderRequest ? { data: { network: renderRequest.network } } : {}) });
           await write(path.join(themedOutput, `${id}-certification.json`), { renderRequest, rendered, certification });
           if (chart.source === 'edge-array') {
@@ -254,8 +255,9 @@ async function runCell(output: string, object: string, context: Context, framewo
             assert.equal(certification.conformant, theme === 'hc');
             if (theme !== 'hc') assert.match(certification.contrastNote ?? '', /missing-semantic-metadata/);
           } else assert.equal(certification.conformant, true, JSON.stringify(certification));
+          // The figure carries the narrow render beside the design-size one (Sprint 202 m01); the design-size SVG is the public one the consumer must show.
           cases.push({ id, brand, theme, svgCount: 1, expectedSvg: rendered.svg, accessibleName: chartNode.props?.title,
-            selector: `[data-oods-component="${chartNode.component}"] svg`, mount: async (page: Page) => {
+            selector: `[data-oods-component="${chartNode.component}"] [data-viz-svg] svg`, mount: async (page: Page) => {
             const themedFiles = createConsumerFiles({ framework, source: generated.code, actions: generated.artifact!.actions,
               schemaName: `fresh-${object}-${context}`, model, mission: process.env.OODS_PROOF_MISSION ?? 's195-m06' });
             mountEntry(framework, themedFiles);
@@ -264,7 +266,7 @@ async function runCell(output: string, object: string, context: Context, framewo
             await command(`chart-themes/${id}-build`, ['exec', '--', 'vite', 'build']);
             await withStaticServer(path.join(consumer!, 'dist'), async url => {
               await page.goto(url, { waitUntil: 'networkidle' });
-              const target = page.locator(`[data-oods-component="${chartNode.component}"] svg`);
+              const target = page.locator(`[data-oods-component="${chartNode.component}"] [data-viz-svg] svg`);
               if (!await target.isVisible()) for (const tab of await page.getByRole('tab').all()) { await tab.click(); if (await target.isVisible()) break; }
               await target.waitFor({ state: 'visible' });
             });

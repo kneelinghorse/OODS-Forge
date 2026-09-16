@@ -27,6 +27,8 @@ export interface CompositionVersion {
   model?: Record<string, unknown>;
   artifacts: Partial<Record<PreviewFramework, { artifact: PreviewArtifact; generatedAt: string }>>;
   measurements: Record<string, unknown>;
+  /** Per-scope re-generation (brand/theme → artifacts and chart certifications) when the placed charts were rendered for another scope. */
+  scopes?: Record<string, { artifacts: Partial<Record<PreviewFramework, { artifact: PreviewArtifact; generatedAt: string }>>; charts?: unknown[] }>;
 }
 export interface VersionSummary { version: number; parentVersion: number | null; operation: string; createdAt: string; schemaHash: string; head: string | null; artifacts: PreviewFramework[] }
 
@@ -43,6 +45,8 @@ export function resolveCompositionsDir(serverCwd: string, env: NodeJS.ProcessEnv
 }
 
 export const isSafeCompositionId = (value: unknown): value is string => typeof value === 'string' && COMPOSITION_ID_PATTERN.test(value);
+// The scope helpers are browser-safe (the preview app inside the conversation mounts with them too).
+export { hasPlacedChart, scopeKey, servedArtifact } from './scope.js';
 export const parseVersion = (value: unknown): number | undefined => (typeof value === 'string' && /^[1-9]\d{0,6}$/.test(value) ? Number(value) : undefined);
 
 export function readVersion(directory: string, compositionId: string, version: number): CompositionVersion | undefined {
@@ -63,6 +67,18 @@ export function listVersions(directory: string, compositionId: string): VersionS
     const record = readVersion(directory, compositionId, version)!;
     return { version: record.version, parentVersion: record.parentVersion, operation: record.operation, createdAt: record.createdAt, schemaHash: record.schemaHash, head: record.head, artifacts: Object.keys(record.artifacts) as PreviewFramework[] };
   });
+}
+
+/** The standing acceptance of a composition (the last in accepted.json, written by design.preview action accept) and how many it holds. */
+export interface AcceptedSummary { version: number; acceptedAt: string; acceptances: number; supersedes: { version: number; acceptedAt: string } | null }
+export function readAccepted(directory: string, compositionId: string): AcceptedSummary | undefined {
+  if (!isSafeCompositionId(compositionId)) throw new Error(`Unsafe composition id: ${String(compositionId)}`);
+  const file = path.join(directory, compositionId, 'accepted.json');
+  if (!fs.existsSync(file)) return undefined;
+  const record = JSON.parse(fs.readFileSync(file, 'utf8')) as { recordVersion?: string; compositionId?: string; acceptances?: Array<{ version: number; acceptedAt: string; supersedes?: { version: number; acceptedAt: string } | null }> };
+  if (record.recordVersion !== '1' || record.compositionId !== compositionId || !Array.isArray(record.acceptances) || !record.acceptances.length) throw new Error(`Malformed acceptance record: ${file}`);
+  const standing = record.acceptances.at(-1)!;
+  return { version: standing.version, acceptedAt: standing.acceptedAt, acceptances: record.acceptances.length, supersedes: standing.supersedes ?? null };
 }
 
 /** Replace a version file atomically; only measurements may change this way, the schema never does. */

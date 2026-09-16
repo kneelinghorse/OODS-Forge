@@ -8,18 +8,19 @@ import { ROOT, PATTERN_REGISTRY_PATH, writePatternOutputs } from '../../../../sc
 import { cpSync, mkdirSync } from 'node:fs';
 import { dirname } from 'node:path';
 
-const observationsPath = 'artifacts/product-reality/sprint-199/m03/patterns/pattern-observations.json';
+/** Re-measured in Sprint 202 m01 when viz.render gained output.titlePlacement (the registry reproduced byte-for-byte). */
+const observationsPath = 'artifacts/product-reality/sprint-202/m01/patterns/pattern-observations.json';
 const read = (file: string) => readFileSync(join(ROOT, file), 'utf8');
 const directories: string[] = [];
 afterEach(() => directories.splice(0).forEach(directory => rmSync(directory, { recursive: true, force: true })));
 
 describe('s199 local chart gate and receipt boundaries', () => {
-  it.each([195, 196, 197, 198, 199, 200])('rejects new chart-gate receipts in sealed Sprint %s before executing commands', sprint => {
-    expect(() => verify(`artifacts/product-reality/sprint-${sprint}/gate`)).toThrow('under unsealed sprint-201');
+  it.each([195, 196, 197, 198, 199, 200, 201])('rejects new chart-gate receipts in sealed Sprint %s before executing commands', sprint => {
+    expect(() => verify(`artifacts/product-reality/sprint-${sprint}/gate`)).toThrow('under unsealed sprint-202');
   });
 
-  it.each(['artifacts/product-reality/sprint-201/../sprint-200/gate', 'artifacts/product-reality/sprint-201-other/gate'])('rejects a path escaping the current receipt boundary: %s', output => {
-    expect(() => verify(output)).toThrow('under unsealed sprint-201');
+  it.each(['artifacts/product-reality/sprint-202/../sprint-201/gate', 'artifacts/product-reality/sprint-202-other/gate'])('rejects a path escaping the current receipt boundary: %s', output => {
+    expect(() => verify(output)).toThrow('under unsealed sprint-202');
   });
 
   it('loads the named golden command from the workflow and keeps the gate narrow', () => {

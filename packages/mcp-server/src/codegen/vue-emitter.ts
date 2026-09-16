@@ -42,6 +42,7 @@ import {
 } from './emission-safety.js';
 import { executeCompositionDirectives } from './composition-directives.js';
 import { collectUiStateBranches } from './state-contract.js';
+import { screenShell } from './screen-shell.js';
 
 // ---------------------------------------------------------------------------
 // Token + layout helpers (shared logic with tree-renderer.ts / react-emitter.ts)
@@ -526,6 +527,10 @@ function emitTemplateNodeBody(
   if (node.chart && typeof propsObject?.svg === 'string') {
     attrParts.push(':svg="svg ?? defaultChartSvg"');
     delete propsObject.svg;
+  }
+  if (node.chart && typeof propsObject?.svgNarrow === 'string') {
+    attrParts.push(':svgNarrow="svgNarrow ?? defaultChartSvgNarrow"');
+    delete propsObject.svgNarrow;
   }
   if (propsObject) {
     const propsStr = propsToVueAttrs(propsObject, options.styling === 'tailwind');
@@ -1148,6 +1153,7 @@ function buildScriptSetup(
   if (nucleus.length > 0) lines.push(`import '@oods/component-styles/css';`);
   const chart = chartNodes(screens)[0];
   if (typeof chart?.props?.svg === 'string') lines.push(`const defaultChartSvg = ${JSON.stringify(chart.props.svg)};`);
+  if (typeof chart?.props?.svgNarrow === 'string') lines.push(`const defaultChartSvgNarrow = ${JSON.stringify(chart.props.svgNarrow)};`);
   if (includeCva) {
     lines.push(`import { cva } from 'class-variance-authority';`);
   }
@@ -1219,7 +1225,7 @@ function buildScriptSetup(
     // Non-form: use defineProps for display components
     lines.push('');
     lines.push('interface Props {', ...collectionProps(screens, objectSchema ?? {}).map(field => '  ' + field));
-    if (chartNodes(screens).length) lines.push('  svg?: string;');
+    if (chartNodes(screens).length) lines.push('  svg?: string;', '  svgNarrow?: string;');
     if (hasDomainActions) lines.push('  actions: GeneratedUIActions;');
     if (hasStateBranches) lines.push('  uiState: GeneratedUIState;');
     for (const [fieldName, entry] of Object.entries(objectSchema!).sort(([a], [b]) => a.localeCompare(b))) {
@@ -1241,7 +1247,7 @@ function buildScriptSetup(
       ...(hasStateBranches ? ['uiState'] : []),
       ...fieldNames,
       ...collectionParameters(screens),
-      ...(chartNodes(screens).length ? ['svg'] : []),
+      ...(chartNodes(screens).length ? ['svg', 'svgNarrow'] : []),
     ];
     lines.push(`const { ${propNames.join(', ')} } = defineProps<Props>();`);
   } else if (options.typescript) {
@@ -1269,7 +1275,7 @@ function buildScriptSetup(
       }
     }
   } else if (hasObjectSchema && (collectionSources(screens).size > 0 || chartNodes(screens).length > 0)) {
-    const names = [...(hasDomainActions ? ['actions'] : []), ...(hasStateBranches ? ['uiState'] : []), ...Object.keys(objectSchema!).map(snakeToCamel), ...collectionParameters(screens), ...(chartNodes(screens).length ? ['svg'] : [])];
+    const names = [...(hasDomainActions ? ['actions'] : []), ...(hasStateBranches ? ['uiState'] : []), ...Object.keys(objectSchema!).map(snakeToCamel), ...collectionParameters(screens), ...(chartNodes(screens).length ? ['svg', 'svgNarrow'] : [])];
     const keys = names.map(name => javascriptSingleQuotedString(name.split('=')[0]!.trim()));
     lines.push(`const { ${names.join(', ')} } = defineProps([${keys.join(', ')}]);`);
   } else if (hasDomainActions || hasStateBranches) {
@@ -1390,11 +1396,20 @@ export function emit(schema: UiSchema, options: CodegenOptions): CodegenResult {
     ))
     .join('\n');
 
-  const templateBlock = [
+  // A standalone screen is a page: one main landmark and one level-one heading (the composer's record title, else the screen label).
+  const shell = screenShell(normalizedSchema, options);
+  const templateBlock = (shell ? [
+    `<template>`,
+    `  <main data-oods-shell="${escapeDoubleQuotedAttr(shell.screenId)}">`,
+    ...(shell.heading ? [`    <h1 data-oods-shell-heading="true">${childValueToVue(shell.heading)}</h1>`] : []),
+    ind(screenTemplates, 2),
+    `  </main>`,
+    `</template>`,
+  ] : [
     `<template>`,
     ind(screenTemplates, 1),
     `</template>`,
-  ].join('\n');
+  ]).join('\n');
 
   // Build script setup block
   const scriptBlock = buildScriptSetup(ctx);

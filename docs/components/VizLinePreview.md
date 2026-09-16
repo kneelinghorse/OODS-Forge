@@ -12,7 +12,7 @@ Source: [packages/component-contracts/src/contracts.ts#VizLinePreview](../../pac
 
 | Field | Declared names |
 | --- | --- |
-| `props` | `svg`, `title`, `description`, `width`, `height` |
+| `props` | `svg`, `svgNarrow`, `title`, `description`, `width`, `height` |
 | `slots` | `default` |
 | `events` | None declared |
 | `states` | `unbound`, `rendered` |

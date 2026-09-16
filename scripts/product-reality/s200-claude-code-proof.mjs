@@ -6,7 +6,7 @@
 // environment and check the advertised tool surface. Nothing touches the real HOME.
 //
 //   node scripts/product-reality/s200-claude-code-proof.mjs \
-//     --extract-dir <extracted bundle> --receipt-dir <directory> [--archive <forge-runtime.tar.gz>]
+//     --extract-dir <extracted bundle> --receipt-dir <directory> [--archive <forge-runtime.tar.gz>] [--mission <id>]
 
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
@@ -30,9 +30,13 @@ function parseArgs(argv) {
       const value = argv[++index];
       if (!value) throw new Error(`missing value for ${arg}`);
       parsed[arg.slice(2).replace(/-(\w)/g, (_, c) => c.toUpperCase())] = path.resolve(value);
+    } else if (arg === "--mission") {
+      // The mission the receipt is recorded for (Sprint 202 reuses this proof); Sprint 200's own runs keep the default.
+      parsed.mission = argv[++index];
+      if (!parsed.mission) throw new Error("missing value for --mission");
     } else throw new Error(`unknown argument: ${arg}`);
   }
-  if (!parsed.extractDir || !parsed.receiptDir) throw new Error("usage: --extract-dir <dir> --receipt-dir <dir> [--archive <file>]");
+  if (!parsed.extractDir || !parsed.receiptDir) throw new Error("usage: --extract-dir <dir> --receipt-dir <dir> [--archive <file>] [--mission <id>]");
   return parsed;
 }
 
@@ -108,7 +112,7 @@ async function main() {
 
   const receipt = {
     schemaVersion: "1.0.0",
-    mission: "s200-m04",
+    mission: args.mission ?? "s200-m04",
     kind: "claude-code-install-proof",
     builderSelfCertified: false,
     executedAt: new Date().toISOString(),
@@ -127,9 +131,13 @@ async function main() {
     stdio: {
       protocolVersion: initialized.protocolVersion,
       serverInfo: initialized.serverInfo,
+      // Sprint 202: the adapter advertises resources and the MCP Apps extension; this proof's client advertises nothing, so no tool carries _meta.ui.
+      capabilities: initialized.capabilities,
       toolsListed: listed.tools.length,
       tools: listed.tools.map((tool) => tool.name),
       toolsMatchExtractedRegistry: true,
+      toolsWithUiMeta: listed.tools.filter((tool) => tool._meta !== undefined).map((tool) => tool.name),
+      mcpAppsReceipt: client.stderrBuffer.split("\n").find((line) => line.includes("MCP Apps")) ?? null,
       health: { status: health.status, registry: health.registry },
     },
     claudeMcpRemove: { exitCode: removed.exitCode, stdout: redact(removed.stdout.trim(), replacements) },

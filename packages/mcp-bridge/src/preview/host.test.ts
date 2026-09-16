@@ -167,10 +167,11 @@ describe('preview host routes', () => {
     expect(versionOne.body).toContain('none (first version)');
     expect(versionOne.body).toContain('<strong>1</strong> of 2');
     const versions = await server.inject(`/preview/${ID}/versions.json`);
+    // s202-m04: versions.json also names the standing acceptance, null until a version is accepted.
     expect(versions.json()).toEqual({ compositionId: ID, versions: [
       { version: 1, parentVersion: null, operation: 'compose', createdAt: first.createdAt, schemaHash: first.schemaHash, head: first.head, artifacts: ['react', 'vue'] },
       { version: 2, parentVersion: 1, operation: 'recompose', createdAt: second.createdAt, schemaHash: second.schemaHash, head: second.head, artifacts: ['react', 'vue'] },
-    ] });
+    ], accepted: null });
     const latest = await server.inject(`/preview/${ID}?framework=react`);
     expect(latest.statusCode).toBe(302);
     expect(latest.headers.location).toBe(`/preview/${ID}/2?framework=react`);
@@ -195,10 +196,48 @@ describe('preview host routes', () => {
     const app = (await server.inject(`/preview/${ID}/1/app?framework=vue&brand=A&theme=hc`)).body;
     expect(app).toContain('<html lang="en" data-theme="hc" data-brand="A">');
     expect(app).toContain('<body data-theme="hc" data-brand="A" style="color-scheme:light">');
-    expect(app).toContain('"generatedFor":{"brand":"B","theme":"dark"}');
+    // Without a placed chart the same artifact mounts in every scope: generatedFor is the requested scope, not chart-scoped.
+    expect(app).toContain('"generatedFor":{"brand":"A","theme":"hc","chartScoped":false}');
     expect((await server.inject(`/preview/${ID}/1?brand=C`)).statusCode).toBe(400);
     expect((await server.inject(`/preview/${ID}/1?theme=sepia`)).statusCode).toBe(400);
     expect((await server.inject(`/preview/${ID}/1?width=10`)).statusCode).toBe(400);
+  });
+
+  it('answers scope.json for a version without a placed chart with the requested scope, and serves a scoped generation for one that has it (s202-m01)', async () => {
+    const record = fixture('subscription-card');
+    const { server } = await host(store(record));
+    const plain = (await server.inject(`/preview/${ID}/1/scope.json?framework=react&brand=A&theme=hc`)).json();
+    expect(plain).toMatchObject({ compositionId: ID, version: 1, framework: 'react', brand: 'A', theme: 'hc', available: true, chartScoped: false, generatedFor: { brand: 'A', theme: 'hc', chartScoped: false }, moduleUrl: `/preview/${ID}/1/module.js?framework=react&brand=A&theme=hc`, artifactContentHash: record.artifacts.react!.artifact.contentHash, charts: [] });
+    // A version whose screen places a chart: its SVG was rendered for the version's own scope; another scope needs its own generation.
+    const screen = (record.schema as { screens: Array<Record<string, unknown> & { children?: unknown[] }> }).screens[0]!;
+    const schema = { ...(record.schema as object), screens: [{ ...screen, children: [...(screen.children ?? []), { id: 've-chart-1', component: 'VizAreaPreview', chart: { chartType: 'area', source: 'record-array', dataField: 'rows', encodings: {} }, props: { title: 'Payment amounts' } }] }] };
+    const scoped: PreviewArtifact = { ...record.artifacts.react!.artifact, contentHash: `sha256:${'1'.repeat(64)}` };
+    const other = record.brand === 'A' ? 'B' : 'A';
+    const key = `${other}/${record.theme}`;
+    const charts = [{ path: 'src/charts/payment-001.svg', brand: other, theme: record.theme, certification: { conformant: true } }];
+    const { server: chartHost } = await host(store({ ...record, schema, scopes: { [key]: { artifacts: { react: { artifact: scoped, generatedAt: record.createdAt } }, charts } } }));
+    const own = await chartHost.inject(`/preview/${ID}/1/module.js?framework=react&brand=${record.brand}&theme=${record.theme}`);
+    expect(own.statusCode).toBe(200);
+    expect(own.headers['x-oods-generated-for']).toBe(`${record.brand}/${record.theme}`);
+    expect(own.headers['x-oods-artifact-hash']).toBe(record.artifacts.react!.artifact.contentHash);
+    const switched = await chartHost.inject(`/preview/${ID}/1/module.js?framework=react&brand=${other}&theme=${record.theme}`);
+    expect(switched.statusCode).toBe(200);
+    expect(switched.headers['x-oods-generated-for']).toBe(key);
+    expect(switched.headers['x-oods-artifact-hash']).toBe(scoped.contentHash);
+    const info = (await chartHost.inject(`/preview/${ID}/1/scope.json?framework=react&brand=${other}&theme=${record.theme}`)).json();
+    expect(info).toMatchObject({ available: true, chartScoped: true, generatedFor: { brand: other, theme: record.theme, chartScoped: true }, artifactContentHash: scoped.contentHash, charts });
+    // The version's own scope answers its own certification; a scope nobody generated is typed unavailable without a native runner.
+    const ownInfo = (await chartHost.inject(`/preview/${ID}/1/scope.json?framework=react&brand=${record.brand}&theme=${record.theme}`)).json();
+    expect(ownInfo).toMatchObject({ available: true, generatedFor: { brand: record.brand, theme: record.theme, chartScoped: true }, artifactContentHash: record.artifacts.react!.artifact.contentHash, charts: null });
+    const missing = (await chartHost.inject(`/preview/${ID}/1/scope.json?framework=react&brand=${other}&theme=hc`)).json();
+    expect(missing).toMatchObject({ available: false, chartScoped: true, generatedFor: { brand: record.brand, theme: record.theme, chartScoped: true } });
+    expect(missing.reason).toMatch(/no native server/);
+    expect((await chartHost.inject(`/preview/${ID}/1/scope.json?framework=vue&brand=${other}&theme=${record.theme}`)).json()).toMatchObject({ available: false, framework: 'vue' });
+    const app = (await chartHost.inject(`/preview/${ID}/1/app?framework=react&brand=${other}&theme=${record.theme}`)).body;
+    expect(app).toContain(`"generatedFor":{"brand":"${other}","theme":"${record.theme}","chartScoped":true}`);
+    expect(app).toContain(`"artifactContentHash":"${scoped.contentHash}"`);
+    expect(app).toContain(`/preview/${ID}/1/module.js?framework=react&brand=${other}&theme=${record.theme}`);
+    expect(app).toContain('/scope.json');
   });
 
   it('serves the runtime files the page links with their manifest digests', async () => {

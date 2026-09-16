@@ -4,8 +4,9 @@ import { validateGeneratedArtifact } from '../codegen/artifact-envelope.js';
 import { seedPreviewModel } from '../codegen/preview-model.js';
 import { certifyPlacedCharts } from '../lib/measurements.js';
 import { ToolError } from '../errors/tool-error.js';
-import { attachToVersion, latestVersion, listVersions, readVersion, resolveCompositionsDir, versionPath, type CompositionVersion, type PreviewBrand, type PreviewFramework, type PreviewTheme } from '../lib/composition-store.js';
+import { appendAcceptance, attachToVersion, latestVersion, listVersions, readAccepted, readForgeHead, readVersion, resolveCompositionsDir, versionPath, type CompositionVersion, type PreviewBrand, type PreviewFramework, type PreviewTheme } from '../lib/composition-store.js';
 import { fieldKeyOf } from './design.compose.js';
+import { chartNodes } from '../codegen/chart-declaration.js';
 import type { UiElement } from '../schemas/generated.js';
 import type { ToolContext } from '../lib/tool-context.js';
 import type { DesignPreviewInputSchema, DesignPreviewOutputSchema } from '../schemas/generated.js';
@@ -13,9 +14,10 @@ import { handle as generate } from './code.generate.js';
 import { handle as compose } from './design.compose.js';
 
 type DesignPreviewOutput = DesignPreviewOutputSchema.DesignPreviewOutput;
-type RenderOutput = Exclude<DesignPreviewOutput, { action: 'compare' } | { action: 'versions' }>;
+type RenderOutput = Exclude<DesignPreviewOutput, { action: 'compare' } | { action: 'versions' } | { action: 'accept' }>;
 type CompareOutput = Extract<DesignPreviewOutput, { action: 'compare' }>;
 type VersionsOutput = Extract<DesignPreviewOutput, { action: 'versions' }>;
+type AcceptOutput = Extract<DesignPreviewOutput, { action: 'accept' }>;
 type EditInput = NonNullable<DesignPreviewInputSchema.DesignPreviewInput['edit']>;
 type PreviewEntry = RenderOutput['previews'][number];
 const PROBE_TIMEOUT_MS = 3_000;
@@ -68,6 +70,7 @@ export async function handle(input: DesignPreviewInputSchema.DesignPreviewInput,
   }
   if (input.action === 'compare') return compare(input, hostUrl, compositionsDir, started);
   if (input.action === 'versions') return versions(input, hostUrl, compositionsDir, started);
+  if (input.action === 'accept') return accept(input, hostUrl, compositionsDir, started);
 
   // The version to open: an existing one, the first version of a fresh composition, or the version an edit records.
   let record: CompositionVersion;
@@ -92,6 +95,10 @@ export async function handle(input: DesignPreviewInputSchema.DesignPreviewInput,
   const viewContext = String(record.compose.context ?? '');
   const brand = (input.preferences?.brand ?? record.brand) as PreviewBrand;
   const theme = (input.preferences?.theme ?? record.theme) as PreviewTheme;
+  // A placed chart's SVG is rendered for one brand and theme: opening another scope generates and certifies for it (Sprint 202 m01).
+  const scope = `${brand}/${theme}` as const;
+  const generatedScope = `${record.brand}/${record.theme}`;
+  const chartScoped = chartNodes(record.schema.screens).length > 0;
 
   // The deterministic field model, seeded once per version with the same policy as the design loop.
   let model = record.model;
@@ -125,20 +132,38 @@ export async function handle(input: DesignPreviewInputSchema.DesignPreviewInput,
   // Every placed chart is certified once per version, in the scope the artifacts were generated for.
   if (!record.measurements.charts) measurements.charts = await certifyPlacedCharts(record.schema, { theme: record.theme, brand: record.brand });
   if (Object.keys(artifacts).length || !record.model || Object.keys(measurements).length) record = await attachToVersion(compositionsDir, record.compositionId, record.version, { artifacts, model, measurements });
+  if (chartScoped && scope !== generatedScope) {
+    const scoped = record.scopes?.[scope];
+    const scopedArtifacts: CompositionVersion['artifacts'] = {};
+    for (const framework of frameworks) {
+      if (scoped?.artifacts[framework]) continue;
+      const generated = await generate({ schema: record.schema, framework, profile: 'build', options: { theme, brand } });
+      if (generated.status !== 'ok' || !generated.artifact) throw new Error(`Generation failed (${framework}, ${scope}): ${JSON.stringify(generated.errors)}`);
+      const issues = validateGeneratedArtifact(generated.artifact);
+      if (issues.length) throw new Error(issues.join('\n'));
+      scopedArtifacts[framework] = { artifact: generated.artifact, generatedAt: new Date().toISOString() };
+    }
+    const charts = scoped?.charts ? undefined : await certifyPlacedCharts(record.schema, { theme, brand });
+    if (Object.keys(scopedArtifacts).length || charts) record = await attachToVersion(compositionsDir, record.compositionId, record.version, { scopes: { [scope]: { artifacts: scopedArtifacts, ...(charts ? { charts } : {}) } } });
+  }
 
   const base = `${hostUrl}/preview/${record.compositionId}/${record.version}`;
   const previews: PreviewEntry[] = [];
   for (const framework of frameworks) {
     const query = `framework=${framework}&brand=${brand}&theme=${theme}`;
-    const moduleUrl = `${base}/module.js?framework=${framework}`;
+    // The module for this scope: the scoped generation when the placed chart needed one, else the version's own artifact.
+    const scopedEntry = chartScoped && scope !== generatedScope ? record.scopes?.[scope]?.artifacts[framework] : undefined;
+    const served = scopedEntry ?? record.artifacts[framework]!;
+    const moduleUrl = `${base}/module.js?${query}`;
     // Compile now, so a broken artifact is this call's failure rather than a blank page later.
     const response = await fetch(moduleUrl, { signal: AbortSignal.timeout(COMPILE_TIMEOUT_MS) });
     const body = await response.text();
     if (!response.ok) throw new Error(`The preview host could not compile the ${framework} artifact (HTTP ${response.status}): ${body.slice(0, 2000)}`);
     previews.push({
       framework, url: `${base}?${query}`, appUrl: `${base}/app?${query}`, moduleUrl,
-      artifactContentHash: record.artifacts[framework]!.artifact.contentHash,
+      artifactContentHash: served.artifact.contentHash,
       compiled: { bytes: Buffer.byteLength(body), sha256: digest(body) },
+      generatedFor: { brand: scopedEntry || !chartScoped ? brand : record.brand, theme: scopedEntry || !chartScoped ? theme : record.theme, chartScoped },
     });
   }
 
@@ -229,9 +254,40 @@ async function applyEdit(compositionsDir: string, parent: CompositionVersion, ed
 async function versions(input: DesignPreviewInputSchema.DesignPreviewInput, hostUrl: string, compositionsDir: string, started: number): Promise<VersionsOutput> {
   if (!input.compositionId) throw new ToolError('OODS-V203', 'design.preview action versions needs compositionId', { input: Object.keys(input) });
   const entries = await listVersions(compositionsDir, input.compositionId);
+  const acceptances = (await readAccepted(compositionsDir, input.compositionId))?.acceptances ?? [];
+  const standing = acceptances.at(-1);
   return {
     status: 'ok', action: 'versions', compositionId: input.compositionId, latest: entries.at(-1)!.version,
     versions: entries.map(entry => ({ ...entry, url: `${hostUrl}/preview/${input.compositionId}/${entry.version}` })),
+    accepted: standing ? { version: standing.version, acceptedAt: standing.acceptedAt, acceptances: acceptances.length } : null,
+    host: { url: hostUrl, port: Number(new URL(hostUrl).port), compositionsDir }, durationMs: performance.now() - started,
+  };
+}
+
+const refuseAccept = (reason: string, details: Record<string, unknown>) => new ToolError('OODS-V205', `design.preview action accept: ${reason}`, details);
+
+/**
+ * Accept a version (Sprint 202 m04): recorded once in the composition's accepted.json with when, the heads, the schema
+ * hash and a snapshot of the measurements the version carries; a later acceptance supersedes the standing one with lineage.
+ * A version that was never generated has no measurements to stand on, and the standing version cannot be accepted again.
+ */
+async function accept(input: DesignPreviewInputSchema.DesignPreviewInput, hostUrl: string, compositionsDir: string, started: number): Promise<AcceptOutput> {
+  if (!input.compositionId) throw new ToolError('OODS-V203', 'design.preview action accept needs compositionId (with an optional version)', { input: Object.keys(input) });
+  const version = input.version ?? await latestVersion(compositionsDir, input.compositionId);
+  const record = await readVersion(compositionsDir, input.compositionId, version);
+  const generated = (['react', 'vue'] as const).filter(framework => record.artifacts[framework]);
+  if (!generated.length) throw refuseAccept(`${input.compositionId} version ${version} has not been generated, so it has no measurements to accept; open it with design.preview first`, { compositionId: input.compositionId, version });
+  const standing = (await readAccepted(compositionsDir, input.compositionId))?.acceptances.at(-1);
+  if (standing?.version === version) throw refuseAccept(`${input.compositionId} version ${version} is already the accepted version (since ${standing.acceptedAt})`, { compositionId: input.compositionId, version, acceptedAt: standing.acceptedAt });
+  const scopeCharts = Object.fromEntries(Object.entries(record.scopes ?? {}).filter(([, generation]) => generation?.charts?.length).map(([scope, generation]) => [scope, generation!.charts!]));
+  const { record: accepted, acceptance, file } = await appendAcceptance(compositionsDir, input.compositionId, {
+    version, acceptedAt: new Date().toISOString(), head: readForgeHead(), versionHead: record.head, schemaHash: record.schemaHash,
+    measurements: record.measurements, scopeCharts, measured: summarizeMeasurements(record),
+  });
+  return {
+    status: 'ok', action: 'accept', compositionId: input.compositionId, version, parentVersion: record.parentVersion, operation: record.operation,
+    object: String(record.compose.object ?? ''), context: String(record.compose.context ?? ''),
+    accepted: acceptance as AcceptOutput['accepted'], acceptances: accepted.acceptances.length, acceptedPath: file, previewUrl: `${hostUrl}/preview/${input.compositionId}/${version}`,
     host: { url: hostUrl, port: Number(new URL(hostUrl).port), compositionsDir }, durationMs: performance.now() - started,
   };
 }
@@ -239,11 +295,18 @@ async function versions(input: DesignPreviewInputSchema.DesignPreviewInput, host
 /** What the version carries as measured, and what it does not; the panel says the same. */
 function summarizeMeasurements(record: CompositionVersion): RenderOutput['measured'] {
   const validation = (record.measurements.validation as Record<string, unknown> | undefined) ?? {};
-  const charts = (record.measurements.charts as Array<{ path: string; certification: { conformant: boolean | null } }> | undefined) ?? [];
+  type Certified = { path: string; certification: { conformant: boolean | null }; narrow?: { certification: { conformant: boolean | null } } };
+  const charts = (record.measurements.charts as Certified[] | undefined) ?? [];
   const axe = (record.measurements.axe as Record<string, Record<string, unknown>> | undefined) ?? {};
+  // A placed chart is conformant when both its renders (design size and narrow) are; a null on either leaves it uncertified.
+  const verdict = (chart: Certified): boolean | null => {
+    const values = [chart.certification.conformant, ...(chart.narrow ? [chart.narrow.certification.conformant] : [])];
+    return values.some(value => value === false) ? false : values.every(value => value === true) ? true : null;
+  };
+  const scopes = charts.length ? [`${record.brand}/${record.theme}`, ...Object.entries(record.scopes ?? {}).filter(([, generation]) => generation?.charts?.length).map(([key]) => key)] : [];
   return {
     validation: (['react', 'vue'] as const).filter(framework => validation[framework]),
-    charts: { placed: charts.length, conformant: charts.filter(chart => chart.certification.conformant === true).length, notConformant: charts.filter(chart => chart.certification.conformant === false).length, uncertified: charts.filter(chart => chart.certification.conformant === null).length },
+    charts: { placed: charts.length, conformant: charts.filter(chart => verdict(chart) === true).length, notConformant: charts.filter(chart => verdict(chart) === false).length, uncertified: charts.filter(chart => verdict(chart) === null).length, scopes },
     axe: Object.entries(axe).flatMap(([framework, scopes]) => Object.keys(scopes).sort().map(scope => `${framework}:${scope}`)),
     notMeasured: [
       ...(['react', 'vue'] as const).filter(framework => record.artifacts[framework] && !validation[framework]).map(framework => `validation:${framework}`),

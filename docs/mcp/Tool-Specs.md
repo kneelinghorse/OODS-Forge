@@ -19,13 +19,13 @@ Bridge-exposed tools require both [agent policy](../../configs/agent/policy.json
 
 ## Evidence and portable outcomes
 
-Tool ledger: [packages/mcp-server/registry/tool-capability-ledger.v1.json](../../packages/mcp-server/registry/tool-capability-ledger.v1.json), recorded source head `"a6bd41b2577d69bf294d8aeaa03ee88d30925415"`.
+Tool ledger: [packages/mcp-server/registry/tool-capability-ledger.v1.json](../../packages/mcp-server/registry/tool-capability-ledger.v1.json), recorded source head `"99f3d501d4290db932e73a6055d265a35fdd8da2"`.
 
 Proof tier methodology: Highest location tier of a literal runtime import of a handler-bearing module in mcp-server test/spec sources. Grouped action imports roll up to their registered family. Imports are source evidence, not proof of invocation, passing execution or browser certification. Transitive imports and constructed imports/dispatch are not followed; type-only and schema-only imports do not promote a tier.
 
 README references in product-reality directories containing browser/packed/runtime/SVG/screenshot prose. Current census reports are excluded. References are discovery pointers, never verified receipts or tier promotions.
 
-Recorded portable execution: 19 pass and 0 typed dependency outcomes across 19 tools. Receipt: [artifacts/product-reality/sprint-201/m07/pre-freeze/e2e-host.json](../../artifacts/product-reality/sprint-201/m07/pre-freeze/e2e-host.json); SHA-256 `"sha256:6004c55687a5c3aa505402715cadc0c0d47782353efdaede000d2fbf8b2a403b"`; bundle head `"37fc2351b64e716938be5c1850b94dbfd7e161e4"`; dirty=`false`. This records the measured development bundle, not a later clean release.
+Recorded portable execution: 19 pass and 0 typed dependency outcomes across 19 tools. Receipt: [artifacts/product-reality/sprint-202/m06/pre-freeze/e2e-host.json](../../artifacts/product-reality/sprint-202/m06/pre-freeze/e2e-host.json); SHA-256 `"sha256:67194d59f88763dc4786a8ecedc58b8a68cdeb9743e80352f8ee853f1ed4ef6d"`; bundle head `"99f3d501d4290db932e73a6055d265a35fdd8da2"`; dirty=`false`. This records the measured development bundle, not a later clean release.
 
 ## Current component capability counts
 
@@ -536,7 +536,7 @@ Additional properties: `false`.
 
 ### `design.preview`
 
-Open a composition version as the generated React or Vue app actually running in a browser: an existing compositionId (and optional version) or an object and context composed now as a new composition. Generates one or both frameworks onto the version, seeds the deterministic field model, compiles each artifact once through the preview host and returns one URL per framework with the lineage (compositionId, version, parentVersion, operation, head), the schema hash and the compiled module digests; the page shows the lineage and the measurements beside the running app with brand, theme and width controls, and brand and theme re-mount the app in place. Measurements are stored on the version and the result's measured block names them: the code.generate validation receipt per framework, artifact.certify for every placed chart, and axe-core run inside the running page per framework, brand and theme; every measurement not taken is listed under notMeasured, so nothing is claimed that did not run. The HTTP bridge hosts the preview in-process and the stdio adapter starts it on 127.0.0.1 for Claude Desktop, Claude Code and Cursor, so the extracted runtime bundle serves it with no Vite, npm install or browser automation. action compare (compositionId@version against another version) returns the structural what-changed the compare page shows: regions added, removed or reordered, slot components, nodes outside slots, props, field order, the seed and artifact files whose hash moved, with the side-by-side URL; identical versions report zero differences. action edit applies one operation to compositionId@version by re-composing through the override surface and re-generating, and records the result as a new version with its parent and the operation, then opens it: reorder-region (regionOrder), swap-slot (slot, component from the composer's own candidates), reorder-fields (region, fieldOrder), seed (seed); the parent version is never changed, and an operation that names nothing on the version or changes nothing is refused with OODS-V204. action versions lists the composition's versions with their lineage. The render result's editable block names the regions, slots with candidates, field order and seed an edit may use; the page offers the same four edits. Typed limits: without a reachable host (a native server run on its own, a host reading another schema store root, or a platform without a bundled esbuild binary) the outcome is OODS-N021, retryable, with the host details in data; an unknown composition or version is OODS-N022. Writes only the version's artifacts and model; never saves or edits a schema. A running preview is an observation, not usability certification.
+Open a composition version as the generated React or Vue app actually running in a browser: an existing compositionId (and optional version) or an object and context composed now as a new composition. Generates one or both frameworks onto the version, seeds the deterministic field model, compiles each artifact once through the preview host and returns one URL per framework with the lineage (compositionId, version, parentVersion, operation, head), the schema hash and the compiled module digests; the page shows the lineage and the measurements beside the running app with brand, theme and width controls, and brand and theme re-mount the app in place. Measurements are stored on the version and the result's measured block names them: the code.generate validation receipt per framework, artifact.certify for every placed chart, and axe-core run inside the running page per framework, brand and theme; every measurement not taken is listed under notMeasured, so nothing is claimed that did not run. The HTTP bridge hosts the preview in-process and the stdio adapter starts it on 127.0.0.1 for Claude Desktop, Claude Code and Cursor, so the extracted runtime bundle serves it with no Vite, npm install or browser automation. A client that negotiates the MCP Apps extension (io.modelcontextprotocol/ui) with the stdio adapter also receives the preview app as a ui:// resource: the same running app with its lineage and measurements, the brand, theme, framework and width switches, the four edits, compare side by side, accept and request changes, inside the conversation. action compare (compositionId@version against another version) returns the structural what-changed the compare page shows: regions added, removed or reordered, slot components, nodes outside slots, props, field order, the seed and artifact files whose hash moved, with the side-by-side URL; identical versions report zero differences. action edit applies one operation to compositionId@version by re-composing through the override surface and re-generating, and records the result as a new version with its parent and the operation, then opens it: reorder-region (regionOrder), swap-slot (slot, component from the composer's own candidates), reorder-fields (region, fieldOrder), seed (seed); the parent version is never changed, and an operation that names nothing on the version or changes nothing is refused with OODS-V204. action versions lists the composition's versions with their lineage. The render result's editable block names the regions, slots with candidates, field order and seed an edit may use; the page offers the same four edits. Typed limits: without a reachable host (a native server run on its own, a host reading another schema store root, or a platform without a bundled esbuild binary) the outcome is OODS-N021, retryable, with the host details in data; an unknown composition or version is OODS-N022. Writes only the version's artifacts and model; never saves or edits a schema. A running preview is an observation, not usability certification.
 
 [Complete input/output reference](../api/design-preview.md). The tables below follow the actual dispatch schema paths; those paths control when the legacy API page selects a different schema.
 
@@ -550,11 +550,11 @@ Documented limit (documented-limit): Requires a reachable preview host: the HTTP
 
 Dispatch schema: [packages/mcp-server/src/schemas/design.preview.input.json](../../packages/mcp-server/src/schemas/design.preview.input.json).
 
-Open a composition version as the generated React or Vue app actually running in a browser: either an existing compositionId (and optional version) or an object and context composed now as a new composition. The preview host (in the HTTP bridge, or started by the stdio adapter) compiles the artifact and serves it at one URL per version with its lineage and brand, theme and width controls. action "compare" returns the structural what-changed between this version and `against` (regions, slots, nodes, props, field order, seed, artifact file hashes) with the side-by-side URL.
+Open a composition version as the generated React or Vue app actually running in a browser: either an existing compositionId (and optional version) or an object and context composed now as a new composition. The preview host (in the HTTP bridge, or started by the stdio adapter) compiles the artifact and serves it at one URL per version with its lineage and brand, theme and width controls. action "compare" returns the structural what-changed between this version and `against` (regions, slots, nodes, props, field order, seed, artifact file hashes) with the side-by-side URL. action "accept" records the version as the composition's accepted version with a snapshot of its measurements.
 
 | Parameter / field | Type | Required in this branch | Default | Description / constraints |
 |---|---|---|---|---|
-| `action` | `"render"` or `"compare"` or `"edit"` or `"versions"` | No | `"render"` | render (default): open the version as the running app. compare: the what-changed between compositionId@version and against. edit: apply one operation to compositionId@version by re-composing through the override surface and re-generating, recording a new version with its parent, then open it. versions: list the composition's versions. |
+| `action` | `"render"` or `"compare"` or `"edit"` or `"versions"` or `"accept"` | No | `"render"` | render (default): open the version as the running app. compare: the what-changed between compositionId@version and against. edit: apply one operation to compositionId@version by re-composing through the override surface and re-generating, recording a new version with its parent, then open it. versions: list the composition's versions and the accepted one. accept: record compositionId@version (default its latest) in the composition's accepted.json with when, the Forge head, the schema hash and a snapshot of the version's measurements; a later accept supersedes it with lineage, and a version not generated yet or already the accepted one is refused with OODS-V205. |
 | `compositionId` | string | No | — | An existing composition from design.compose; with no version, its latest version opens.; pattern: `"^cmp-[a-f0-9]{12}$"` |
 | `version` | integer | No | — | The version of compositionId to open.; minimum: `1` |
 | `object` | string | No | — | Object name from the OODS registry (e.g., 'Subscription', 'User'); with context, composes a new composition (version 1) and opens it.; minLength: `1` |
@@ -584,7 +584,7 @@ Required keys in this branch: `"object"`, `"context"`.
 
 Dispatch schema: [packages/mcp-server/src/schemas/design.preview.output.json](../../packages/mcp-server/src/schemas/design.preview.output.json).
 
-The URL of the composition version running in the preview host, one per compiled framework, with its lineage (composition, version, parent, operation, head), the schema hash and the compiled module digests. An unreachable host throws OODS-N021 before any record is written; an unknown composition or version throws OODS-N022. action compare returns the what-changed between two versions instead. action edit records a new version from one operation and opens it; action versions lists a composition's versions.
+The URL of the composition version running in the preview host, one per compiled framework, with its lineage (composition, version, parent, operation, head), the schema hash and the compiled module digests. An unreachable host throws OODS-N021 before any record is written; an unknown composition or version throws OODS-N022. action compare returns the what-changed between two versions instead. action edit records a new version from one operation and opens it; action versions lists a composition's versions and the accepted one; action accept records a version as accepted and returns the acceptance.
 
 anyOf: at least one branch must match.
 
@@ -647,10 +647,34 @@ Additional properties: `false`.
 | `compositionId` | string | Yes | — | — |
 | `latest` | integer | Yes | — | — |
 | `versions` | array of object | Yes | — | — |
+| `accepted` | null or object | Yes | — | The standing acceptance (the last one in accepted.json), or null when no version was accepted. |
 | `host` | object | Yes | — | additionalProperties: `false` |
 | `durationMs` | number | Yes | — | minimum: `0` |
 
-Required keys in this branch: `"status"`, `"action"`, `"compositionId"`, `"latest"`, `"versions"`, `"host"`, `"durationMs"`.
+Required keys in this branch: `"status"`, `"action"`, `"compositionId"`, `"latest"`, `"versions"`, `"accepted"`, `"host"`, `"durationMs"`.
+
+Additional properties: `false`.
+
+##### Output anyOf[3]
+
+| Parameter / field | Type | Required in this branch | Default | Description / constraints |
+|---|---|---|---|---|
+| `status` | `"ok"` | Yes | — | — |
+| `action` | `"accept"` | Yes | — | — |
+| `compositionId` | string | Yes | — | pattern: `"^cmp-[a-f0-9]{12}$"` |
+| `version` | integer | Yes | — | minimum: `1` |
+| `parentVersion` | integer or null | Yes | — | — |
+| `operation` | string | Yes | — | — |
+| `object` | string | Yes | — | — |
+| `context` | string | Yes | — | — |
+| `accepted` | object | Yes | — | The acceptance just recorded in accepted.json.; additionalProperties: `false` |
+| `acceptances` | integer | Yes | — | How many acceptances accepted.json holds now; the last is the standing one.; minimum: `1` |
+| `acceptedPath` | string | Yes | — | — |
+| `previewUrl` | string | Yes | — | format: `"uri"` |
+| `host` | object | Yes | — | additionalProperties: `false` |
+| `durationMs` | number | Yes | — | minimum: `0` |
+
+Required keys in this branch: `"status"`, `"action"`, `"compositionId"`, `"version"`, `"parentVersion"`, `"operation"`, `"object"`, `"context"`, `"accepted"`, `"acceptances"`, `"acceptedPath"`, `"previewUrl"`, `"host"`, `"durationMs"`.
 
 Additional properties: `false`.
 

@@ -20,6 +20,13 @@ const CATEGORY_LABELS: Record<DiffCategory, string> = { regions: 'Regions', slot
 const short = (hash: string | null) => hash ? hash.replace(/^sha256:/, '').slice(0, 12) : 'none';
 const json = (value: unknown) => escapeHtml(JSON.stringify(value));
 
+/** The structural what-changed, one list per category, or the no-differences note; the compare page and the preview app both show it. */
+export function renderWhatChanged(diff: CompositionDiff): string {
+  return diff.identical
+    ? '<p data-oods-identical="true">No differences: the two versions have the same regions, slots, nodes, props, field order, seed and artifact files.</p>'
+    : (Object.keys(CATEGORY_LABELS) as DiffCategory[]).filter(category => diff.summary[category] > 0).map(category => `<h3>${CATEGORY_LABELS[category]} <span class="count">${diff.summary[category]}</span></h3><ul data-oods-diff="${category}">${diff.differences.filter(entry => entry.category === category).map(entry => `<li><code>${escapeHtml(entry.field)}</code> <em>${escapeHtml(entry.note)}</em><br><span class="before">${json(entry.before)}</span> → <span class="after">${json(entry.after)}</span></li>`).join('')}</ul>`).join('');
+}
+
 /** Two running apps side by side with the structural what-changed and both measurement panels. */
 export function renderComparePage({ left, right, diff, frameworks, framework, brand, theme, width, base }: ComparePageInput): string {
   const pixelWidth = width === 'free' ? 720 : width;
@@ -27,9 +34,7 @@ export function renderComparePage({ left, right, diff, frameworks, framework, br
   const page = (record: CompositionVersion) => `${base}/${record.compositionId}/${record.version}?framework=${framework}&brand=${brand}&theme=${theme}`;
   const label = (record: CompositionVersion) => `${record.compose.object ?? 'composition'} ${record.compose.context ?? ''} · <a href="${page(record)}">${escapeHtml(record.compositionId)} v${record.version}</a> · ${escapeHtml(record.operation)}${record.parentVersion === null ? '' : ` ← v${record.parentVersion}`} · schema <code>${escapeHtml(short(record.schemaHash))}</code>`;
   const options = <T extends string | number>(name: string, values: readonly T[], current: T) => values.map(value => `<button type="button" data-control="${name}" data-value="${escapeHtml(String(value))}" aria-pressed="${String(value === current)}">${escapeHtml(String(value))}</button>`).join('');
-  const changes = diff.identical
-    ? '<p data-oods-identical="true">No differences: the two versions have the same regions, slots, nodes, props, field order, seed and artifact files.</p>'
-    : (Object.keys(CATEGORY_LABELS) as DiffCategory[]).filter(category => diff.summary[category] > 0).map(category => `<h3>${CATEGORY_LABELS[category]} <span class="count">${diff.summary[category]}</span></h3><ul data-oods-diff="${category}">${diff.differences.filter(entry => entry.category === category).map(entry => `<li><code>${escapeHtml(entry.field)}</code> <em>${escapeHtml(entry.note)}</em><br><span class="before">${json(entry.before)}</span> → <span class="after">${json(entry.after)}</span></li>`).join('')}</ul>`).join('');
+  const changes = renderWhatChanged(diff);
   const state = { left: `${left.compositionId}@${left.version}`, right: `${right.compositionId}@${right.version}`, framework, brand, theme, width, base };
   return [
     '<!doctype html>',

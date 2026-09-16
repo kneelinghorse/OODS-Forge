@@ -145,13 +145,17 @@ test('Error guidance only appended for server-related failures', () => {
   );
 });
 
-// ── Criterion 4: structuredContent removed ───────────────────────────
+// ── Criterion 4: structuredContent only on design_preview (s202-m02) ───────────────────────────
 
-test('No structuredContent field in tool responses', () => {
-  assert.ok(
-    !INDEX_SRC.includes('structuredContent'),
-    'structuredContent should be removed from all tool responses'
-  );
+// Sprint 55 removed structuredContent from every tool response. Sprint 202 (MCP Apps) returns it beside the unchanged text
+// for design_preview only, for the preview app inside the conversation; no other tool carries it.
+test('structuredContent only on design_preview results', () => {
+  const uses = INDEX_SRC.split('\n').map(line => line.trim()).filter(line => line.includes('structuredContent'));
+  assert.deepEqual(uses, [
+    '// design_preview carries its result as structuredContent too (for the app, never for the model); the text is unchanged.',
+    '...(structured ? { structuredContent: structured } : {}),',
+  ], 'structuredContent appears only in the design_preview result branch');
+  assert.match(INDEX_SRC, /const structured = internalName === 'design\.preview' && /, 'structuredContent is built only for design.preview');
 });
 
 // ── Criterion 5: Startup logging with version, tool count, server path

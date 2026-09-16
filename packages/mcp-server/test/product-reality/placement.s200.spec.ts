@@ -28,8 +28,11 @@ describe('s200-m02 placed charts render at design size and never scale above it'
       for (const framework of ['react', 'vue'] as const) {
         const result = await generate({ schema: composed.schema, framework, profile: 'build', options: { styling: 'tokens', typescript: true } });
         expect(result.status, JSON.stringify(result.errors)).toBe('ok');
-        const asset = result.artifact!.files.find(file => file.path.endsWith('.svg'))!;
+        // The design-size asset; the narrow render beside it (Sprint 202 m01) is the figure's own switch, not a scale-up.
+        const asset = result.artifact!.files.find(file => file.path.endsWith('.svg') && !file.path.endsWith('.narrow.svg'))!;
         expect(asset, `${object}/${framework} chart asset`).toBeDefined();
+        const narrow = result.artifact!.files.find(file => file.path.endsWith('.narrow.svg'))!;
+        expect(Number(narrow.contents.match(/^<svg[^>]*\bwidth="(\d+)"/)![1])).toBeLessThanOrEqual(370);
         const [, width, height] = asset.contents.match(/^<svg[^>]*\bwidth="(\d+)"[^>]*\bheight="(\d+)"/)!;
         // Vega adds its 5px padding around the requested frame; ECharts renders the frame exactly.
         expect(Number(width)).toBeGreaterThanOrEqual(720); expect(Number(width)).toBeLessThanOrEqual(730);

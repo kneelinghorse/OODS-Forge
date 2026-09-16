@@ -14,6 +14,7 @@ import { isMarkRectGrid, heatmapColorIsMeasure, getEncodingBinding, aggregateMar
 import { getVizScaleTokens } from '../tokens/scale-token-mapper.js';
 import { resolveOodsEchartsChrome } from '../tokens/oods-echarts-chrome.js';
 import { createVisualMapForScale } from './spatial/echarts-visualmap-generator.js';
+import { paintedTitle } from '../spec/title-placement.js';
 
 const DEFAULT_DATASET_ID = 'viz-dataset';
 const CATEGORY_SCALES = new Set(['band', 'point']);
@@ -783,12 +784,13 @@ function buildAria(spec: NormalizedVizSpec): Record<string, unknown> {
 }
 
 function buildTitle(spec: NormalizedVizSpec): Record<string, unknown> | undefined {
-  if (!spec.name) {
+  const text = paintedTitle(spec);
+  if (!text) {
     return undefined;
   }
 
   return removeUndefined({
-    text: spec.name,
+    text,
     subtext: spec.a11y.narrative?.summary,
   });
 }

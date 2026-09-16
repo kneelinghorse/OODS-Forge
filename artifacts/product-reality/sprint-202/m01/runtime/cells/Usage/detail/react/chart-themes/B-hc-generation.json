@@ -1,0 +1,794 @@
+{
+  "request": {
+    "schema": {
+      "version": "2026.02",
+      "screens": [
+        {
+          "id": "screen-detail-13",
+          "component": "Stack",
+          "layout": {
+            "type": "stack",
+            "gapToken": "cluster-default"
+          },
+          "children": [
+            {
+              "id": "detail-header-1",
+              "component": "Stack",
+              "layout": {
+                "type": "stack",
+                "align": "space-between",
+                "gapToken": "stack-default"
+              },
+              "style": {
+                "spacingToken": "inset-default"
+              },
+              "children": [
+                {
+                  "id": "slot-header-2",
+                  "component": "Stack",
+                  "meta": {
+                    "intent": "slot:header",
+                    "label": "header"
+                  },
+                  "children": [
+                    {
+                      "id": "primary-header-21",
+                      "component": "DetailHeader",
+                      "props": {
+                        "titleField": "usage_id",
+                        "headingLevel": 1
+                      }
+                    },
+                    {
+                      "id": "ve-header-20",
+                      "component": "VizLinePreview",
+                      "props": {
+                        "title": "Example API-call usage",
+                        "description": "Synthetic API-call counts for generated example records."
+                      },
+                      "chart": {
+                        "chartType": "line",
+                        "source": "record-array",
+                        "dataField": "samples",
+                        "encodings": {
+                          "x": {
+                            "field": "timestamp",
+                            "scale": "temporal",
+                            "title": "Recorded at"
+                          },
+                          "y": {
+                            "field": "value",
+                            "title": "API calls"
+                          }
+                        },
+                        "sampleRows": [
+                          {
+                            "timestamp": "2025-06-15T00:00:00Z",
+                            "value": 1200
+                          },
+                          {
+                            "timestamp": "2025-06-20T00:00:00Z",
+                            "value": 1800
+                          },
+                          {
+                            "timestamp": "2025-06-25T00:00:00Z",
+                            "value": 1500
+                          }
+                        ]
+                      }
+                    }
+                  ],
+                  "layout": {
+                    "type": "stack",
+                    "gapToken": "cluster-default"
+                  }
+                }
+              ]
+            },
+            {
+              "id": "detail-body-10",
+              "component": "Card",
+              "layout": {
+                "type": "stack",
+                "gapToken": "cluster-default"
+              },
+              "children": [
+                {
+                  "id": "detail-tabs-9",
+                  "component": "Tabs",
+                  "children": [
+                    {
+                      "id": "detail-tab-panel-3",
+                      "component": "Stack",
+                      "layout": {
+                        "type": "stack",
+                        "gapToken": "cluster-default"
+                      },
+                      "props": {
+                        "label": "Details"
+                      },
+                      "children": [
+                        {
+                          "id": "slot-tab-0-4",
+                          "component": "Stack",
+                          "meta": {
+                            "intent": "slot:tab-0",
+                            "label": "tab-0",
+                            "notes": "pattern-group:status-timeline"
+                          },
+                          "layout": {
+                            "type": "stack",
+                            "gapToken": "cluster-tight"
+                          },
+                          "children": [
+                            {
+                              "id": "pg-status-timeline-23-read-field",
+                              "component": "Stack",
+                              "children": [
+                                {
+                                  "id": "pg-status-timeline-23-label",
+                                  "component": "Text",
+                                  "props": {
+                                    "as": "strong",
+                                    "content": "Status"
+                                  }
+                                },
+                                {
+                                  "id": "pg-status-timeline-23-value",
+                                  "meta": {
+                                    "intent": "read-only-field"
+                                  },
+                                  "component": "Text",
+                                  "props": {
+                                    "field": "status"
+                                  }
+                                }
+                              ]
+                            },
+                            {
+                              "id": "pg-status-timeline-24-read-field",
+                              "component": "Stack",
+                              "children": [
+                                {
+                                  "id": "pg-status-timeline-24-label",
+                                  "component": "Text",
+                                  "props": {
+                                    "as": "strong",
+                                    "content": "Updated at"
+                                  }
+                                },
+                                {
+                                  "id": "pg-status-timeline-24-value",
+                                  "meta": {
+                                    "intent": "read-only-field"
+                                  },
+                                  "component": "Text",
+                                  "props": {
+                                    "field": "updated_at"
+                                  }
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "id": "slot-tab-1-6-read-field",
+                          "component": "Stack",
+                          "children": [
+                            {
+                              "id": "slot-tab-1-6-label",
+                              "component": "Text",
+                              "props": {
+                                "as": "strong",
+                                "content": "Consumed quantity"
+                              }
+                            },
+                            {
+                              "id": "slot-tab-1-6-value",
+                              "meta": {
+                                "intent": "read-only-field"
+                              },
+                              "component": "Text",
+                              "props": {
+                                "field": "consumed_quantity"
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "id": "detail-tabs-9-overage_rate_minor-read-field",
+                          "component": "Stack",
+                          "children": [
+                            {
+                              "id": "detail-tabs-9-overage_rate_minor-label",
+                              "component": "Text",
+                              "props": {
+                                "as": "strong",
+                                "content": "Overage rate"
+                              }
+                            },
+                            {
+                              "id": "detail-tabs-9-overage_rate_minor-value",
+                              "meta": {
+                                "intent": "read-only-field"
+                              },
+                              "component": "Text",
+                              "props": {
+                                "field": "overage_rate_minor"
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "id": "detail-tabs-9-projected_overage_minor-read-field",
+                          "component": "Stack",
+                          "children": [
+                            {
+                              "id": "detail-tabs-9-projected_overage_minor-label",
+                              "component": "Text",
+                              "props": {
+                                "as": "strong",
+                                "content": "Projected overage"
+                              }
+                            },
+                            {
+                              "id": "detail-tabs-9-projected_overage_minor-value",
+                              "meta": {
+                                "intent": "read-only-field"
+                              },
+                              "component": "Text",
+                              "props": {
+                                "field": "projected_overage_minor"
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "id": "detail-tabs-9-created_at-read-field",
+                          "component": "Stack",
+                          "children": [
+                            {
+                              "id": "detail-tabs-9-created_at-label",
+                              "component": "Text",
+                              "props": {
+                                "as": "strong",
+                                "content": "Created at"
+                              }
+                            },
+                            {
+                              "id": "detail-tabs-9-created_at-value",
+                              "meta": {
+                                "intent": "read-only-field"
+                              },
+                              "component": "Text",
+                              "props": {
+                                "field": "created_at"
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "id": "detail-tabs-9-last_event-read-field",
+                          "component": "Stack",
+                          "children": [
+                            {
+                              "id": "detail-tabs-9-last_event-label",
+                              "component": "Text",
+                              "props": {
+                                "as": "strong",
+                                "content": "Last event"
+                              }
+                            },
+                            {
+                              "id": "detail-tabs-9-last_event-value",
+                              "meta": {
+                                "intent": "read-only-field"
+                              },
+                              "component": "Text",
+                              "props": {
+                                "field": "last_event"
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "id": "detail-tabs-9-last_event_at-read-field",
+                          "component": "Stack",
+                          "children": [
+                            {
+                              "id": "detail-tabs-9-last_event_at-label",
+                              "component": "Text",
+                              "props": {
+                                "as": "strong",
+                                "content": "Last event at"
+                              }
+                            },
+                            {
+                              "id": "detail-tabs-9-last_event_at-value",
+                              "meta": {
+                                "intent": "read-only-field"
+                              },
+                              "component": "Text",
+                              "props": {
+                                "field": "last_event_at"
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "id": "detail-tabs-9-subscription_id-read-field",
+                          "component": "Stack",
+                          "children": [
+                            {
+                              "id": "detail-tabs-9-subscription_id-label",
+                              "component": "Text",
+                              "props": {
+                                "as": "strong",
+                                "content": "Subscription id"
+                              }
+                            },
+                            {
+                              "id": "detail-tabs-9-subscription_id-value",
+                              "meta": {
+                                "intent": "read-only-field"
+                              },
+                              "component": "Text",
+                              "props": {
+                                "field": "subscription_id"
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "id": "detail-tabs-9-meter_id-read-field",
+                          "component": "Stack",
+                          "children": [
+                            {
+                              "id": "detail-tabs-9-meter_id-label",
+                              "component": "Text",
+                              "props": {
+                                "as": "strong",
+                                "content": "Meter id"
+                              }
+                            },
+                            {
+                              "id": "detail-tabs-9-meter_id-value",
+                              "meta": {
+                                "intent": "read-only-field"
+                              },
+                              "component": "Text",
+                              "props": {
+                                "field": "meter_id"
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "id": "detail-tabs-9-provider-read-field",
+                          "component": "Stack",
+                          "children": [
+                            {
+                              "id": "detail-tabs-9-provider-label",
+                              "component": "Text",
+                              "props": {
+                                "as": "strong",
+                                "content": "Provider"
+                              }
+                            },
+                            {
+                              "id": "detail-tabs-9-provider-value",
+                              "meta": {
+                                "intent": "read-only-field"
+                              },
+                              "component": "Text",
+                              "props": {
+                                "field": "provider"
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "id": "detail-tabs-9-trend_percent-read-field",
+                          "component": "Stack",
+                          "children": [
+                            {
+                              "id": "detail-tabs-9-trend_percent-label",
+                              "component": "Text",
+                              "props": {
+                                "as": "strong",
+                                "content": "Trend percent"
+                              }
+                            },
+                            {
+                              "id": "detail-tabs-9-trend_percent-value",
+                              "meta": {
+                                "intent": "read-only-field"
+                              },
+                              "component": "Text",
+                              "props": {
+                                "field": "trend_percent"
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "id": "detail-tabs-9-variance_minor-read-field",
+                          "component": "Stack",
+                          "children": [
+                            {
+                              "id": "detail-tabs-9-variance_minor-label",
+                              "component": "Text",
+                              "props": {
+                                "as": "strong",
+                                "content": "Variance"
+                              }
+                            },
+                            {
+                              "id": "detail-tabs-9-variance_minor-value",
+                              "meta": {
+                                "intent": "read-only-field"
+                              },
+                              "component": "Text",
+                              "props": {
+                                "field": "variance_minor"
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "id": "detail-tabs-9-last_reported_at-read-field",
+                          "component": "Stack",
+                          "children": [
+                            {
+                              "id": "detail-tabs-9-last_reported_at-label",
+                              "component": "Text",
+                              "props": {
+                                "as": "strong",
+                                "content": "Last reported at"
+                              }
+                            },
+                            {
+                              "id": "detail-tabs-9-last_reported_at-value",
+                              "meta": {
+                                "intent": "read-only-field"
+                              },
+                              "component": "Text",
+                              "props": {
+                                "field": "last_reported_at"
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ],
+                  "props": {
+                    "ariaLabel": "Record details"
+                  }
+                }
+              ]
+            }
+          ],
+          "bindings": {
+            "onEdit": "handleEdit",
+            "onDelete": "handleDelete",
+            "onViewTimeline": "handleViewTimeline"
+          },
+          "meta": {
+            "label": "Usage"
+          }
+        }
+      ],
+      "objectSchema": {
+        "meter_name": {
+          "type": "string",
+          "required": true,
+          "description": "Friendly metered feature name shown in UI (ex: Analytics Seats).",
+          "semanticType": "billing.usage.meter_name"
+        },
+        "included_quantity": {
+          "type": "integer",
+          "required": true,
+          "description": "Quantity included in base plan before overages.",
+          "semanticType": "billing.usage.included_quantity"
+        },
+        "consumed_quantity": {
+          "type": "integer",
+          "required": true,
+          "description": "Actual quantity consumed in the active period.",
+          "semanticType": "billing.usage.consumed_quantity"
+        },
+        "unit_label": {
+          "type": "string",
+          "required": true,
+          "default": "api_calls",
+          "description": "Label for display, defaults to the unit parameter.",
+          "semanticType": "billing.usage.unit_label"
+        },
+        "period_start": {
+          "type": "date",
+          "required": true,
+          "description": "Date the usage accumulation window began.",
+          "semanticType": "billing.usage.period_start"
+        },
+        "period_end": {
+          "type": "date",
+          "required": true,
+          "description": "Date the usage accumulation window ends.",
+          "semanticType": "billing.usage.period_end"
+        },
+        "rollover_strategy": {
+          "type": "string",
+          "required": false,
+          "default": "expire",
+          "description": "Strategy for unused units (inherits rolloverStrategy parameter).",
+          "semanticType": "billing.usage.rollover_strategy"
+        },
+        "overage_rate_minor": {
+          "type": "integer",
+          "required": false,
+          "description": "Cost per additional unit expressed in minor currency units.",
+          "semanticType": "billing.usage.overage_rate_minor"
+        },
+        "projected_overage_minor": {
+          "type": "integer",
+          "required": false,
+          "description": "Forecasted overage spend derived from consumption trends.",
+          "semanticType": "billing.usage.projected_overage_minor"
+        },
+        "samples": {
+          "type": "UsageSample[]",
+          "required": false,
+          "default": [],
+          "description": "Rolling usage measurements for charts or anomaly detection.",
+          "semanticType": "billing.usage.samples"
+        },
+        "created_at": {
+          "type": "datetime",
+          "required": true,
+          "description": "Timestamp recording when the entity was first created.",
+          "semanticType": "audit.created_at"
+        },
+        "updated_at": {
+          "type": "datetime",
+          "required": false,
+          "description": "Timestamp for the most recent modification, when available.",
+          "semanticType": "audit.updated_at"
+        },
+        "last_event": {
+          "type": "string",
+          "required": true,
+          "description": "Lifecycle event associated with the most recent timestamp mutation.",
+          "enum": [
+            "reading_captured",
+            "anomaly_detected",
+            "reset"
+          ],
+          "semanticType": "audit.event.type"
+        },
+        "last_event_at": {
+          "type": "datetime",
+          "required": false,
+          "description": "Timestamp for the lifecycle event captured in last_event.",
+          "semanticType": "audit.event.timestamp"
+        },
+        "usage_id": {
+          "type": "string",
+          "required": true,
+          "description": "Identifier for this usage record.",
+          "semanticType": "billing.usage.id"
+        },
+        "subscription_id": {
+          "type": "string",
+          "required": true,
+          "description": "Subscription the usage belongs to.",
+          "semanticType": "billing.usage.subscription_id"
+        },
+        "meter_id": {
+          "type": "string",
+          "required": true,
+          "description": "Provider specific meter identifier.",
+          "semanticType": "billing.usage.meter_id"
+        },
+        "provider": {
+          "type": "string",
+          "required": true,
+          "description": "Source provider for usage data.",
+          "semanticType": "billing.usage.provider"
+        },
+        "status": {
+          "type": "string",
+          "required": false,
+          "default": "ok",
+          "description": "Health of the usage feed (ok, delayed, investigating).",
+          "enum": [
+            "ok",
+            "delayed",
+            "investigating"
+          ],
+          "semanticType": "billing.usage.status"
+        },
+        "trend_percent": {
+          "type": "number",
+          "required": false,
+          "description": "Percent delta compared to previous window.",
+          "semanticType": "billing.usage.trend_percent"
+        },
+        "variance_minor": {
+          "type": "integer",
+          "required": false,
+          "description": "Currency impact of usage variance calculated with overage rate.",
+          "semanticType": "billing.usage.variance_minor"
+        },
+        "last_reported_at": {
+          "type": "datetime",
+          "required": true,
+          "description": "Timestamp of the most recent provider usage payload.",
+          "semanticType": "billing.usage.last_reported_at"
+        },
+        "anomalies": {
+          "type": "UsageAnomaly[]",
+          "required": false,
+          "default": [],
+          "description": "Detected anomalies with context for investigation.",
+          "semanticType": "billing.usage.anomalies"
+        }
+      }
+    },
+    "framework": "react",
+    "profile": "build",
+    "options": {
+      "styling": "tokens",
+      "typescript": true,
+      "brand": "B",
+      "theme": "hc"
+    }
+  },
+  "response": {
+    "status": "ok",
+    "framework": "react",
+    "artifact": {
+      "schemaVersion": "1.0.0",
+      "framework": "react",
+      "files": [
+        {
+          "path": "src/GeneratedUI.tsx",
+          "contents": "import React from 'react';\nimport { Card, DetailHeader, Stack, Tabs, Text, VizLinePreview } from '@oods/components-react';\nimport '@oods/component-styles/css';\nimport { formatReadOnlyValue } from '@oods/component-contracts';\n\nexport interface GeneratedUIActions {\n  /* @oods-domain-action handleDelete sha256:221fdee3330ccb3c003961fa632660ca61b4f1713ca9b67d2612c45fe63a1f43 */\n  /* @oods-domain-source sha256:74252fa49ed24d37978bced342336a0b2aac9bed23e8fa0d6d3db7f99f0fe9fc */\n  handleDelete: () => void;\n  /* @oods-domain-action handleEdit sha256:8d06ae954d1e16d46333996b5945dbfef37c642e52d7bc1f68ece666c760d9b2 */\n  /* @oods-domain-source sha256:c0d990cc2989feb07786ba35c93b878e524cccf8ecc11583869e8f3344f87f48 */\n  handleEdit: () => void;\n  /* @oods-domain-action handleViewTimeline sha256:71b845bd5c850e444bda9b61a19589b098d52255006045a1c1979efd3844a6b1 */\n  /* @oods-domain-source sha256:67df05e1fca7b25d68f0c064be69dd0ac5d61fc1682331b45d695c043e2a4dda */\n  handleViewTimeline: () => void;\n}\n\nexport interface PageProps {\n  svg?: string;\n  svgNarrow?: string;\n  actions: GeneratedUIActions;\n  /** Detected anomalies with context for investigation. */\n  anomalies?: unknown[];\n  /** Actual quantity consumed in the active period. */\n  consumedQuantity: number;\n  /** Timestamp recording when the entity was first created. */\n  createdAt: string;\n  /** Quantity included in base plan before overages. */\n  includedQuantity: number;\n  /** Lifecycle event associated with the most recent timestamp mutation. */\n  lastEvent: 'reading_captured' | 'anomaly_detected' | 'reset';\n  /** Timestamp for the lifecycle event captured in last_event. */\n  lastEventAt?: string;\n  /** Timestamp of the most recent provider usage payload. */\n  lastReportedAt: string;\n  /** Provider specific meter identifier. */\n  meterId: string;\n  /** Friendly metered feature name shown in UI (ex: Analytics Seats). */\n  meterName: string;\n  /** Cost per additional unit expressed in minor currency units. */\n  overageRateMinor?: number;\n  /** Date the usage accumulation window ends. */\n  periodEnd: string;\n  /** Date the usage accumulation window began. */\n  periodStart: string;\n  /** Forecasted overage spend derived from consumption trends. */\n  projectedOverageMinor?: number;\n  /** Source provider for usage data. */\n  provider: string;\n  /** Strategy for unused units (inherits rolloverStrategy parameter). */\n  rolloverStrategy?: string;\n  /** Rolling usage measurements for charts or anomaly detection. */\n  samples?: unknown[];\n  /** Health of the usage feed (ok, delayed, investigating). */\n  status?: 'ok' | 'delayed' | 'investigating';\n  /** Subscription the usage belongs to. */\n  subscriptionId: string;\n  /** Percent delta compared to previous window. */\n  trendPercent?: number;\n  /** Label for display, defaults to the unit parameter. */\n  unitLabel: string;\n  /** Timestamp for the most recent modification, when available. */\n  updatedAt?: string;\n  /** Identifier for this usage record. */\n  usageId: string;\n  /** Currency impact of usage variance calculated with overage rate. */\n  varianceMinor?: number;\n}\n\ntype CardProps = React.ComponentPropsWithoutRef<typeof Card>;\ntype DetailHeaderProps = React.ComponentPropsWithoutRef<typeof DetailHeader>;\ntype StackProps = React.ComponentPropsWithoutRef<typeof Stack>;\ntype TabsProps = React.ComponentPropsWithoutRef<typeof Tabs>;\ntype TextProps = React.ComponentPropsWithoutRef<typeof Text>;\ntype VizLinePreviewProps = React.ComponentPropsWithoutRef<typeof VizLinePreview>;\n\nexport const GeneratedUI: React.FC<PageProps> = ({ actions, anomalies, consumedQuantity, createdAt, includedQuantity, lastEvent, lastEventAt, lastReportedAt, meterId, meterName, overageRateMinor, periodEnd, periodStart, projectedOverageMinor, provider, rolloverStrategy, samples, status, subscriptionId, trendPercent, unitLabel, updatedAt, usageId, varianceMinor, svg, svgNarrow }) => {\n  if (!actions || !Object.prototype.hasOwnProperty.call(actions, 'handleDelete') || typeof actions.handleDelete !== 'function') { throw new Error('GeneratedUI requires actions.handleDelete.'); }\n  if (!actions || !Object.prototype.hasOwnProperty.call(actions, 'handleEdit') || typeof actions.handleEdit !== 'function') { throw new Error('GeneratedUI requires actions.handleEdit.'); }\n  if (!actions || !Object.prototype.hasOwnProperty.call(actions, 'handleViewTimeline') || typeof actions.handleViewTimeline !== 'function') { throw new Error('GeneratedUI requires actions.handleViewTimeline.'); }\n\n  /* @oods-domain-binding handleDelete */ const handleDelete = () => { actions.handleDelete(); };\n  /* @oods-domain-binding handleEdit */ const handleEdit = () => { actions.handleEdit(); };\n  /* @oods-domain-binding handleViewTimeline */ const handleViewTimeline = () => { actions.handleViewTimeline(); };\n\n  return (\n    <main data-oods-shell=\"screen-detail-13\">\n      <>\n        <Stack id=\"screen-detail-13\" data-oods-component=\"Stack\" data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-default)' }}>\n              <Stack id=\"detail-header-1\" data-oods-component=\"Stack\" data-layout=\"stack\" style={{ alignItems: 'space-between', display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-stack-default)', padding: 'var(--ref-space-inset-default)' }}>\n                      <Stack id=\"slot-header-2\" data-oods-component=\"Stack\" data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-default)' }}>\n                                <DetailHeader id=\"primary-header-21\" data-oods-component=\"DetailHeader\" title={usageId} level={1} />\n                                <VizLinePreview id=\"ve-header-20\" data-oods-component=\"VizLinePreview\" svg={svg ?? \"<svg xmlns=\\\"http://www.w3.org/2000/svg\\\" xmlns:xlink=\\\"http://www.w3.org/1999/xlink\\\" version=\\\"1.1\\\" class=\\\"marks\\\" width=\\\"730\\\" height=\\\"410\\\" viewBox=\\\"0 0 730 410\\\"><rect width=\\\"730\\\" height=\\\"410\\\" fill=\\\"Canvas\\\"/><g fill=\\\"none\\\" stroke-miterlimit=\\\"10\\\" transform=\\\"translate(67,10)\\\"><g class=\\\"mark-group role-frame root\\\" role=\\\"graphics-object\\\" aria-roledescription=\\\"group mark container\\\"><g transform=\\\"translate(0,0)\\\"><path class=\\\"background\\\" aria-hidden=\\\"true\\\" d=\\\"M0,0h656v363h-656Z\\\"/><g><g class=\\\"mark-group role-axis\\\" aria-hidden=\\\"true\\\"><g transform=\\\"translate(0.5,0.5)\\\"><path class=\\\"background\\\" aria-hidden=\\\"true\\\" d=\\\"M0,0h0v0h0Z\\\" pointer-events=\\\"none\\\"/><g><g class=\\\"mark-rule role-axis-grid\\\" pointer-events=\\\"none\\\"><line transform=\\\"translate(0,363)\\\" x2=\\\"656\\\" y2=\\\"0\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(0,323)\\\" x2=\\\"656\\\" y2=\\\"0\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(0,282)\\\" x2=\\\"656\\\" y2=\\\"0\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(0,242)\\\" x2=\\\"656\\\" y2=\\\"0\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(0,202)\\\" x2=\\\"656\\\" y2=\\\"0\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(0,161)\\\" x2=\\\"656\\\" y2=\\\"0\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(0,121)\\\" x2=\\\"656\\\" y2=\\\"0\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(0,81)\\\" x2=\\\"656\\\" y2=\\\"0\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(0,40)\\\" x2=\\\"656\\\" y2=\\\"0\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(0,0)\\\" x2=\\\"656\\\" y2=\\\"0\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/></g></g><path class=\\\"foreground\\\" aria-hidden=\\\"true\\\" d=\\\"\\\" pointer-events=\\\"none\\\" display=\\\"none\\\"/></g></g><g class=\\\"mark-group role-axis\\\" role=\\\"graphics-symbol\\\" aria-roledescription=\\\"axis\\\" aria-label=\\\"X-axis titled 'Recorded at' for a utc scale with values from Sunday, 15 June 2025, 12:00:00 AM UTC to Wednesday, 25 June 2025, 12:00:00 AM UTC\\\"><g transform=\\\"translate(0.5,363.5)\\\"><path class=\\\"background\\\" aria-hidden=\\\"true\\\" d=\\\"M0,0h0v0h0Z\\\" pointer-events=\\\"none\\\"/><g><g class=\\\"mark-rule role-axis-tick\\\" pointer-events=\\\"none\\\"><line transform=\\\"translate(0,0)\\\" x2=\\\"0\\\" y2=\\\"5\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(33,0)\\\" x2=\\\"0\\\" y2=\\\"5\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(66,0)\\\" x2=\\\"0\\\" y2=\\\"5\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(98,0)\\\" x2=\\\"0\\\" y2=\\\"5\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(131,0)\\\" x2=\\\"0\\\" y2=\\\"5\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(164,0)\\\" x2=\\\"0\\\" y2=\\\"5\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(197,0)\\\" x2=\\\"0\\\" y2=\\\"5\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(230,0)\\\" x2=\\\"0\\\" y2=\\\"5\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(262,0)\\\" x2=\\\"0\\\" y2=\\\"5\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(295,0)\\\" x2=\\\"0\\\" y2=\\\"5\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(328,0)\\\" x2=\\\"0\\\" y2=\\\"5\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(361,0)\\\" x2=\\\"0\\\" y2=\\\"5\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(394,0)\\\" x2=\\\"0\\\" y2=\\\"5\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(426,0)\\\" x2=\\\"0\\\" y2=\\\"5\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(459,0)\\\" x2=\\\"0\\\" y2=\\\"5\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(492,0)\\\" x2=\\\"0\\\" y2=\\\"5\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(525,0)\\\" x2=\\\"0\\\" y2=\\\"5\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(558,0)\\\" x2=\\\"0\\\" y2=\\\"5\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(590,0)\\\" x2=\\\"0\\\" y2=\\\"5\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(623,0)\\\" x2=\\\"0\\\" y2=\\\"5\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(656,0)\\\" x2=\\\"0\\\" y2=\\\"5\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/></g><g class=\\\"mark-text role-axis-label\\\" pointer-events=\\\"none\\\"><text text-anchor=\\\"start\\\" transform=\\\"translate(0,15)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"1\\\">Jun 15</text><text text-anchor=\\\"middle\\\" transform=\\\"translate(32.800000000000004,15)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"0\\\">12 PM</text><text text-anchor=\\\"middle\\\" transform=\\\"translate(65.60000000000001,15)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"0\\\">Mon 16</text><text text-anchor=\\\"middle\\\" transform=\\\"translate(98.39999999999999,15)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"0\\\">12 PM</text><text text-anchor=\\\"middle\\\" transform=\\\"translate(131.20000000000002,15)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"1\\\">Tue 17</text><text text-anchor=\\\"middle\\\" transform=\\\"translate(164,15)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"0\\\">12 PM</text><text text-anchor=\\\"middle\\\" transform=\\\"translate(196.79999999999998,15)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"0\\\">Wed 18</text><text text-anchor=\\\"middle\\\" transform=\\\"translate(229.6,15)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"0\\\">12 PM</text><text text-anchor=\\\"middle\\\" transform=\\\"translate(262.40000000000003,15)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"1\\\">Thu 19</text><text text-anchor=\\\"middle\\\" transform=\\\"translate(295.2,15)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"0\\\">12 PM</text><text text-anchor=\\\"middle\\\" transform=\\\"translate(328,15)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"0\\\">Fri 20</text><text text-anchor=\\\"middle\\\" transform=\\\"translate(360.8,15)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"0\\\">12 PM</text><text text-anchor=\\\"middle\\\" transform=\\\"translate(393.59999999999997,15)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"1\\\">Sat 21</text><text text-anchor=\\\"middle\\\" transform=\\\"translate(426.40000000000003,15)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"0\\\">12 PM</text><text text-anchor=\\\"middle\\\" transform=\\\"translate(459.2,15)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"0\\\">Jun 22</text><text text-anchor=\\\"middle\\\" transform=\\\"translate(492,15)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"0\\\">12 PM</text><text text-anchor=\\\"middle\\\" transform=\\\"translate(524.8000000000001,15)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"1\\\">Mon 23</text><text text-anchor=\\\"middle\\\" transform=\\\"translate(557.6,15)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"0\\\">12 PM</text><text text-anchor=\\\"middle\\\" transform=\\\"translate(590.4,15)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"0\\\">Tue 24</text><text text-anchor=\\\"middle\\\" transform=\\\"translate(623.1999999999999,15)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"0\\\">12 PM</text><text text-anchor=\\\"end\\\" transform=\\\"translate(656,15)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"1\\\">Wed 25</text></g><g class=\\\"mark-rule role-axis-domain\\\" pointer-events=\\\"none\\\"><line transform=\\\"translate(0,0)\\\" x2=\\\"656\\\" y2=\\\"0\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/></g><g class=\\\"mark-text role-axis-title\\\" pointer-events=\\\"none\\\"><text text-anchor=\\\"middle\\\" transform=\\\"translate(328,30)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"11px\\\" font-weight=\\\"bold\\\" fill=\\\"CanvasText\\\" opacity=\\\"1\\\">Recorded at</text></g></g><path class=\\\"foreground\\\" aria-hidden=\\\"true\\\" d=\\\"\\\" pointer-events=\\\"none\\\" display=\\\"none\\\"/></g></g><g class=\\\"mark-group role-axis\\\" role=\\\"graphics-symbol\\\" aria-roledescription=\\\"axis\\\" aria-label=\\\"Y-axis titled 'API calls' for a linear scale with values from 0 to 1,800\\\"><g transform=\\\"translate(0.5,0.5)\\\"><path class=\\\"background\\\" aria-hidden=\\\"true\\\" d=\\\"M0,0h0v0h0Z\\\" pointer-events=\\\"none\\\"/><g><g class=\\\"mark-rule role-axis-tick\\\" pointer-events=\\\"none\\\"><line transform=\\\"translate(0,363)\\\" x2=\\\"-5\\\" y2=\\\"0\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(0,323)\\\" x2=\\\"-5\\\" y2=\\\"0\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(0,282)\\\" x2=\\\"-5\\\" y2=\\\"0\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(0,242)\\\" x2=\\\"-5\\\" y2=\\\"0\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(0,202)\\\" x2=\\\"-5\\\" y2=\\\"0\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(0,161)\\\" x2=\\\"-5\\\" y2=\\\"0\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(0,121)\\\" x2=\\\"-5\\\" y2=\\\"0\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(0,81)\\\" x2=\\\"-5\\\" y2=\\\"0\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(0,40)\\\" x2=\\\"-5\\\" y2=\\\"0\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(0,0)\\\" x2=\\\"-5\\\" y2=\\\"0\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/></g><g class=\\\"mark-text role-axis-label\\\" pointer-events=\\\"none\\\"><text text-anchor=\\\"end\\\" transform=\\\"translate(-7,366)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"1\\\">0</text><text text-anchor=\\\"end\\\" transform=\\\"translate(-7,325.66666666666663)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"1\\\">200</text><text text-anchor=\\\"end\\\" transform=\\\"translate(-7,285.3333333333333)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"1\\\">400</text><text text-anchor=\\\"end\\\" transform=\\\"translate(-7,245.00000000000003)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"1\\\">600</text><text text-anchor=\\\"end\\\" transform=\\\"translate(-7,204.66666666666669)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"1\\\">800</text><text text-anchor=\\\"end\\\" transform=\\\"translate(-7,164.33333333333331)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"1\\\">1,000</text><text text-anchor=\\\"end\\\" transform=\\\"translate(-7,124.00000000000001)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"1\\\">1,200</text><text text-anchor=\\\"end\\\" transform=\\\"translate(-7,83.66666666666666)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"1\\\">1,400</text><text text-anchor=\\\"end\\\" transform=\\\"translate(-7,43.33333333333335)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"1\\\">1,600</text><text text-anchor=\\\"end\\\" transform=\\\"translate(-7,3)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"1\\\">1,800</text></g><g class=\\\"mark-rule role-axis-domain\\\" pointer-events=\\\"none\\\"><line transform=\\\"translate(0,363)\\\" x2=\\\"0\\\" y2=\\\"-363\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/></g><g class=\\\"mark-text role-axis-title\\\" pointer-events=\\\"none\\\"><text text-anchor=\\\"middle\\\" transform=\\\"translate(-51,181.5) rotate(-90) translate(0,-2)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"11px\\\" font-weight=\\\"bold\\\" fill=\\\"CanvasText\\\" opacity=\\\"1\\\">API calls</text></g></g><path class=\\\"foreground\\\" aria-hidden=\\\"true\\\" d=\\\"\\\" pointer-events=\\\"none\\\" display=\\\"none\\\"/></g></g><g class=\\\"mark-line role-mark marks\\\" role=\\\"graphics-object\\\" aria-roledescription=\\\"line mark container\\\"><path aria-label=\\\"Recorded at: Jun 15, 2025; API calls: 1200\\\" role=\\\"graphics-symbol\\\" aria-roledescription=\\\"line mark\\\" d=\\\"M0,121L328,0L656,60.5\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"2\\\"/></g></g><path class=\\\"foreground\\\" aria-hidden=\\\"true\\\" d=\\\"\\\" display=\\\"none\\\"/></g></g></g></svg>\"} svgNarrow={svgNarrow ?? \"<svg xmlns=\\\"http://www.w3.org/2000/svg\\\" xmlns:xlink=\\\"http://www.w3.org/1999/xlink\\\" version=\\\"1.1\\\" class=\\\"marks\\\" width=\\\"370\\\" height=\\\"230\\\" viewBox=\\\"0 0 370 230\\\"><rect width=\\\"370\\\" height=\\\"230\\\" fill=\\\"Canvas\\\"/><g fill=\\\"none\\\" stroke-miterlimit=\\\"10\\\" transform=\\\"translate(67,10)\\\"><g class=\\\"mark-group role-frame root\\\" role=\\\"graphics-object\\\" aria-roledescription=\\\"group mark container\\\"><g transform=\\\"translate(0,0)\\\"><path class=\\\"background\\\" aria-hidden=\\\"true\\\" d=\\\"M0,0h296v183h-296Z\\\"/><g><g class=\\\"mark-group role-axis\\\" aria-hidden=\\\"true\\\"><g transform=\\\"translate(0.5,0.5)\\\"><path class=\\\"background\\\" aria-hidden=\\\"true\\\" d=\\\"M0,0h0v0h0Z\\\" pointer-events=\\\"none\\\"/><g><g class=\\\"mark-rule role-axis-grid\\\" pointer-events=\\\"none\\\"><line transform=\\\"translate(0,183)\\\" x2=\\\"296\\\" y2=\\\"0\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(0,81)\\\" x2=\\\"296\\\" y2=\\\"0\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(0,132)\\\" x2=\\\"296\\\" y2=\\\"0\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(0,30)\\\" x2=\\\"296\\\" y2=\\\"0\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/></g></g><path class=\\\"foreground\\\" aria-hidden=\\\"true\\\" d=\\\"\\\" pointer-events=\\\"none\\\" display=\\\"none\\\"/></g></g><g class=\\\"mark-group role-axis\\\" role=\\\"graphics-symbol\\\" aria-roledescription=\\\"axis\\\" aria-label=\\\"X-axis titled 'Recorded at' for a utc scale with values from Sunday, 15 June 2025, 12:00:00 AM UTC to Wednesday, 25 June 2025, 12:00:00 AM UTC\\\"><g transform=\\\"translate(0.5,183.5)\\\"><path class=\\\"background\\\" aria-hidden=\\\"true\\\" d=\\\"M0,0h0v0h0Z\\\" pointer-events=\\\"none\\\"/><g><g class=\\\"mark-rule role-axis-tick\\\" pointer-events=\\\"none\\\"><line transform=\\\"translate(0,0)\\\" x2=\\\"0\\\" y2=\\\"5\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(30,0)\\\" x2=\\\"0\\\" y2=\\\"5\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(59,0)\\\" x2=\\\"0\\\" y2=\\\"5\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(89,0)\\\" x2=\\\"0\\\" y2=\\\"5\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(118,0)\\\" x2=\\\"0\\\" y2=\\\"5\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(148,0)\\\" x2=\\\"0\\\" y2=\\\"5\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(178,0)\\\" x2=\\\"0\\\" y2=\\\"5\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(207,0)\\\" x2=\\\"0\\\" y2=\\\"5\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(237,0)\\\" x2=\\\"0\\\" y2=\\\"5\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(266,0)\\\" x2=\\\"0\\\" y2=\\\"5\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(296,0)\\\" x2=\\\"0\\\" y2=\\\"5\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/></g><g class=\\\"mark-text role-axis-label\\\" pointer-events=\\\"none\\\"><text text-anchor=\\\"start\\\" transform=\\\"translate(0,15)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"1\\\">Jun 15</text><text text-anchor=\\\"middle\\\" transform=\\\"translate(29.6,15)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"0\\\">Mon 16</text><text text-anchor=\\\"middle\\\" transform=\\\"translate(59.2,15)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"0\\\">Tue 17</text><text text-anchor=\\\"middle\\\" transform=\\\"translate(88.8,15)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"0\\\">Wed 18</text><text text-anchor=\\\"middle\\\" transform=\\\"translate(118.4,15)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"1\\\">Thu 19</text><text text-anchor=\\\"middle\\\" transform=\\\"translate(148,15)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"0\\\">Fri 20</text><text text-anchor=\\\"middle\\\" transform=\\\"translate(177.6,15)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"0\\\">Sat 21</text><text text-anchor=\\\"middle\\\" transform=\\\"translate(207.2,15)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"0\\\">Jun 22</text><text text-anchor=\\\"middle\\\" transform=\\\"translate(236.8,15)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"1\\\">Mon 23</text><text text-anchor=\\\"middle\\\" transform=\\\"translate(266.40000000000003,15)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"0\\\">Tue 24</text><text text-anchor=\\\"end\\\" transform=\\\"translate(296,15)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"0\\\">Wed 25</text></g><g class=\\\"mark-rule role-axis-domain\\\" pointer-events=\\\"none\\\"><line transform=\\\"translate(0,0)\\\" x2=\\\"296\\\" y2=\\\"0\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/></g><g class=\\\"mark-text role-axis-title\\\" pointer-events=\\\"none\\\"><text text-anchor=\\\"middle\\\" transform=\\\"translate(148,30)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"11px\\\" font-weight=\\\"bold\\\" fill=\\\"CanvasText\\\" opacity=\\\"1\\\">Recorded at</text></g></g><path class=\\\"foreground\\\" aria-hidden=\\\"true\\\" d=\\\"\\\" pointer-events=\\\"none\\\" display=\\\"none\\\"/></g></g><g class=\\\"mark-group role-axis\\\" role=\\\"graphics-symbol\\\" aria-roledescription=\\\"axis\\\" aria-label=\\\"Y-axis titled 'API calls' for a linear scale with values from 0 to 1,800\\\"><g transform=\\\"translate(0.5,0.5)\\\"><path class=\\\"background\\\" aria-hidden=\\\"true\\\" d=\\\"M0,0h0v0h0Z\\\" pointer-events=\\\"none\\\"/><g><g class=\\\"mark-rule role-axis-tick\\\" pointer-events=\\\"none\\\"><line transform=\\\"translate(0,183)\\\" x2=\\\"-5\\\" y2=\\\"0\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(0,81)\\\" x2=\\\"-5\\\" y2=\\\"0\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(0,132)\\\" x2=\\\"-5\\\" y2=\\\"0\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(0,30)\\\" x2=\\\"-5\\\" y2=\\\"0\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/></g><g class=\\\"mark-text role-axis-label\\\" pointer-events=\\\"none\\\"><text text-anchor=\\\"end\\\" transform=\\\"translate(-7,186)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"1\\\">0</text><text text-anchor=\\\"end\\\" transform=\\\"translate(-7,84.33333333333333)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"1\\\">1,000</text><text text-anchor=\\\"end\\\" transform=\\\"translate(-7,135.16666666666666)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"1\\\">500</text><text text-anchor=\\\"end\\\" transform=\\\"translate(-7,33.49999999999999)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"1\\\">1,500</text></g><g class=\\\"mark-rule role-axis-domain\\\" pointer-events=\\\"none\\\"><line transform=\\\"translate(0,183)\\\" x2=\\\"0\\\" y2=\\\"-183\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/></g><g class=\\\"mark-text role-axis-title\\\" pointer-events=\\\"none\\\"><text text-anchor=\\\"middle\\\" transform=\\\"translate(-51,91.5) rotate(-90) translate(0,-2)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"11px\\\" font-weight=\\\"bold\\\" fill=\\\"CanvasText\\\" opacity=\\\"1\\\">API calls</text></g></g><path class=\\\"foreground\\\" aria-hidden=\\\"true\\\" d=\\\"\\\" pointer-events=\\\"none\\\" display=\\\"none\\\"/></g></g><g class=\\\"mark-line role-mark marks\\\" role=\\\"graphics-object\\\" aria-roledescription=\\\"line mark container\\\"><path aria-label=\\\"Recorded at: Jun 15, 2025; API calls: 1200\\\" role=\\\"graphics-symbol\\\" aria-roledescription=\\\"line mark\\\" d=\\\"M0,61L148,0L296,30.5\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"2\\\"/></g></g><path class=\\\"foreground\\\" aria-hidden=\\\"true\\\" d=\\\"\\\" display=\\\"none\\\"/></g></g></g></svg>\"} description=\"Synthetic API-call counts for generated example records.\" height={400} title=\"Example API-call usage\" width={720} />\n                              </Stack>\n                    </Stack>\n              <Card id=\"detail-body-10\" data-oods-component=\"Card\" data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-default)' }}>\n                      <Tabs id=\"detail-tabs-9\" data-oods-component=\"Tabs\" ariaLabel=\"Record details\" items={[\n                        { ...{\"id\":\"detail-tab-panel-3\",\"label\":\"Details\"}, panel: (\n                          <Stack id=\"detail-tab-panel-3\" data-oods-component=\"Stack\" data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-default)' }}>\n                            <Stack id=\"slot-tab-0-4\" data-oods-component=\"Stack\" data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-tight)' }}>\n                                <Stack id=\"pg-status-timeline-23-read-field\" data-oods-component=\"Stack\">\n                                      <Text id=\"pg-status-timeline-23-label\" data-oods-component=\"Text\" as=\"strong\" content=\"Status\" />\n                                      <Text id=\"pg-status-timeline-23-value\" data-oods-component=\"Text\">{formatReadOnlyValue(status, \"string\", true)}</Text>\n                                    </Stack>\n                                <Stack id=\"pg-status-timeline-24-read-field\" data-oods-component=\"Stack\">\n                                      <Text id=\"pg-status-timeline-24-label\" data-oods-component=\"Text\" as=\"strong\" content=\"Updated at\" />\n                                      <Text id=\"pg-status-timeline-24-value\" data-oods-component=\"Text\">{formatReadOnlyValue(updatedAt, \"datetime\", false)}</Text>\n                                    </Stack>\n                              </Stack>\n                            <Stack id=\"slot-tab-1-6-read-field\" data-oods-component=\"Stack\">\n                                <Text id=\"slot-tab-1-6-label\" data-oods-component=\"Text\" as=\"strong\" content=\"Consumed quantity\" />\n                                <Text id=\"slot-tab-1-6-value\" data-oods-component=\"Text\">{formatReadOnlyValue(consumedQuantity, \"integer\", false)}</Text>\n                              </Stack>\n                            <Stack id=\"detail-tabs-9-overage_rate_minor-read-field\" data-oods-component=\"Stack\">\n                                <Text id=\"detail-tabs-9-overage_rate_minor-label\" data-oods-component=\"Text\" as=\"strong\" content=\"Overage rate\" />\n                                <Text id=\"detail-tabs-9-overage_rate_minor-value\" data-oods-component=\"Text\">{formatReadOnlyValue(overageRateMinor, \"integer\", false)}</Text>\n                              </Stack>\n                            <Stack id=\"detail-tabs-9-projected_overage_minor-read-field\" data-oods-component=\"Stack\">\n                                <Text id=\"detail-tabs-9-projected_overage_minor-label\" data-oods-component=\"Text\" as=\"strong\" content=\"Projected overage\" />\n                                <Text id=\"detail-tabs-9-projected_overage_minor-value\" data-oods-component=\"Text\">{formatReadOnlyValue(projectedOverageMinor, \"integer\", false)}</Text>\n                              </Stack>\n                            <Stack id=\"detail-tabs-9-created_at-read-field\" data-oods-component=\"Stack\">\n                                <Text id=\"detail-tabs-9-created_at-label\" data-oods-component=\"Text\" as=\"strong\" content=\"Created at\" />\n                                <Text id=\"detail-tabs-9-created_at-value\" data-oods-component=\"Text\">{formatReadOnlyValue(createdAt, \"datetime\", false)}</Text>\n                              </Stack>\n                            <Stack id=\"detail-tabs-9-last_event-read-field\" data-oods-component=\"Stack\">\n                                <Text id=\"detail-tabs-9-last_event-label\" data-oods-component=\"Text\" as=\"strong\" content=\"Last event\" />\n                                <Text id=\"detail-tabs-9-last_event-value\" data-oods-component=\"Text\">{formatReadOnlyValue(lastEvent, \"string\", true)}</Text>\n                              </Stack>\n                            <Stack id=\"detail-tabs-9-last_event_at-read-field\" data-oods-component=\"Stack\">\n                                <Text id=\"detail-tabs-9-last_event_at-label\" data-oods-component=\"Text\" as=\"strong\" content=\"Last event at\" />\n                                <Text id=\"detail-tabs-9-last_event_at-value\" data-oods-component=\"Text\">{formatReadOnlyValue(lastEventAt, \"datetime\", false)}</Text>\n                              </Stack>\n                            <Stack id=\"detail-tabs-9-subscription_id-read-field\" data-oods-component=\"Stack\">\n                                <Text id=\"detail-tabs-9-subscription_id-label\" data-oods-component=\"Text\" as=\"strong\" content=\"Subscription id\" />\n                                <Text id=\"detail-tabs-9-subscription_id-value\" data-oods-component=\"Text\">{formatReadOnlyValue(subscriptionId, \"string\", false)}</Text>\n                              </Stack>\n                            <Stack id=\"detail-tabs-9-meter_id-read-field\" data-oods-component=\"Stack\">\n                                <Text id=\"detail-tabs-9-meter_id-label\" data-oods-component=\"Text\" as=\"strong\" content=\"Meter id\" />\n                                <Text id=\"detail-tabs-9-meter_id-value\" data-oods-component=\"Text\">{formatReadOnlyValue(meterId, \"string\", false)}</Text>\n                              </Stack>\n                            <Stack id=\"detail-tabs-9-provider-read-field\" data-oods-component=\"Stack\">\n                                <Text id=\"detail-tabs-9-provider-label\" data-oods-component=\"Text\" as=\"strong\" content=\"Provider\" />\n                                <Text id=\"detail-tabs-9-provider-value\" data-oods-component=\"Text\">{formatReadOnlyValue(provider, \"string\", false)}</Text>\n                              </Stack>\n                            <Stack id=\"detail-tabs-9-trend_percent-read-field\" data-oods-component=\"Stack\">\n                                <Text id=\"detail-tabs-9-trend_percent-label\" data-oods-component=\"Text\" as=\"strong\" content=\"Trend percent\" />\n                                <Text id=\"detail-tabs-9-trend_percent-value\" data-oods-component=\"Text\">{formatReadOnlyValue(trendPercent, \"number\", false)}</Text>\n                              </Stack>\n                            <Stack id=\"detail-tabs-9-variance_minor-read-field\" data-oods-component=\"Stack\">\n                                <Text id=\"detail-tabs-9-variance_minor-label\" data-oods-component=\"Text\" as=\"strong\" content=\"Variance\" />\n                                <Text id=\"detail-tabs-9-variance_minor-value\" data-oods-component=\"Text\">{formatReadOnlyValue(varianceMinor, \"integer\", false)}</Text>\n                              </Stack>\n                            <Stack id=\"detail-tabs-9-last_reported_at-read-field\" data-oods-component=\"Stack\">\n                                <Text id=\"detail-tabs-9-last_reported_at-label\" data-oods-component=\"Text\" as=\"strong\" content=\"Last reported at\" />\n                                <Text id=\"detail-tabs-9-last_reported_at-value\" data-oods-component=\"Text\">{formatReadOnlyValue(lastReportedAt, \"datetime\", false)}</Text>\n                              </Stack>\n                          </Stack>\n                        ) }\n                      ]} />\n                    </Card>\n            </Stack>\n        <div role=\"group\" aria-label=\"Screen actions\" data-oods-screen-actions=\"screen-detail-13\">\n          <button type=\"button\" data-oods-action=\"handleDelete\" onClick={() => handleDelete()}>Delete</button>\n          <button type=\"button\" data-oods-action=\"handleEdit\" onClick={() => handleEdit()}>Edit</button>\n          <button type=\"button\" data-oods-action=\"handleViewTimeline\" onClick={() => handleViewTimeline()}>View timeline</button>\n        </div>\n      </>\n    </main>\n  );\n};\n",
+          "contentHash": "sha256:03d72f03eb582be9b1b8970b2c0b72ed4386cc5843f4883dc26f58003945c0a3"
+        },
+        {
+          "path": "src/charts/line-001.narrow.svg",
+          "contents": "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" version=\"1.1\" class=\"marks\" width=\"370\" height=\"230\" viewBox=\"0 0 370 230\"><rect width=\"370\" height=\"230\" fill=\"Canvas\"/><g fill=\"none\" stroke-miterlimit=\"10\" transform=\"translate(67,10)\"><g class=\"mark-group role-frame root\" role=\"graphics-object\" aria-roledescription=\"group mark container\"><g transform=\"translate(0,0)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h296v183h-296Z\"/><g><g class=\"mark-group role-axis\" aria-hidden=\"true\"><g transform=\"translate(0.5,0.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-grid\" pointer-events=\"none\"><line transform=\"translate(0,183)\" x2=\"296\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,81)\" x2=\"296\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,132)\" x2=\"296\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,30)\" x2=\"296\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-group role-axis\" role=\"graphics-symbol\" aria-roledescription=\"axis\" aria-label=\"X-axis titled 'Recorded at' for a utc scale with values from Sunday, 15 June 2025, 12:00:00 AM UTC to Wednesday, 25 June 2025, 12:00:00 AM UTC\"><g transform=\"translate(0.5,183.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-tick\" pointer-events=\"none\"><line transform=\"translate(0,0)\" x2=\"0\" y2=\"5\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(30,0)\" x2=\"0\" y2=\"5\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(59,0)\" x2=\"0\" y2=\"5\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(89,0)\" x2=\"0\" y2=\"5\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(118,0)\" x2=\"0\" y2=\"5\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(148,0)\" x2=\"0\" y2=\"5\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(178,0)\" x2=\"0\" y2=\"5\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(207,0)\" x2=\"0\" y2=\"5\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(237,0)\" x2=\"0\" y2=\"5\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(266,0)\" x2=\"0\" y2=\"5\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(296,0)\" x2=\"0\" y2=\"5\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-label\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(0,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">Jun 15</text><text text-anchor=\"middle\" transform=\"translate(29.6,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"0\">Mon 16</text><text text-anchor=\"middle\" transform=\"translate(59.2,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"0\">Tue 17</text><text text-anchor=\"middle\" transform=\"translate(88.8,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"0\">Wed 18</text><text text-anchor=\"middle\" transform=\"translate(118.4,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">Thu 19</text><text text-anchor=\"middle\" transform=\"translate(148,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"0\">Fri 20</text><text text-anchor=\"middle\" transform=\"translate(177.6,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"0\">Sat 21</text><text text-anchor=\"middle\" transform=\"translate(207.2,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"0\">Jun 22</text><text text-anchor=\"middle\" transform=\"translate(236.8,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">Mon 23</text><text text-anchor=\"middle\" transform=\"translate(266.40000000000003,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"0\">Tue 24</text><text text-anchor=\"end\" transform=\"translate(296,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"0\">Wed 25</text></g><g class=\"mark-rule role-axis-domain\" pointer-events=\"none\"><line transform=\"translate(0,0)\" x2=\"296\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-title\" pointer-events=\"none\"><text text-anchor=\"middle\" transform=\"translate(148,30)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"11px\" font-weight=\"bold\" fill=\"CanvasText\" opacity=\"1\">Recorded at</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-group role-axis\" role=\"graphics-symbol\" aria-roledescription=\"axis\" aria-label=\"Y-axis titled 'API calls' for a linear scale with values from 0 to 1,800\"><g transform=\"translate(0.5,0.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-tick\" pointer-events=\"none\"><line transform=\"translate(0,183)\" x2=\"-5\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,81)\" x2=\"-5\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,132)\" x2=\"-5\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,30)\" x2=\"-5\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-label\" pointer-events=\"none\"><text text-anchor=\"end\" transform=\"translate(-7,186)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">0</text><text text-anchor=\"end\" transform=\"translate(-7,84.33333333333333)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">1,000</text><text text-anchor=\"end\" transform=\"translate(-7,135.16666666666666)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">500</text><text text-anchor=\"end\" transform=\"translate(-7,33.49999999999999)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">1,500</text></g><g class=\"mark-rule role-axis-domain\" pointer-events=\"none\"><line transform=\"translate(0,183)\" x2=\"0\" y2=\"-183\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-title\" pointer-events=\"none\"><text text-anchor=\"middle\" transform=\"translate(-51,91.5) rotate(-90) translate(0,-2)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"11px\" font-weight=\"bold\" fill=\"CanvasText\" opacity=\"1\">API calls</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-line role-mark marks\" role=\"graphics-object\" aria-roledescription=\"line mark container\"><path aria-label=\"Recorded at: Jun 15, 2025; API calls: 1200\" role=\"graphics-symbol\" aria-roledescription=\"line mark\" d=\"M0,61L148,0L296,30.5\" stroke=\"CanvasText\" stroke-width=\"2\"/></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" display=\"none\"/></g></g></g></svg>",
+          "contentHash": "sha256:91d13b70e245c5e67ef6ae440cc0f2d6d8ea447460bdd074a8c647852e436079"
+        },
+        {
+          "path": "src/charts/line-001.svg",
+          "contents": "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" version=\"1.1\" class=\"marks\" width=\"730\" height=\"410\" viewBox=\"0 0 730 410\"><rect width=\"730\" height=\"410\" fill=\"Canvas\"/><g fill=\"none\" stroke-miterlimit=\"10\" transform=\"translate(67,10)\"><g class=\"mark-group role-frame root\" role=\"graphics-object\" aria-roledescription=\"group mark container\"><g transform=\"translate(0,0)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h656v363h-656Z\"/><g><g class=\"mark-group role-axis\" aria-hidden=\"true\"><g transform=\"translate(0.5,0.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-grid\" pointer-events=\"none\"><line transform=\"translate(0,363)\" x2=\"656\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,323)\" x2=\"656\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,282)\" x2=\"656\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,242)\" x2=\"656\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,202)\" x2=\"656\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,161)\" x2=\"656\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,121)\" x2=\"656\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,81)\" x2=\"656\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,40)\" x2=\"656\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,0)\" x2=\"656\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-group role-axis\" role=\"graphics-symbol\" aria-roledescription=\"axis\" aria-label=\"X-axis titled 'Recorded at' for a utc scale with values from Sunday, 15 June 2025, 12:00:00 AM UTC to Wednesday, 25 June 2025, 12:00:00 AM UTC\"><g transform=\"translate(0.5,363.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-tick\" pointer-events=\"none\"><line transform=\"translate(0,0)\" x2=\"0\" y2=\"5\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(33,0)\" x2=\"0\" y2=\"5\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(66,0)\" x2=\"0\" y2=\"5\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(98,0)\" x2=\"0\" y2=\"5\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(131,0)\" x2=\"0\" y2=\"5\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(164,0)\" x2=\"0\" y2=\"5\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(197,0)\" x2=\"0\" y2=\"5\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(230,0)\" x2=\"0\" y2=\"5\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(262,0)\" x2=\"0\" y2=\"5\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(295,0)\" x2=\"0\" y2=\"5\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(328,0)\" x2=\"0\" y2=\"5\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(361,0)\" x2=\"0\" y2=\"5\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(394,0)\" x2=\"0\" y2=\"5\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(426,0)\" x2=\"0\" y2=\"5\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(459,0)\" x2=\"0\" y2=\"5\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(492,0)\" x2=\"0\" y2=\"5\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(525,0)\" x2=\"0\" y2=\"5\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(558,0)\" x2=\"0\" y2=\"5\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(590,0)\" x2=\"0\" y2=\"5\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(623,0)\" x2=\"0\" y2=\"5\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(656,0)\" x2=\"0\" y2=\"5\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-label\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(0,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">Jun 15</text><text text-anchor=\"middle\" transform=\"translate(32.800000000000004,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"0\">12 PM</text><text text-anchor=\"middle\" transform=\"translate(65.60000000000001,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"0\">Mon 16</text><text text-anchor=\"middle\" transform=\"translate(98.39999999999999,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"0\">12 PM</text><text text-anchor=\"middle\" transform=\"translate(131.20000000000002,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">Tue 17</text><text text-anchor=\"middle\" transform=\"translate(164,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"0\">12 PM</text><text text-anchor=\"middle\" transform=\"translate(196.79999999999998,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"0\">Wed 18</text><text text-anchor=\"middle\" transform=\"translate(229.6,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"0\">12 PM</text><text text-anchor=\"middle\" transform=\"translate(262.40000000000003,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">Thu 19</text><text text-anchor=\"middle\" transform=\"translate(295.2,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"0\">12 PM</text><text text-anchor=\"middle\" transform=\"translate(328,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"0\">Fri 20</text><text text-anchor=\"middle\" transform=\"translate(360.8,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"0\">12 PM</text><text text-anchor=\"middle\" transform=\"translate(393.59999999999997,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">Sat 21</text><text text-anchor=\"middle\" transform=\"translate(426.40000000000003,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"0\">12 PM</text><text text-anchor=\"middle\" transform=\"translate(459.2,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"0\">Jun 22</text><text text-anchor=\"middle\" transform=\"translate(492,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"0\">12 PM</text><text text-anchor=\"middle\" transform=\"translate(524.8000000000001,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">Mon 23</text><text text-anchor=\"middle\" transform=\"translate(557.6,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"0\">12 PM</text><text text-anchor=\"middle\" transform=\"translate(590.4,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"0\">Tue 24</text><text text-anchor=\"middle\" transform=\"translate(623.1999999999999,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"0\">12 PM</text><text text-anchor=\"end\" transform=\"translate(656,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">Wed 25</text></g><g class=\"mark-rule role-axis-domain\" pointer-events=\"none\"><line transform=\"translate(0,0)\" x2=\"656\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-title\" pointer-events=\"none\"><text text-anchor=\"middle\" transform=\"translate(328,30)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"11px\" font-weight=\"bold\" fill=\"CanvasText\" opacity=\"1\">Recorded at</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-group role-axis\" role=\"graphics-symbol\" aria-roledescription=\"axis\" aria-label=\"Y-axis titled 'API calls' for a linear scale with values from 0 to 1,800\"><g transform=\"translate(0.5,0.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-tick\" pointer-events=\"none\"><line transform=\"translate(0,363)\" x2=\"-5\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,323)\" x2=\"-5\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,282)\" x2=\"-5\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,242)\" x2=\"-5\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,202)\" x2=\"-5\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,161)\" x2=\"-5\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,121)\" x2=\"-5\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,81)\" x2=\"-5\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,40)\" x2=\"-5\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,0)\" x2=\"-5\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-label\" pointer-events=\"none\"><text text-anchor=\"end\" transform=\"translate(-7,366)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">0</text><text text-anchor=\"end\" transform=\"translate(-7,325.66666666666663)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">200</text><text text-anchor=\"end\" transform=\"translate(-7,285.3333333333333)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">400</text><text text-anchor=\"end\" transform=\"translate(-7,245.00000000000003)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">600</text><text text-anchor=\"end\" transform=\"translate(-7,204.66666666666669)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">800</text><text text-anchor=\"end\" transform=\"translate(-7,164.33333333333331)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">1,000</text><text text-anchor=\"end\" transform=\"translate(-7,124.00000000000001)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">1,200</text><text text-anchor=\"end\" transform=\"translate(-7,83.66666666666666)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">1,400</text><text text-anchor=\"end\" transform=\"translate(-7,43.33333333333335)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">1,600</text><text text-anchor=\"end\" transform=\"translate(-7,3)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">1,800</text></g><g class=\"mark-rule role-axis-domain\" pointer-events=\"none\"><line transform=\"translate(0,363)\" x2=\"0\" y2=\"-363\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-title\" pointer-events=\"none\"><text text-anchor=\"middle\" transform=\"translate(-51,181.5) rotate(-90) translate(0,-2)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"11px\" font-weight=\"bold\" fill=\"CanvasText\" opacity=\"1\">API calls</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-line role-mark marks\" role=\"graphics-object\" aria-roledescription=\"line mark container\"><path aria-label=\"Recorded at: Jun 15, 2025; API calls: 1200\" role=\"graphics-symbol\" aria-roledescription=\"line mark\" d=\"M0,121L328,0L656,60.5\" stroke=\"CanvasText\" stroke-width=\"2\"/></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" display=\"none\"/></g></g></g></svg>",
+          "contentHash": "sha256:edc1067890e8db2d81c96484827fd0824f60d0521908857083fe9d3e8b78b606"
+        }
+      ],
+      "dependencies": [
+        {
+          "name": "@oods/component-contracts",
+          "version": "0.1.0",
+          "kind": "dependency"
+        },
+        {
+          "name": "@oods/component-styles",
+          "version": "0.1.0",
+          "kind": "dependency"
+        },
+        {
+          "name": "@oods/components-react",
+          "version": "0.1.0",
+          "kind": "dependency"
+        },
+        {
+          "name": "react",
+          "version": "19.2.0",
+          "kind": "peerDependency"
+        },
+        {
+          "name": "react-dom",
+          "version": "19.2.0",
+          "kind": "peerDependency"
+        }
+      ],
+      "actions": [
+        {
+          "name": "handleDelete",
+          "parameters": [],
+          "sources": [
+            {
+              "nodeId": "screen-detail-13",
+              "component": "Stack",
+              "event": "onDelete"
+            }
+          ]
+        },
+        {
+          "name": "handleEdit",
+          "parameters": [],
+          "sources": [
+            {
+              "nodeId": "screen-detail-13",
+              "component": "Stack",
+              "event": "onEdit"
+            }
+          ]
+        },
+        {
+          "name": "handleViewTimeline",
+          "parameters": [],
+          "sources": [
+            {
+              "nodeId": "screen-detail-13",
+              "component": "Stack",
+              "event": "onViewTimeline"
+            }
+          ]
+        }
+      ],
+      "contentHash": "sha256:dd90c3cc721b48877328e8858d1406a1e080a8d9bef5eabbe9f8444cdf86b4cd"
+    },
+    "code": "import React from 'react';\nimport { Card, DetailHeader, Stack, Tabs, Text, VizLinePreview } from '@oods/components-react';\nimport '@oods/component-styles/css';\nimport { formatReadOnlyValue } from '@oods/component-contracts';\n\nexport interface GeneratedUIActions {\n  /* @oods-domain-action handleDelete sha256:221fdee3330ccb3c003961fa632660ca61b4f1713ca9b67d2612c45fe63a1f43 */\n  /* @oods-domain-source sha256:74252fa49ed24d37978bced342336a0b2aac9bed23e8fa0d6d3db7f99f0fe9fc */\n  handleDelete: () => void;\n  /* @oods-domain-action handleEdit sha256:8d06ae954d1e16d46333996b5945dbfef37c642e52d7bc1f68ece666c760d9b2 */\n  /* @oods-domain-source sha256:c0d990cc2989feb07786ba35c93b878e524cccf8ecc11583869e8f3344f87f48 */\n  handleEdit: () => void;\n  /* @oods-domain-action handleViewTimeline sha256:71b845bd5c850e444bda9b61a19589b098d52255006045a1c1979efd3844a6b1 */\n  /* @oods-domain-source sha256:67df05e1fca7b25d68f0c064be69dd0ac5d61fc1682331b45d695c043e2a4dda */\n  handleViewTimeline: () => void;\n}\n\nexport interface PageProps {\n  svg?: string;\n  svgNarrow?: string;\n  actions: GeneratedUIActions;\n  /** Detected anomalies with context for investigation. */\n  anomalies?: unknown[];\n  /** Actual quantity consumed in the active period. */\n  consumedQuantity: number;\n  /** Timestamp recording when the entity was first created. */\n  createdAt: string;\n  /** Quantity included in base plan before overages. */\n  includedQuantity: number;\n  /** Lifecycle event associated with the most recent timestamp mutation. */\n  lastEvent: 'reading_captured' | 'anomaly_detected' | 'reset';\n  /** Timestamp for the lifecycle event captured in last_event. */\n  lastEventAt?: string;\n  /** Timestamp of the most recent provider usage payload. */\n  lastReportedAt: string;\n  /** Provider specific meter identifier. */\n  meterId: string;\n  /** Friendly metered feature name shown in UI (ex: Analytics Seats). */\n  meterName: string;\n  /** Cost per additional unit expressed in minor currency units. */\n  overageRateMinor?: number;\n  /** Date the usage accumulation window ends. */\n  periodEnd: string;\n  /** Date the usage accumulation window began. */\n  periodStart: string;\n  /** Forecasted overage spend derived from consumption trends. */\n  projectedOverageMinor?: number;\n  /** Source provider for usage data. */\n  provider: string;\n  /** Strategy for unused units (inherits rolloverStrategy parameter). */\n  rolloverStrategy?: string;\n  /** Rolling usage measurements for charts or anomaly detection. */\n  samples?: unknown[];\n  /** Health of the usage feed (ok, delayed, investigating). */\n  status?: 'ok' | 'delayed' | 'investigating';\n  /** Subscription the usage belongs to. */\n  subscriptionId: string;\n  /** Percent delta compared to previous window. */\n  trendPercent?: number;\n  /** Label for display, defaults to the unit parameter. */\n  unitLabel: string;\n  /** Timestamp for the most recent modification, when available. */\n  updatedAt?: string;\n  /** Identifier for this usage record. */\n  usageId: string;\n  /** Currency impact of usage variance calculated with overage rate. */\n  varianceMinor?: number;\n}\n\ntype CardProps = React.ComponentPropsWithoutRef<typeof Card>;\ntype DetailHeaderProps = React.ComponentPropsWithoutRef<typeof DetailHeader>;\ntype StackProps = React.ComponentPropsWithoutRef<typeof Stack>;\ntype TabsProps = React.ComponentPropsWithoutRef<typeof Tabs>;\ntype TextProps = React.ComponentPropsWithoutRef<typeof Text>;\ntype VizLinePreviewProps = React.ComponentPropsWithoutRef<typeof VizLinePreview>;\n\nexport const GeneratedUI: React.FC<PageProps> = ({ actions, anomalies, consumedQuantity, createdAt, includedQuantity, lastEvent, lastEventAt, lastReportedAt, meterId, meterName, overageRateMinor, periodEnd, periodStart, projectedOverageMinor, provider, rolloverStrategy, samples, status, subscriptionId, trendPercent, unitLabel, updatedAt, usageId, varianceMinor, svg, svgNarrow }) => {\n  if (!actions || !Object.prototype.hasOwnProperty.call(actions, 'handleDelete') || typeof actions.handleDelete !== 'function') { throw new Error('GeneratedUI requires actions.handleDelete.'); }\n  if (!actions || !Object.prototype.hasOwnProperty.call(actions, 'handleEdit') || typeof actions.handleEdit !== 'function') { throw new Error('GeneratedUI requires actions.handleEdit.'); }\n  if (!actions || !Object.prototype.hasOwnProperty.call(actions, 'handleViewTimeline') || typeof actions.handleViewTimeline !== 'function') { throw new Error('GeneratedUI requires actions.handleViewTimeline.'); }\n\n  /* @oods-domain-binding handleDelete */ const handleDelete = () => { actions.handleDelete(); };\n  /* @oods-domain-binding handleEdit */ const handleEdit = () => { actions.handleEdit(); };\n  /* @oods-domain-binding handleViewTimeline */ const handleViewTimeline = () => { actions.handleViewTimeline(); };\n\n  return (\n    <main data-oods-shell=\"screen-detail-13\">\n      <>\n        <Stack id=\"screen-detail-13\" data-oods-component=\"Stack\" data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-default)' }}>\n              <Stack id=\"detail-header-1\" data-oods-component=\"Stack\" data-layout=\"stack\" style={{ alignItems: 'space-between', display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-stack-default)', padding: 'var(--ref-space-inset-default)' }}>\n                      <Stack id=\"slot-header-2\" data-oods-component=\"Stack\" data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-default)' }}>\n                                <DetailHeader id=\"primary-header-21\" data-oods-component=\"DetailHeader\" title={usageId} level={1} />\n                                <VizLinePreview id=\"ve-header-20\" data-oods-component=\"VizLinePreview\" svg={svg ?? \"<svg xmlns=\\\"http://www.w3.org/2000/svg\\\" xmlns:xlink=\\\"http://www.w3.org/1999/xlink\\\" version=\\\"1.1\\\" class=\\\"marks\\\" width=\\\"730\\\" height=\\\"410\\\" viewBox=\\\"0 0 730 410\\\"><rect width=\\\"730\\\" height=\\\"410\\\" fill=\\\"Canvas\\\"/><g fill=\\\"none\\\" stroke-miterlimit=\\\"10\\\" transform=\\\"translate(67,10)\\\"><g class=\\\"mark-group role-frame root\\\" role=\\\"graphics-object\\\" aria-roledescription=\\\"group mark container\\\"><g transform=\\\"translate(0,0)\\\"><path class=\\\"background\\\" aria-hidden=\\\"true\\\" d=\\\"M0,0h656v363h-656Z\\\"/><g><g class=\\\"mark-group role-axis\\\" aria-hidden=\\\"true\\\"><g transform=\\\"translate(0.5,0.5)\\\"><path class=\\\"background\\\" aria-hidden=\\\"true\\\" d=\\\"M0,0h0v0h0Z\\\" pointer-events=\\\"none\\\"/><g><g class=\\\"mark-rule role-axis-grid\\\" pointer-events=\\\"none\\\"><line transform=\\\"translate(0,363)\\\" x2=\\\"656\\\" y2=\\\"0\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(0,323)\\\" x2=\\\"656\\\" y2=\\\"0\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(0,282)\\\" x2=\\\"656\\\" y2=\\\"0\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(0,242)\\\" x2=\\\"656\\\" y2=\\\"0\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(0,202)\\\" x2=\\\"656\\\" y2=\\\"0\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(0,161)\\\" x2=\\\"656\\\" y2=\\\"0\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(0,121)\\\" x2=\\\"656\\\" y2=\\\"0\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(0,81)\\\" x2=\\\"656\\\" y2=\\\"0\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(0,40)\\\" x2=\\\"656\\\" y2=\\\"0\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(0,0)\\\" x2=\\\"656\\\" y2=\\\"0\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/></g></g><path class=\\\"foreground\\\" aria-hidden=\\\"true\\\" d=\\\"\\\" pointer-events=\\\"none\\\" display=\\\"none\\\"/></g></g><g class=\\\"mark-group role-axis\\\" role=\\\"graphics-symbol\\\" aria-roledescription=\\\"axis\\\" aria-label=\\\"X-axis titled 'Recorded at' for a utc scale with values from Sunday, 15 June 2025, 12:00:00 AM UTC to Wednesday, 25 June 2025, 12:00:00 AM UTC\\\"><g transform=\\\"translate(0.5,363.5)\\\"><path class=\\\"background\\\" aria-hidden=\\\"true\\\" d=\\\"M0,0h0v0h0Z\\\" pointer-events=\\\"none\\\"/><g><g class=\\\"mark-rule role-axis-tick\\\" pointer-events=\\\"none\\\"><line transform=\\\"translate(0,0)\\\" x2=\\\"0\\\" y2=\\\"5\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(33,0)\\\" x2=\\\"0\\\" y2=\\\"5\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(66,0)\\\" x2=\\\"0\\\" y2=\\\"5\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(98,0)\\\" x2=\\\"0\\\" y2=\\\"5\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(131,0)\\\" x2=\\\"0\\\" y2=\\\"5\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(164,0)\\\" x2=\\\"0\\\" y2=\\\"5\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(197,0)\\\" x2=\\\"0\\\" y2=\\\"5\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(230,0)\\\" x2=\\\"0\\\" y2=\\\"5\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(262,0)\\\" x2=\\\"0\\\" y2=\\\"5\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(295,0)\\\" x2=\\\"0\\\" y2=\\\"5\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(328,0)\\\" x2=\\\"0\\\" y2=\\\"5\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(361,0)\\\" x2=\\\"0\\\" y2=\\\"5\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(394,0)\\\" x2=\\\"0\\\" y2=\\\"5\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(426,0)\\\" x2=\\\"0\\\" y2=\\\"5\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(459,0)\\\" x2=\\\"0\\\" y2=\\\"5\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(492,0)\\\" x2=\\\"0\\\" y2=\\\"5\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(525,0)\\\" x2=\\\"0\\\" y2=\\\"5\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(558,0)\\\" x2=\\\"0\\\" y2=\\\"5\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(590,0)\\\" x2=\\\"0\\\" y2=\\\"5\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(623,0)\\\" x2=\\\"0\\\" y2=\\\"5\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(656,0)\\\" x2=\\\"0\\\" y2=\\\"5\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/></g><g class=\\\"mark-text role-axis-label\\\" pointer-events=\\\"none\\\"><text text-anchor=\\\"start\\\" transform=\\\"translate(0,15)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"1\\\">Jun 15</text><text text-anchor=\\\"middle\\\" transform=\\\"translate(32.800000000000004,15)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"0\\\">12 PM</text><text text-anchor=\\\"middle\\\" transform=\\\"translate(65.60000000000001,15)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"0\\\">Mon 16</text><text text-anchor=\\\"middle\\\" transform=\\\"translate(98.39999999999999,15)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"0\\\">12 PM</text><text text-anchor=\\\"middle\\\" transform=\\\"translate(131.20000000000002,15)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"1\\\">Tue 17</text><text text-anchor=\\\"middle\\\" transform=\\\"translate(164,15)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"0\\\">12 PM</text><text text-anchor=\\\"middle\\\" transform=\\\"translate(196.79999999999998,15)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"0\\\">Wed 18</text><text text-anchor=\\\"middle\\\" transform=\\\"translate(229.6,15)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"0\\\">12 PM</text><text text-anchor=\\\"middle\\\" transform=\\\"translate(262.40000000000003,15)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"1\\\">Thu 19</text><text text-anchor=\\\"middle\\\" transform=\\\"translate(295.2,15)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"0\\\">12 PM</text><text text-anchor=\\\"middle\\\" transform=\\\"translate(328,15)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"0\\\">Fri 20</text><text text-anchor=\\\"middle\\\" transform=\\\"translate(360.8,15)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"0\\\">12 PM</text><text text-anchor=\\\"middle\\\" transform=\\\"translate(393.59999999999997,15)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"1\\\">Sat 21</text><text text-anchor=\\\"middle\\\" transform=\\\"translate(426.40000000000003,15)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"0\\\">12 PM</text><text text-anchor=\\\"middle\\\" transform=\\\"translate(459.2,15)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"0\\\">Jun 22</text><text text-anchor=\\\"middle\\\" transform=\\\"translate(492,15)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"0\\\">12 PM</text><text text-anchor=\\\"middle\\\" transform=\\\"translate(524.8000000000001,15)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"1\\\">Mon 23</text><text text-anchor=\\\"middle\\\" transform=\\\"translate(557.6,15)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"0\\\">12 PM</text><text text-anchor=\\\"middle\\\" transform=\\\"translate(590.4,15)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"0\\\">Tue 24</text><text text-anchor=\\\"middle\\\" transform=\\\"translate(623.1999999999999,15)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"0\\\">12 PM</text><text text-anchor=\\\"end\\\" transform=\\\"translate(656,15)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"1\\\">Wed 25</text></g><g class=\\\"mark-rule role-axis-domain\\\" pointer-events=\\\"none\\\"><line transform=\\\"translate(0,0)\\\" x2=\\\"656\\\" y2=\\\"0\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/></g><g class=\\\"mark-text role-axis-title\\\" pointer-events=\\\"none\\\"><text text-anchor=\\\"middle\\\" transform=\\\"translate(328,30)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"11px\\\" font-weight=\\\"bold\\\" fill=\\\"CanvasText\\\" opacity=\\\"1\\\">Recorded at</text></g></g><path class=\\\"foreground\\\" aria-hidden=\\\"true\\\" d=\\\"\\\" pointer-events=\\\"none\\\" display=\\\"none\\\"/></g></g><g class=\\\"mark-group role-axis\\\" role=\\\"graphics-symbol\\\" aria-roledescription=\\\"axis\\\" aria-label=\\\"Y-axis titled 'API calls' for a linear scale with values from 0 to 1,800\\\"><g transform=\\\"translate(0.5,0.5)\\\"><path class=\\\"background\\\" aria-hidden=\\\"true\\\" d=\\\"M0,0h0v0h0Z\\\" pointer-events=\\\"none\\\"/><g><g class=\\\"mark-rule role-axis-tick\\\" pointer-events=\\\"none\\\"><line transform=\\\"translate(0,363)\\\" x2=\\\"-5\\\" y2=\\\"0\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(0,323)\\\" x2=\\\"-5\\\" y2=\\\"0\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(0,282)\\\" x2=\\\"-5\\\" y2=\\\"0\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(0,242)\\\" x2=\\\"-5\\\" y2=\\\"0\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(0,202)\\\" x2=\\\"-5\\\" y2=\\\"0\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(0,161)\\\" x2=\\\"-5\\\" y2=\\\"0\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(0,121)\\\" x2=\\\"-5\\\" y2=\\\"0\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(0,81)\\\" x2=\\\"-5\\\" y2=\\\"0\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(0,40)\\\" x2=\\\"-5\\\" y2=\\\"0\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(0,0)\\\" x2=\\\"-5\\\" y2=\\\"0\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/></g><g class=\\\"mark-text role-axis-label\\\" pointer-events=\\\"none\\\"><text text-anchor=\\\"end\\\" transform=\\\"translate(-7,366)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"1\\\">0</text><text text-anchor=\\\"end\\\" transform=\\\"translate(-7,325.66666666666663)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"1\\\">200</text><text text-anchor=\\\"end\\\" transform=\\\"translate(-7,285.3333333333333)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"1\\\">400</text><text text-anchor=\\\"end\\\" transform=\\\"translate(-7,245.00000000000003)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"1\\\">600</text><text text-anchor=\\\"end\\\" transform=\\\"translate(-7,204.66666666666669)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"1\\\">800</text><text text-anchor=\\\"end\\\" transform=\\\"translate(-7,164.33333333333331)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"1\\\">1,000</text><text text-anchor=\\\"end\\\" transform=\\\"translate(-7,124.00000000000001)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"1\\\">1,200</text><text text-anchor=\\\"end\\\" transform=\\\"translate(-7,83.66666666666666)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"1\\\">1,400</text><text text-anchor=\\\"end\\\" transform=\\\"translate(-7,43.33333333333335)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"1\\\">1,600</text><text text-anchor=\\\"end\\\" transform=\\\"translate(-7,3)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"1\\\">1,800</text></g><g class=\\\"mark-rule role-axis-domain\\\" pointer-events=\\\"none\\\"><line transform=\\\"translate(0,363)\\\" x2=\\\"0\\\" y2=\\\"-363\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/></g><g class=\\\"mark-text role-axis-title\\\" pointer-events=\\\"none\\\"><text text-anchor=\\\"middle\\\" transform=\\\"translate(-51,181.5) rotate(-90) translate(0,-2)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"11px\\\" font-weight=\\\"bold\\\" fill=\\\"CanvasText\\\" opacity=\\\"1\\\">API calls</text></g></g><path class=\\\"foreground\\\" aria-hidden=\\\"true\\\" d=\\\"\\\" pointer-events=\\\"none\\\" display=\\\"none\\\"/></g></g><g class=\\\"mark-line role-mark marks\\\" role=\\\"graphics-object\\\" aria-roledescription=\\\"line mark container\\\"><path aria-label=\\\"Recorded at: Jun 15, 2025; API calls: 1200\\\" role=\\\"graphics-symbol\\\" aria-roledescription=\\\"line mark\\\" d=\\\"M0,121L328,0L656,60.5\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"2\\\"/></g></g><path class=\\\"foreground\\\" aria-hidden=\\\"true\\\" d=\\\"\\\" display=\\\"none\\\"/></g></g></g></svg>\"} svgNarrow={svgNarrow ?? \"<svg xmlns=\\\"http://www.w3.org/2000/svg\\\" xmlns:xlink=\\\"http://www.w3.org/1999/xlink\\\" version=\\\"1.1\\\" class=\\\"marks\\\" width=\\\"370\\\" height=\\\"230\\\" viewBox=\\\"0 0 370 230\\\"><rect width=\\\"370\\\" height=\\\"230\\\" fill=\\\"Canvas\\\"/><g fill=\\\"none\\\" stroke-miterlimit=\\\"10\\\" transform=\\\"translate(67,10)\\\"><g class=\\\"mark-group role-frame root\\\" role=\\\"graphics-object\\\" aria-roledescription=\\\"group mark container\\\"><g transform=\\\"translate(0,0)\\\"><path class=\\\"background\\\" aria-hidden=\\\"true\\\" d=\\\"M0,0h296v183h-296Z\\\"/><g><g class=\\\"mark-group role-axis\\\" aria-hidden=\\\"true\\\"><g transform=\\\"translate(0.5,0.5)\\\"><path class=\\\"background\\\" aria-hidden=\\\"true\\\" d=\\\"M0,0h0v0h0Z\\\" pointer-events=\\\"none\\\"/><g><g class=\\\"mark-rule role-axis-grid\\\" pointer-events=\\\"none\\\"><line transform=\\\"translate(0,183)\\\" x2=\\\"296\\\" y2=\\\"0\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(0,81)\\\" x2=\\\"296\\\" y2=\\\"0\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(0,132)\\\" x2=\\\"296\\\" y2=\\\"0\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(0,30)\\\" x2=\\\"296\\\" y2=\\\"0\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/></g></g><path class=\\\"foreground\\\" aria-hidden=\\\"true\\\" d=\\\"\\\" pointer-events=\\\"none\\\" display=\\\"none\\\"/></g></g><g class=\\\"mark-group role-axis\\\" role=\\\"graphics-symbol\\\" aria-roledescription=\\\"axis\\\" aria-label=\\\"X-axis titled 'Recorded at' for a utc scale with values from Sunday, 15 June 2025, 12:00:00 AM UTC to Wednesday, 25 June 2025, 12:00:00 AM UTC\\\"><g transform=\\\"translate(0.5,183.5)\\\"><path class=\\\"background\\\" aria-hidden=\\\"true\\\" d=\\\"M0,0h0v0h0Z\\\" pointer-events=\\\"none\\\"/><g><g class=\\\"mark-rule role-axis-tick\\\" pointer-events=\\\"none\\\"><line transform=\\\"translate(0,0)\\\" x2=\\\"0\\\" y2=\\\"5\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(30,0)\\\" x2=\\\"0\\\" y2=\\\"5\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(59,0)\\\" x2=\\\"0\\\" y2=\\\"5\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(89,0)\\\" x2=\\\"0\\\" y2=\\\"5\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(118,0)\\\" x2=\\\"0\\\" y2=\\\"5\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(148,0)\\\" x2=\\\"0\\\" y2=\\\"5\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(178,0)\\\" x2=\\\"0\\\" y2=\\\"5\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(207,0)\\\" x2=\\\"0\\\" y2=\\\"5\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(237,0)\\\" x2=\\\"0\\\" y2=\\\"5\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(266,0)\\\" x2=\\\"0\\\" y2=\\\"5\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(296,0)\\\" x2=\\\"0\\\" y2=\\\"5\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/></g><g class=\\\"mark-text role-axis-label\\\" pointer-events=\\\"none\\\"><text text-anchor=\\\"start\\\" transform=\\\"translate(0,15)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"1\\\">Jun 15</text><text text-anchor=\\\"middle\\\" transform=\\\"translate(29.6,15)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"0\\\">Mon 16</text><text text-anchor=\\\"middle\\\" transform=\\\"translate(59.2,15)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"0\\\">Tue 17</text><text text-anchor=\\\"middle\\\" transform=\\\"translate(88.8,15)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"0\\\">Wed 18</text><text text-anchor=\\\"middle\\\" transform=\\\"translate(118.4,15)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"1\\\">Thu 19</text><text text-anchor=\\\"middle\\\" transform=\\\"translate(148,15)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"0\\\">Fri 20</text><text text-anchor=\\\"middle\\\" transform=\\\"translate(177.6,15)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"0\\\">Sat 21</text><text text-anchor=\\\"middle\\\" transform=\\\"translate(207.2,15)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"0\\\">Jun 22</text><text text-anchor=\\\"middle\\\" transform=\\\"translate(236.8,15)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"1\\\">Mon 23</text><text text-anchor=\\\"middle\\\" transform=\\\"translate(266.40000000000003,15)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"0\\\">Tue 24</text><text text-anchor=\\\"end\\\" transform=\\\"translate(296,15)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"0\\\">Wed 25</text></g><g class=\\\"mark-rule role-axis-domain\\\" pointer-events=\\\"none\\\"><line transform=\\\"translate(0,0)\\\" x2=\\\"296\\\" y2=\\\"0\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/></g><g class=\\\"mark-text role-axis-title\\\" pointer-events=\\\"none\\\"><text text-anchor=\\\"middle\\\" transform=\\\"translate(148,30)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"11px\\\" font-weight=\\\"bold\\\" fill=\\\"CanvasText\\\" opacity=\\\"1\\\">Recorded at</text></g></g><path class=\\\"foreground\\\" aria-hidden=\\\"true\\\" d=\\\"\\\" pointer-events=\\\"none\\\" display=\\\"none\\\"/></g></g><g class=\\\"mark-group role-axis\\\" role=\\\"graphics-symbol\\\" aria-roledescription=\\\"axis\\\" aria-label=\\\"Y-axis titled 'API calls' for a linear scale with values from 0 to 1,800\\\"><g transform=\\\"translate(0.5,0.5)\\\"><path class=\\\"background\\\" aria-hidden=\\\"true\\\" d=\\\"M0,0h0v0h0Z\\\" pointer-events=\\\"none\\\"/><g><g class=\\\"mark-rule role-axis-tick\\\" pointer-events=\\\"none\\\"><line transform=\\\"translate(0,183)\\\" x2=\\\"-5\\\" y2=\\\"0\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(0,81)\\\" x2=\\\"-5\\\" y2=\\\"0\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(0,132)\\\" x2=\\\"-5\\\" y2=\\\"0\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(0,30)\\\" x2=\\\"-5\\\" y2=\\\"0\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/></g><g class=\\\"mark-text role-axis-label\\\" pointer-events=\\\"none\\\"><text text-anchor=\\\"end\\\" transform=\\\"translate(-7,186)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"1\\\">0</text><text text-anchor=\\\"end\\\" transform=\\\"translate(-7,84.33333333333333)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"1\\\">1,000</text><text text-anchor=\\\"end\\\" transform=\\\"translate(-7,135.16666666666666)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"1\\\">500</text><text text-anchor=\\\"end\\\" transform=\\\"translate(-7,33.49999999999999)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"1\\\">1,500</text></g><g class=\\\"mark-rule role-axis-domain\\\" pointer-events=\\\"none\\\"><line transform=\\\"translate(0,183)\\\" x2=\\\"0\\\" y2=\\\"-183\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/></g><g class=\\\"mark-text role-axis-title\\\" pointer-events=\\\"none\\\"><text text-anchor=\\\"middle\\\" transform=\\\"translate(-51,91.5) rotate(-90) translate(0,-2)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"11px\\\" font-weight=\\\"bold\\\" fill=\\\"CanvasText\\\" opacity=\\\"1\\\">API calls</text></g></g><path class=\\\"foreground\\\" aria-hidden=\\\"true\\\" d=\\\"\\\" pointer-events=\\\"none\\\" display=\\\"none\\\"/></g></g><g class=\\\"mark-line role-mark marks\\\" role=\\\"graphics-object\\\" aria-roledescription=\\\"line mark container\\\"><path aria-label=\\\"Recorded at: Jun 15, 2025; API calls: 1200\\\" role=\\\"graphics-symbol\\\" aria-roledescription=\\\"line mark\\\" d=\\\"M0,61L148,0L296,30.5\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"2\\\"/></g></g><path class=\\\"foreground\\\" aria-hidden=\\\"true\\\" d=\\\"\\\" display=\\\"none\\\"/></g></g></g></svg>\"} description=\"Synthetic API-call counts for generated example records.\" height={400} title=\"Example API-call usage\" width={720} />\n                              </Stack>\n                    </Stack>\n              <Card id=\"detail-body-10\" data-oods-component=\"Card\" data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-default)' }}>\n                      <Tabs id=\"detail-tabs-9\" data-oods-component=\"Tabs\" ariaLabel=\"Record details\" items={[\n                        { ...{\"id\":\"detail-tab-panel-3\",\"label\":\"Details\"}, panel: (\n                          <Stack id=\"detail-tab-panel-3\" data-oods-component=\"Stack\" data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-default)' }}>\n                            <Stack id=\"slot-tab-0-4\" data-oods-component=\"Stack\" data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-tight)' }}>\n                                <Stack id=\"pg-status-timeline-23-read-field\" data-oods-component=\"Stack\">\n                                      <Text id=\"pg-status-timeline-23-label\" data-oods-component=\"Text\" as=\"strong\" content=\"Status\" />\n                                      <Text id=\"pg-status-timeline-23-value\" data-oods-component=\"Text\">{formatReadOnlyValue(status, \"string\", true)}</Text>\n                                    </Stack>\n                                <Stack id=\"pg-status-timeline-24-read-field\" data-oods-component=\"Stack\">\n                                      <Text id=\"pg-status-timeline-24-label\" data-oods-component=\"Text\" as=\"strong\" content=\"Updated at\" />\n                                      <Text id=\"pg-status-timeline-24-value\" data-oods-component=\"Text\">{formatReadOnlyValue(updatedAt, \"datetime\", false)}</Text>\n                                    </Stack>\n                              </Stack>\n                            <Stack id=\"slot-tab-1-6-read-field\" data-oods-component=\"Stack\">\n                                <Text id=\"slot-tab-1-6-label\" data-oods-component=\"Text\" as=\"strong\" content=\"Consumed quantity\" />\n                                <Text id=\"slot-tab-1-6-value\" data-oods-component=\"Text\">{formatReadOnlyValue(consumedQuantity, \"integer\", false)}</Text>\n                              </Stack>\n                            <Stack id=\"detail-tabs-9-overage_rate_minor-read-field\" data-oods-component=\"Stack\">\n                                <Text id=\"detail-tabs-9-overage_rate_minor-label\" data-oods-component=\"Text\" as=\"strong\" content=\"Overage rate\" />\n                                <Text id=\"detail-tabs-9-overage_rate_minor-value\" data-oods-component=\"Text\">{formatReadOnlyValue(overageRateMinor, \"integer\", false)}</Text>\n                              </Stack>\n                            <Stack id=\"detail-tabs-9-projected_overage_minor-read-field\" data-oods-component=\"Stack\">\n                                <Text id=\"detail-tabs-9-projected_overage_minor-label\" data-oods-component=\"Text\" as=\"strong\" content=\"Projected overage\" />\n                                <Text id=\"detail-tabs-9-projected_overage_minor-value\" data-oods-component=\"Text\">{formatReadOnlyValue(projectedOverageMinor, \"integer\", false)}</Text>\n                              </Stack>\n                            <Stack id=\"detail-tabs-9-created_at-read-field\" data-oods-component=\"Stack\">\n                                <Text id=\"detail-tabs-9-created_at-label\" data-oods-component=\"Text\" as=\"strong\" content=\"Created at\" />\n                                <Text id=\"detail-tabs-9-created_at-value\" data-oods-component=\"Text\">{formatReadOnlyValue(createdAt, \"datetime\", false)}</Text>\n                              </Stack>\n                            <Stack id=\"detail-tabs-9-last_event-read-field\" data-oods-component=\"Stack\">\n                                <Text id=\"detail-tabs-9-last_event-label\" data-oods-component=\"Text\" as=\"strong\" content=\"Last event\" />\n                                <Text id=\"detail-tabs-9-last_event-value\" data-oods-component=\"Text\">{formatReadOnlyValue(lastEvent, \"string\", true)}</Text>\n                              </Stack>\n                            <Stack id=\"detail-tabs-9-last_event_at-read-field\" data-oods-component=\"Stack\">\n                                <Text id=\"detail-tabs-9-last_event_at-label\" data-oods-component=\"Text\" as=\"strong\" content=\"Last event at\" />\n                                <Text id=\"detail-tabs-9-last_event_at-value\" data-oods-component=\"Text\">{formatReadOnlyValue(lastEventAt, \"datetime\", false)}</Text>\n                              </Stack>\n                            <Stack id=\"detail-tabs-9-subscription_id-read-field\" data-oods-component=\"Stack\">\n                                <Text id=\"detail-tabs-9-subscription_id-label\" data-oods-component=\"Text\" as=\"strong\" content=\"Subscription id\" />\n                                <Text id=\"detail-tabs-9-subscription_id-value\" data-oods-component=\"Text\">{formatReadOnlyValue(subscriptionId, \"string\", false)}</Text>\n                              </Stack>\n                            <Stack id=\"detail-tabs-9-meter_id-read-field\" data-oods-component=\"Stack\">\n                                <Text id=\"detail-tabs-9-meter_id-label\" data-oods-component=\"Text\" as=\"strong\" content=\"Meter id\" />\n                                <Text id=\"detail-tabs-9-meter_id-value\" data-oods-component=\"Text\">{formatReadOnlyValue(meterId, \"string\", false)}</Text>\n                              </Stack>\n                            <Stack id=\"detail-tabs-9-provider-read-field\" data-oods-component=\"Stack\">\n                                <Text id=\"detail-tabs-9-provider-label\" data-oods-component=\"Text\" as=\"strong\" content=\"Provider\" />\n                                <Text id=\"detail-tabs-9-provider-value\" data-oods-component=\"Text\">{formatReadOnlyValue(provider, \"string\", false)}</Text>\n                              </Stack>\n                            <Stack id=\"detail-tabs-9-trend_percent-read-field\" data-oods-component=\"Stack\">\n                                <Text id=\"detail-tabs-9-trend_percent-label\" data-oods-component=\"Text\" as=\"strong\" content=\"Trend percent\" />\n                                <Text id=\"detail-tabs-9-trend_percent-value\" data-oods-component=\"Text\">{formatReadOnlyValue(trendPercent, \"number\", false)}</Text>\n                              </Stack>\n                            <Stack id=\"detail-tabs-9-variance_minor-read-field\" data-oods-component=\"Stack\">\n                                <Text id=\"detail-tabs-9-variance_minor-label\" data-oods-component=\"Text\" as=\"strong\" content=\"Variance\" />\n                                <Text id=\"detail-tabs-9-variance_minor-value\" data-oods-component=\"Text\">{formatReadOnlyValue(varianceMinor, \"integer\", false)}</Text>\n                              </Stack>\n                            <Stack id=\"detail-tabs-9-last_reported_at-read-field\" data-oods-component=\"Stack\">\n                                <Text id=\"detail-tabs-9-last_reported_at-label\" data-oods-component=\"Text\" as=\"strong\" content=\"Last reported at\" />\n                                <Text id=\"detail-tabs-9-last_reported_at-value\" data-oods-component=\"Text\">{formatReadOnlyValue(lastReportedAt, \"datetime\", false)}</Text>\n                              </Stack>\n                          </Stack>\n                        ) }\n                      ]} />\n                    </Card>\n            </Stack>\n        <div role=\"group\" aria-label=\"Screen actions\" data-oods-screen-actions=\"screen-detail-13\">\n          <button type=\"button\" data-oods-action=\"handleDelete\" onClick={() => handleDelete()}>Delete</button>\n          <button type=\"button\" data-oods-action=\"handleEdit\" onClick={() => handleEdit()}>Edit</button>\n          <button type=\"button\" data-oods-action=\"handleViewTimeline\" onClick={() => handleViewTimeline()}>View timeline</button>\n        </div>\n      </>\n    </main>\n  );\n};\n",
+    "fileExtension": ".tsx",
+    "imports": [
+      "react",
+      "@oods/components-react",
+      "@oods/component-styles/css",
+      "@oods/component-contracts"
+    ],
+    "warnings": [],
+    "validationReceipt": {
+      "profile": "build",
+      "defaulted": false,
+      "rationale": "Build is the default minimum gate for a runnable artifact: target, bindings, dependencies, and fallbacks must resolve.",
+      "axes": {
+        "scope": "generated-artifact",
+        "enforcement": "blocking",
+        "fallback": "forbidden",
+        "target": {
+          "requested": "react",
+          "resolved": "react",
+          "source": "explicit"
+        }
+      },
+      "checks": [
+        "schema-structure",
+        "component-registry",
+        "state-contract",
+        "target-readiness",
+        "normalization-fidelity",
+        "binding-contract",
+        "props-contract",
+        "slots-contract",
+        "events-contract",
+        "dependency-closure",
+        "fallback-policy"
+      ],
+      "notChecked": [
+        "rendered-evidence",
+        "interaction-evidence",
+        "accessibility-evidence",
+        "theme-evidence",
+        "determinism-evidence",
+        "performance-evidence",
+        "certification-evidence"
+      ],
+      "evidence": {
+        "required": [],
+        "provided": [],
+        "missing": [],
+        "mismatched": [],
+        "accepted": [],
+        "notApplicable": [],
+        "artifactContentHash": "sha256:dd90c3cc721b48877328e8858d1406a1e080a8d9bef5eabbe9f8444cdf86b4cd"
+      }
+    },
+    "meta": {
+      "nodeCount": 51,
+      "componentCount": 6
+    }
+  }
+}

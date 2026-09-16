@@ -20,7 +20,9 @@ describe("generated documentation cannot silently lose its CI gate", () => {
       "scripts/docs/generate-tool-specs.ts",
       "scripts/docs/generate-forge-claims.ts",
     ];
-    expect(commands).toEqual(generators.map(generator => `tsx ${generator} --check${generator.endsWith("s195-pattern-census.ts") ? " --observations artifacts/product-reality/sprint-199/m03/patterns/pattern-observations.json" : ""}`));
+    // The pattern census is checked against the observations it was last measured from: Sprint 202 m01 re-measured them
+    // when viz.render gained output.titlePlacement (the registry reproduced byte-for-byte).
+    expect(commands).toEqual(generators.map(generator => `tsx ${generator} --check${generator.endsWith("s195-pattern-census.ts") ? " --observations artifacts/product-reality/sprint-202/m01/patterns/pattern-observations.json" : ""}`));
     expect(scripts["docs:check"]).not.toContain("--measure");
   });
 

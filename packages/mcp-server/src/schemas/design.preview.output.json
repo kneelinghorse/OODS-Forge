@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://designlab.local/schemas/design.preview.output.json",
   "title": "Design preview output",
-  "description": "The URL of the composition version running in the preview host, one per compiled framework, with its lineage (composition, version, parent, operation, head), the schema hash and the compiled module digests. An unreachable host throws OODS-N021 before any record is written; an unknown composition or version throws OODS-N022. action compare returns the what-changed between two versions instead. action edit records a new version from one operation and opens it; action versions lists a composition's versions.",
+  "description": "The URL of the composition version running in the preview host, one per compiled framework, with its lineage (composition, version, parent, operation, head), the schema hash and the compiled module digests. An unreachable host throws OODS-N021 before any record is written; an unknown composition or version throws OODS-N022. action compare returns the what-changed between two versions instead. action edit records a new version from one operation and opens it; action versions lists a composition's versions and the accepted one; action accept records a version as accepted and returns the acceptance.",
   "anyOf": [
     {
       "type": "object",
@@ -98,6 +98,7 @@
               "appUrl",
               "moduleUrl",
               "artifactContentHash",
+              "generatedFor",
               "compiled"
             ],
             "additionalProperties": false,
@@ -127,6 +128,17 @@
               "artifactContentHash": {
                 "type": "string",
                 "pattern": "^sha256:[a-f0-9]{64}$"
+              },
+              "generatedFor": {
+                "type": "object",
+                "required": ["brand", "theme", "chartScoped"],
+                "additionalProperties": false,
+                "description": "The brand and theme the served artifact was generated for. A version that places a chart renders its SVG per scope: asking for another brand or theme generates and certifies for that scope (chartScoped true), so generatedFor equals the mounted scope; a version without a placed chart mounts the same artifact in every scope.",
+                "properties": {
+                  "brand": { "type": "string", "enum": ["A", "B"] },
+                  "theme": { "type": "string", "enum": ["light", "dark", "hc"] },
+                  "chartScoped": { "type": "boolean" }
+                }
               },
               "compiled": {
                 "type": "object",
@@ -223,12 +235,18 @@
                 "placed",
                 "conformant",
                 "notConformant",
-                "uncertified"
+                "uncertified",
+                "scopes"
               ],
               "additionalProperties": false,
               "properties": {
                 "placed": {
                   "type": "integer"
+                },
+                "scopes": {
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "description": "brand/theme scopes the placed charts are certified for: the version's own first, then every scope a brand or theme switch generated (empty until the charts are certified)."
                 },
                 "conformant": {
                   "type": "integer"
@@ -692,6 +710,7 @@
         "compositionId",
         "latest",
         "versions",
+        "accepted",
         "host",
         "durationMs"
       ],
@@ -760,6 +779,209 @@
               }
             }
           }
+        },
+        "accepted": {
+          "description": "The standing acceptance (the last one in accepted.json), or null when no version was accepted.",
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "object",
+              "required": [
+                "version",
+                "acceptedAt",
+                "acceptances"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "version": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "acceptedAt": {
+                  "type": "string"
+                },
+                "acceptances": {
+                  "type": "integer",
+                  "minimum": 1
+                }
+              }
+            }
+          ]
+        },
+        "host": {
+          "type": "object",
+          "required": [
+            "url",
+            "port",
+            "compositionsDir"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "url": {
+              "type": "string",
+              "format": "uri"
+            },
+            "port": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 65535
+            },
+            "compositionsDir": {
+              "type": "string",
+              "description": "Where the version files live and where the host reads them; beside the saved-schema store."
+            }
+          }
+        },
+        "durationMs": {
+          "type": "number",
+          "minimum": 0
+        }
+      }
+    },
+    {
+      "type": "object",
+      "required": [
+        "status",
+        "action",
+        "compositionId",
+        "version",
+        "parentVersion",
+        "operation",
+        "object",
+        "context",
+        "accepted",
+        "acceptances",
+        "acceptedPath",
+        "previewUrl",
+        "host",
+        "durationMs"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "status": {
+          "const": "ok"
+        },
+        "action": {
+          "const": "accept"
+        },
+        "compositionId": {
+          "type": "string",
+          "pattern": "^cmp-[a-f0-9]{12}$"
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "parentVersion": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "operation": {
+          "type": "string"
+        },
+        "object": {
+          "type": "string"
+        },
+        "context": {
+          "type": "string"
+        },
+        "accepted": {
+          "type": "object",
+          "description": "The acceptance just recorded in accepted.json.",
+          "required": [
+            "version",
+            "acceptedAt",
+            "head",
+            "versionHead",
+            "schemaHash",
+            "measurements",
+            "scopeCharts",
+            "measured",
+            "supersedes"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "version": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "acceptedAt": {
+              "type": "string"
+            },
+            "head": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The Forge head that recorded the acceptance; null from a source run."
+            },
+            "versionHead": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The Forge head that produced the version."
+            },
+            "schemaHash": {
+              "type": "string"
+            },
+            "measurements": {
+              "type": "object",
+              "description": "The version's stored measurements at acceptance: generation receipts, placed-chart certifications and axe-core per framework and scope."
+            },
+            "scopeCharts": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "array"
+              },
+              "description": "Placed-chart certifications stored for scopes other than the version's own, keyed brand/theme."
+            },
+            "measured": {
+              "type": "object",
+              "description": "The summary a render result gives as measured, taken at acceptance."
+            },
+            "supersedes": {
+              "description": "The acceptance this one supersedes; null for the first.",
+              "anyOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "type": "object",
+                  "required": [
+                    "version",
+                    "acceptedAt"
+                  ],
+                  "additionalProperties": false,
+                  "properties": {
+                    "version": {
+                      "type": "integer",
+                      "minimum": 1
+                    },
+                    "acceptedAt": {
+                      "type": "string"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        },
+        "acceptances": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "How many acceptances accepted.json holds now; the last is the standing one."
+        },
+        "acceptedPath": {
+          "type": "string"
+        },
+        "previewUrl": {
+          "type": "string",
+          "format": "uri"
         },
         "host": {
           "type": "object",

@@ -209,14 +209,15 @@ describe('design.preview serves a composition version through the preview host (
     const requests = placedChartRequests(record.schema, { theme: record.theme, brand: record.brand });
     expect(requests.length).toBeGreaterThan(0);
     expect(measurements.charts.map(chart => chart.path)).toEqual(requests.map(request => request.path));
-    expect(measurements.charts.map(chart => chart.path)).toEqual(record.artifacts.react!.artifact.files.filter(file => file.path.endsWith('.svg')).map(file => file.path));
+    // Every placed chart ships its design-size render and its narrow render; both are certified (Sprint 202 m01).
+    expect(measurements.charts.flatMap(chart => [chart.path, (chart as { narrow: { path: string } }).narrow.path]).sort()).toEqual(record.artifacts.react!.artifact.files.filter(file => file.path.endsWith('.svg')).map(file => file.path).sort());
     const first = requests[0]!;
     const rendered = await render({ ...first.request, output: { ...first.request.output, svg: true, includeNormalizedSpec: true } });
     const certified = await certify({ spec: rendered.normalizedSpec as never, theme: first.request.theme as never, brand: first.request.brand as never });
     expect(measurements.charts[0]).toMatchObject({ path: first.path, contentHash: rendered.contentHash, theme: 'light', brand: 'A' });
     expect(measurements.charts[0]!.certification).toMatchObject({ status: certified.status, coverage: certified.coverage ?? null, conformant: certified.conformant ?? null, pillars: certified.pillars ?? null });
     expect(measurements.axe).toBeUndefined();
-    expect(result.measured).toEqual({ validation: ['react', 'vue'], charts: { placed: requests.length, conformant: measurements.charts.filter(chart => chart.certification.conformant === true).length, notConformant: measurements.charts.filter(chart => chart.certification.conformant === false).length, uncertified: measurements.charts.filter(chart => chart.certification.conformant === null).length }, axe: [], notMeasured: ['react', 'vue'].flatMap(framework => ['A/light', 'A/dark', 'A/hc', 'B/light', 'B/dark', 'B/hc'].map(scope => `axe:${framework}:${scope}`)) });
+    expect(result.measured).toEqual({ validation: ['react', 'vue'], charts: { placed: requests.length, conformant: measurements.charts.filter(chart => chart.certification.conformant === true).length, notConformant: measurements.charts.filter(chart => chart.certification.conformant === false).length, uncertified: measurements.charts.filter(chart => chart.certification.conformant === null).length, scopes: ['A/light'] }, axe: [], notMeasured: ['react', 'vue'].flatMap(framework => ['A/light', 'A/dark', 'A/hc', 'B/light', 'B/dark', 'B/hc'].map(scope => `axe:${framework}:${scope}`)) });
     const page = await (await fetch(result.previewUrl)).text();
     expect(page).toContain('data-oods-measured="validation:react"');
     expect(page).toContain(`data-oods-measured="chart:${first.path}"`);
@@ -224,7 +225,7 @@ describe('design.preview serves a composition version through the preview host (
     // A card without a chart records an empty certification list, never a claim.
     const card = await preview({ object: 'Subscription', context: 'card', framework: 'vue' }, { previewHostUrl: hostUrl });
     if (card.action !== 'render') throw new Error('render expected');
-    expect(card.measured).toMatchObject({ validation: ['vue'], charts: { placed: 0, conformant: 0, notConformant: 0, uncertified: 0 }, axe: [] });
+    expect(card.measured).toMatchObject({ validation: ['vue'], charts: { placed: 0, conformant: 0, notConformant: 0, uncertified: 0, scopes: [] }, axe: [] });
     expect((await readVersion(compositionsDir, card.compositionId, 1)).measurements.charts).toEqual([]);
   });
 

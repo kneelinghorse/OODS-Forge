@@ -8,8 +8,24 @@ import { workflowSampleRecords } from './workflow-data-emitter.js';
 
 /** Placed charts render at twice the former 360×200 so the detail card shows them at design size; the preview never scales an SVG above this width. */
 export const PLACED_CHART_SIZE = { width: 720, height: 400 } as const;
+/** The same chart at the narrow size the figure switches to below PLACED_CHART_NARROW_BREAKPOINT px, so axis text keeps its size on a phone column instead of scaling with the SVG. */
+export const PLACED_CHART_NARROW_SIZE = { width: 360, height: 220 } as const;
+/** Figure inline size (CSS px) at and below which the figure shows the narrow render (component-styles' container query). */
+export const PLACED_CHART_NARROW_BREAKPOINT = 600;
+/** Every placed chart renders without a painted title: the figure heading carries the chart's name (Sprint 202 m01). */
+export const PLACED_CHART_OUTPUT = { svg: true, titlePlacement: 'figure', ...PLACED_CHART_SIZE } as const;
+export const PLACED_CHART_NARROW_OUTPUT = { svg: true, titlePlacement: 'figure', ...PLACED_CHART_NARROW_SIZE } as const;
 
-export interface PlacedChartRequest { index: number; path: string; recordId: string; source: string; request: VizRenderInput }
+export interface PlacedChartRequest {
+  index: number;
+  path: string;
+  recordId: string;
+  source: string;
+  request: VizRenderInput;
+  /** The same request at the narrow size, rendered to `<path>.narrow.svg` and shown by the figure below the breakpoint. */
+  narrow: { path: string; request: VizRenderInput };
+}
+export const narrowChartPath = (path: string): string => path.replace(/\.svg$/, '.narrow.svg');
 
 /**
  * The viz.render requests behind every placed chart of a schema, one per sample record, with the
@@ -59,14 +75,14 @@ export function placedChartRequests(input: UiSchema, options: Pick<CodegenOption
         brand: options.brand ?? chart.brand ?? 'A',
         rows: [rows[0]!, ...rows.slice(1)],
         encodings: { x: { field: 'date', scale: 'temporal' }, y: { field: 'amount', aggregate: 'sum' } },
-        output: { svg: true, ...PLACED_CHART_SIZE },
+        output: { ...PLACED_CHART_OUTPUT },
       };
     } else if (chart.source === 'edge-array') {
       request = {
         chartType: 'force_graph', network: edgeArrayToNetwork(record[chart.dataField], chart.edges),
         name: String(node.props?.title ?? 'Connected relationships'),
         ...(typeof node.props?.description === 'string' ? { description: node.props.description } : {}),
-        theme, brand: options.brand ?? chart.brand ?? 'A', output: { svg: true, ...PLACED_CHART_SIZE },
+        theme, brand: options.brand ?? chart.brand ?? 'A', output: { ...PLACED_CHART_OUTPUT },
       };
     } else {
       const rows = record[chart.dataField];
@@ -85,16 +101,21 @@ export function placedChartRequests(input: UiSchema, options: Pick<CodegenOption
         brand: options.brand ?? chart.brand ?? 'A',
         rows: [rows[0]!, ...rows.slice(1)],
         encodings: chart.encodings,
-        output: { svg: true, ...PLACED_CHART_SIZE },
+        output: { ...PLACED_CHART_OUTPUT },
       };
     }
     const id = schema.workflow ? String(record[schema.workflow.data.idField]) : 'seed';
-    requests.push({ index, recordId: id, source: chart.source, path: `src/charts/${chart.source === 'payment-events' ? 'payment' : chart.chartType}-${String(index + 1).padStart(3, '0')}.svg`, request });
+    const path = `src/charts/${chart.source === 'payment-events' ? 'payment' : chart.chartType}-${String(index + 1).padStart(3, '0')}.svg`;
+    requests.push({ index, recordId: id, source: chart.source, path, request, narrow: { path: narrowChartPath(path), request: { ...request, output: { ...PLACED_CHART_NARROW_OUTPUT } } } });
   }
   return requests;
 }
 
-/** Render once at generation time; emitted consumers need no chart runtime. */
+/**
+ * Render once at generation time; emitted consumers need no chart runtime. Every placed chart is rendered
+ * twice: at the design size and at the narrow size, both without a painted title (the figure heading names
+ * the chart), so the figure shows legible axis text at every column width without scaling either SVG down.
+ */
 export async function prepareChartAssets(input: UiSchema, options: Pick<CodegenOptions, 'theme' | 'brand'> = {}): Promise<{
   schema: UiSchema;
   files: Array<{ path: string; contents: string }>;
@@ -106,16 +127,22 @@ export async function prepareChartAssets(input: UiSchema, options: Pick<CodegenO
   const chart = nodes[0]!.chart!;
   const files: Array<{ path: string; contents: string }> = [];
   const byRecord: Record<string, string> = {};
-  for (const { index, recordId, path, request } of requests) {
+  const narrowByRecord: Record<string, string> = {};
+  const renderStatic = async (request: VizRenderInput): Promise<string> => {
     const result = await render(request);
     if (result.status !== 'ok' || !result.svg) throw new Error(`${chart.source === 'payment-events' ? 'Payment chart' : 'Chart'} render failed: ${JSON.stringify(result.errors)}`);
-    const svg = assertStaticSvg(result.svg);
-    if (index === 0) for (const candidate of nodes) candidate.props = { ...candidate.props, svg, ...PLACED_CHART_SIZE };
+    return assertStaticSvg(result.svg);
+  };
+  for (const { index, recordId, path, request, narrow } of requests) {
+    const svg = await renderStatic(request);
+    const svgNarrow = await renderStatic(narrow.request);
+    if (index === 0) for (const candidate of nodes) candidate.props = { ...candidate.props, svg, svgNarrow, ...PLACED_CHART_SIZE };
     byRecord[recordId] = svg;
-    files.push({ path, contents: svg });
+    narrowByRecord[recordId] = svgNarrow;
+    files.push({ path, contents: svg }, { path: narrow.path, contents: svgNarrow });
   }
   if (schema.workflow) {
-    files.push({ path: 'src/chart-assets.ts', contents: `// Static public viz.render output, keyed by the seed record identity.\nexport const chartSvgByRecord: Readonly<Record<string, string>> = ${JSON.stringify(byRecord, null, 2)};\n` });
+    files.push({ path: 'src/chart-assets.ts', contents: `// Static public viz.render output, keyed by the seed record identity: the design-size render and the narrow render the figure shows below ${PLACED_CHART_NARROW_BREAKPOINT}px.\nexport const chartSvgByRecord: Readonly<Record<string, string>> = ${JSON.stringify(byRecord, null, 2)};\nexport const chartSvgNarrowByRecord: Readonly<Record<string, string>> = ${JSON.stringify(narrowByRecord, null, 2)};\n` });
   }
   return { schema, files };
 }

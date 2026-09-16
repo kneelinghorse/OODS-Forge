@@ -85,7 +85,8 @@ async function expectTargetGenerated(
   expect(result.imports).not.toContain(`@oods/components-${framework}/ported`);
   expect(result.imports).not.toContain('@oods/component-styles/css-ported');
   const assets = result.artifact!.files.filter(file => file.path.endsWith('.svg'));
-  expect(assets).toHaveLength(chartNodes(schema.screens).length);
+  // Every placed chart ships its design-size render and its narrow render (Sprint 202 m01).
+  expect(assets).toHaveLength(chartNodes(schema.screens).length * 2);
   expect(result.artifact?.files).toHaveLength(1 + assets.length);
   for (const asset of assets) {
     expect(asset.contents).toContain('role="graphics-object"');

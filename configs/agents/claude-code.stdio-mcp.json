@@ -33,13 +33,15 @@
     "MCP_TOOLSET": "default (19 tools) | all (24 tools)",
     "MCP_EXTRA_TOOLS": "comma-separated on-demand tools to add to the default surface, for example a11y.scan,diag.snapshot",
     "MCP_ROLE": "designer (default) | maintainer",
-    "OODS_NODE_PATH": "absolute path of the Node binary the adapter should start the server with; default: the Node running the adapter"
+    "OODS_NODE_PATH": "absolute path of the Node binary the adapter should start the server with; default: the Node running the adapter",
+    "OODS_MCP_APPS_UI": "1 offers the design preview app to a client that did not negotiate the MCP Apps extension; default: unset, only clients that negotiated it"
   },
   "notes": [
     "Replace /path/to/forge-runtime with the directory you extracted forge-runtime.tar.gz into; the path must be absolute.",
     "Node 20.11.1 or newer must be on the PATH as node, or set OODS_NODE_PATH.",
     "The adapter starts the bundled native server itself; nothing else needs to be built, installed or running.",
     "Default surface: 19 tools. MCP_TOOLSET=all advertises all 24.",
-    "Pass environment with -e, for example: claude mcp add forge -e MCP_TOOLSET=all -- node /path/to/forge-runtime/packages/mcp-adapter/index.js"
+    "Pass environment with -e, for example: claude mcp add forge -e MCP_TOOLSET=all -- node /path/to/forge-runtime/packages/mcp-adapter/index.js",
+    "Claude Code does not render MCP Apps: design.preview answers with text and links to the preview in the browser, served by the adapter on 127.0.0.1."
   ]
 }

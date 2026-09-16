@@ -13,7 +13,8 @@ import {
 
 const read = (file: string) => readFileSync(join(ROOT, file), 'utf8');
 const rows = (): VizPatternCapability[] => JSON.parse(read(PATTERN_REGISTRY_PATH));
-const PATTERN_OBSERVATIONS_PATH = 'artifacts/product-reality/sprint-199/m03/patterns/pattern-observations.json';
+/** Re-measured in Sprint 202 m01 when viz.render gained output.titlePlacement; the registry reproduced byte-for-byte. */
+const PATTERN_OBSERVATIONS_PATH = 'artifacts/product-reality/sprint-202/m01/patterns/pattern-observations.json';
 const observations = (): PatternCensusObservations => JSON.parse(read(PATTERN_OBSERVATIONS_PATH));
 const classification = () => JSON.parse(read('packages/viz-core/src/registry/viz-classification.v1.json'));
 const validate = (value: unknown) => validateVizPatternRegistry(value, VIZ_PATTERN_SOURCES, classification().assignments, VIZ_RECIPES.map(recipe => recipe.chartType));

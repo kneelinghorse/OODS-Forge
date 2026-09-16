@@ -181,7 +181,7 @@ export function workflowDataFiles(schema: UiSchema): Array<{ path: string; conte
     { path: 'src/sample-data.ts', contents: `import type { DomainRecord } from './store';\n\nexport const sampleData: DomainRecord[] = ${JSON.stringify(records, null, 2)};\n` },
     { path: 'src/store.ts', contents: `import { recordCollectionEvents, type CollectionEvent } from '@oods/component-contracts';
 import { sampleData } from './sample-data';
-${chartNodes(schema.screens).length ? "import { chartSvgByRecord } from './chart-assets';" : ''}
+${chartNodes(schema.screens).length ? "import { chartSvgByRecord, chartSvgNarrowByRecord } from './chart-assets';" : ''}
 
 export type DomainRecord = {
 ${types}
@@ -212,7 +212,7 @@ export interface HistoryEntry { title?: string; from: string | null; to: string;
 export function screenProps(record: DomainRecord) {
   return {
 ${camelProps}
-${chartNodes(schema.screens).length ? `  svg: chartSvgByRecord[String(record[idField])],` : ''}
+${chartNodes(schema.screens).length ? `  svg: chartSvgByRecord[String(record[idField])],\n  svgNarrow: chartSvgNarrowByRecord[String(record[idField])],` : ''}
   };
 }
 export function history(record: DomainRecord): HistoryEntry[] {

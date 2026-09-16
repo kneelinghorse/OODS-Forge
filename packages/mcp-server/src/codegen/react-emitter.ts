@@ -41,6 +41,7 @@ import {
 } from './emission-safety.js';
 import { executeCompositionDirectives } from './composition-directives.js';
 import { collectUiStateBranches } from './state-contract.js';
+import { screenShell } from './screen-shell.js';
 
 // ---------------------------------------------------------------------------
 // Token + layout helpers (mirrors tree-renderer.ts logic in React style format)
@@ -512,6 +513,10 @@ function emitNode(
   if (node.chart && typeof propsObject?.svg === 'string') {
     attrParts.push(`svg={svg ?? ${JSON.stringify(propsObject.svg)}}`);
     delete propsObject.svg;
+  }
+  if (node.chart && typeof propsObject?.svgNarrow === 'string') {
+    attrParts.push(`svgNarrow={svgNarrow ?? ${JSON.stringify(propsObject.svgNarrow)}}`);
+    delete propsObject.svgNarrow;
   }
   // Spread user props (except style and children)
   if (propsObject) {
@@ -1133,7 +1138,7 @@ export function emit(schema: UiSchema, options: CodegenOptions): CodegenResult {
       normalizedSchema.objectSchema!,
       hasDomainActions,
       hasStateBranches,
-      [...collectionProps(ctx.tree, ctx.objectSchema ?? {}), ...(chartNodes(ctx.tree).length ? ['svg?: string;'] : [])],
+      [...collectionProps(ctx.tree, ctx.objectSchema ?? {}), ...(chartNodes(ctx.tree).length ? ['svg?: string;', 'svgNarrow?: string;'] : [])],
     )
     : '';
   const returnType = options.typescript
@@ -1201,7 +1206,7 @@ export function emit(schema: UiSchema, options: CodegenOptions): CodegenResult {
       ...(hasStateBranches ? ['uiState'] : []),
       ...fieldNames,
       ...collectionParameters(ctx.tree),
-      ...(chartNodes(ctx.tree).length ? ['svg'] : []),
+      ...(chartNodes(ctx.tree).length ? ['svg', 'svgNarrow'] : []),
     ];
     const destructure = `{ ${parameterNames.join(', ')} }`;
     if (!options.typescript && (hasDomainActions || hasStateBranches)) {
@@ -1249,11 +1254,14 @@ export function emit(schema: UiSchema, options: CodegenOptions): CodegenResult {
     lines.push('');
   }
 
+  // A standalone screen is a page: one main landmark and one level-one heading (the composer's record title, else the screen label).
+  const shell = screenShell(normalizedSchema, options);
   lines.push(
     `  return (`,
-    `    <>`,
+    shell ? `    <main data-oods-shell="${escapeDoubleQuotedAttr(shell.screenId)}">` : `    <>`,
+    ...(shell?.heading ? [`      <h1 data-oods-shell-heading="true">${childValueToJsx(shell.heading)}</h1>`] : []),
     indent(screenJsx, 3),
-    `    </>`,
+    shell ? `    </main>` : `    </>`,
     `  );`,
     `};`,
     '',

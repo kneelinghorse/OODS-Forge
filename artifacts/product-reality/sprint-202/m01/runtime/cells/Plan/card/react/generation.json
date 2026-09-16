@@ -1,0 +1,97 @@
+{
+  "status": "ok",
+  "framework": "react",
+  "artifact": {
+    "schemaVersion": "1.0.0",
+    "framework": "react",
+    "files": [
+      {
+        "path": "src/GeneratedUI.tsx",
+        "contents": "import React from 'react';\nimport { Card, OwnershipMeta, Stack, Text } from '@oods/components-react';\nimport '@oods/component-styles/css';\n\nexport interface PageProps {\n  /** Identifiers for add-ons commonly sold with this plan. */\n  addOnIds?: string[];\n  /** Contract value expressed in minor currency units. */\n  amountMinor: number;\n  /** Day of month used to anchor renewals when prorating. */\n  billingAnchorDay?: number;\n  /** Billing cadence name selected from supportedIntervals. */\n  billingInterval: 'monthly' | 'quarterly' | 'annual';\n  /** How billing is collected (charge_automatically, send_invoice). */\n  collectionMethod?: string;\n  /** Actual quantity consumed in the active period. */\n  consumedQuantity: number;\n  /** ISO 4217 currency for the plan price. */\n  currency: string;\n  /** Plans that can be downgraded to from this plan. */\n  downgradeTargets?: string[];\n  /** Array of feature descriptors listing entitlement tiers. */\n  featureMatrix?: unknown[];\n  /** Quantity included in base plan before overages. */\n  includedQuantity: number;\n  /** Multiplier for interval (ex: 12 with monthly => yearly cadence). */\n  intervalCount?: number;\n  /** Friendly metered feature name shown in UI (ex: Analytics Seats). */\n  meterName: string;\n  /** Internal commentary for packaging or finance teams. */\n  notes?: string;\n  /** Cost per additional unit expressed in minor currency units. */\n  overageRateMinor?: number;\n  /** Identifier of the owning principal scoped by owner_type. */\n  ownerId: string;\n  /** Categorical owner type sourced from the ownerTypes parameter. */\n  ownerType: 'organization' | 'team' | 'user';\n  /** Optional role name describing how the owner governs the entity. */\n  ownershipRole?: string;\n  /** Timestamp recording when ownership was last transferred. */\n  ownershipTransferredAt?: string;\n  /** Date the usage accumulation window ends. */\n  periodEnd: string;\n  /** Date the usage accumulation window began. */\n  periodStart: string;\n  /** Provider specific identifier for the plan or price. */\n  planCode: string;\n  /** Stable identifier for the plan within the billing domain. */\n  planId: string;\n  /** Human readable plan label rendered in list and detail contexts. */\n  planName: string;\n  /** Price strategy (flat, per_unit, tiered, package). */\n  pricingModel?: string;\n  /** High level product family grouping for analytics and reporting. */\n  productFamily: string;\n  /** Forecasted overage spend derived from consumption trends. */\n  projectedOverageMinor?: number;\n  /** Strategy for unused units (inherits rolloverStrategy parameter). */\n  rolloverStrategy?: string;\n  /** Rolling usage measurements for charts or anomaly detection. */\n  samples?: unknown[];\n  /** Availability state of the plan (active, deprecated, private_beta). */\n  status: 'active' | 'deprecated' | 'private_beta' | 'legacy';\n  /** Length of introductory trial period in days. */\n  trialPeriodDays?: number;\n  /** Label for display, defaults to the unit parameter. */\n  unitLabel: string;\n  /** Plans presented as upgrade destinations. */\n  upgradeTargets?: string[];\n}\n\ntype CardProps = React.ComponentPropsWithoutRef<typeof Card>;\ntype OwnershipMetaProps = React.ComponentPropsWithoutRef<typeof OwnershipMeta>;\ntype StackProps = React.ComponentPropsWithoutRef<typeof Stack>;\ntype TextProps = React.ComponentPropsWithoutRef<typeof Text>;\n\nexport const GeneratedUI: React.FC<PageProps> = ({ addOnIds, amountMinor, billingAnchorDay, billingInterval, collectionMethod, consumedQuantity, currency, downgradeTargets, featureMatrix, includedQuantity, intervalCount, meterName, notes, overageRateMinor, ownerId, ownerType, ownershipRole, ownershipTransferredAt, periodEnd, periodStart, planCode, planId, planName, pricingModel, productFamily, projectedOverageMinor, rolloverStrategy, samples, status, trialPeriodDays, unitLabel, upgradeTargets }) => {\n  return (\n    <main data-oods-shell=\"screen-card-7\">\n      <h1 data-oods-shell-heading=\"true\">Plan</h1>\n      <Card id=\"screen-card-7\" data-oods-component=\"Card\" data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-default)' }}>\n            <Stack id=\"card-header-1\" data-oods-component=\"Stack\" data-layout=\"inline\" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', padding: 'var(--ref-space-inset-squish)' }}>\n                    <Text id=\"slot-header-2\" data-oods-component=\"Text\" label=\"Amount minor\">{amountMinor}</Text>\n                  </Stack>\n            <Stack id=\"card-body-3\" data-oods-component=\"Stack\" data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-tight)', padding: 'var(--ref-space-inset-default)' }}>\n                    <Card id=\"slot-body-4\" data-oods-component=\"Card\" />\n                  </Stack>\n            <Stack id=\"card-footer-5\" data-oods-component=\"Stack\" data-layout=\"inline\" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', padding: 'var(--ref-space-inset-squish)' }}>\n                    <OwnershipMeta id=\"slot-footer-6\" data-oods-component=\"OwnershipMeta\" ownerType={ownerType} role={ownershipRole} />\n                  </Stack>\n          </Card>\n    </main>\n  );\n};\n",
+        "contentHash": "sha256:921098c16eb47664aaced23610124abe582e7ab155811c4806178594f41313f2"
+      }
+    ],
+    "dependencies": [
+      {
+        "name": "@oods/component-styles",
+        "version": "0.1.0",
+        "kind": "dependency"
+      },
+      {
+        "name": "@oods/components-react",
+        "version": "0.1.0",
+        "kind": "dependency"
+      },
+      {
+        "name": "react",
+        "version": "19.2.0",
+        "kind": "peerDependency"
+      },
+      {
+        "name": "react-dom",
+        "version": "19.2.0",
+        "kind": "peerDependency"
+      }
+    ],
+    "actions": [],
+    "contentHash": "sha256:c2ef4c79fc53d05103fb9616c1abcf06d1fe95e888eaff78d3c931383893b948"
+  },
+  "code": "import React from 'react';\nimport { Card, OwnershipMeta, Stack, Text } from '@oods/components-react';\nimport '@oods/component-styles/css';\n\nexport interface PageProps {\n  /** Identifiers for add-ons commonly sold with this plan. */\n  addOnIds?: string[];\n  /** Contract value expressed in minor currency units. */\n  amountMinor: number;\n  /** Day of month used to anchor renewals when prorating. */\n  billingAnchorDay?: number;\n  /** Billing cadence name selected from supportedIntervals. */\n  billingInterval: 'monthly' | 'quarterly' | 'annual';\n  /** How billing is collected (charge_automatically, send_invoice). */\n  collectionMethod?: string;\n  /** Actual quantity consumed in the active period. */\n  consumedQuantity: number;\n  /** ISO 4217 currency for the plan price. */\n  currency: string;\n  /** Plans that can be downgraded to from this plan. */\n  downgradeTargets?: string[];\n  /** Array of feature descriptors listing entitlement tiers. */\n  featureMatrix?: unknown[];\n  /** Quantity included in base plan before overages. */\n  includedQuantity: number;\n  /** Multiplier for interval (ex: 12 with monthly => yearly cadence). */\n  intervalCount?: number;\n  /** Friendly metered feature name shown in UI (ex: Analytics Seats). */\n  meterName: string;\n  /** Internal commentary for packaging or finance teams. */\n  notes?: string;\n  /** Cost per additional unit expressed in minor currency units. */\n  overageRateMinor?: number;\n  /** Identifier of the owning principal scoped by owner_type. */\n  ownerId: string;\n  /** Categorical owner type sourced from the ownerTypes parameter. */\n  ownerType: 'organization' | 'team' | 'user';\n  /** Optional role name describing how the owner governs the entity. */\n  ownershipRole?: string;\n  /** Timestamp recording when ownership was last transferred. */\n  ownershipTransferredAt?: string;\n  /** Date the usage accumulation window ends. */\n  periodEnd: string;\n  /** Date the usage accumulation window began. */\n  periodStart: string;\n  /** Provider specific identifier for the plan or price. */\n  planCode: string;\n  /** Stable identifier for the plan within the billing domain. */\n  planId: string;\n  /** Human readable plan label rendered in list and detail contexts. */\n  planName: string;\n  /** Price strategy (flat, per_unit, tiered, package). */\n  pricingModel?: string;\n  /** High level product family grouping for analytics and reporting. */\n  productFamily: string;\n  /** Forecasted overage spend derived from consumption trends. */\n  projectedOverageMinor?: number;\n  /** Strategy for unused units (inherits rolloverStrategy parameter). */\n  rolloverStrategy?: string;\n  /** Rolling usage measurements for charts or anomaly detection. */\n  samples?: unknown[];\n  /** Availability state of the plan (active, deprecated, private_beta). */\n  status: 'active' | 'deprecated' | 'private_beta' | 'legacy';\n  /** Length of introductory trial period in days. */\n  trialPeriodDays?: number;\n  /** Label for display, defaults to the unit parameter. */\n  unitLabel: string;\n  /** Plans presented as upgrade destinations. */\n  upgradeTargets?: string[];\n}\n\ntype CardProps = React.ComponentPropsWithoutRef<typeof Card>;\ntype OwnershipMetaProps = React.ComponentPropsWithoutRef<typeof OwnershipMeta>;\ntype StackProps = React.ComponentPropsWithoutRef<typeof Stack>;\ntype TextProps = React.ComponentPropsWithoutRef<typeof Text>;\n\nexport const GeneratedUI: React.FC<PageProps> = ({ addOnIds, amountMinor, billingAnchorDay, billingInterval, collectionMethod, consumedQuantity, currency, downgradeTargets, featureMatrix, includedQuantity, intervalCount, meterName, notes, overageRateMinor, ownerId, ownerType, ownershipRole, ownershipTransferredAt, periodEnd, periodStart, planCode, planId, planName, pricingModel, productFamily, projectedOverageMinor, rolloverStrategy, samples, status, trialPeriodDays, unitLabel, upgradeTargets }) => {\n  return (\n    <main data-oods-shell=\"screen-card-7\">\n      <h1 data-oods-shell-heading=\"true\">Plan</h1>\n      <Card id=\"screen-card-7\" data-oods-component=\"Card\" data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-default)' }}>\n            <Stack id=\"card-header-1\" data-oods-component=\"Stack\" data-layout=\"inline\" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', padding: 'var(--ref-space-inset-squish)' }}>\n                    <Text id=\"slot-header-2\" data-oods-component=\"Text\" label=\"Amount minor\">{amountMinor}</Text>\n                  </Stack>\n            <Stack id=\"card-body-3\" data-oods-component=\"Stack\" data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-tight)', padding: 'var(--ref-space-inset-default)' }}>\n                    <Card id=\"slot-body-4\" data-oods-component=\"Card\" />\n                  </Stack>\n            <Stack id=\"card-footer-5\" data-oods-component=\"Stack\" data-layout=\"inline\" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', padding: 'var(--ref-space-inset-squish)' }}>\n                    <OwnershipMeta id=\"slot-footer-6\" data-oods-component=\"OwnershipMeta\" ownerType={ownerType} role={ownershipRole} />\n                  </Stack>\n          </Card>\n    </main>\n  );\n};\n",
+  "fileExtension": ".tsx",
+  "imports": [
+    "react",
+    "@oods/components-react",
+    "@oods/component-styles/css"
+  ],
+  "warnings": [],
+  "validationReceipt": {
+    "profile": "build",
+    "defaulted": false,
+    "rationale": "Build is the default minimum gate for a runnable artifact: target, bindings, dependencies, and fallbacks must resolve.",
+    "axes": {
+      "scope": "generated-artifact",
+      "enforcement": "blocking",
+      "fallback": "forbidden",
+      "target": {
+        "requested": "react",
+        "resolved": "react",
+        "source": "explicit"
+      }
+    },
+    "checks": [
+      "schema-structure",
+      "component-registry",
+      "state-contract",
+      "target-readiness",
+      "normalization-fidelity",
+      "binding-contract",
+      "props-contract",
+      "slots-contract",
+      "events-contract",
+      "dependency-closure",
+      "fallback-policy"
+    ],
+    "notChecked": [
+      "rendered-evidence",
+      "interaction-evidence",
+      "accessibility-evidence",
+      "theme-evidence",
+      "determinism-evidence",
+      "performance-evidence",
+      "certification-evidence"
+    ],
+    "evidence": {
+      "required": [],
+      "provided": [],
+      "missing": [],
+      "mismatched": [],
+      "accepted": [],
+      "notApplicable": [],
+      "artifactContentHash": "sha256:c2ef4c79fc53d05103fb9616c1abcf06d1fe95e888eaff78d3c931383893b948"
+    }
+  },
+  "meta": {
+    "nodeCount": 7,
+    "componentCount": 4
+  }
+}

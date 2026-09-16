@@ -18,6 +18,7 @@ import { applyHcEchartsChrome, resolveOodsEchartsChrome } from '../../tokens/ood
 import { getVizScaleTokens } from '../../tokens/scale-token-mapper.js';
 
 import { resolveTokenToColor, type TokenScope } from './token-resolver.js';
+import { paintedTitle } from '../../spec/title-placement.js';
 
 // Fallback colors if tokens aren't available (matches categorical scale)
 const FALLBACK_PALETTE = [
@@ -204,7 +205,7 @@ export function adaptGraphToECharts(spec: NormalizedVizSpec, input: NetworkInput
     tooltip: generateGraphTooltip(),
     legend: scope.theme !== 'hc' && categories.length > 0 ? generateGraphLegend(categories, graphSpec, chrome.visualMapLabel) : undefined,
     aria: { enabled: true, description: graphSpec.a11y?.description },
-    title: graphSpec.name ? { text: graphSpec.name, left: 'center', top: TITLE_TOP, textStyle: { color: chrome.title, fontSize: TITLE_FONT_SIZE, fontWeight: TITLE_FONT_WEIGHT } } : undefined,
+    title: paintedTitle(graphSpec) ? { text: paintedTitle(graphSpec), left: 'center', top: TITLE_TOP, textStyle: { color: chrome.title, fontSize: TITLE_FONT_SIZE, fontWeight: TITLE_FONT_WEIGHT } } : undefined,
     usermeta: {
       oods: pruneUndefined({
         specId: graphSpec.id,

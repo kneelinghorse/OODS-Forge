@@ -409,7 +409,7 @@ describe('react-emitter', () => {
   // Multiple screens
   // -------------------------------------------------------------------------
 
-  it('renders multiple screens in a fragment', () => {
+  it('renders multiple screens inside one page landmark (s202-m01)', () => {
     const schema = makeSchema([
       { id: 'screen-1', component: 'Card' },
       { id: 'screen-2', component: 'Card' },
@@ -417,8 +417,11 @@ describe('react-emitter', () => {
 
     const result = emit(schema, defaultOptions);
 
-    expect(result.code).toContain('<>');
-    expect(result.code).toContain('</>');
+    // Sprint 202 m01: a standalone emission is a page, so its screens sit in one main landmark named after the
+    // first screen, where the fragment used to be. These screens carry no label, so the shell adds no heading.
+    expect(result.code).toContain('<main data-oods-shell="screen-1">');
+    expect(result.code).toContain('</main>');
+    expect(result.code).not.toContain('data-oods-shell-heading');
     // Both screens present
     expect(result.code).toContain('id="screen-1"');
     expect(result.code).toContain('id="screen-2"');
