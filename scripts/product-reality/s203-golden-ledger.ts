@@ -85,8 +85,13 @@ if (command === 'plan') {
   const ledger = readLedger(); verifyImmutable(ledger);
   const entries: Entry[] = [];
   for (const pin of ledger.mayMoveOnce) {
-    const before = pin.baseSha256, after = treeHash(pin.file);
-    if (before === after || ledger.entries.some(entry => entry.file === pin.file)) continue;
+    // A pin moves at most once PER MISSION, chained: a later mission's entry starts where the previous
+    // one ended. The rule exists to make every move attributed, not to forbid two the sprint planned —
+    // the memo declares the adapter's description pins moving in m01 and design.preview's advertised
+    // schema in m05, and those are two different, declared moves of one file.
+    const previous = ledger.entries.filter(entry => entry.file === pin.file).at(-1);
+    const before = previous?.after ?? pin.baseSha256, after = treeHash(pin.file);
+    if (before === after || previous?.mission === mission) continue;
     if (pin.file === runtimeFile) {
       // Runtime cells move per row: every changed artifact hash is its own attributed pin, and rows born this sprint are their own entries.
       const base = JSON.parse(execFileSync('git', ['show', `${BASE_HEAD}:${runtimeFile}`], { cwd: root, maxBuffer: 64 * 1024 * 1024 }).toString());
@@ -101,14 +106,19 @@ if (command === 'plan') {
       entries.push({ file: runtimeFile, pin: 'ledger head', before: base.head, after: current.head, mission, reason: `Re-sweep at the ${mission} head (run ${current.runId}); ${base.rows.length} rows in, ${current.rows.length} out.` });
     } else entries.push({ file: pin.file, pin: pin.file.endsWith('.snap') ? 'snapshot' : pin.file.startsWith('docs/') ? 'generated doc' : 'registry', before, after, mission, reason });
   }
-  for (const entry of entries) assert(!ledger.entries.some(existing => existing.file === entry.file && existing.pin === entry.pin), `pin moved twice: ${entry.file} ${entry.pin}`);
+  // Twice within one mission is unattributed churn; once per declared mission is the sprint's plan.
+  for (const entry of entries) assert(!ledger.entries.some(existing => existing.file === entry.file && existing.pin === entry.pin && existing.mission === entry.mission), `pin moved twice in ${entry.mission}: ${entry.file} ${entry.pin}`);
   ledger.entries.push(...entries); writeLedger(ledger);
   console.log(JSON.stringify({ appended: entries.length, files: [...new Set(entries.map(entry => entry.file))] }));
 } else if (command === 'check') {
   const ledger = readLedger(); verifyImmutable(ledger);
   const unrecorded = ledger.mayMoveOnce.filter(pin => treeHash(pin.file) !== pin.baseSha256 && !ledger.entries.some(entry => entry.file === pin.file)).map(pin => pin.file);
   assert.deepEqual(unrecorded, [], `Moved without a ledger entry: ${unrecorded.join(', ')}`);
-  for (const entry of ledger.entries) if (entry.pin !== 'ledger head' && !entry.pin.endsWith('artifactHash')) assert.equal(treeHash(entry.file), entry.after, `${entry.file} moved again after its ledger entry`);
+  // The tree must match the LAST recorded move of each pin: every move is attributed, and an
+  // unrecorded one after the last entry still fails.
+  const latest = new Map<string, Entry>();
+  for (const entry of ledger.entries) if (entry.pin !== 'ledger head' && !entry.pin.endsWith('artifactHash')) latest.set(entry.file, entry);
+  for (const entry of latest.values()) assert.equal(treeHash(entry.file), entry.after, `${entry.file} moved again after its last ledger entry (${entry.mission})`);
   const sealed = execFileSync('git', ['diff', '--stat', BASE_HEAD, '--', ...SEALED], { cwd: root, encoding: 'utf8' }).trim();
   assert.equal(sealed, '', `Sealed receipts changed:\n${sealed}`);
   console.log(JSON.stringify({ mustNotMove: ledger.mustNotMove.length, mayMoveOnce: ledger.mayMoveOnce.length, entries: ledger.entries.length, sealed: 'byte-identical', status: 'verified' }));

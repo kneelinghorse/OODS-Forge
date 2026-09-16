@@ -105,3 +105,15 @@ is updated with its reason: `tool-specs-generator.s196` counted 125 root input p
 advertised tool and now counts 127, for `contextItems` and `contextSearched`. `docs:api`, `docs:tools`
 and `docs:claims` regenerated through their generators; `docs:check` green; the adapter's description
 check still 16/16.
+
+## The golden ledger records a second declared move
+
+`packages/mcp-adapter/tool-descriptions.json` moved in m01 (four descriptions that opened with a noun
+phrase) and again here (`design.preview`'s advertised schema). The ledger refused the second with "moved
+again after its ledger entry", and the refusal was the instrument's, not the sprint's: the memo declares
+**both** moves, the adapter's description pins in m01 and `design.preview`'s advertised schema in m05.
+
+The rule now is one move **per mission**, chained — a later mission's entry starts where the previous
+one ended — and `check` compares the tree to the last recorded move of each pin. Every move is still
+attributed and an unrecorded one still fails; two the sprint planned are no longer treated as churn.
+Three entries, `verified`, with the sealed `sprint-195…202` receipts byte-identical.
