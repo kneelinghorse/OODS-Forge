@@ -55,11 +55,14 @@ const TRACKED_BOUNDARY_COUNTS = Object.freeze({
   // Sprint 195 includes the authored API-call Usage example beside its object.
   "configs/agent/policy.json": 1,
   domains: 15,
-  // UX-1 adds seven research definitions and their authoring README.
-  objects: 16,
-  // Sprint 199 adds the mark-graph parameter schema beside its trait pair.
-  schemas: 57,
-  traits: 78,
+  // UX-1 adds seven research definitions and their authoring README; Sprint 203 adds three delivery
+  // objects born from CMOS's record and two intelligence objects born from Hive's cohort, with a README
+  // for each new domain.
+  objects: 23,
+  // Sprint 199 adds the mark-graph parameter schema beside its trait pair; Sprint 203 adds
+  // supersedable's, beside the lifecycle/Supersedable trait the delivery objects compose.
+  schemas: 58,
+  traits: 79,
   // Sprint 187 retains the existing 19 files plus the approved component/token refresh pair.
   // Sprint 188 retains three named component/token snapshot pairs (six files).
   // Sprint 193 retains the dated public/runtime-projected component/token refresh pairs.
