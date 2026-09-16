@@ -953,7 +953,7 @@ async function main() {
     assert.deepEqual(health.tokens.scopes, Object.fromEntries(Object.entries(builtScopes).map(([brand, themes]) => [brand, Object.keys(themes).sort()])));
     assert.deepEqual(health.tokens.defaultScope, { brand: 'A', theme: 'light', source: 'default' });
     assert.deepEqual(health.productReality.runtime, {
-      cells: 240, pass: 240, typedGap: 0, fail: 0,
+      cells: 310, pass: 310, typedGap: 0, fail: 0,
       head: (await loadJson(path.join(runtimeRoot, "packages/mcp-server/dist/registry/runtime-cells.v1.json"))).head,
     });
     const releaseLedger = await loadJson(path.join(runtimeRoot, "packages/mcp-server/dist/registry/release-cells.v1.json"));
