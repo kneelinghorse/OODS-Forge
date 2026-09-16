@@ -1,0 +1,162 @@
+{
+  "status": "ok",
+  "framework": "react",
+  "artifact": {
+    "schemaVersion": "1.0.0",
+    "framework": "react",
+    "files": [
+      {
+        "path": "src/GeneratedUI.tsx",
+        "contents": "import React from 'react';\nimport { Banner, Button, PaginationBar, RelativeTimestamp, SearchInput, Select, Stack, Text } from '@oods/components-react';\nimport '@oods/component-styles/css';\n\nexport type GeneratedUIState = 'loading' | 'error' | 'success' | 'empty';\n\nexport interface GeneratedUIActions {\n  /* @oods-domain-action handleFilter sha256:16ab1e92d1fca94435e207207864ab7015dc274fc62e2f211a0df55cc291ea36 */\n  /* @oods-domain-source sha256:8e5f3caefc9ad5e749948c77de5f5978bb91ef33958f95a5a2be4b419cff400e */\n  handleFilter: (criteria: Record<string, unknown>) => void;\n  /* @oods-domain-action handlePageChange sha256:78ef60870d55a6e088b4e3ef0a0961fa95794baa77ee43f37fdaee1bcc395469 */\n  /* @oods-domain-source sha256:300063760dda8c519a2f55163f592f1d2a1c688624ead19adb05a6639ee54617 */\n  handlePageChange: (page: number) => void;\n  /* @oods-domain-action handleRowClick sha256:773eb5947f10b9c469abd54e200f61529df89035100d7d19eaa88adcd565efc0 */\n  /* @oods-domain-source sha256:2691a39947329776a84396671cd57ad501e6855e24bc09bfe575a98e1fde4a88 */\n  handleRowClick: (rowId: string) => void;\n  /* @oods-domain-action handleSort sha256:757d6df84825c12c0f0cf60e76596eb7c5d0f48a6a4d4cf4186ee36063811b44 */\n  /* @oods-domain-source sha256:a44f6b01c1934ac2bd84da820758bea74479e3a4ec56f169390a3d3eeaf34649 */\n  handleSort: (column: string) => void;\n}\n\nexport interface PageProps {\n  rows?: Array<{ meterName: string; includedQuantity: number; consumedQuantity: number; unitLabel: string; periodStart: string; periodEnd: string; rolloverStrategy?: string; overageRateMinor?: number; projectedOverageMinor?: number; samples?: unknown[]; createdAt: string; updatedAt?: string; lastEvent: 'reading_captured' | 'anomaly_detected' | 'reset'; lastEventAt?: string; usageId: string; subscriptionId: string; meterId: string; provider: string; status?: 'ok' | 'delayed' | 'investigating'; trendPercent?: number; varianceMinor?: number; lastReportedAt: string; anomalies?: unknown[] }>;\n  collectionQuery?: { search?: string; status?: string; descending?: boolean; archived?: boolean; page?: number; pageSize?: number; total?: number };\n  actions: GeneratedUIActions;\n  uiState: GeneratedUIState;\n  /** Detected anomalies with context for investigation. */\n  anomalies?: unknown[];\n  /** Actual quantity consumed in the active period. */\n  consumedQuantity: number;\n  /** Timestamp recording when the entity was first created. */\n  createdAt: string;\n  /** Quantity included in base plan before overages. */\n  includedQuantity: number;\n  /** Lifecycle event associated with the most recent timestamp mutation. */\n  lastEvent: 'reading_captured' | 'anomaly_detected' | 'reset';\n  /** Timestamp for the lifecycle event captured in last_event. */\n  lastEventAt?: string;\n  /** Timestamp of the most recent provider usage payload. */\n  lastReportedAt: string;\n  /** Provider specific meter identifier. */\n  meterId: string;\n  /** Friendly metered feature name shown in UI (ex: Analytics Seats). */\n  meterName: string;\n  /** Cost per additional unit expressed in minor currency units. */\n  overageRateMinor?: number;\n  /** Date the usage accumulation window ends. */\n  periodEnd: string;\n  /** Date the usage accumulation window began. */\n  periodStart: string;\n  /** Forecasted overage spend derived from consumption trends. */\n  projectedOverageMinor?: number;\n  /** Source provider for usage data. */\n  provider: string;\n  /** Strategy for unused units (inherits rolloverStrategy parameter). */\n  rolloverStrategy?: string;\n  /** Rolling usage measurements for charts or anomaly detection. */\n  samples?: unknown[];\n  /** Health of the usage feed (ok, delayed, investigating). */\n  status?: 'ok' | 'delayed' | 'investigating';\n  /** Subscription the usage belongs to. */\n  subscriptionId: string;\n  /** Percent delta compared to previous window. */\n  trendPercent?: number;\n  /** Label for display, defaults to the unit parameter. */\n  unitLabel: string;\n  /** Timestamp for the most recent modification, when available. */\n  updatedAt?: string;\n  /** Identifier for this usage record. */\n  usageId: string;\n  /** Currency impact of usage variance calculated with overage rate. */\n  varianceMinor?: number;\n}\n\ntype BannerProps = React.ComponentPropsWithoutRef<typeof Banner>;\ntype ButtonProps = React.ComponentPropsWithoutRef<typeof Button>;\ntype PaginationBarProps = React.ComponentPropsWithoutRef<typeof PaginationBar>;\ntype RelativeTimestampProps = React.ComponentPropsWithoutRef<typeof RelativeTimestamp>;\ntype SearchInputProps = React.ComponentPropsWithoutRef<typeof SearchInput>;\ntype SelectProps = React.ComponentPropsWithoutRef<typeof Select>;\ntype StackProps = React.ComponentPropsWithoutRef<typeof Stack>;\ntype TextProps = React.ComponentPropsWithoutRef<typeof Text>;\n\nexport const GeneratedUI: React.FC<PageProps> = ({ actions, uiState, anomalies, consumedQuantity, createdAt, includedQuantity, lastEvent, lastEventAt, lastReportedAt, meterId, meterName, overageRateMinor, periodEnd, periodStart, projectedOverageMinor, provider, rolloverStrategy, samples, status, subscriptionId, trendPercent, unitLabel, updatedAt, usageId, varianceMinor, rows = [], collectionQuery = {} }) => {\n  if (!actions || !Object.prototype.hasOwnProperty.call(actions, 'handleFilter') || typeof actions.handleFilter !== 'function') { throw new Error('GeneratedUI requires actions.handleFilter.'); }\n  if (!actions || !Object.prototype.hasOwnProperty.call(actions, 'handlePageChange') || typeof actions.handlePageChange !== 'function') { throw new Error('GeneratedUI requires actions.handlePageChange.'); }\n  if (!actions || !Object.prototype.hasOwnProperty.call(actions, 'handleRowClick') || typeof actions.handleRowClick !== 'function') { throw new Error('GeneratedUI requires actions.handleRowClick.'); }\n  if (!actions || !Object.prototype.hasOwnProperty.call(actions, 'handleSort') || typeof actions.handleSort !== 'function') { throw new Error('GeneratedUI requires actions.handleSort.'); }\n\n  /* @oods-domain-binding handleFilter */ const handleFilter = (criteria: Record<string, unknown>) => { actions.handleFilter(criteria); };\n  /* @oods-domain-binding handlePageChange */ const handlePageChange = (page: number) => { actions.handlePageChange(page); };\n  /* @oods-domain-binding handleRowClick */ const handleRowClick = (rowId: string) => { actions.handleRowClick(rowId); };\n  /* @oods-domain-binding handleSort */ const handleSort = (column: string) => { actions.handleSort(column); };\n\n  return (\n    <main data-oods-shell=\"screen-list-9\">\n      <h1 data-oods-shell-heading=\"true\">Usages</h1>\n      <Stack id=\"screen-list-9\" data-oods-component=\"Stack\" data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-default)' }}>\n            {uiState === 'loading' && (\n              <Banner id=\"screen-list-9-loading\" data-oods-component=\"Banner\" data-oods-state=\"loading\" content=\"Loading your records.\" title=\"Loading\" />\n            )}\n            {uiState === 'error' && (\n              <Banner id=\"screen-list-9-error\" data-oods-component=\"Banner\" data-oods-state=\"error\" content=\"Try again or choose another record.\" title=\"Unable to load records\" />\n            )}\n            {(uiState === 'success' || uiState === 'empty') && (\n              <Stack id=\"screen-list-9-success\" data-oods-component=\"Stack\" data-oods-state={uiState === 'success' ? 'success' : undefined} data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-default)' }}>\n                      <Stack id=\"list-toolbar-4\" data-oods-component=\"Stack\" data-oods-collection-toolbar=\"true\" data-layout=\"inline\" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', padding: 'var(--ref-space-inset-default)' }}>\n                                <SearchInput id=\"slot-search-1\" label=\"Search\" placeholder=\"Search records\" value={collectionQuery.search ?? ''} clearable={true} onValueChange={(search) => handleFilter({ ...collectionQuery, search })} />\n                                <Select id=\"slot-filters-2\" label=\"Status\" value={collectionQuery.status ?? ''} options={[{'value': '', 'label': 'All states'}, {'value': 'ok', 'label': 'Ok'}, {'value': 'delayed', 'label': 'Delayed'}, {'value': 'investigating', 'label': 'Investigating'}]} onChange={(event) => handleFilter({ ...collectionQuery, status: event.currentTarget.value })} />\n                                <Select id=\"list-toolbar-4-sort\" label=\"Sort\" value={collectionQuery.descending ? 'desc' : 'asc'} options={[{'value': 'asc', 'label': 'Name A–Z'}, {'value': 'desc', 'label': 'Name Z–A'}]} onChange={() => handleSort('usage_id')} />\n                              </Stack>\n                      <section id=\"list-items-5\" data-oods-collection=\"rows\">{rows.length === 0 ? (<Banner id=\"list-items-5-empty\" data-oods-component=\"Banner\" data-oods-state=\"empty\" content=\"No records found.\" />) : (<ol aria-label=\"Records\" className=\"oods-collection\">{rows.map(({ meterName, includedQuantity, consumedQuantity, unitLabel, periodStart, periodEnd, rolloverStrategy, overageRateMinor, projectedOverageMinor, samples, createdAt, updatedAt, lastEvent, lastEventAt, usageId, subscriptionId, meterId, provider, status, trendPercent, varianceMinor, lastReportedAt, anomalies }, collectionIndex) => <li key={String(usageId)}><Button id={'list-items-5-row-' + collectionIndex} type=\"button\" className=\"oods-collection-row\" data-record-id={String(usageId)} onClick={() => handleRowClick(String(usageId))}><Text id={'list-items-5-title-' + collectionIndex} data-oods-component=\"Text\">{usageId}</Text>\n                      <RelativeTimestamp id={'slot-items-6-' + collectionIndex} data-oods-component=\"RelativeTimestamp\" datetime={updatedAt ?? createdAt} /></Button></li>)}</ol>)}</section>\n                      <Stack id=\"list-pagination-7\" data-oods-component=\"Stack\" data-layout=\"inline\" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', padding: 'var(--ref-space-inset-default)' }}>\n                                <PaginationBar id=\"slot-pagination-8\" page={collectionQuery.page ?? 1} pageSize={collectionQuery.pageSize ?? 10} totalItems={collectionQuery.total ?? rows.length} onPageChange={handlePageChange} />\n                              </Stack>\n                    </Stack>\n            )}\n          </Stack>\n    </main>\n  );\n};\n",
+        "contentHash": "sha256:cd633b9d74c41ecaddc9b14cc311d7745b71b7cf256876bdd6052f20d25e145e"
+      }
+    ],
+    "dependencies": [
+      {
+        "name": "@oods/component-styles",
+        "version": "0.1.0",
+        "kind": "dependency"
+      },
+      {
+        "name": "@oods/components-react",
+        "version": "0.1.0",
+        "kind": "dependency"
+      },
+      {
+        "name": "react",
+        "version": "19.2.0",
+        "kind": "peerDependency"
+      },
+      {
+        "name": "react-dom",
+        "version": "19.2.0",
+        "kind": "peerDependency"
+      }
+    ],
+    "actions": [
+      {
+        "name": "handleFilter",
+        "parameters": [
+          {
+            "name": "criteria",
+            "type": "Record<string, unknown>"
+          }
+        ],
+        "sources": [
+          {
+            "nodeId": "screen-list-9",
+            "component": "Stack",
+            "event": "onFilter"
+          }
+        ]
+      },
+      {
+        "name": "handlePageChange",
+        "parameters": [
+          {
+            "name": "page",
+            "type": "number"
+          }
+        ],
+        "sources": [
+          {
+            "nodeId": "screen-list-9",
+            "component": "Stack",
+            "event": "onPageChange"
+          }
+        ]
+      },
+      {
+        "name": "handleRowClick",
+        "parameters": [
+          {
+            "name": "rowId",
+            "type": "string"
+          }
+        ],
+        "sources": [
+          {
+            "nodeId": "screen-list-9",
+            "component": "Stack",
+            "event": "onRowClick"
+          }
+        ]
+      },
+      {
+        "name": "handleSort",
+        "parameters": [
+          {
+            "name": "column",
+            "type": "string"
+          }
+        ],
+        "sources": [
+          {
+            "nodeId": "screen-list-9",
+            "component": "Stack",
+            "event": "onSort"
+          }
+        ]
+      }
+    ],
+    "contentHash": "sha256:e03895770f490ff243c0db2f7dfdc7badfaae610994a128fe508f445477bb4d4"
+  },
+  "code": "import React from 'react';\nimport { Banner, Button, PaginationBar, RelativeTimestamp, SearchInput, Select, Stack, Text } from '@oods/components-react';\nimport '@oods/component-styles/css';\n\nexport type GeneratedUIState = 'loading' | 'error' | 'success' | 'empty';\n\nexport interface GeneratedUIActions {\n  /* @oods-domain-action handleFilter sha256:16ab1e92d1fca94435e207207864ab7015dc274fc62e2f211a0df55cc291ea36 */\n  /* @oods-domain-source sha256:8e5f3caefc9ad5e749948c77de5f5978bb91ef33958f95a5a2be4b419cff400e */\n  handleFilter: (criteria: Record<string, unknown>) => void;\n  /* @oods-domain-action handlePageChange sha256:78ef60870d55a6e088b4e3ef0a0961fa95794baa77ee43f37fdaee1bcc395469 */\n  /* @oods-domain-source sha256:300063760dda8c519a2f55163f592f1d2a1c688624ead19adb05a6639ee54617 */\n  handlePageChange: (page: number) => void;\n  /* @oods-domain-action handleRowClick sha256:773eb5947f10b9c469abd54e200f61529df89035100d7d19eaa88adcd565efc0 */\n  /* @oods-domain-source sha256:2691a39947329776a84396671cd57ad501e6855e24bc09bfe575a98e1fde4a88 */\n  handleRowClick: (rowId: string) => void;\n  /* @oods-domain-action handleSort sha256:757d6df84825c12c0f0cf60e76596eb7c5d0f48a6a4d4cf4186ee36063811b44 */\n  /* @oods-domain-source sha256:a44f6b01c1934ac2bd84da820758bea74479e3a4ec56f169390a3d3eeaf34649 */\n  handleSort: (column: string) => void;\n}\n\nexport interface PageProps {\n  rows?: Array<{ meterName: string; includedQuantity: number; consumedQuantity: number; unitLabel: string; periodStart: string; periodEnd: string; rolloverStrategy?: string; overageRateMinor?: number; projectedOverageMinor?: number; samples?: unknown[]; createdAt: string; updatedAt?: string; lastEvent: 'reading_captured' | 'anomaly_detected' | 'reset'; lastEventAt?: string; usageId: string; subscriptionId: string; meterId: string; provider: string; status?: 'ok' | 'delayed' | 'investigating'; trendPercent?: number; varianceMinor?: number; lastReportedAt: string; anomalies?: unknown[] }>;\n  collectionQuery?: { search?: string; status?: string; descending?: boolean; archived?: boolean; page?: number; pageSize?: number; total?: number };\n  actions: GeneratedUIActions;\n  uiState: GeneratedUIState;\n  /** Detected anomalies with context for investigation. */\n  anomalies?: unknown[];\n  /** Actual quantity consumed in the active period. */\n  consumedQuantity: number;\n  /** Timestamp recording when the entity was first created. */\n  createdAt: string;\n  /** Quantity included in base plan before overages. */\n  includedQuantity: number;\n  /** Lifecycle event associated with the most recent timestamp mutation. */\n  lastEvent: 'reading_captured' | 'anomaly_detected' | 'reset';\n  /** Timestamp for the lifecycle event captured in last_event. */\n  lastEventAt?: string;\n  /** Timestamp of the most recent provider usage payload. */\n  lastReportedAt: string;\n  /** Provider specific meter identifier. */\n  meterId: string;\n  /** Friendly metered feature name shown in UI (ex: Analytics Seats). */\n  meterName: string;\n  /** Cost per additional unit expressed in minor currency units. */\n  overageRateMinor?: number;\n  /** Date the usage accumulation window ends. */\n  periodEnd: string;\n  /** Date the usage accumulation window began. */\n  periodStart: string;\n  /** Forecasted overage spend derived from consumption trends. */\n  projectedOverageMinor?: number;\n  /** Source provider for usage data. */\n  provider: string;\n  /** Strategy for unused units (inherits rolloverStrategy parameter). */\n  rolloverStrategy?: string;\n  /** Rolling usage measurements for charts or anomaly detection. */\n  samples?: unknown[];\n  /** Health of the usage feed (ok, delayed, investigating). */\n  status?: 'ok' | 'delayed' | 'investigating';\n  /** Subscription the usage belongs to. */\n  subscriptionId: string;\n  /** Percent delta compared to previous window. */\n  trendPercent?: number;\n  /** Label for display, defaults to the unit parameter. */\n  unitLabel: string;\n  /** Timestamp for the most recent modification, when available. */\n  updatedAt?: string;\n  /** Identifier for this usage record. */\n  usageId: string;\n  /** Currency impact of usage variance calculated with overage rate. */\n  varianceMinor?: number;\n}\n\ntype BannerProps = React.ComponentPropsWithoutRef<typeof Banner>;\ntype ButtonProps = React.ComponentPropsWithoutRef<typeof Button>;\ntype PaginationBarProps = React.ComponentPropsWithoutRef<typeof PaginationBar>;\ntype RelativeTimestampProps = React.ComponentPropsWithoutRef<typeof RelativeTimestamp>;\ntype SearchInputProps = React.ComponentPropsWithoutRef<typeof SearchInput>;\ntype SelectProps = React.ComponentPropsWithoutRef<typeof Select>;\ntype StackProps = React.ComponentPropsWithoutRef<typeof Stack>;\ntype TextProps = React.ComponentPropsWithoutRef<typeof Text>;\n\nexport const GeneratedUI: React.FC<PageProps> = ({ actions, uiState, anomalies, consumedQuantity, createdAt, includedQuantity, lastEvent, lastEventAt, lastReportedAt, meterId, meterName, overageRateMinor, periodEnd, periodStart, projectedOverageMinor, provider, rolloverStrategy, samples, status, subscriptionId, trendPercent, unitLabel, updatedAt, usageId, varianceMinor, rows = [], collectionQuery = {} }) => {\n  if (!actions || !Object.prototype.hasOwnProperty.call(actions, 'handleFilter') || typeof actions.handleFilter !== 'function') { throw new Error('GeneratedUI requires actions.handleFilter.'); }\n  if (!actions || !Object.prototype.hasOwnProperty.call(actions, 'handlePageChange') || typeof actions.handlePageChange !== 'function') { throw new Error('GeneratedUI requires actions.handlePageChange.'); }\n  if (!actions || !Object.prototype.hasOwnProperty.call(actions, 'handleRowClick') || typeof actions.handleRowClick !== 'function') { throw new Error('GeneratedUI requires actions.handleRowClick.'); }\n  if (!actions || !Object.prototype.hasOwnProperty.call(actions, 'handleSort') || typeof actions.handleSort !== 'function') { throw new Error('GeneratedUI requires actions.handleSort.'); }\n\n  /* @oods-domain-binding handleFilter */ const handleFilter = (criteria: Record<string, unknown>) => { actions.handleFilter(criteria); };\n  /* @oods-domain-binding handlePageChange */ const handlePageChange = (page: number) => { actions.handlePageChange(page); };\n  /* @oods-domain-binding handleRowClick */ const handleRowClick = (rowId: string) => { actions.handleRowClick(rowId); };\n  /* @oods-domain-binding handleSort */ const handleSort = (column: string) => { actions.handleSort(column); };\n\n  return (\n    <main data-oods-shell=\"screen-list-9\">\n      <h1 data-oods-shell-heading=\"true\">Usages</h1>\n      <Stack id=\"screen-list-9\" data-oods-component=\"Stack\" data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-default)' }}>\n            {uiState === 'loading' && (\n              <Banner id=\"screen-list-9-loading\" data-oods-component=\"Banner\" data-oods-state=\"loading\" content=\"Loading your records.\" title=\"Loading\" />\n            )}\n            {uiState === 'error' && (\n              <Banner id=\"screen-list-9-error\" data-oods-component=\"Banner\" data-oods-state=\"error\" content=\"Try again or choose another record.\" title=\"Unable to load records\" />\n            )}\n            {(uiState === 'success' || uiState === 'empty') && (\n              <Stack id=\"screen-list-9-success\" data-oods-component=\"Stack\" data-oods-state={uiState === 'success' ? 'success' : undefined} data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-default)' }}>\n                      <Stack id=\"list-toolbar-4\" data-oods-component=\"Stack\" data-oods-collection-toolbar=\"true\" data-layout=\"inline\" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', padding: 'var(--ref-space-inset-default)' }}>\n                                <SearchInput id=\"slot-search-1\" label=\"Search\" placeholder=\"Search records\" value={collectionQuery.search ?? ''} clearable={true} onValueChange={(search) => handleFilter({ ...collectionQuery, search })} />\n                                <Select id=\"slot-filters-2\" label=\"Status\" value={collectionQuery.status ?? ''} options={[{'value': '', 'label': 'All states'}, {'value': 'ok', 'label': 'Ok'}, {'value': 'delayed', 'label': 'Delayed'}, {'value': 'investigating', 'label': 'Investigating'}]} onChange={(event) => handleFilter({ ...collectionQuery, status: event.currentTarget.value })} />\n                                <Select id=\"list-toolbar-4-sort\" label=\"Sort\" value={collectionQuery.descending ? 'desc' : 'asc'} options={[{'value': 'asc', 'label': 'Name A–Z'}, {'value': 'desc', 'label': 'Name Z–A'}]} onChange={() => handleSort('usage_id')} />\n                              </Stack>\n                      <section id=\"list-items-5\" data-oods-collection=\"rows\">{rows.length === 0 ? (<Banner id=\"list-items-5-empty\" data-oods-component=\"Banner\" data-oods-state=\"empty\" content=\"No records found.\" />) : (<ol aria-label=\"Records\" className=\"oods-collection\">{rows.map(({ meterName, includedQuantity, consumedQuantity, unitLabel, periodStart, periodEnd, rolloverStrategy, overageRateMinor, projectedOverageMinor, samples, createdAt, updatedAt, lastEvent, lastEventAt, usageId, subscriptionId, meterId, provider, status, trendPercent, varianceMinor, lastReportedAt, anomalies }, collectionIndex) => <li key={String(usageId)}><Button id={'list-items-5-row-' + collectionIndex} type=\"button\" className=\"oods-collection-row\" data-record-id={String(usageId)} onClick={() => handleRowClick(String(usageId))}><Text id={'list-items-5-title-' + collectionIndex} data-oods-component=\"Text\">{usageId}</Text>\n                      <RelativeTimestamp id={'slot-items-6-' + collectionIndex} data-oods-component=\"RelativeTimestamp\" datetime={updatedAt ?? createdAt} /></Button></li>)}</ol>)}</section>\n                      <Stack id=\"list-pagination-7\" data-oods-component=\"Stack\" data-layout=\"inline\" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', padding: 'var(--ref-space-inset-default)' }}>\n                                <PaginationBar id=\"slot-pagination-8\" page={collectionQuery.page ?? 1} pageSize={collectionQuery.pageSize ?? 10} totalItems={collectionQuery.total ?? rows.length} onPageChange={handlePageChange} />\n                              </Stack>\n                    </Stack>\n            )}\n          </Stack>\n    </main>\n  );\n};\n",
+  "fileExtension": ".tsx",
+  "imports": [
+    "react",
+    "@oods/components-react",
+    "@oods/component-styles/css"
+  ],
+  "warnings": [],
+  "validationReceipt": {
+    "profile": "build",
+    "defaulted": false,
+    "rationale": "Build is the default minimum gate for a runnable artifact: target, bindings, dependencies, and fallbacks must resolve.",
+    "axes": {
+      "scope": "generated-artifact",
+      "enforcement": "blocking",
+      "fallback": "forbidden",
+      "target": {
+        "requested": "react",
+        "resolved": "react",
+        "source": "explicit"
+      }
+    },
+    "checks": [
+      "schema-structure",
+      "component-registry",
+      "state-contract",
+      "target-readiness",
+      "normalization-fidelity",
+      "binding-contract",
+      "props-contract",
+      "slots-contract",
+      "events-contract",
+      "dependency-closure",
+      "fallback-policy"
+    ],
+    "notChecked": [
+      "rendered-evidence",
+      "interaction-evidence",
+      "accessibility-evidence",
+      "theme-evidence",
+      "determinism-evidence",
+      "performance-evidence",
+      "certification-evidence"
+    ],
+    "evidence": {
+      "required": [],
+      "provided": [],
+      "missing": [],
+      "mismatched": [],
+      "accepted": [],
+      "notApplicable": [],
+      "artifactContentHash": "sha256:e03895770f490ff243c0db2f7dfdc7badfaae610994a128fe508f445477bb4d4"
+    }
+  },
+  "meta": {
+    "nodeCount": 15,
+    "componentCount": 8
+  }
+}

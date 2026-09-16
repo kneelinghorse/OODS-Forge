@@ -43,6 +43,7 @@ export * from './traits/searchable.parameters';
 export * from './traits/sortable.parameters';
 export * from './traits/stateful.parameters';
 export * from './traits/statusable.parameters';
+export * from './traits/supersedable.parameters';
 export * from './traits/taggable.parameters';
 export * from './traits/timestampable.parameters';
 export * from './ui/status-map';

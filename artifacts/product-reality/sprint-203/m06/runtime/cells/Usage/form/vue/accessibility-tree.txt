@@ -1,0 +1,46 @@
+- main:
+  - heading "Details" [level=1]
+  - text: Period start
+  - textbox "Period start": 2026-09-05
+  - paragraph: Date the usage accumulation window began.
+  - text: Status
+  - combobox "Status":
+    - option "Enter status" [disabled]
+    - option "ok" [selected]
+    - option "delayed"
+    - option "investigating"
+  - paragraph: Choose the current status.
+  - text: Meter name
+  - textbox "Meter name":
+    - /placeholder: Enter meter name
+    - text: Consumer meter name
+  - paragraph: "Friendly metered feature name shown in UI (ex: Analytics Seats)."
+  - text: Included quantity
+  - spinbutton "Included quantity": "0"
+  - paragraph: Quantity included in base plan before overages.
+  - text: Consumed quantity
+  - spinbutton "Consumed quantity": "0"
+  - paragraph: Actual quantity consumed in the active period.
+  - text: Unit label
+  - textbox "Unit label":
+    - /placeholder: Enter unit label
+    - text: Consumer unit label
+  - paragraph: Label for display, defaults to the unit parameter.
+  - text: Rollover strategy
+  - textbox "Rollover strategy":
+    - /placeholder: Enter rollover strategy
+    - text: Consumer rollover strategy
+  - paragraph: Strategy for unused units (inherits rolloverStrategy parameter).
+  - text: Overage rate minor
+  - spinbutton "Overage rate minor": "0"
+  - paragraph: Cost per additional unit expressed in minor currency units.
+  - text: Projected overage minor
+  - spinbutton "Projected overage minor": "0"
+  - paragraph: Forecasted overage spend derived from consumption trends.
+  - text: Last event
+  - combobox "Last event":
+    - option "Reading Captured" [selected]
+    - option "Anomaly Detected"
+    - option "Reset"
+  - paragraph: Lifecycle event associated with the most recent timestamp mutation.
+  - button "Save"

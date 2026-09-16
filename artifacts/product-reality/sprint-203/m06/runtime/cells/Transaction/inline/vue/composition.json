@@ -1,0 +1,587 @@
+{
+  "status": "ok",
+  "layout": "list",
+  "schema": {
+    "version": "2026.02",
+    "screens": [
+      {
+        "id": "screen-list-9",
+        "component": "Stack",
+        "layout": {
+          "type": "stack",
+          "gapToken": "cluster-default"
+        },
+        "children": [
+          {
+            "id": "list-toolbar-4",
+            "component": "Stack",
+            "layout": {
+              "type": "inline",
+              "align": "space-between"
+            },
+            "style": {
+              "spacingToken": "inset-default"
+            },
+            "children": [
+              {
+                "id": "slot-search-1",
+                "component": "SearchInput",
+                "meta": {
+                  "intent": "slot:search",
+                  "label": "search",
+                  "confidence": 1,
+                  "confidenceLevel": "low"
+                }
+              },
+              {
+                "id": "slot-filters-2",
+                "component": "Select",
+                "meta": {
+                  "intent": "slot:filters",
+                  "label": "filters",
+                  "confidence": 0.67,
+                  "confidenceLevel": "low"
+                },
+                "props": {
+                  "field": "cancel_at_period_end",
+                  "label": "Cancel at period end",
+                  "placeholder": "Enter cancel at period end"
+                }
+              }
+            ]
+          },
+          {
+            "id": "list-items-5",
+            "component": "Stack",
+            "layout": {
+              "type": "stack",
+              "gapToken": "cluster-tight"
+            },
+            "children": [
+              {
+                "id": "slot-items-6",
+                "component": "Table",
+                "meta": {
+                  "intent": "slot:items",
+                  "label": "items",
+                  "confidence": 1,
+                  "confidenceLevel": "low"
+                }
+              }
+            ]
+          },
+          {
+            "id": "list-pagination-7",
+            "component": "Stack",
+            "layout": {
+              "type": "inline",
+              "align": "center"
+            },
+            "style": {
+              "spacingToken": "inset-default"
+            },
+            "children": [
+              {
+                "id": "slot-pagination-8",
+                "component": "PaginationBar",
+                "meta": {
+                  "intent": "slot:pagination",
+                  "label": "pagination",
+                  "confidence": 0.77,
+                  "confidenceLevel": "low"
+                }
+              }
+            ]
+          }
+        ],
+        "meta": {
+          "label": "Transaction"
+        }
+      }
+    ],
+    "objectSchema": {
+      "status": {
+        "type": "string",
+        "required": true,
+        "description": "Canonical lifecycle state derived from the states parameter. This is the single source\nof truth for the entity's current lifecycle position. Consumed by Colorized to resolve\nvisual tokens, and by view extensions to render StatusBadge and StatusTimeline.\n",
+        "enum": [
+          "pending",
+          "authorized",
+          "settled",
+          "failed",
+          "refunded"
+        ],
+        "semanticType": "status.state"
+      },
+      "state_history": {
+        "type": "StateTransition[]",
+        "required": false,
+        "default": [],
+        "description": "Chronological log of state transitions. Each entry records the before/after states,\ntimestamp, and (when governance is enabled) the actor, reason, and transition metadata.\nRendered by StatusTimeline in the detail and timeline views.\n\nEntry structure:\n  - from: string (previous state)\n  - to: string (new state)\n  - timestamp: ISO 8601 datetime\n  - actor_id: string (user/system who triggered the transition, optional)\n  - reason: string (human-readable justification, required when requireTransitionReason is true)\n  - transition_metadata: Record<string, unknown> (arbitrary context, optional)\n",
+        "semanticType": "timeline.state_transition"
+      },
+      "allowed_transitions": {
+        "type": "string[]",
+        "required": false,
+        "default": [],
+        "description": "Materialized list of valid next states from the current status, computed from the\ntransitionRules parameter. When transitionRules is null (open model), this contains\nall states except the current one. Used by StatusSelector to disable invalid options\nand by StatusBadge to indicate available paths.\n",
+        "semanticType": "status.navigation"
+      },
+      "created_at": {
+        "type": "datetime",
+        "required": true,
+        "description": "Timestamp recording when the entity was first created.",
+        "semanticType": "audit.created_at"
+      },
+      "updated_at": {
+        "type": "datetime",
+        "required": false,
+        "description": "Timestamp for the most recent modification, when available.",
+        "semanticType": "audit.updated_at"
+      },
+      "last_event": {
+        "type": "string",
+        "required": true,
+        "description": "Lifecycle event associated with the most recent timestamp mutation.",
+        "enum": [
+          "initiated",
+          "authorized",
+          "settled",
+          "refunded",
+          "failed"
+        ],
+        "semanticType": "audit.event.type"
+      },
+      "last_event_at": {
+        "type": "datetime",
+        "required": false,
+        "description": "Timestamp for the lifecycle event captured in last_event.",
+        "semanticType": "audit.event.timestamp"
+      },
+      "unit_amount_cents": {
+        "type": "number",
+        "required": true,
+        "description": "Base unit price expressed in the smallest currency denomination.",
+        "semanticType": "commerce.price.amount"
+      },
+      "currency": {
+        "type": "string",
+        "required": true,
+        "description": "ISO currency code for the unit amount.",
+        "enum": [
+          "USD",
+          "EUR",
+          "GBP",
+          "JPY",
+          "AUD"
+        ],
+        "semanticType": "commerce.price.currency"
+      },
+      "pricing_model": {
+        "type": "string",
+        "required": true,
+        "description": "Monetization model applied to the entity.",
+        "enum": [
+          "one_time",
+          "usage_based"
+        ],
+        "semanticType": "commerce.price.model"
+      },
+      "billing_interval": {
+        "type": "string",
+        "required": false,
+        "description": "Billing cadence when pricing_model indicates recurring revenue.",
+        "enum": [
+          "one_time"
+        ],
+        "semanticType": "commerce.price.interval"
+      },
+      "tax_behavior": {
+        "type": "string",
+        "required": true,
+        "default": "exclusive",
+        "description": "Defines whether taxes are included in the displayed price.",
+        "enum": [
+          "exclusive",
+          "inclusive"
+        ],
+        "semanticType": "commerce.price.tax_behavior"
+      },
+      "cancel_at_period_end": {
+        "type": "boolean",
+        "required": true,
+        "default": false,
+        "description": "Whether cancellation occurs at the natural period end instead of immediately. When true the entity is in a REVERSIBLE pending-cancellation state: the schedule can be undone (set back to false) any time before period end, returning the entity to active. This is distinct from a terminal cancellation (a `terminated`/canceled subscription), which is irreversible and non-reactivatable. Mirrors Stripe's cancel_at_period_end flag (docs.stripe.com/billing/subscriptions/cancel).",
+        "semanticType": "status.cancel.deferred"
+      },
+      "cancellation_reason": {
+        "type": "string",
+        "required": false,
+        "description": "Free-form detail describing why cancellation occurred.",
+        "semanticType": "status.cancel.reason"
+      },
+      "cancellation_reason_code": {
+        "type": "string",
+        "required": false,
+        "description": "Structured reason code chosen from the allowedReasons parameter.",
+        "enum": [
+          "customer_request",
+          "suspected_fraud",
+          "duplicate_charge",
+          "payment_method_error"
+        ],
+        "semanticType": "status.cancel.reason_code"
+      },
+      "cancellation_requested_at": {
+        "type": "datetime",
+        "required": false,
+        "description": "Timestamp capturing when the cancellation workflow was initiated.",
+        "semanticType": "status.cancel.timestamp"
+      },
+      "is_archived": {
+        "type": "boolean",
+        "required": true,
+        "default": false,
+        "description": "Flag indicating whether the entity is currently archived (soft-deleted).",
+        "semanticType": "status.archive.state"
+      },
+      "archived_at": {
+        "type": "datetime?",
+        "required": false,
+        "description": "Timestamp for when the entity entered the archived state.",
+        "semanticType": "status.archive.timestamp"
+      },
+      "restored_at": {
+        "type": "datetime?",
+        "required": false,
+        "description": "Timestamp for when the entity was most recently restored from an archived state.",
+        "semanticType": "status.archive.restore_timestamp"
+      },
+      "archive_reason": {
+        "type": "string",
+        "required": false,
+        "description": "Human-readable narrative describing why the entity was archived.",
+        "semanticType": "status.archive.reason"
+      },
+      "archived_by": {
+        "type": "string",
+        "required": false,
+        "description": "User ID or system identifier of the actor who archived this entity.\nSet to \"system\" for automated/policy-driven archival. Supports audit trail queries\nlike \"show all entities archived by user X\" or \"show all auto-archived entities\".\n",
+        "semanticType": "status.archive.actor"
+      },
+      "archive_metadata": {
+        "type": "object",
+        "required": false,
+        "description": "Structured metadata about the archival action for compliance and audit purposes.\n\nProperties:\n  - method: \"manual\" | \"automated\" | \"policy\" — how the archive was triggered\n  - compliance_tags: string[] — regulatory labels (e.g., [\"GDPR\", \"SOX\", \"HIPAA\"])\n  - retention_policy_id: string — reference to the retention policy that triggered archival\n  - original_status: string — the Stateful status before archival\n  - related_entity_count: number — count of related entities also archived (cascade)\n",
+        "semanticType": "status.archive.compliance"
+      },
+      "restoration_metadata": {
+        "type": "object",
+        "required": false,
+        "description": "Metadata about the most recent restoration action.\n\nProperties:\n  - restored_by: string — user ID or \"system\"\n  - restored_fields: string[] — when partial restore, which fields were restored\n  - restoration_reason: string — why the entity was restored\n  - restored_from_snapshot: boolean — whether restored from a point-in-time snapshot\n",
+        "semanticType": "status.archive.restoration"
+      },
+      "transaction_id": {
+        "type": "uuid",
+        "required": true,
+        "description": "Unique identifier for the transaction record.",
+        "semanticType": "commerce.transaction.id"
+      },
+      "user_id": {
+        "type": "uuid",
+        "required": true,
+        "description": "Identifier of the user associated with the transaction.",
+        "semanticType": "identity.user.id"
+      },
+      "organization_id": {
+        "type": "uuid",
+        "required": false,
+        "description": "Tenant organization responsible for the transaction.",
+        "semanticType": "organization.id"
+      },
+      "occurred_at": {
+        "type": "datetime",
+        "required": true,
+        "description": "Timestamp when the transaction occurred in the source system.",
+        "semanticType": "commerce.transaction.timestamp"
+      },
+      "payment_method": {
+        "type": "string",
+        "required": true,
+        "description": "Funding source used to complete the transaction.",
+        "enum": [
+          "card",
+          "bank_transfer",
+          "digital_wallet",
+          "invoice"
+        ],
+        "semanticType": "commerce.payment.method"
+      },
+      "channel": {
+        "type": "string",
+        "required": true,
+        "default": "online",
+        "description": "Sales channel through which the transaction was initiated.",
+        "enum": [
+          "online",
+          "in_app",
+          "point_of_sale",
+          "partner"
+        ],
+        "semanticType": "commerce.transaction.channel"
+      },
+      "payment_reference": {
+        "type": "string",
+        "required": false,
+        "description": "Provider reference code linking to the payment processor."
+      },
+      "risk_score": {
+        "type": "number",
+        "required": false,
+        "description": "Fraud assessment score assigned during authorization.",
+        "semanticType": "risk.transaction.score"
+      }
+    }
+  },
+  "schemaRef": "compose-39dfd77a",
+  "schemaRefCreatedAt": "2026-09-16T09:26:48.003Z",
+  "schemaRefExpiresAt": "2026-09-16T09:56:48.003Z",
+  "compositionId": "cmp-5ce095cb5a1d",
+  "version": 1,
+  "parentVersion": null,
+  "operation": "compose",
+  "head": null,
+  "selections": [
+    {
+      "slotName": "items",
+      "intent": "data-list",
+      "selectedComponent": "Table",
+      "confidence": 1,
+      "confidenceLevel": "high",
+      "explanation": "Table was selected for slot \"items\" because preferred for \"data-list\" (rank 2); 1 tag match(es); tag match (data); 1 context match(es); context match (list); 2 region match(es); position affinity: Table fits well in main. Confidence is high (1.00).",
+      "candidates": [
+        {
+          "name": "Table",
+          "reason": "preferred for \"data-list\" (rank 2); 1 tag match(es); tag match (data); 1 context match(es); context match (list); 2 region match(es); position affinity: Table fits well in main",
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 1
+        },
+        {
+          "name": "Stack",
+          "reason": "preferred for \"data-list\" (rank 1); 1 context match(es); context match (list); 2 region match(es); position affinity: Stack fits well in main",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.85
+        },
+        {
+          "name": "RoleBadgeList",
+          "reason": "1 context match(es); context match (list); 1 region match(es); 1 trait(s); name contains \"list\"",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.45
+        }
+      ]
+    },
+    {
+      "slotName": "search",
+      "intent": "search-input",
+      "selectedComponent": "SearchInput",
+      "confidence": 1,
+      "confidenceLevel": "high",
+      "explanation": "SearchInput was selected for slot \"search\" because preferred for \"search-input\" (rank 1); 2 tag match(es); tag match (search); 1 context match(es); 1 category match(es); 1 trait(s); name contains \"search\"; position affinity: SearchInput fits well in header; search intent bias. Confidence is high (1.00).",
+      "candidates": [
+        {
+          "name": "SearchInput",
+          "reason": "preferred for \"search-input\" (rank 1); 2 tag match(es); tag match (search); 1 context match(es); 1 category match(es); 1 trait(s); name contains \"search\"; position affinity: SearchInput fits well in header; search intent bias",
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 1,
+          "contextTraitMatches": 0,
+          "score": 1
+        },
+        {
+          "name": "Input",
+          "reason": "preferred for \"search-input\" (rank 2); 1 tag match(es); tag match (input); 1 context match(es); 1 region match(es); 1 category match(es); name contains \"input\"; position affinity: Input fits well in header",
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 1,
+          "contextTraitMatches": 0,
+          "score": 1
+        },
+        {
+          "name": "DatePicker",
+          "reason": "1 tag match(es); tag match (input); 1 context match(es); 1 region match(es); 1 category match(es); position affinity: DatePicker fits well in header",
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 1,
+          "contextTraitMatches": 0,
+          "score": 0.47
+        }
+      ]
+    },
+    {
+      "slotName": "filters",
+      "intent": "filter-control",
+      "selectedComponent": "Select",
+      "confidence": 0.67,
+      "confidenceLevel": "medium",
+      "explanation": "Select was selected for slot \"filters\" because preferred for \"filter-control\" (rank 1); 1 tag match(es); 1 context match(es); position affinity: Select fits well in sidebar. Confidence is medium (0.67).",
+      "candidates": [
+        {
+          "name": "Select",
+          "reason": "preferred for \"filter-control\" (rank 1); 1 tag match(es); 1 context match(es); position affinity: Select fits well in sidebar",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 1
+        },
+        {
+          "name": "Input",
+          "reason": "preferred for \"filter-control\" (rank 2); 1 tag match(es); 1 context match(es); position affinity: Input fits well in sidebar",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.9
+        },
+        {
+          "name": "StatusBadge",
+          "reason": "2 context match(es); 1 region match(es); 2 trait(s); position affinity: StatusBadge fits well in sidebar",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.52
+        }
+      ]
+    },
+    {
+      "slotName": "toolbar-actions",
+      "intent": "action-button",
+      "selectedComponent": "Button",
+      "confidence": 1,
+      "confidenceLevel": "high",
+      "explanation": "Button was selected for slot \"toolbar-actions\" because preferred for \"action-button\" (rank 1); 2 tag match(es); tag match (action); 1 region match(es); 1 category match(es); name contains \"button\"; position affinity: Button fits well in header. Confidence is high (1.00).",
+      "candidates": [
+        {
+          "name": "Button",
+          "reason": "preferred for \"action-button\" (rank 1); 2 tag match(es); tag match (action); 1 region match(es); 1 category match(es); name contains \"button\"; position affinity: Button fits well in header",
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 1,
+          "contextTraitMatches": 0,
+          "score": 1
+        },
+        {
+          "name": "InlineLabel",
+          "reason": "context match (inline); 1 trait(s); name contains \"inline\"",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.29
+        },
+        {
+          "name": "DatePicker",
+          "reason": "1 tag match(es); 1 category match(es); position affinity: DatePicker fits well in header",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.15
+        }
+      ]
+    },
+    {
+      "slotName": "pagination",
+      "intent": "pagination-control",
+      "selectedComponent": "PaginationBar",
+      "confidence": 0.77,
+      "confidenceLevel": "medium",
+      "explanation": "PaginationBar was selected for slot \"pagination\" because 2 tag match(es); tag match (pagination, navigation); 1 context match(es); 1 trait(s); name contains \"pagination\"; position affinity: PaginationBar fits well in footer. Confidence is medium (0.77).",
+      "candidates": [
+        {
+          "name": "PaginationBar",
+          "reason": "2 tag match(es); tag match (pagination, navigation); 1 context match(es); 1 trait(s); name contains \"pagination\"; position affinity: PaginationBar fits well in footer",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 1,
+          "contextTraitMatches": 0,
+          "score": 1
+        },
+        {
+          "name": "Button",
+          "reason": "preferred for \"pagination-control\" (rank 2); 1 context match(es); 1 region match(es); position affinity: Button fits well in footer",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.75
+        },
+        {
+          "name": "Text",
+          "reason": "preferred for \"pagination-control\" (rank 1); 1 context match(es)",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.65
+        }
+      ]
+    }
+  ],
+  "validation": {
+    "status": "ok",
+    "errors": [],
+    "warnings": []
+  },
+  "warnings": [
+    {
+      "code": "OODS-V119",
+      "message": "No view_extensions found for context \"inline\" in object \"Transaction\". Available contexts: list, detail, form, timeline, card"
+    }
+  ],
+  "objectUsed": {
+    "name": "Transaction",
+    "version": "1.0.0",
+    "traits": [
+      "lifecycle/Stateful",
+      "lifecycle/Timestampable",
+      "financial/Priceable",
+      "lifecycle/Cancellable",
+      "lifecycle/Archivable"
+    ],
+    "fieldsComposed": 31,
+    "viewExtensionsApplied": {
+      "list": 4,
+      "detail": 5,
+      "form": 2,
+      "timeline": 4,
+      "card": 4
+    }
+  },
+  "meta": {
+    "intentParsed": "Transaction inline view",
+    "layoutDetected": "context-inferred: list (from context=\"inline\")",
+    "slotCount": 5,
+    "nodeCount": 8,
+    "intentSynthetic": true,
+    "warnings": [
+      "No view_extensions found for context \"inline\" in object \"Transaction\". Available contexts: list, detail, form, timeline, card"
+    ],
+    "intelligence": {
+      "fieldsExpanded": false,
+      "positionAffinityUsed": true,
+      "fieldAffinityUsed": true,
+      "compositionConfidence": 0.89
+    }
+  }
+}

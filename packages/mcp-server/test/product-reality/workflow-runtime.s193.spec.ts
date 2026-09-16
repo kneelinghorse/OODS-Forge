@@ -32,13 +32,13 @@ function installFixture(ledger: RuntimeLedger) {
 describe('current workflow runtime accountability', () => {
   it('health and catalog serve the same measured 240-cell ratio without approving classifications', async () => {
     installFixture(fixture());
-    expect(readRuntimeSummary()).toEqual({ cells: 240, pass: 240, typedGap: 0, fail: 0, head: 'measured-head' });
+    expect(readRuntimeSummary()).toEqual({ cells: 310, pass: 310, typedGap: 0, fail: 0, head: 'measured-head' });
     const result = await health({});
     expect(result.productReality.runtime).toEqual(readRuntimeSummary());
     const validate = new Ajv({ strict: false }).compile(JSON.parse(fs.readFileSync(path.join(root, 'packages/mcp-server/src/schemas/health.output.json'), 'utf8')));
     expect(validate(result), JSON.stringify(validate.errors)).toBe(true);
     const listed = await catalog({});
-    expect(listed.obligationScope?.runtimeEvidence).toContain('240/240 generated cells pass packed runtime gates at measured-head');
+    expect(listed.obligationScope?.runtimeEvidence).toContain('310/310 generated cells pass packed runtime gates at measured-head');
     expect(listed.obligationScope?.approvedRuntimeCensus).toBeNull();
   });
   it('missing, failed, duplicated, or historical cells cannot be served as a healthy ratio', async () => {
@@ -83,8 +83,8 @@ describe('current workflow runtime accountability', () => {
     const file = process.env.OODS_RUNTIME_REPORT ?? path.join(root, 'packages/mcp-server/registry/runtime-cells.v1.json');
     const ledger = JSON.parse(fs.readFileSync(file, 'utf8')) as RuntimeLedger;
     expect(validateRuntimeLedger(ledger, true)).toEqual([]);
-    expect(ledger.rows).toHaveLength(240);
-    expect(ledger.rows.filter(row => row.context === 'workflow')).toHaveLength(34);
+    expect(ledger.rows).toHaveLength(310);
+    expect(ledger.rows.filter(row => row.context === 'workflow')).toHaveLength(44);
     vi.stubEnv('MCP_RUNTIME_CELLS_PATH', file);
     expect((await health({})).productReality.runtime).toEqual({ ...ledger.summary, head: ledger.head });
     if (!process.env.OODS_RUNTIME_REPORT) expect(ledger.receiptRoot).toBeTruthy();

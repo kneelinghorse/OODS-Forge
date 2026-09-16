@@ -1,0 +1,97 @@
+{
+  "status": "ok",
+  "framework": "react",
+  "artifact": {
+    "schemaVersion": "1.0.0",
+    "framework": "react",
+    "files": [
+      {
+        "path": "src/GeneratedUI.tsx",
+        "contents": "import React from 'react';\nimport { Input, PaginationBar, SearchInput, Stack, Table } from '@oods/components-react';\nimport '@oods/component-styles/css';\n\nexport interface PageProps {\n  /** Detected anomalies with context for investigation. */\n  anomalies?: unknown[];\n  /** Actual quantity consumed in the active period. */\n  consumedQuantity: number;\n  /** Timestamp recording when the entity was first created. */\n  createdAt: string;\n  /** Quantity included in base plan before overages. */\n  includedQuantity: number;\n  /** Lifecycle event associated with the most recent timestamp mutation. */\n  lastEvent: 'reading_captured' | 'anomaly_detected' | 'reset';\n  /** Timestamp for the lifecycle event captured in last_event. */\n  lastEventAt?: string;\n  /** Timestamp of the most recent provider usage payload. */\n  lastReportedAt: string;\n  /** Provider specific meter identifier. */\n  meterId: string;\n  /** Friendly metered feature name shown in UI (ex: Analytics Seats). */\n  meterName: string;\n  /** Cost per additional unit expressed in minor currency units. */\n  overageRateMinor?: number;\n  /** Date the usage accumulation window ends. */\n  periodEnd: string;\n  /** Date the usage accumulation window began. */\n  periodStart: string;\n  /** Forecasted overage spend derived from consumption trends. */\n  projectedOverageMinor?: number;\n  /** Source provider for usage data. */\n  provider: string;\n  /** Strategy for unused units (inherits rolloverStrategy parameter). */\n  rolloverStrategy?: string;\n  /** Rolling usage measurements for charts or anomaly detection. */\n  samples?: unknown[];\n  /** Health of the usage feed (ok, delayed, investigating). */\n  status?: 'ok' | 'delayed' | 'investigating';\n  /** Subscription the usage belongs to. */\n  subscriptionId: string;\n  /** Percent delta compared to previous window. */\n  trendPercent?: number;\n  /** Label for display, defaults to the unit parameter. */\n  unitLabel: string;\n  /** Timestamp for the most recent modification, when available. */\n  updatedAt?: string;\n  /** Identifier for this usage record. */\n  usageId: string;\n  /** Currency impact of usage variance calculated with overage rate. */\n  varianceMinor?: number;\n}\n\ntype InputProps = React.ComponentPropsWithoutRef<typeof Input>;\ntype PaginationBarProps = React.ComponentPropsWithoutRef<typeof PaginationBar>;\ntype SearchInputProps = React.ComponentPropsWithoutRef<typeof SearchInput>;\ntype StackProps = React.ComponentPropsWithoutRef<typeof Stack>;\ntype TableProps = React.ComponentPropsWithoutRef<typeof Table>;\n\nexport const GeneratedUI: React.FC<PageProps> = ({ anomalies, consumedQuantity, createdAt, includedQuantity, lastEvent, lastEventAt, lastReportedAt, meterId, meterName, overageRateMinor, periodEnd, periodStart, projectedOverageMinor, provider, rolloverStrategy, samples, status, subscriptionId, trendPercent, unitLabel, updatedAt, usageId, varianceMinor }) => {\n  const [handleChange_consumed_quantityState, setHandleChange_consumed_quantityState] = React.useState<string>(String(consumedQuantity ?? ''));\n  /* @oods-local-binding handleChange_consumed_quantity */ const handleChange_consumed_quantity = (event: React.ChangeEvent<HTMLInputElement>) => { setHandleChange_consumed_quantityState(event.currentTarget.value); };\n\n  return (\n    <main data-oods-shell=\"screen-list-9\">\n      <h1 data-oods-shell-heading=\"true\">Usage</h1>\n      <Stack id=\"screen-list-9\" data-oods-component=\"Stack\" data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-default)' }}>\n            <Stack id=\"list-toolbar-4\" data-oods-component=\"Stack\" data-layout=\"inline\" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', padding: 'var(--ref-space-inset-default)' }}>\n                    <SearchInput id=\"slot-search-1\" data-oods-component=\"SearchInput\" />\n                    <Input id=\"slot-filters-2\" data-oods-component=\"Input\" label=\"Consumed quantity\" placeholder=\"Enter consumed quantity\" required type=\"number\" value={handleChange_consumed_quantityState} onChange={handleChange_consumed_quantity} />\n                  </Stack>\n            <Stack id=\"list-items-5\" data-oods-component=\"Stack\" data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-tight)' }}>\n                    <Table id=\"slot-items-6\" data-oods-component=\"Table\" />\n                  </Stack>\n            <Stack id=\"list-pagination-7\" data-oods-component=\"Stack\" data-layout=\"inline\" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', padding: 'var(--ref-space-inset-default)' }}>\n                    <PaginationBar id=\"slot-pagination-8\" data-oods-component=\"PaginationBar\" />\n                  </Stack>\n          </Stack>\n    </main>\n  );\n};\n",
+        "contentHash": "sha256:7cb2698b5feb18d92ac5c0c20383bbd08f309b72ad8a575bd62cb5456e6bb95f"
+      }
+    ],
+    "dependencies": [
+      {
+        "name": "@oods/component-styles",
+        "version": "0.1.0",
+        "kind": "dependency"
+      },
+      {
+        "name": "@oods/components-react",
+        "version": "0.1.0",
+        "kind": "dependency"
+      },
+      {
+        "name": "react",
+        "version": "19.2.0",
+        "kind": "peerDependency"
+      },
+      {
+        "name": "react-dom",
+        "version": "19.2.0",
+        "kind": "peerDependency"
+      }
+    ],
+    "actions": [],
+    "contentHash": "sha256:69396eecf4ded86b4699ec9071c68a0d06d0f586d4fd7302c570223977c4db13"
+  },
+  "code": "import React from 'react';\nimport { Input, PaginationBar, SearchInput, Stack, Table } from '@oods/components-react';\nimport '@oods/component-styles/css';\n\nexport interface PageProps {\n  /** Detected anomalies with context for investigation. */\n  anomalies?: unknown[];\n  /** Actual quantity consumed in the active period. */\n  consumedQuantity: number;\n  /** Timestamp recording when the entity was first created. */\n  createdAt: string;\n  /** Quantity included in base plan before overages. */\n  includedQuantity: number;\n  /** Lifecycle event associated with the most recent timestamp mutation. */\n  lastEvent: 'reading_captured' | 'anomaly_detected' | 'reset';\n  /** Timestamp for the lifecycle event captured in last_event. */\n  lastEventAt?: string;\n  /** Timestamp of the most recent provider usage payload. */\n  lastReportedAt: string;\n  /** Provider specific meter identifier. */\n  meterId: string;\n  /** Friendly metered feature name shown in UI (ex: Analytics Seats). */\n  meterName: string;\n  /** Cost per additional unit expressed in minor currency units. */\n  overageRateMinor?: number;\n  /** Date the usage accumulation window ends. */\n  periodEnd: string;\n  /** Date the usage accumulation window began. */\n  periodStart: string;\n  /** Forecasted overage spend derived from consumption trends. */\n  projectedOverageMinor?: number;\n  /** Source provider for usage data. */\n  provider: string;\n  /** Strategy for unused units (inherits rolloverStrategy parameter). */\n  rolloverStrategy?: string;\n  /** Rolling usage measurements for charts or anomaly detection. */\n  samples?: unknown[];\n  /** Health of the usage feed (ok, delayed, investigating). */\n  status?: 'ok' | 'delayed' | 'investigating';\n  /** Subscription the usage belongs to. */\n  subscriptionId: string;\n  /** Percent delta compared to previous window. */\n  trendPercent?: number;\n  /** Label for display, defaults to the unit parameter. */\n  unitLabel: string;\n  /** Timestamp for the most recent modification, when available. */\n  updatedAt?: string;\n  /** Identifier for this usage record. */\n  usageId: string;\n  /** Currency impact of usage variance calculated with overage rate. */\n  varianceMinor?: number;\n}\n\ntype InputProps = React.ComponentPropsWithoutRef<typeof Input>;\ntype PaginationBarProps = React.ComponentPropsWithoutRef<typeof PaginationBar>;\ntype SearchInputProps = React.ComponentPropsWithoutRef<typeof SearchInput>;\ntype StackProps = React.ComponentPropsWithoutRef<typeof Stack>;\ntype TableProps = React.ComponentPropsWithoutRef<typeof Table>;\n\nexport const GeneratedUI: React.FC<PageProps> = ({ anomalies, consumedQuantity, createdAt, includedQuantity, lastEvent, lastEventAt, lastReportedAt, meterId, meterName, overageRateMinor, periodEnd, periodStart, projectedOverageMinor, provider, rolloverStrategy, samples, status, subscriptionId, trendPercent, unitLabel, updatedAt, usageId, varianceMinor }) => {\n  const [handleChange_consumed_quantityState, setHandleChange_consumed_quantityState] = React.useState<string>(String(consumedQuantity ?? ''));\n  /* @oods-local-binding handleChange_consumed_quantity */ const handleChange_consumed_quantity = (event: React.ChangeEvent<HTMLInputElement>) => { setHandleChange_consumed_quantityState(event.currentTarget.value); };\n\n  return (\n    <main data-oods-shell=\"screen-list-9\">\n      <h1 data-oods-shell-heading=\"true\">Usage</h1>\n      <Stack id=\"screen-list-9\" data-oods-component=\"Stack\" data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-default)' }}>\n            <Stack id=\"list-toolbar-4\" data-oods-component=\"Stack\" data-layout=\"inline\" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', padding: 'var(--ref-space-inset-default)' }}>\n                    <SearchInput id=\"slot-search-1\" data-oods-component=\"SearchInput\" />\n                    <Input id=\"slot-filters-2\" data-oods-component=\"Input\" label=\"Consumed quantity\" placeholder=\"Enter consumed quantity\" required type=\"number\" value={handleChange_consumed_quantityState} onChange={handleChange_consumed_quantity} />\n                  </Stack>\n            <Stack id=\"list-items-5\" data-oods-component=\"Stack\" data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-tight)' }}>\n                    <Table id=\"slot-items-6\" data-oods-component=\"Table\" />\n                  </Stack>\n            <Stack id=\"list-pagination-7\" data-oods-component=\"Stack\" data-layout=\"inline\" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', padding: 'var(--ref-space-inset-default)' }}>\n                    <PaginationBar id=\"slot-pagination-8\" data-oods-component=\"PaginationBar\" />\n                  </Stack>\n          </Stack>\n    </main>\n  );\n};\n",
+  "fileExtension": ".tsx",
+  "imports": [
+    "react",
+    "@oods/components-react",
+    "@oods/component-styles/css"
+  ],
+  "warnings": [],
+  "validationReceipt": {
+    "profile": "build",
+    "defaulted": false,
+    "rationale": "Build is the default minimum gate for a runnable artifact: target, bindings, dependencies, and fallbacks must resolve.",
+    "axes": {
+      "scope": "generated-artifact",
+      "enforcement": "blocking",
+      "fallback": "forbidden",
+      "target": {
+        "requested": "react",
+        "resolved": "react",
+        "source": "explicit"
+      }
+    },
+    "checks": [
+      "schema-structure",
+      "component-registry",
+      "state-contract",
+      "target-readiness",
+      "normalization-fidelity",
+      "binding-contract",
+      "props-contract",
+      "slots-contract",
+      "events-contract",
+      "dependency-closure",
+      "fallback-policy"
+    ],
+    "notChecked": [
+      "rendered-evidence",
+      "interaction-evidence",
+      "accessibility-evidence",
+      "theme-evidence",
+      "determinism-evidence",
+      "performance-evidence",
+      "certification-evidence"
+    ],
+    "evidence": {
+      "required": [],
+      "provided": [],
+      "missing": [],
+      "mismatched": [],
+      "accepted": [],
+      "notApplicable": [],
+      "artifactContentHash": "sha256:69396eecf4ded86b4699ec9071c68a0d06d0f586d4fd7302c570223977c4db13"
+    }
+  },
+  "meta": {
+    "nodeCount": 8,
+    "componentCount": 5
+  }
+}

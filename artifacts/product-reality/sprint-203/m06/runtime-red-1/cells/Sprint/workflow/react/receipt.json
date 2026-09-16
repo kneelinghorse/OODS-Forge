@@ -1,0 +1,165 @@
+{
+  "object": "Sprint",
+  "context": "workflow",
+  "framework": "react",
+  "head": "7e29ca94e8e484a0972194919c2e534bd87493a4",
+  "runId": "a5cfa8c2-a714-4512-a06a-5b4aab178236",
+  "status": "fail",
+  "artifactHash": "sha256:5e619383089f9ab7d50fde6387940b43d2c6235ebb2e96cdb6b6d5c9459bfcca",
+  "components": [
+    "Banner",
+    "Button",
+    "Card",
+    "Checkbox",
+    "DetailHeader",
+    "Input",
+    "PaginationBar",
+    "RelativeTimestamp",
+    "SearchInput",
+    "Select",
+    "Stack",
+    "StateTransitionEvent",
+    "StatusBadge",
+    "StatusSelector",
+    "StatusTimeline",
+    "Tabs",
+    "Text",
+    "Textarea",
+    "TimelineEntryLabel"
+  ],
+  "gates": [
+    {
+      "name": "generation",
+      "status": "pass",
+      "detail": {
+        "artifactHash": "sha256:5e619383089f9ab7d50fde6387940b43d2c6235ebb2e96cdb6b6d5c9459bfcca",
+        "response": "workflows/Sprint/react-generation.json"
+      }
+    },
+    {
+      "name": "fresh-exact-tarball-install",
+      "status": "pass",
+      "detail": {
+        "report": "workflows/Sprint/react/receipt.json",
+        "observation": {
+          "isolation": {
+            "outsidePnpmWorkspace": true,
+            "freshNodeModules": true,
+            "emptyVerifierOwnedNpmConfiguration": true,
+            "installScripts": false,
+            "localPackagesFromBuiltTarballsOnly": true,
+            "workspaceAliases": false,
+            "workspaceSymlinks": false,
+            "repositorySourceImports": false,
+            "inheritedNodeModules": false,
+            "allResolvedPathsOutsideRepository": true,
+            "installed": [
+              {
+                "name": "@oods/tokens",
+                "version": "0.1.0",
+                "consumerRelative": "node_modules/@oods/tokens"
+              },
+              {
+                "name": "@oods/component-contracts",
+                "version": "0.1.0",
+                "consumerRelative": "node_modules/@oods/component-contracts"
+              },
+              {
+                "name": "@oods/component-styles",
+                "version": "0.1.0",
+                "consumerRelative": "node_modules/@oods/component-styles"
+              },
+              {
+                "name": "@oods/components-react",
+                "version": "0.1.0",
+                "consumerRelative": "node_modules/@oods/components-react"
+              }
+            ]
+          },
+          "resolutions": [
+            {
+              "specifier": "@oods/component-contracts",
+              "consumerRelative": "node_modules/@oods/component-contracts/dist/index.js"
+            },
+            {
+              "specifier": "@oods/component-styles/css",
+              "consumerRelative": "node_modules/@oods/component-styles/dist/components.css"
+            },
+            {
+              "specifier": "@oods/components-react",
+              "consumerRelative": "node_modules/@oods/components-react/dist/index.js"
+            },
+            {
+              "specifier": "react",
+              "consumerRelative": "node_modules/react/index.js"
+            },
+            {
+              "specifier": "react-dom/client",
+              "consumerRelative": "node_modules/react-dom/client.js"
+            },
+            {
+              "specifier": "react-dom/server",
+              "consumerRelative": "node_modules/react-dom/server.node.js"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "strict-typecheck",
+      "status": "fail",
+      "detail": {
+        "report": "workflows/Sprint/react/receipt.json"
+      },
+      "reason": "react typecheck failed (2)\n\n> sprint-workflow-react@1.0.0 typecheck\n> tsc --noEmit --pretty false\n\nsrc/screens/Detail.tsx(145,121): error TS2322: Type '{ children: Element[]; id: string; \"data-oods-component\": string; \"data-layout\": string; fields: string[]; patternComponent: string; style: { display: \"flex\"; flexDirection: \"column\"; gap: string; }; }' is not assignable to type 'IntrinsicAttributes & StackProps & RefAttributes<HTMLDivElement>'.\n  Property 'fields' does not exist on type 'IntrinsicAttributes & StackProps & RefAttributes<HTMLDivElement>'.\n"
+    },
+    {
+      "name": "production-build",
+      "status": "fail",
+      "detail": {
+        "report": "workflows/Sprint/react/receipt.json"
+      }
+    },
+    {
+      "name": "server-render",
+      "status": "fail",
+      "detail": {
+        "report": "workflows/Sprint/react/receipt.json"
+      }
+    },
+    {
+      "name": "mount",
+      "status": "fail",
+      "detail": {
+        "report": "workflows/Sprint/react/receipt.json"
+      }
+    },
+    {
+      "name": "hydration",
+      "status": "fail",
+      "detail": {
+        "report": "workflows/Sprint/react/receipt.json"
+      }
+    },
+    {
+      "name": "shared-css-resolution",
+      "status": "fail",
+      "detail": {
+        "report": "workflows/Sprint/react/receipt.json"
+      }
+    },
+    {
+      "name": "interaction-evidence",
+      "status": "fail",
+      "detail": {
+        "report": "workflows/Sprint/react/receipt.json"
+      }
+    },
+    {
+      "name": "workflow-proof",
+      "status": "fail",
+      "reason": "AssertionError [ERR_ASSERTION]: Every established workflow gate must pass"
+    }
+  ],
+  "report": "cells/Sprint/workflow/react/receipt.json"
+}
