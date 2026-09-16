@@ -44,7 +44,7 @@
         "inline",
         "workflow"
       ],
-      "description": "View context for object-aware composition. Determines which view_extensions are applied. When object is provided without layout, context infers the layout (detail→detail, list→list, form→form). workflow assembles list/detail/form/timeline screens with trait actions, routes, four UI states and generated application data."
+      "description": "View context for object-aware composition. Determines which view_extensions are applied. When object is provided without layout, context infers the layout (detail\u2192detail, list\u2192list, form\u2192form). workflow assembles list/detail/form/timeline screens with trait actions, routes, four UI states and generated application data."
     },
     "framework": {
       "type": "string",
@@ -108,7 +108,7 @@
           "additionalProperties": {
             "type": "string"
           },
-          "description": "Slot-name → component-name overrides (e.g., { 'items': 'Table' })."
+          "description": "Slot-name \u2192 component-name overrides (e.g., { 'items': 'Table' })."
         }
       },
       "additionalProperties": false
@@ -184,6 +184,104 @@
           "minLength": 1,
           "maxLength": 64,
           "description": "seed: the new sample-data seed."
+        }
+      }
+    },
+    "contextItems": {
+      "type": "array",
+      "maxItems": 200,
+      "description": "Decisions and evidence about this object that YOU already fetched, shown beside the running preview and stored on the version. Forge opens no database, store or network connection belonging to CMOS, TraceLab or Hive and never will: a direct reader would couple the portable bundle to another product's schema. Every item must carry its own provenance \u2014 source, id, title, the query that produced it and when you fetched it \u2014 because Forge cannot re-run your search to check it. An item naming a different object from the one on screen is refused with OODS-V207 and nothing is written; a malformed item is refused with OODS-V206.",
+      "items": {
+        "type": "object",
+        "required": [
+          "source",
+          "id",
+          "title",
+          "query",
+          "fetchedAt"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "source": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Where it came from, as your own tool names it: cmos.decisions, tracelab.evidence, hive.person."
+          },
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Its identifier in that source, so a reader can go and find it."
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "body": {
+            "type": "string",
+            "description": "What it says, in full. Supply this or excerpt."
+          },
+          "excerpt": {
+            "type": "string",
+            "description": "Your own shortening of it; Forge never shortens content itself."
+          },
+          "url": {
+            "type": "string"
+          },
+          "timestamp": {
+            "type": "string",
+            "description": "The time the item itself carries \u2014 when the decision was taken, not when you fetched it."
+          },
+          "query": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The query that produced it. Without this the panel cannot say why the item is here."
+          },
+          "fetchedAt": {
+            "type": "string",
+            "minLength": 1,
+            "description": "When you fetched it, ISO-8601. Items fetched before this version was composed are marked on the panel rather than hidden."
+          },
+          "object": {
+            "type": "string",
+            "description": "The object it is about; must be the composition's object."
+          },
+          "urn": {
+            "type": "string",
+            "description": "Alternatively its Forge URN, urn:oods:object:<Name>@<version>."
+          }
+        }
+      }
+    },
+    "contextSearched": {
+      "type": "array",
+      "maxItems": 50,
+      "description": "What you searched that returned nothing, so an empty panel is a statement rather than a silence: the reader can tell 'nothing was found' from 'nobody asked'.",
+      "items": {
+        "type": "object",
+        "required": [
+          "source",
+          "query",
+          "fetchedAt",
+          "found"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "source": {
+            "type": "string",
+            "minLength": 1
+          },
+          "query": {
+            "type": "string",
+            "minLength": 1
+          },
+          "fetchedAt": {
+            "type": "string",
+            "minLength": 1
+          },
+          "found": {
+            "type": "integer",
+            "minimum": 0
+          }
         }
       }
     }

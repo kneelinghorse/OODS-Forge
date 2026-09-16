@@ -16,7 +16,7 @@ import { renderMeasurementPanel } from '../src/preview/measurements.js';
 import { MODULES_GLOBAL, RUNTIME_GLOBAL, moduleKey } from '../src/preview/module-globals.js';
 import { escapeHtml } from '../src/preview/page.js';
 import { hasPlacedChart, scopeKey, servedArtifact } from '../src/preview/scope.js';
-import { FIXED_WIDTHS, renderEditControls, renderLineage, renderVersionList } from '../src/preview/shell.js';
+import { FIXED_WIDTHS, renderContext, renderEditControls, renderLineage, renderVersionList, type ContextLink } from '../src/preview/shell.js';
 import type { AcceptedSummary, CompositionVersion, PreviewArtifact, PreviewBrand, PreviewFramework, PreviewTheme, VersionSummary } from '../src/preview/store.js';
 
 declare const __OODS_PREVIEW_APP_VERSION__: string;
@@ -165,6 +165,15 @@ function syncControls(): void {
   for (const button of toolbar.querySelectorAll<HTMLButtonElement>('button[data-control]')) button.setAttribute('aria-pressed', String(pressed[button.dataset.control ?? ''] === button.dataset.value));
 }
 
+/**
+ * The conversation app's half of the Sprint 202 callback pattern. The page renders each context item as
+ * an anchor; this view cannot open one from inside the host's sandbox, so it prints the destination
+ * beside the title rather than offering a link that would do nothing when clicked.
+ */
+const contextLink: ContextLink = item => item.url
+  ? `${escapeHtml(item.title)} <span class="note">${escapeHtml(item.url)}</span>`
+  : escapeHtml(item.title);
+
 /** The Sprint 201 page's lineage, versions, edits and measurement panel, and the acts; another version opens in place instead of navigating. */
 const openButton = (version: number, label: string) => `<button type="button" class="link" data-open-version="${version}">${label}</button>`;
 const actStatus = (act: Act) => `<span class="status" data-oods-act-status="${act}" aria-live="polite">${escapeHtml(state.actStatus[act] ?? '')}</span>`;
@@ -185,6 +194,7 @@ function renderPanel(): void {
     `<form class="act" data-act="request-changes"><label for="oods-request-changes">Request changes to v${record.version}</label><textarea id="oods-request-changes" name="text" rows="2" required></textarea><button type="submit">Send to the conversation</button> ${actStatus('request-changes')}</form>`,
     '</details>',
     `<details open data-oods-edit-panel="true"><summary>Edit</summary><div class="edit" data-oods-edit="true">${renderEditControls(record)}</div><p class="note">${actStatus('edit')}</p></details>`,
+    `<details open data-oods-context-panel="true"><summary>Context</summary>${renderContext(record, contextLink) || '<p class="note">No context was supplied with this preview. Forge fetches none of its own: an agent passes design_preview the decisions and evidence it already found, and they are stored on the version.</p>'}</details>`,
     `<details open data-oods-measurements-panel="true"><summary>Measurements</summary>${renderMeasurementPanel(record)}<p class="note" data-oods-axe-scope="stored-document-run">Every axe-core result above was measured by the browser preview page, which runs the engine over the whole generated page as its own document, and stored on this version; this view shows those stored results and re-runs nothing. Here the design is mounted beside this app's own chrome in one document, so neither scope would measure it honestly: a run scoped to the mounted design cannot evaluate the nine document-level rules — including <code>landmark-one-main</code>, <code>page-has-heading-one</code> and <code>region</code>, the three the generated shell exists to satisfy — and a run over this whole document would report this app's chrome as the design's findings.</p></details>`,
   ].join('');
 }

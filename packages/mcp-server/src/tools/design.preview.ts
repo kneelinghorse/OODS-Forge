@@ -4,6 +4,8 @@ import { validateGeneratedArtifact } from '../codegen/artifact-envelope.js';
 import { seedPreviewModel } from '../codegen/preview-model.js';
 import { certifyPlacedCharts } from '../lib/measurements.js';
 import { ToolError } from '../errors/tool-error.js';
+import { ContextRefusal, carryContextForward, objectUrn, validateContext, type StoredContext } from '../lib/preview-context.js';
+import { loadObject } from '../objects/object-loader.js';
 import { appendAcceptance, attachToVersion, latestVersion, listVersions, readAccepted, readForgeHead, readVersion, resolveCompositionsDir, versionPath, type CompositionVersion, type PreviewBrand, type PreviewFramework, type PreviewTheme } from '../lib/composition-store.js';
 import { fieldKeyOf } from './design.compose.js';
 import { chartNodes } from '../codegen/chart-declaration.js';
@@ -131,7 +133,21 @@ export async function handle(input: DesignPreviewInputSchema.DesignPreviewInput,
   }
   // Every placed chart is certified once per version, in the scope the artifacts were generated for.
   if (!record.measurements.charts) measurements.charts = await certifyPlacedCharts(record.schema, { theme: record.theme, brand: record.brand });
-  if (Object.keys(artifacts).length || !record.model || Object.keys(measurements).length) record = await attachToVersion(compositionsDir, record.compositionId, record.version, { artifacts, model, measurements });
+  // Context the caller supplied: checked, keyed to this object, and stored beside the measurements so it
+  // is durable. Forge fetched none of it and opens no store of anyone else's to check it — see
+  // lib/preview-context.ts. A refusal here writes nothing at all, including the artifacts above.
+  let storedContext: StoredContext | undefined;
+  if (input.contextItems || input.contextSearched) {
+    const definition = object ? loadObject(object) : undefined;
+    const urn = definition ? objectUrn(definition.object.name, definition.object.version) : objectUrn(object || 'composition', '0.0.0');
+    try {
+      storedContext = validateContext({ items: input.contextItems, searched: input.contextSearched }, { object, urn, version: record.version });
+    } catch (error) {
+      if (error instanceof ContextRefusal) throw new ToolError(error.code, `design.preview: ${error.message}`, error.data);
+      throw error;
+    }
+  }
+  if (Object.keys(artifacts).length || !record.model || Object.keys(measurements).length || storedContext) record = await attachToVersion(compositionsDir, record.compositionId, record.version, { artifacts, model, measurements, ...(storedContext ? { context: storedContext } : {}) });
   if (chartScoped && scope !== generatedScope) {
     const scoped = record.scopes?.[scope];
     const scopedArtifacts: CompositionVersion['artifacts'] = {};
@@ -247,6 +263,10 @@ async function applyEdit(compositionsDir: string, parent: CompositionVersion, ed
   }
   const composed = await compose({ ...(compose_ as object), preferences, compositionId: parent.compositionId, parentVersion: parent.version, options: { ...(parentOptions ?? {}), transient: false, operation: edit.operation } } as Parameters<typeof compose>[0]);
   if (composed.status !== 'ok' || !composed.compositionId || !composed.version) throw new Error(`Re-composition failed: ${JSON.stringify(composed.errors ?? composed)}`);
+  // An edit produces a new version of the same object, so the context the parent carried is still about
+  // it and travels with the lineage. It keeps the fetchedAt it was gathered with, so it is marked stale
+  // against the version it now sits beside rather than silently re-dated to look current.
+  if (parent.context) await attachToVersion(compositionsDir, composed.compositionId, composed.version, { context: carryContextForward(parent.context, composed.version) });
   return readVersion(compositionsDir, composed.compositionId, composed.version);
 }
 
