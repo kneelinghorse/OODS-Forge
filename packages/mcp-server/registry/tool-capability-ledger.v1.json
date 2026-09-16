@@ -27,7 +27,7 @@
       "reason": "apply:false invokes package builds and prepack in canonical package directories; no honest dry-run. Earlier probe rebuilt workspace dist but created no tags or publications."
     }
   ],
-  "head": "99f3d501d4290db932e73a6055d265a35fdd8da2",
+  "head": "94b184415c49c27212348d91ed2e8f4469ef187e",
   "builderSelfCertified": false,
   "methodology": {
     "proofTier": "Highest location tier of a literal runtime import of a handler-bearing module in mcp-server test/spec sources. Grouped action imports roll up to their registered family. Imports are source evidence, not proof of invocation, passing execution or browser certification. Transitive imports and constructed imports/dispatch are not followed; type-only and schema-only imports do not promote a tier.",
@@ -1582,6 +1582,16 @@
       "testImports": {
         "product-reality": [
           {
+            "path": "packages/mcp-server/test/product-reality/axe-scope.s203.spec.ts",
+            "line": 10,
+            "handler": "packages/mcp-server/src/tools/design.preview.ts"
+          },
+          {
+            "path": "packages/mcp-server/test/product-reality/heading-order.s203.spec.ts",
+            "line": 10,
+            "handler": "packages/mcp-server/src/tools/design.preview.ts"
+          },
+          {
             "path": "packages/mcp-server/test/product-reality/options.s194.spec.ts",
             "line": 14,
             "handler": "packages/mcp-server/src/tools/design.preview.ts"
@@ -1941,6 +1951,18 @@
           "line": 11,
           "kind": "readme-reference",
           "verifiedReceipt": false
+        },
+        {
+          "path": "artifacts/product-reality/sprint-203/m01/README.md",
+          "line": 11,
+          "kind": "readme-reference",
+          "verifiedReceipt": false
+        },
+        {
+          "path": "artifacts/product-reality/sprint-203/m01/README.md",
+          "line": 62,
+          "kind": "readme-reference",
+          "verifiedReceipt": false
         }
       ],
       "portableE2E": true,
@@ -2176,6 +2198,12 @@
         {
           "path": "artifacts/product-reality/sprint-202/m04/README.md",
           "line": 100,
+          "kind": "readme-reference",
+          "verifiedReceipt": false
+        },
+        {
+          "path": "artifacts/product-reality/sprint-203/m01/README.md",
+          "line": 11,
           "kind": "readme-reference",
           "verifiedReceipt": false
         }
@@ -3045,6 +3073,12 @@
           "line": 100,
           "kind": "readme-reference",
           "verifiedReceipt": false
+        },
+        {
+          "path": "artifacts/product-reality/sprint-203/m01/README.md",
+          "line": 11,
+          "kind": "readme-reference",
+          "verifiedReceipt": false
         }
       ],
       "portableE2E": true,
@@ -3132,10 +3166,10 @@
       "name": "map",
       "registration": "auto",
       "advertisedClaim": {
-        "description": "Grouped mapping-registry tool. Set `action` to one of apply|create|list|resolve|update|delete to select the operation; the remaining fields match that action's contract. Consolidates the former map.* tools with identical per-action behavior. Records and resolves mappings for external consumers; no composer or generator consumes them. preferred_terms and disambiguation_decisions are preserved and surfaced, not consumed by resolution.",
+        "description": "Run one mapping-registry operation. Set `action` to one of apply|create|list|resolve|update|delete to select the operation; the remaining fields match that action's contract. Consolidates the former map.* tools with identical per-action behavior. Records and resolves mappings for external consumers; no composer or generator consumes them. preferred_terms and disambiguation_decisions are preserved and surfaced, not consumed by resolution.",
         "inputSchemaDescription": "Grouped action-parameter tool for the component-mapping registry family. Routes on the required `action` discriminator to the per-action handlers (apply, create, list, resolve, update, delete). Each branch reproduces the exact body of the corresponding per-action input schema with `action` added as an allowed property. Records and resolves mappings for external consumers; no composer or generator consumes them. preferred_terms and disambiguation_decisions are surfaced, not consumed by resolution."
       },
-      "claimHash": "sha256:a8afb11eac72c2e0e5167996398f4936a9f89f1028b7433fdf119fec59ddf3a8",
+      "claimHash": "sha256:b9199d078254d26887d2d60b37cfcd4f7d755936aee53ecfd67d84398951edd1",
       "inputSchemaPath": "packages/mcp-server/src/schemas/map.input.json",
       "inputSchemaHash": "sha256:caf2dd1c09c8c6c13bc0ea4fc5db34ffd03bfbd4316785be6d57bf554d8c414e",
       "proofTier": "product-reality",
@@ -3263,6 +3297,12 @@
           "line": 100,
           "kind": "readme-reference",
           "verifiedReceipt": false
+        },
+        {
+          "path": "artifacts/product-reality/sprint-203/m01/README.md",
+          "line": 11,
+          "kind": "readme-reference",
+          "verifiedReceipt": false
         }
       ],
       "portableE2E": true,
@@ -3298,10 +3338,10 @@
       "name": "schema",
       "registration": "auto",
       "advertisedClaim": {
-        "description": "Grouped schema-store tool. Set `action` to one of save|load|list|delete. Consolidates the former schema.* tools with identical per-action behavior. Use action=save to persist a composed UiSchema beyond the 30-minute schemaRef TTL. Saved schemas expose monotonic versions and schemaRef identity, not ETags or conditional requests.",
+        "description": "Run one schema-store operation. Set `action` to one of save|load|list|delete. Consolidates the former schema.* tools with identical per-action behavior. Use action=save to persist a composed UiSchema beyond the 30-minute schemaRef TTL. Saved schemas expose monotonic versions and schemaRef identity, not ETags or conditional requests.",
         "inputSchemaDescription": "Grouped action-parameter tool for the schema family (save, load, list, delete). The `action` field selects the per-action handler; each branch reproduces the exact body of the corresponding per-action input schema plus the discriminator key. Mirrors the established review.chain discriminated-union precedent using plain JSON-Schema if/then (no AJV discriminator keyword)."
       },
-      "claimHash": "sha256:959c0a7efd522dafe5f5872a0bc6c44b3671547e9a296ebc8f72ccc132933c06",
+      "claimHash": "sha256:dd5a15ee45f1db0890d5dc275fdfdaeb5f544d7b255c2447491928f1fe1e21ce",
       "inputSchemaPath": "packages/mcp-server/src/schemas/schema.input.json",
       "inputSchemaHash": "sha256:2138884d58e43d1b37a1649b1d26d1643072fc0bf04d578e98dacbb3c9c43778",
       "proofTier": "product-reality",
@@ -3404,6 +3444,12 @@
           "line": 100,
           "kind": "readme-reference",
           "verifiedReceipt": false
+        },
+        {
+          "path": "artifacts/product-reality/sprint-203/m01/README.md",
+          "line": 11,
+          "kind": "readme-reference",
+          "verifiedReceipt": false
         }
       ],
       "portableE2E": true,
@@ -3432,10 +3478,10 @@
       "name": "object",
       "registration": "auto",
       "advertisedClaim": {
-        "description": "Grouped object-registry tool. Set `action` to list (filter OODS objects) or show (full object definition incl. composed traits and view extensions). Consolidates the former object.* tools with identical per-action behavior.",
+        "description": "Run one object-registry operation. Set `action` to list (filter OODS objects) or show (full object definition incl. composed traits and view extensions). Consolidates the former object.* tools with identical per-action behavior.",
         "inputSchemaDescription": "Grouped action-parameter tool consolidating the object.* read family (list, show). The top-level `action` selects which per-action contract applies; each branch reproduces the exact body of the original per-action input schema (object.<action>.input.json) with the discriminator key `action` added to its allowed properties. Zero functionality loss — handlers are delegated unchanged."
       },
-      "claimHash": "sha256:f52c74aeb35963a4d8b297dc994110d55a811f6f11773a3b999cbd0b5981b231",
+      "claimHash": "sha256:6baf15e154bdac10f8f1383157b509aa389b2f3c14fdda6b0caefb3f5bc19417",
       "inputSchemaPath": "packages/mcp-server/src/schemas/object.input.json",
       "inputSchemaHash": "sha256:f57410cd145f0e7aee63c31472c0f66e20867e55b12ab34c42646999cda14c94",
       "proofTier": "product-reality",
@@ -3548,6 +3594,12 @@
           "line": 11,
           "kind": "readme-reference",
           "verifiedReceipt": false
+        },
+        {
+          "path": "artifacts/product-reality/sprint-203/m01/README.md",
+          "line": 11,
+          "kind": "readme-reference",
+          "verifiedReceipt": false
         }
       ],
       "portableE2E": true,
@@ -3568,10 +3620,10 @@
       "name": "repl",
       "registration": "auto",
       "advertisedClaim": {
-        "description": "Grouped Design Lab REPL tool. Set `action` to validate (check a UiSchema/patch against the DSL+registry) or render (produce HTML/CSS preview; apply=true to emit). Consolidates the former repl.* tools with identical per-action behavior. BRAND (s169 m04): pass brand:'A'|'B' to render a specific brand's palette; omit it for the previous behaviour, byte-identical. On dashboard.render the brand drives both the tokens inlined into the output.html export and the palette output.contrastScan grades, so what is painted and what is checked are always the same brand. Fragment output diagnoses ignored brand/output.tokenOverlay/output.skinOverlay with OODS-W001. Non-strict fragments expose OODS-W002 when OODS-V006 is reclassified per node. Document output applies scope options. validate.apply is an ignored bridge-parity key. Fragment depth and request-level dslVersion are not supported. output.payloadMode file writes the rendered document as index.html (or fragments.json and css.json) beside the saved-schema store (<store>/../payloads/repl.render-<digest>/) and returns a payload block of file references instead of html, fragments and css; a directory that cannot be written is OODS-S020.",
+        "description": "Run one Design Lab REPL operation. Set `action` to validate (check a UiSchema/patch against the DSL+registry) or render (produce HTML/CSS preview; apply=true to emit). Consolidates the former repl.* tools with identical per-action behavior. BRAND (s169 m04): pass brand:'A'|'B' to render a specific brand's palette; omit it for the previous behaviour, byte-identical. On dashboard.render the brand drives both the tokens inlined into the output.html export and the palette output.contrastScan grades, so what is painted and what is checked are always the same brand. Fragment output diagnoses ignored brand/output.tokenOverlay/output.skinOverlay with OODS-W001. Non-strict fragments expose OODS-W002 when OODS-V006 is reclassified per node. Document output applies scope options. validate.apply is an ignored bridge-parity key. Fragment depth and request-level dslVersion are not supported. output.payloadMode file writes the rendered document as index.html (or fragments.json and css.json) beside the saved-schema store (<store>/../payloads/repl.render-<digest>/) and returns a payload block of file references instead of html, fragments and css; a directory that cannot be written is OODS-S020.",
         "inputSchemaDescription": "Grouped action-parameter tool consolidating repl.render and repl.validate. Select the per-action body via the top-level `action` discriminator. Each branch reproduces the exact body of the corresponding per-action input schema, with `action` added to the allowed property set. Per-action handlers, schemas, and the external repl_render/repl_validate tools are unchanged; this is a zero-functionality-loss bolt-on."
       },
-      "claimHash": "sha256:59c5c81331b098be8605c07b599279115f35070770232ed32571c9e744d80495",
+      "claimHash": "sha256:87d8f13f8155a82c501a0e7d10a54c881108b48c1de1da7fe3b46cd76250ae73",
       "inputSchemaPath": "packages/mcp-server/src/schemas/repl.input.json",
       "inputSchemaHash": "sha256:09324c40707b667504ccb4e637172aab39997fcb322bbb864e46bcc3908479a8",
       "proofTier": "product-reality",
@@ -3797,6 +3849,12 @@
         {
           "path": "artifacts/product-reality/sprint-202/m04/README.md",
           "line": 100,
+          "kind": "readme-reference",
+          "verifiedReceipt": false
+        },
+        {
+          "path": "artifacts/product-reality/sprint-203/m01/README.md",
+          "line": 11,
           "kind": "readme-reference",
           "verifiedReceipt": false
         }

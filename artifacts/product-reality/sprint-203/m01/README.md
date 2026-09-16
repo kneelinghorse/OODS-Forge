@@ -43,4 +43,20 @@ They belong to **m04**, whose objective is exactly this: defects fixed at the pr
 
 ## Movers
 
-The preview app rebuilt from `87de86c9408e` to `6394d6f1bdfb` (the panel text and the component styles it inlines), the same 2,105,9xx-byte shape. Moved pins are appended once to `../golden-ledger.json`, attributed to `s203-m01`.
+The preview app rebuilt from `87de86c9408e` to `6394d6f1bdfb` (the panel text and the component styles it inlines), the same 2,105,9xx-byte shape.
+
+`../golden-ledger.json` was planned at the base `a5d1ba084` (4 must-not-move — the viz pattern registry, the certified matrix, the viz recipes and the Sprint 196 package-shape baseline, since there is no chart work this sprint — and 15 may-move-once) and m01 appended **8 entries**: `tool-descriptions.json`, `configs/agent/policy.json` and the six generated pages over them. `check`: the four must-not-move pins byte-identical to the base, every moved pin recorded once, the sealed `sprint-195…202` receipts byte-identical (`verified`). The runtime-cell and release-cell registries and the composed-screen snapshots did **not** move, for the reason measured above.
+
+Regenerated through their generators, not by hand: `docs/api/*` and `docs/api/README.md` (`docs:api`), `docs/mcp/Tool-Specs.md` (`docs:tools`), the 15 component pages whose heading level the fix moved (`docs:components`), and the tool capability ledger (`s193-tool-truth.mjs --mode s202`, still bound to the Sprint 202 archive receipt; closeout re-binds it to Sprint 203). `docs:check` passes.
+
+## Suites at this tree
+
+`@oods/mcp-server` **405 files / 7,182 passed**, `@oods/components-react` 639, `@oods/components-vue` 625, `@oods/component-contracts` 159, `@oods/component-styles` 62, `@oods/mcp-bridge` 58; root `pnpm typecheck` clean; `docs:check` green; `node packages/mcp-adapter/test-s55-m03.js` 16/16.
+
+The root project's own run went red on 25 files, and every one was accounted for rather than excused. Three causes, none a defect in this work:
+
+1. **The root project had never been built in this worktree.** `dist/` is gitignored and `pnpm run build` + `pnpm run pkg:build` had not run here, so `tests/contracts/public-api.contract.test.ts` could not find `dist/pkg`. Built; the file passes.
+2. **`docs/components` was genuinely stale** — 15 pages whose heading level this fix moved. Regenerated through `docs:components`; `--check` passes. This one was mine.
+3. **The rest were the parallel-scheduling reds policy `#1833` describes.** Every one of the remaining 21 mcp-server files passes serially: a 13-file serial rerun is 295/295, and the two lone timeouts (`collections.s189` vue at 30s, `design-loop` at 20s) each pass in one isolated rerun (12/12 and 15/15, the latter in 6.7s against a 20s budget). No full recapture was run, per that policy.
+
+The two genuinely failing files at the first pass were `tool-truth.s193` and `closeout-audit.s195`, both stale-ledger: this mission's two new specs import `design.preview` and this receipt is a new README reference. Regenerating the ledger closed both.
