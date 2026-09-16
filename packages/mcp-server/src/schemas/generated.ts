@@ -3900,6 +3900,62 @@ export namespace DesignPreviewInputSchema {
        */
       seed?: string;
     };
+    /**
+     * Decisions and evidence about this object that YOU already fetched, shown beside the running preview and stored on the version. Forge opens no database, store or network connection belonging to CMOS, TraceLab or Hive and never will: a direct reader would couple the portable bundle to another product's schema. Every item must carry its own provenance — source, id, title, the query that produced it and when you fetched it — because Forge cannot re-run your search to check it. An item naming a different object from the one on screen is refused with OODS-V207 and nothing is written; a malformed item is refused with OODS-V206.
+     *
+     * @maxItems 200
+     */
+    contextItems?: {
+      /**
+       * Where it came from, as your own tool names it: cmos.decisions, tracelab.evidence, hive.person.
+       */
+      source: string;
+      /**
+       * Its identifier in that source, so a reader can go and find it.
+       */
+      id: string;
+      title: string;
+      /**
+       * What it says, in full. Supply this or excerpt.
+       */
+      body?: string;
+      /**
+       * Your own shortening of it; Forge never shortens content itself.
+       */
+      excerpt?: string;
+      url?: string;
+      /**
+       * The time the item itself carries — when the decision was taken, not when you fetched it.
+       */
+      timestamp?: string;
+      /**
+       * The query that produced it. Without this the panel cannot say why the item is here.
+       */
+      query: string;
+      /**
+       * When you fetched it, ISO-8601. Items fetched before this version was composed are marked on the panel rather than hidden.
+       */
+      fetchedAt: string;
+      /**
+       * The object it is about; must be the composition's object.
+       */
+      object?: string;
+      /**
+       * Alternatively its Forge URN, urn:oods:object:<Name>@<version>.
+       */
+      urn?: string;
+    }[];
+    /**
+     * What you searched that returned nothing, so an empty panel is a statement rather than a silence: the reader can tell 'nothing was found' from 'nobody asked'.
+     *
+     * @maxItems 50
+     */
+    contextSearched?: {
+      source: string;
+      query: string;
+      fetchedAt: string;
+      found: number;
+    }[];
   }
 }
 export type DesignPreviewInput = DesignPreviewInputSchema.DesignPreviewInput;
@@ -4467,7 +4523,10 @@ export namespace HealthOutputSchema {
        * Measured complete current population; null when its ledger is missing or invalid. Counts do not imply craft or classification approval.
        */
       runtime: {
-        cells: 240;
+        /**
+         * The runtime roster's population. 240 through Sprint 202; Sprint 203 adds five objects born from Derek's own stores — Decision, Sprint and Session from CMOS, Person and Cluster from Hive — and the sweep proves 310.
+         */
+        cells: 310;
         pass: number;
         typedGap: number;
         fail: number;
