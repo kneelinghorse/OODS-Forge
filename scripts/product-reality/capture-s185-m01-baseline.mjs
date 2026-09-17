@@ -154,14 +154,18 @@ function reapActiveGroup(signal) {
   }
 }
 
-let reaping = false;
+// Reaping the running suite is only half the job: the capture must also STOP. The first version of
+// this handler killed the child and then let the loop carry on, which on a five-suite run would
+// have started the NEXT suite after the operator asked for the whole thing to end. Proven by
+// killing a run — see artifacts/product-reality/sprint-204/m01/reaping-proof/.
+let aborted = null;
 for (const signal of ["SIGINT", "SIGTERM", "SIGHUP"]) {
   process.on(signal, () => {
-    if (reaping) return;
-    reaping = true;
+    if (aborted) return;
+    aborted = signal;
     const reaped = reapActiveGroup("SIGTERM");
-    process.stderr.write(`capture: ${signal} received; ${reaped ? "reaped the running suite's process group" : "no suite was running"}\n`);
-    // Give the group a moment to die on SIGTERM, then insist.
+    process.stderr.write(`capture: ${signal} received; ${reaped ? "reaped the running suite's process group" : "no suite was running"}; aborting the capture\n`);
+    // Give the group a moment to die on SIGTERM, then insist and leave.
     setTimeout(() => {
       reapActiveGroup("SIGKILL");
       process.exit(signal === "SIGINT" ? 130 : 143);
@@ -170,6 +174,13 @@ for (const signal of ["SIGINT", "SIGTERM", "SIGHUP"]) {
 }
 
 async function run(command, commandArgs) {
+  if (aborted) {
+    return {
+      startedAt: new Date().toISOString(), endedAt: new Date().toISOString(), durationMs: 0,
+      loadAverageBefore: os.loadavg(), loadAverageAfter: os.loadavg(),
+      exitCode: 130, stdout: "", stderr: `capture aborted by ${aborted}; not started\n`, notStarted: true,
+    };
+  }
   const startedAt = new Date().toISOString();
   const started = process.hrtime.bigint();
   const loadAverageBefore = os.loadavg();
@@ -466,7 +477,7 @@ try {
       loadAverageAfter: result.loadAverageAfter,
       log,
     });
-    if (result.exitCode !== 0) break;
+    if (result.exitCode !== 0 || aborted) break;
   }
   aggregate.cleanAfterSetup = cleanliness();
 
@@ -502,8 +513,8 @@ try {
     };
   }
 
-  if (setupPassed && aggregate.tripwire?.status === "passed") {
-    for (let runNumber = 1; runNumber <= runCount; runNumber += 1) {
+  if (setupPassed && aggregate.tripwire?.status === "passed" && !aborted) {
+    for (let runNumber = 1; runNumber <= runCount && !aborted; runNumber += 1) {
       const runRecord = {
         run: runNumber,
         cleanBefore: cleanliness(),
@@ -511,6 +522,7 @@ try {
         cleanAfter: null,
       };
       for (const suite of suites) {
+        if (aborted) break;
         const reportPath = path.join(
           temporaryRoot,
           `run-${runNumber}-${suite.id}.json`,
@@ -610,6 +622,11 @@ try {
     allSuites.every(({ status }) => status === "passed")
       ? "passed"
       : "failed";
+  if (aborted) {
+    aggregate.status = "aborted";
+    aggregate.abortedBy = aborted;
+    aggregate.abortNote = `Stopped by ${aborted}. The running suite's process group was reaped; no later suite was started. This is not a red receipt — nothing was measured to completion.`;
+  }
   aggregate.outputRoot = path.relative(outputParent, outputRoot);
   writeJson("four-suite-baseline.json", aggregate);
   process.stdout.write(
