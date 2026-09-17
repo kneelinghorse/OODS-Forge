@@ -1093,12 +1093,8 @@ function applyToSchema(
  * An empty control is worse than no control, so the placeholder is removed rather than given invented
  * copy: naming it would put a button on the page that does nothing.
  *
- * Container placeholders are deliberately left alone, even when they draw something. The card
- * template's body placeholder is a `Card` that nothing fills for any object in the registry, so every
- * card screen draws an empty bordered box under its header — but that placeholder is also the slot a
- * `componentOverrides` preference and a `design.preview` slot swap target, and dropping it breaks both
- * along with the fragment-anchor contract. It is recorded as a measured finding in the m04 receipt
- * instead of being removed here.
+ * A container placeholder that PAINTS is a different problem with a different answer, and it is not
+ * dropped: see `neutralizeUnfilledSurfaceSlots` below.
  */
 export function dropUnfilledInteractiveSlots(schema: UiSchema): number {
   /**
@@ -1122,4 +1118,121 @@ export function dropUnfilledInteractiveSlots(schema: UiSchema): number {
   };
   schema.screens.forEach(walk);
   return dropped;
+}
+
+/**
+ * Stop an unfilled slot placeholder from painting an empty bordered box, without moving the anchor
+ * anything targets.
+ *
+ * Sprint 203 m04 measured this and left it (decision #2169): every card in the registry drew an empty
+ * bordered box under its header, because the card template's body placeholder is a `Card` that nothing
+ * fills for any object. Dropping it — the answer `dropUnfilledInteractiveSlots` gives a control —
+ * would take the anchor with it, and that anchor is what a `componentOverrides` preference and a
+ * `design.preview` slot swap target. The s203 review ruled (#2180) that the placeholder is kept and
+ * rendered as a zero-height anchor instead, and that is what this does: the element stays, its `id`
+ * stays (the fragment anchor), its `meta.intent` of `slot:<name>` stays (the slot identity), and only
+ * the painted chrome goes.
+ *
+ * `SURFACE` is one name rather than a guess. Across all 110 entries of the canonical component
+ * contracts, `Card` is the ONLY component whose `tokenRoles` carry both a `surface.*` and a
+ * `border.*` role — that is, the only one an empty instance of which draws a box. Measured in
+ * s204-m02, and `card-body-anchor.s204.spec.ts` re-derives it from the contracts so a future
+ * component that starts painting a border cannot quietly reintroduce the defect.
+ *
+ * The neutral form is `Stack`, which renders an empty `div` with no border, no background and no
+ * height. Nothing is destroyed by the rewrite: which component was selected for the slot is recorded
+ * in design.compose's own `selections`, which this does not touch.
+ *
+ * Scope, also measured: 23 objects across 6 contexts leave 22 unfilled `Card` placeholders on card
+ * bodies and a further 73 on detail tabs. The defect was reported as a card-header problem; it is the
+ * same placeholder in both places and both are fixed here.
+ */
+export function neutralizeUnfilledSurfaceSlots(schema: UiSchema): number {
+  const SURFACE = new Set(['Card']);
+  const NEUTRAL = 'Stack';
+  let neutralized = 0;
+  const walk = (el: UiElement): void => {
+    if (
+      isSlotElement(el)
+      && SURFACE.has(el.component)
+      && !el.children?.length
+      && Object.keys(el.props ?? {}).length === 0
+    ) {
+      el.component = NEUTRAL;
+      neutralized += 1;
+    }
+    el.children?.forEach(walk);
+  };
+  schema.screens.forEach(walk);
+  return neutralized;
+}
+
+/**
+ * Give a card header something that says what the record IS.
+ *
+ * `wireFieldProps` assigns fields to leaf nodes required-first then ALPHABETICALLY, so a card header
+ * gets whatever field happens to sort first. For a CMOS Decision that is `created_at`, and the card
+ * read `Decision · 2026-09-01T12:00:00.000Z · Active`: a stored timestamp and a supersession badge,
+ * and nothing about the decision (s203-m04, decision #2170). The s203 review ruled the fix is a
+ * first-line excerpt of the record's own words (#2180) — an excerpt, not an invented title, because
+ * a CMOS decision genuinely has no title and m02 established that from the store.
+ *
+ * The rule is narrow on purpose, and it is stated as a prohibition rather than a preference: a card
+ * header must not bind a field that says nothing about the record. Only a TIMESTAMP qualifies today,
+ * which is why the blast radius is Decision and Invoice and not the whole registry — every other card
+ * header in the registry binds a non-timestamp field already and is left exactly as an earlier sprint
+ * certified it. Widening this into a general "cards should show a title" pass would re-open twenty
+ * certified screens and belongs to a mission that owns them.
+ *
+ * The replacement is the object's primary prose field: required, free text, not an identifier and not
+ * an enum, longest declared first so the field the object exists to carry wins. It is marked
+ * `headingExcerpt` so the artifact shows its first line; the same field still renders in full on the
+ * detail.
+ */
+export function bindCardHeadingField(schema: UiSchema, context: string | undefined): number {
+  if (context !== 'card') return 0;
+  const objectSchema = schema.objectSchema;
+  if (!objectSchema) return 0;
+
+  const isTimestamp = (entry: FieldSchemaEntry | undefined): boolean => {
+    const type = entry?.type.replace(/\?$/, '');
+    return type === 'date' || type === 'datetime';
+  };
+  // Candidates keep DECLARATION order — the order the object's author wrote them, which is the only
+  // statement of importance available here. Identifiers, enums and lifecycle state are excluded
+  // because none of them says what the record is.
+  const candidates = Object.entries(objectSchema).filter(([name, entry]) => {
+    const semantic = entry.semanticType ?? '';
+    return entry.required
+      && entry.type.replace(/\?$/, '') === 'string'
+      && !entry.enum?.length
+      && !/(^|_)id$/i.test(name)
+      && !/\.id$/.test(semantic)
+      && !/\.(state|status)$/.test(semantic);
+  });
+  // The record's own prose wins where the object declares it; otherwise the first thing the author
+  // wrote that is not an identifier. Decision -> decision_text (delivery.decision.text);
+  // Invoice -> invoice_number (billing.invoice.number).
+  const replacement = (
+    candidates.find(([, entry]) => /\.(text|body|content|summary|description)$/.test(entry.semanticType ?? ''))
+    ?? candidates[0]
+  )?.[0];
+  if (!replacement) return 0;
+
+  let rebound = 0;
+  const walk = (el: UiElement): void => {
+    if (
+      el.meta?.intent === 'slot:header'
+      && el.component === 'Text'
+      && typeof el.props?.field === 'string'
+      && isTimestamp(objectSchema[el.props.field])
+    ) {
+      el.props = { ...el.props, field: replacement };
+      el.meta = { ...el.meta, headingExcerpt: true };
+      rebound += 1;
+    }
+    el.children?.forEach(walk);
+  };
+  schema.screens.forEach(walk);
+  return rebound;
 }

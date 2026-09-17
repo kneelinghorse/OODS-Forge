@@ -81,8 +81,16 @@ describe('generated Forge claims remain tied to their measured sources (s196)', 
 
   it('pins the Product example including its s198 read-only field summaries', () => {
     // This operand is intentionally fixed: changing its output changes the public tutorial.
-    expect(facts).toMatchObject({ productNodes: 55, productSlots: 10, productTabs: 8, productFields: 38 });
-    expect(documents['docs/how-forge-works.html']).toContain('55-node tree with 10 filled slots and 8 tabs expanded from Product\'s 38 fields');
+    //
+    // MOVED in s204-m02, 55 nodes to 52, and the three that went are the defect this sprint removed:
+    // Product composes Stateful, so its detail carried an "Allowed transitions: None recorded" row —
+    // a labelled Stack holding a label Text and a value Text. The status-timeline rule matched
+    // `allowed_transitions` on its name via /transition/i though it is a `string[]` of state names and
+    // not a moment in time; it now requires a date-typed field. Product's slot roster is still 10 and
+    // its field count still 38; what changed is that a row saying nothing is gone from the tutorial's
+    // own example screen.
+    expect(facts).toMatchObject({ productNodes: 52, productSlots: 10, productTabs: 8, productFields: 38 });
+    expect(documents['docs/how-forge-works.html']).toContain('52-node tree with 10 filled slots and 8 tabs expanded from Product\'s 38 fields');
     expect(documents['docs/how-forge-works.html']).not.toContain('31-node tree');
     expect(String(facts.productSlotRoster).split('; ')).toHaveLength(10);
     const example = yaml(String(facts.subscriptionExample)) as { traits: Array<{ name: string }> };

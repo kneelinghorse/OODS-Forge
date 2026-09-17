@@ -1334,3 +1334,115 @@ export function resolveFrameworkRecipeProps(
 export function hasReadOnlyFields(nodes: readonly UiElement[]): boolean {
   return nodes.some(node => node.meta?.intent === 'read-only-field' || hasReadOnlyFields(node.children ?? []));
 }
+
+/* ------------------------------------------------------------------ */
+/*  Slot-bound dates (s204-m02)                                        */
+/* ------------------------------------------------------------------ */
+
+/** A trailing `?` marks the type optional and says nothing about what it holds. */
+export function isDateFieldEntry(entry: FieldSchemaEntry | undefined): boolean {
+  if (!entry) return false;
+  const type = entry.type.replace(/\?$/, '');
+  return type === 'date' || type === 'datetime';
+}
+
+/** The module-local date formatter's name. Not imported from anywhere; see below. */
+export const SLOT_DATE_HELPER = 'formatSlotDate';
+
+/**
+ * A date bound through a slot printed its raw stored value — a Decision card read
+ * `2026-09-01T12:00:00.000Z` where its own detail read `Sep 1, 2026, 12:00 PM` (s203-m04). The
+ * emitters format a date only under the `read-only-field` intent, because that branch calls
+ * `formatReadOnlyValue` and so forces an `@oods/component-contracts` import; widening the branch
+ * would put that dependency into artifacts that declare none, which the s203 review refused to do
+ * (#2180) and instead asked for the formatted value to be lowered at generate time.
+ *
+ * This is that lowering: a module-LOCAL function, emitted into the artifact, so nothing is imported
+ * and the declared dependency surface does not move. It is deliberately the same computation as
+ * `formatDateTime` in @oods/component-contracts — same locale, same date and time styles, and the
+ * same UTC pin that keeps output identical across host time zones — and
+ * `slot-date-lowering.s204.spec.ts` holds the two in agreement over a corpus so this copy cannot
+ * drift from the contract it mirrors.
+ *
+ * Absent reads as empty rather than as `Not recorded`, matching the boolean and array branches beside
+ * it: this is slot-bound text, not a labelled read-only field row.
+ */
+export function slotDateHelperSource(typescript: boolean): string {
+  const valueType = typescript ? ': unknown' : '';
+  const returns = typescript ? ': string' : '';
+  const cast = typescript ? ' as string | number | Date' : '';
+  return [
+    `function ${SLOT_DATE_HELPER}(value${valueType})${returns} {`,
+    "  if (value == null || value === '') return '';",
+    `  const date = new Date(value${cast});`,
+    "  if (!Number.isFinite(date.getTime())) return '';",
+    "  return new Intl.DateTimeFormat('en-US', {",
+    "    dateStyle: 'medium', timeStyle: 'short', timeZone: 'UTC',",
+    '  }).format(date);',
+    '}',
+  ].join('\n');
+}
+
+/**
+ * Whether the emitted module will call `formatSlotDate`, and therefore has to define it.
+ *
+ * This has to track the emitters' date branch EXACTLY. The comment on `hasReadOnlyFields` records
+ * what happens when a guard and its branch disagree: a Sprint 203 m04 attempt to widen the formatting
+ * branch without widening its guard had a Decision card call a symbol it had not imported and render
+ * blank. `Text` is the only component this branch fires for and its content strategy is `children`,
+ * so the two conditions below are the whole of it.
+ */
+export function hasSlotBoundDates(
+  nodes: readonly UiElement[],
+  objectSchema: Record<string, FieldSchemaEntry> | undefined,
+): boolean {
+  return nodes.some(node => {
+    const field = node.props?.field;
+    const bound = node.component === 'Text'
+      && node.meta?.intent !== 'read-only-field'
+      && typeof field === 'string'
+      && isDateFieldEntry(ownFieldSchemaEntry(objectSchema, field));
+    return bound || hasSlotBoundDates(node.children ?? [], objectSchema);
+  });
+}
+
+/** The module-local heading-excerpt formatter's name. Not imported from anywhere. */
+export const SLOT_EXCERPT_HELPER = 'formatHeadingExcerpt';
+
+/** How much of a record's prose a card heading shows before it is cut. */
+export const HEADING_EXCERPT_LIMIT = 120;
+
+/**
+ * A card heading standing in for a record with no title shows the record's FIRST LINE, not all of it.
+ *
+ * Emitted into the artifact rather than imported, for the same reason as `slotDateHelperSource`: the
+ * declared dependency surface must not move. The cut is by line first and then by length, so a
+ * decision whose first line is already a sentence keeps that sentence whole, and the 8,418-character
+ * one does not paint a wall of text into a card header. An ellipsis marks that something was cut, so
+ * the heading never reads as the whole value.
+ *
+ * The full value still renders on the detail; only the heading is cut.
+ */
+export function slotExcerptHelperSource(typescript: boolean): string {
+  const valueType = typescript ? ': unknown' : '';
+  const returns = typescript ? ': string' : '';
+  return [
+    `function ${SLOT_EXCERPT_HELPER}(value${valueType})${returns} {`,
+    "  if (value == null) return '';",
+    '  const text = String(value).trim();',
+    "  const firstLine = text.split(/\\r?\\n/)[0] ?? '';",
+    `  if (firstLine.length <= ${HEADING_EXCERPT_LIMIT}) return firstLine === text ? firstLine : firstLine + '\\u2026';`,
+    `  return firstLine.slice(0, ${HEADING_EXCERPT_LIMIT}).trimEnd() + '\\u2026';`,
+    '}',
+  ].join('\n');
+}
+
+/**
+ * Whether the emitted module will call `formatHeadingExcerpt`, and therefore has to define it.
+ * Tracks the emitters' excerpt branch exactly; see the note on `hasSlotBoundDates`.
+ */
+export function hasHeadingExcerpts(nodes: readonly UiElement[]): boolean {
+  return nodes.some(node =>
+    (node.component === 'Text' && node.meta?.headingExcerpt === true && typeof node.props?.field === 'string')
+    || hasHeadingExcerpts(node.children ?? []));
+}

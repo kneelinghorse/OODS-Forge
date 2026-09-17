@@ -272,7 +272,8 @@
         "components",
         "traits",
         "objects",
-        "lastSync"
+        "lastSync",
+        "countsFrom"
       ],
       "properties": {
         "components": {
@@ -290,6 +291,39 @@
         "lastSync": {
           "type": "string",
           "minLength": 1
+        },
+        "countsFrom": {
+          "type": "object",
+          "description": "Where each count above was read from on this call. \"live\" is computed from the registry itself and moves when the registry moves; \"snapshot\" is read from the structured-data export named in the manifest and stays frozen at lastSync until that export is regenerated.",
+          "additionalProperties": false,
+          "required": [
+            "components",
+            "traits",
+            "objects"
+          ],
+          "properties": {
+            "components": {
+              "type": "string",
+              "enum": [
+                "live",
+                "snapshot"
+              ]
+            },
+            "traits": {
+              "type": "string",
+              "enum": [
+                "live",
+                "snapshot"
+              ]
+            },
+            "objects": {
+              "type": "string",
+              "enum": [
+                "live",
+                "snapshot"
+              ]
+            }
+          }
         }
       }
     },

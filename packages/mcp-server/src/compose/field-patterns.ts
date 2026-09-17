@@ -72,11 +72,28 @@ function fieldNameMatches(fieldName: string, patterns: RegExp[]): boolean {
 function hasFieldMatching(
   fields: Record<string, FieldDefinition>,
   patterns: RegExp[],
+  accept?: (name: string, def: FieldDefinition) => boolean,
 ): string | undefined {
-  for (const name of Object.keys(fields)) {
-    if (fieldNameMatches(name, patterns)) return name;
+  for (const [name, def] of Object.entries(fields)) {
+    if (!fieldNameMatches(name, patterns)) continue;
+    if (accept && !accept(name, def)) continue;
+    return name;
   }
   return undefined;
+}
+
+/**
+ * Whether a field actually holds a moment in time, rather than merely being named like one.
+ * A trailing `?` marks the type optional and says nothing about what it holds.
+ */
+function isTimestampValued(
+  name: string,
+  def: FieldDefinition,
+  semanticTypes?: Record<string, string>,
+): boolean {
+  const type = def.type.replace(/\?$/, '');
+  if (type === 'datetime' || type === 'date') return true;
+  return hasSemanticType(name, semanticTypes, ['timestamp']);
 }
 
 function hasFieldsMatching(
@@ -116,17 +133,22 @@ const PATTERN_RULES: PatternRule[] = [
       ]);
       if (!statusField) return null;
 
-      // NOTE (s203-m04): /transition/i also matches Stateful's `allowed_transitions`, a list of state
-      // names and an internal field, so every detail of every object composing Stateful carries an
-      // "Allowed transitions: None recorded" row. Requiring this field to be a real date removes it —
-      // and also re-pairs Subscription's group with `updated_at`, which reshapes that detail's tabs and
-      // breaks what billing-placement.s188 and design.compose.s202 pinned about an already-certified
-      // screen. It is recorded as a measured finding in the m04 receipt rather than changed here.
+      // A StatusTimeline pairs a status with the MOMENT it was last set, so the second field has to
+      // be a real timestamp and not merely named like one. Matching on the name alone let
+      // /transition/i pick up Stateful's `allowed_transitions` — a `string[]` of state names whose
+      // semantic type is `status.navigation`, an internal field and not a time at all — so every
+      // detail of every object composing Stateful carried an "Allowed transitions: None recorded" row
+      // (s203-m04 measured it; the s203 review ruled it fixed here in #2180).
+      //
+      // The type check below is the same one the fallback loop underneath already applies; requiring
+      // it on this path too is what makes the two agree. Subscription's group re-pairs with
+      // `updated_at` as a result, which reshapes tabs an earlier sprint certified — that
+      // re-certification is part of this mission rather than a reason not to fix it.
       const timestampField = hasFieldMatching(fields, [
         /updated.?at$/i, /changed.?at$/i, /modified.?at$/i,
         /status.?updated/i, /state.?changed/i, /last.?modified/i,
         /transition/i,
-      ]);
+      ], (name, def) => isTimestampValued(name, def, semanticTypes));
       if (timestampField) return [statusField, timestampField];
 
       // Also check for any datetime field with "status" or "update" in name
