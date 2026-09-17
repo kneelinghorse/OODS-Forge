@@ -173,3 +173,36 @@ Measured across this session, the host — Derek's working machine, running Chro
 and an unrelated Stage1 test run — sat between **load 7 and load 33 on 8 cores**. That is the single
 largest influence on every duration in this receipt, and it is why the capture's **counts** are the
 comparable number and its **durations** are an upper bound.
+
+## 7. The receipt Sprint 203 owed
+
+One five-suite capture, one run, green, at head `400c02465` on the path sections 1 to 6 built.
+Full accounting and provenance in
+[capture/affordable-path-400c02465/](capture/affordable-path-400c02465/README.md).
+
+| | passed | failed | skipped | failed files | uncollected |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| **Sprint 204 m01** | **18,000** | **0** | **32** | **0** | **0** |
+| Sprint 203 (red) | 17,978 | 3 | 32 | 3 | 0 |
+| Sprint 202 (certified) | 17,849 | 0 | 32 | 0 | 0 |
+
+Every one of the +22 assertions is accounted for: +10 twice for this mission's two new specs in
+mcp-server and root-core, −1 for `m06-gate-bites.s184` leaving the default suite, and **+3 for the
+three assertions that failed in Sprint 203 and now pass**. The 32 skipped are unchanged and are still
+the Stage1 e2e fixtures — s204-m03's job, not closed here.
+
+`viz-recipes.s190`, the gate this mission was asked to resolve, finishes in **9.2 s in root-core and
+13.1 s in mcp-server** against the 60 s ceiling it could not reach in Sprint 203.
+
+End to end: 2,012 s — 33.5 minutes — against the 87+ minutes Derek stopped, and against Sprint 203's
+5,906 s of suite time. **That 3.1x is not claimed as this mission's doing.** Sprint 203 captured at
+load average 24.6 on 8 cores; this capture started its suites between 3.6 and 11.0. Consistent with
+section 1's conclusion — contention, not workload, is the dominant term — the durations here are an
+upper bound and the *counts* are the comparable number. What is separably attributable is listed in
+the capture receipt: the moved gate file, the ledger memo, and the tripwire at 51.1 s for the same 14
+checks it ran in 113.6 s.
+
+**The open risk is unchanged and still not closed by this mission:** nothing prevents a capture on a
+busy machine from hitting the 60 s ceiling again. What is different is that the receipt now records
+the load, and one warning did fire — `component-packages` started at load 11.05 — so the next reader
+can tell a slow host from a regression, which Sprint 203's receipt could not.
