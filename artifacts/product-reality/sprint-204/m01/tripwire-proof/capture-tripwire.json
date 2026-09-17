@@ -1,0 +1,114 @@
+{
+  "schemaVersion": "1.0.0",
+  "kind": "capture-tripwire",
+  "startedAt": "2026-09-17T04:01:44.371Z",
+  "endedAt": "2026-09-17T04:03:38.005Z",
+  "durationMs": 113631,
+  "workspace": "/Users/systemsystems/portfolio/Design-Tools/OODS-Forge/.worktrees/s204",
+  "host": {
+    "hostname": "Mac",
+    "cpuCount": 8,
+    "loadAverageBefore": [
+      14.14794921875,
+      20.5205078125,
+      21.8505859375
+    ],
+    "loadAverageAfter": [
+      21.833984375,
+      20.78466796875,
+      21.748046875
+    ],
+    "loadThreshold": 8
+  },
+  "warnings": [
+    "host load average 14.1 exceeds 8 on 8 cores; timing-sensitive suites will run long. Check for orphaned vitest workers (pgrep -fl vitest; PPID 1 = orphan) before trusting any measured duration."
+  ],
+  "checks": [
+    {
+      "id": "readiness-check",
+      "executedCommand": "pnpm exec tsx scripts/product-reality/s196-release-readiness.ts --check",
+      "exitCode": 0,
+      "durationMs": 877.7
+    },
+    {
+      "id": "docs-check",
+      "executedCommand": "pnpm docs:check",
+      "exitCode": 0,
+      "durationMs": 8240.7
+    },
+    {
+      "id": "generate-check",
+      "executedCommand": "pnpm --filter @oods/schemas-tools generate:check",
+      "exitCode": 0,
+      "durationMs": 2297.3
+    },
+    {
+      "id": "tool-truth-check",
+      "executedCommand": "node scripts/product-reality/s193-tool-truth.mjs --check",
+      "exitCode": 0,
+      "durationMs": 4714.8
+    },
+    {
+      "id": "docs-api-check",
+      "executedCommand": "pnpm docs:api -- --check",
+      "exitCode": 0,
+      "durationMs": 685.4
+    },
+    {
+      "id": "docs-tools-check",
+      "executedCommand": "pnpm docs:tools -- --check",
+      "exitCode": 0,
+      "durationMs": 1565.1
+    },
+    {
+      "id": "docs-claims-check",
+      "executedCommand": "pnpm docs:claims -- --check",
+      "exitCode": 0,
+      "durationMs": 1799.3
+    },
+    {
+      "id": "render-license-check",
+      "executedCommand": "node scripts/license/render-license.mjs --check",
+      "exitCode": 0,
+      "durationMs": 49.4
+    },
+    {
+      "id": "third-party-notices-check",
+      "executedCommand": "node scripts/runtime/third-party-notices.mjs --check",
+      "exitCode": 0,
+      "durationMs": 421.4
+    },
+    {
+      "id": "client-configs-check",
+      "executedCommand": "node scripts/runtime/client-configs.mjs --check",
+      "exitCode": 0,
+      "durationMs": 77.1
+    },
+    {
+      "id": "golden-ledger-check",
+      "executedCommand": "pnpm exec tsx scripts/product-reality/s203-golden-ledger.ts check",
+      "exitCode": 0,
+      "durationMs": 1621.6
+    },
+    {
+      "id": "viz-census-check",
+      "executedCommand": "pnpm exec tsx scripts/product-reality/s190-viz-census.ts --check",
+      "exitCode": 0,
+      "durationMs": 26092.6
+    },
+    {
+      "id": "schema-types-check",
+      "executedCommand": "pnpm run generate:schema-types -- --check",
+      "exitCode": 0,
+      "durationMs": 2097.1
+    },
+    {
+      "id": "near-md-readers",
+      "executedCommand": "npx vitest run --project core --no-file-parallelism tests/verification tests/contracts",
+      "exitCode": 0,
+      "durationMs": 63078.3
+    }
+  ],
+  "status": "passed",
+  "failedChecks": []
+}

@@ -1,0 +1,213 @@
+{
+  "schemaVersion": "1.0.0",
+  "sprintId": "sprint-204",
+  "missionId": "s204-m01",
+  "kind": "suite-file-scheduling-measurement",
+  "question": "Policy #1833 serialises root-core because its git-range mover specs go red under parallel scheduling. The mission's premise was that the other four suites carry no such constraint and pay ~30 minutes per capture for another suite's flake. Each was measured rather than assumed.",
+  "serialBaselines": {
+    "source": "artifacts/product-reality/sprint-202/m06/capture/forge-s202-m06-head/four-suite-baseline.json",
+    "viz-core": {
+      "tests": 1546,
+      "passed": 1546,
+      "skipped": 0,
+      "wallSeconds": 28
+    },
+    "viz-render": {
+      "tests": 72,
+      "passed": 72,
+      "skipped": 0,
+      "wallSeconds": 11
+    },
+    "component-packages": {
+      "tests": 1485,
+      "passed": 1485,
+      "skipped": 0,
+      "wallSeconds": 52
+    },
+    "mcp-server": {
+      "tests": 7197,
+      "passed": 7181,
+      "skipped": 16,
+      "wallSeconds": 1420
+    },
+    "root-core": {
+      "tests": 7581,
+      "passed": 7565,
+      "skipped": 16,
+      "wallSeconds": 961
+    }
+  },
+  "findings": [
+    {
+      "suite": "mcp-server",
+      "verdict": "CANNOT be un-serialised",
+      "reason": "packages/mcp-server/vitest.config.ts sets fileParallelism:false in its own config, because its pack specs run prepack builds that replace shared workspace dist trees. Forced parallel: 120 failed suites and only 6,801 of the serial 7,263 tests collected at all.",
+      "evidence": "scheduling/mcp-server-forced-parallel.json"
+    },
+    {
+      "suite": "root-core",
+      "verdict": "stays serial",
+      "reason": "policy #1833, unchanged and not re-litigated here.",
+      "evidence": "policy #1833"
+    },
+    {
+      "suite": "viz-core",
+      "verdict": "stays serial, on the arithmetic rather than a hard constraint",
+      "reason": "Six parallel runs, three serial. Parallel run 1, taken at the highest load observed in the session, failed chart-titles.s201's label-overlap assertion \u2014 it reads the settled positions of an ECharts force-directed layout, which is iterative and therefore timing-dependent. Runs 2-6 and all three serial runs matched the baseline exactly. The suite is 28s of a 2,472s capture, so parallelism buys seconds while admitting a timing-sensitive geometry assertion into the receipt.",
+      "parallelRuns": [
+        {
+          "report": "viz-core-par-1.json",
+          "tests": 1546,
+          "passed": 1545,
+          "failed": 1,
+          "skipped": 0,
+          "failedFiles": [
+            "packages/viz-core/test/chart-titles.s201.spec.ts"
+          ]
+        },
+        {
+          "report": "viz-core-par-2.json",
+          "tests": 1546,
+          "passed": 1546,
+          "failed": 0,
+          "skipped": 0,
+          "failedFiles": []
+        },
+        {
+          "report": "viz-core-par-3.json",
+          "tests": 1546,
+          "passed": 1546,
+          "failed": 0,
+          "skipped": 0,
+          "failedFiles": []
+        },
+        {
+          "report": "viz-core-par-4.json",
+          "tests": 1546,
+          "passed": 1546,
+          "failed": 0,
+          "skipped": 0,
+          "failedFiles": []
+        },
+        {
+          "report": "viz-core-par-5.json",
+          "tests": 1546,
+          "passed": 1546,
+          "failed": 0,
+          "skipped": 0,
+          "failedFiles": []
+        },
+        {
+          "report": "viz-core-par-6.json",
+          "tests": 1546,
+          "passed": 1546,
+          "failed": 0,
+          "skipped": 0,
+          "failedFiles": []
+        }
+      ],
+      "serialRuns": [
+        {
+          "report": "viz-core-ser-1.json",
+          "tests": 1546,
+          "passed": 1546,
+          "failed": 0,
+          "skipped": 0,
+          "failedFiles": []
+        },
+        {
+          "report": "viz-core-ser-2.json",
+          "tests": 1546,
+          "passed": 1546,
+          "failed": 0,
+          "skipped": 0,
+          "failedFiles": []
+        },
+        {
+          "report": "viz-core-ser-3.json",
+          "tests": 1546,
+          "passed": 1546,
+          "failed": 0,
+          "skipped": 0,
+          "failedFiles": []
+        }
+      ]
+    },
+    {
+      "suite": "viz-render",
+      "verdict": "parallel is clean, and worth nothing",
+      "reason": "Three back-to-back parallel runs matched the serial baseline exactly at 72/72/0. The suite is 11s.",
+      "parallelRuns": [
+        {
+          "report": "viz-render-par-1.json",
+          "tests": 72,
+          "passed": 72,
+          "failed": 0,
+          "skipped": 0,
+          "failedFiles": []
+        },
+        {
+          "report": "viz-render-par-2.json",
+          "tests": 72,
+          "passed": 72,
+          "failed": 0,
+          "skipped": 0,
+          "failedFiles": []
+        },
+        {
+          "report": "viz-render-par-3.json",
+          "tests": 72,
+          "passed": 72,
+          "failed": 0,
+          "skipped": 0,
+          "failedFiles": []
+        }
+      ]
+    },
+    {
+      "suite": "component-packages",
+      "verdict": "parallel is clean, and worth about twenty seconds",
+      "reason": "Three back-to-back runs at package defaults matched the serial baseline exactly at 1,485/1,485/0. The suite is 52s serial.",
+      "parallelRuns": [
+        {
+          "report": "comp-par-1.json",
+          "tests": 1485,
+          "passed": 1485,
+          "failed": 0,
+          "skipped": 0,
+          "failedFiles": []
+        },
+        {
+          "report": "comp-par-2.json",
+          "tests": 1485,
+          "passed": 1485,
+          "failed": 0,
+          "skipped": 0,
+          "failedFiles": []
+        },
+        {
+          "report": "comp-par-3.json",
+          "tests": 1485,
+          "passed": 1485,
+          "failed": 0,
+          "skipped": 0,
+          "failedFiles": []
+        }
+      ]
+    }
+  ],
+  "conclusion": "There is almost nothing to win by un-serialising. mcp-server and root-core are 2,381s of the 2,472s certified capture \u2014 96% \u2014 and both are serial for stated, measured reasons. The three fast suites together are 91s, 3.7%. The capture's real costs are elsewhere, and s204-m01 took them there: the per-call ledger read (census-cost/), the 170s single-test outlier moved to an on-demand gate, and the ninety-second tripwire that stops a thirty-four-minute discovery.",
+  "decision": {
+    "note": "Scheduling is now decided PER SUITE with its reason recorded on the receipt, instead of one blanket --serial applied to all five because of root-core. That is the part worth keeping: the blanket flag is exactly what CMOS learning #655 objected to, and it hid which constraint belonged to which suite.",
+    "serial": {
+      "root-core": "policy #1833",
+      "mcp-server": "its own vitest.config.ts fileParallelism:false \u2014 pack prepack builds replace shared dist trees",
+      "viz-core": "s204-m01: one parallel failure in a force-layout geometry assertion; 28s suite, so the saving does not pay for the flake"
+    },
+    "packageDefaults": {
+      "viz-render": "proven clean 3/3 parallel at 72/72/0",
+      "component-packages": "proven clean 3/3 parallel at 1,485/1,485/0"
+    },
+    "measuredSaving": "roughly 35 seconds of a 2,472-second capture. Scheduling was not the cost."
+  }
+}

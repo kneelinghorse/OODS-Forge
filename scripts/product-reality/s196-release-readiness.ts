@@ -8,7 +8,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import yaml from 'js-yaml';
 
-export const FACTS_PATH = 'artifacts/product-reality/sprint-203/readiness/release-readiness-facts.json';
+export const FACTS_PATH = 'artifacts/product-reality/sprint-204/readiness/release-readiness-facts.json';
 export const BASELINE_PATH = 'artifacts/product-reality/sprint-196/m06/package-shapes-baseline.json';
 export const PACKET_PATH = 'cmos/planning/forge-gate2-decision-packet.md';
 export const START = '<!-- BEGIN GENERATED GATE2 FACTS -->';
