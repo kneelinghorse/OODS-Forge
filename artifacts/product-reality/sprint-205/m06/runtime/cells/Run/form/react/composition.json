@@ -1,0 +1,1235 @@
+{
+  "status": "ok",
+  "layout": "form",
+  "schema": {
+    "version": "2026.02",
+    "screens": [
+      {
+        "id": "screen-form-11",
+        "component": "Stack",
+        "layout": {
+          "type": "stack",
+          "gapToken": "cluster-default"
+        },
+        "style": {
+          "spacingToken": "inset-default"
+        },
+        "children": [
+          {
+            "id": "form-title-1",
+            "component": "Input",
+            "props": {
+              "field": "target_name",
+              "label": "Target name",
+              "help": "What was captured, as the run names it (targets[0].name). Every run read carries exactly one target, so the subject is two fields here rather than an object of its own."
+            },
+            "meta": {
+              "intent": "slot:title",
+              "label": "title",
+              "confidence": 0.7,
+              "confidenceLevel": "low"
+            },
+            "bindings": {
+              "onChange": "handleChange_target_name"
+            }
+          },
+          {
+            "id": "form-fields-8",
+            "component": "Stack",
+            "layout": {
+              "type": "stack",
+              "gapToken": "cluster-default"
+            },
+            "children": [
+              {
+                "id": "form-field-group-2",
+                "component": "Stack",
+                "layout": {
+                  "type": "stack",
+                  "gapToken": "cluster-tight"
+                },
+                "children": [
+                  {
+                    "id": "slot-field-0-3",
+                    "component": "Input",
+                    "meta": {
+                      "intent": "slot:field-0",
+                      "label": "field-0",
+                      "confidence": 1,
+                      "confidenceLevel": "low"
+                    },
+                    "props": {
+                      "field": "searchQuery",
+                      "label": "Search Query",
+                      "help": "The current search query string entered by the user."
+                    },
+                    "bindings": {
+                      "onChange": "handleChange_searchQuery"
+                    }
+                  }
+                ]
+              },
+              {
+                "id": "form-field-group-4",
+                "component": "Stack",
+                "layout": {
+                  "type": "stack",
+                  "gapToken": "cluster-tight"
+                },
+                "children": [
+                  {
+                    "id": "slot-field-1-5",
+                    "component": "Checkbox",
+                    "meta": {
+                      "intent": "slot:field-1",
+                      "label": "field-1",
+                      "confidence": 1,
+                      "confidenceLevel": "low"
+                    },
+                    "props": {
+                      "field": "searchActive",
+                      "label": "Search Active",
+                      "help": "Whether the search input is currently focused or has a non-empty query."
+                    },
+                    "bindings": {
+                      "onChange": "handleChange_searchActive"
+                    }
+                  }
+                ]
+              },
+              {
+                "id": "form-field-group-6",
+                "component": "Stack",
+                "layout": {
+                  "type": "stack",
+                  "gapToken": "cluster-tight"
+                },
+                "children": [
+                  {
+                    "id": "slot-field-2-7",
+                    "component": "Input",
+                    "meta": {
+                      "intent": "slot:field-2",
+                      "label": "field-2",
+                      "confidence": 1,
+                      "confidenceLevel": "low"
+                    },
+                    "props": {
+                      "field": "filterCount",
+                      "label": "Filter Count",
+                      "placeholder": "Enter filterCount",
+                      "type": "number",
+                      "help": "Computed count of currently active filters."
+                    },
+                    "bindings": {
+                      "onChange": "handleChange_filterCount"
+                    }
+                  }
+                ]
+              },
+              {
+                "id": "form-field-group-12",
+                "component": "Stack",
+                "layout": {
+                  "type": "stack",
+                  "gapToken": "cluster-tight"
+                },
+                "children": [
+                  {
+                    "id": "slot-field-3-13",
+                    "component": "Input",
+                    "meta": {
+                      "intent": "slot:field-3",
+                      "label": "field-3",
+                      "confidence": 1,
+                      "confidenceLevel": "low"
+                    },
+                    "props": {
+                      "field": "provenance_at",
+                      "label": "Obtained",
+                      "help": "When they were obtained.",
+                      "type": "datetime-local"
+                    },
+                    "bindings": {
+                      "onChange": "handleChange_provenance_at"
+                    }
+                  }
+                ]
+              },
+              {
+                "id": "form-field-group-14",
+                "component": "Stack",
+                "layout": {
+                  "type": "stack",
+                  "gapToken": "cluster-tight"
+                },
+                "children": [
+                  {
+                    "id": "slot-field-4-15",
+                    "component": "Select",
+                    "meta": {
+                      "intent": "slot:field-4",
+                      "label": "field-4",
+                      "confidence": 1,
+                      "confidenceLevel": "low"
+                    },
+                    "props": {
+                      "field": "mode",
+                      "label": "Mode",
+                      "placeholder": "Enter mode",
+                      "options": [
+                        {
+                          "value": "app",
+                          "label": "app"
+                        },
+                        {
+                          "value": "suite",
+                          "label": "suite"
+                        }
+                      ],
+                      "help": "The capture mode. Every run a run view reads is app; suite runs aggregate targets and carry no a11y report of their own."
+                    },
+                    "bindings": {
+                      "onChange": "handleChange_mode"
+                    }
+                  }
+                ]
+              },
+              {
+                "id": "form-field-group-16",
+                "component": "Stack",
+                "layout": {
+                  "type": "stack",
+                  "gapToken": "cluster-tight"
+                },
+                "children": [
+                  {
+                    "id": "slot-field-5-17",
+                    "component": "Input",
+                    "meta": {
+                      "intent": "slot:field-5",
+                      "label": "field-5",
+                      "confidence": 1,
+                      "confidenceLevel": "low"
+                    },
+                    "props": {
+                      "field": "page",
+                      "label": "Page",
+                      "placeholder": "Enter page",
+                      "type": "number",
+                      "help": "Current page number (1-based)."
+                    },
+                    "bindings": {
+                      "onChange": "handleChange_page"
+                    }
+                  }
+                ]
+              },
+              {
+                "id": "form-field-group-18",
+                "component": "Stack",
+                "layout": {
+                  "type": "stack",
+                  "gapToken": "cluster-tight"
+                },
+                "children": [
+                  {
+                    "id": "slot-field-6-19",
+                    "component": "Input",
+                    "meta": {
+                      "intent": "slot:field-6",
+                      "label": "field-6",
+                      "confidence": 1,
+                      "confidenceLevel": "low"
+                    },
+                    "props": {
+                      "field": "pageSize",
+                      "label": "Page Size",
+                      "placeholder": "Enter pageSize",
+                      "type": "number",
+                      "help": "Number of items displayed per page."
+                    },
+                    "bindings": {
+                      "onChange": "handleChange_pageSize"
+                    }
+                  }
+                ]
+              },
+              {
+                "id": "form-field-group-20",
+                "component": "Stack",
+                "layout": {
+                  "type": "stack",
+                  "gapToken": "cluster-tight"
+                },
+                "children": [
+                  {
+                    "id": "slot-field-7-21",
+                    "component": "Input",
+                    "meta": {
+                      "intent": "slot:field-7",
+                      "label": "field-7",
+                      "confidence": 1,
+                      "confidenceLevel": "low"
+                    },
+                    "props": {
+                      "field": "provenance_source",
+                      "label": "Source",
+                      "placeholder": "Enter provenance source",
+                      "help": "The system that produced the record."
+                    },
+                    "bindings": {
+                      "onChange": "handleChange_provenance_source"
+                    }
+                  }
+                ]
+              },
+              {
+                "id": "form-field-group-22",
+                "component": "Stack",
+                "layout": {
+                  "type": "stack",
+                  "gapToken": "cluster-tight"
+                },
+                "children": [
+                  {
+                    "id": "slot-field-8-23",
+                    "component": "Input",
+                    "meta": {
+                      "intent": "slot:field-8",
+                      "label": "field-8",
+                      "confidence": 1,
+                      "confidenceLevel": "low"
+                    },
+                    "props": {
+                      "field": "provenance_record",
+                      "label": "Record",
+                      "placeholder": "Enter provenance record",
+                      "help": "Which record there."
+                    },
+                    "bindings": {
+                      "onChange": "handleChange_provenance_record"
+                    }
+                  }
+                ]
+              },
+              {
+                "id": "form-field-group-24",
+                "component": "Stack",
+                "layout": {
+                  "type": "stack",
+                  "gapToken": "cluster-tight"
+                },
+                "children": [
+                  {
+                    "id": "slot-field-9-25",
+                    "component": "Input",
+                    "meta": {
+                      "intent": "slot:field-9",
+                      "label": "field-9",
+                      "confidence": 1,
+                      "confidenceLevel": "low"
+                    },
+                    "props": {
+                      "field": "provenance_locator",
+                      "label": "Read from",
+                      "placeholder": "Enter provenance locator",
+                      "help": "Where in that record the values were read."
+                    },
+                    "bindings": {
+                      "onChange": "handleChange_provenance_locator"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "form-actions-9",
+            "component": "Stack",
+            "layout": {
+              "type": "inline",
+              "align": "end"
+            },
+            "style": {
+              "spacingToken": "inset-default"
+            },
+            "children": [
+              {
+                "id": "form-submit-10",
+                "component": "Button",
+                "props": {
+                  "label": "Save",
+                  "type": "submit"
+                }
+              }
+            ]
+          }
+        ],
+        "bindings": {
+          "onSubmit": "handleSubmit"
+        },
+        "meta": {
+          "label": "Run form"
+        }
+      }
+    ],
+    "objectSchema": {
+      "searchQuery": {
+        "type": "string",
+        "required": false,
+        "default": "",
+        "description": "The current search query string entered by the user.",
+        "semanticType": "input.search.query"
+      },
+      "searchActive": {
+        "type": "boolean",
+        "required": false,
+        "default": false,
+        "description": "Whether the search input is currently focused or has a non-empty query.",
+        "semanticType": "state.search.active"
+      },
+      "filters": {
+        "type": "object[]",
+        "required": false,
+        "default": [],
+        "description": "Array of available filter descriptors. Each entry defines a filterable dimension:\n  - field: string (the schema field to filter on)\n  - label: string (display label)\n  - type: \"select\" | \"multi-select\" | \"range\" | \"boolean\" | \"date-range\"\n  - options: array of { value, label } for select/multi-select types\n",
+        "semanticType": "input.filter.descriptors"
+      },
+      "activeFilters": {
+        "type": "object[]",
+        "required": false,
+        "default": [],
+        "description": "Array of currently applied filter values:\n  - field: string (matches a filter descriptor field)\n  - operator: \"eq\" | \"in\" | \"range\" | \"gt\" | \"lt\" | \"between\"\n  - value: unknown (the selected filter value or values)\n",
+        "semanticType": "state.filter.active"
+      },
+      "filterCount": {
+        "type": "number",
+        "required": true,
+        "default": 0,
+        "description": "Computed count of currently active filters.",
+        "semanticType": "metric.filter.count"
+      },
+      "page": {
+        "type": "number",
+        "required": true,
+        "default": 1,
+        "description": "Current page number (1-based).",
+        "semanticType": "state.pagination.page"
+      },
+      "pageSize": {
+        "type": "number",
+        "required": true,
+        "default": 25,
+        "description": "Number of items displayed per page.",
+        "semanticType": "state.pagination.pageSize"
+      },
+      "totalItems": {
+        "type": "number",
+        "required": false,
+        "default": 0,
+        "description": "Total number of items across all pages. Used to compute total page count.",
+        "semanticType": "metric.pagination.totalItems"
+      },
+      "totalPages": {
+        "type": "number",
+        "required": false,
+        "default": 0,
+        "description": "Computed total number of pages (ceil(totalItems / pageSize)).",
+        "semanticType": "metric.pagination.totalPages"
+      },
+      "provenance_source": {
+        "type": "string",
+        "required": true,
+        "examples": [
+          "Stage1",
+          "Stage1",
+          "Stage1",
+          "Stage1",
+          "Stage1",
+          "Stage1"
+        ],
+        "description": "The system that produced the record.",
+        "semanticType": "provenance.source"
+      },
+      "provenance_record": {
+        "type": "string",
+        "required": true,
+        "examples": [
+          "stage1-tracelab.aquex.ai-2026-09-18",
+          "stage1-tracelab.aquex.ai-2026-09-17",
+          "stage1-tracelab.aquex.ai-2026-09-17",
+          "stage1-frontend-production-43c3.up.railway.app-2026-09-17",
+          "stage1-designsystem.digital.gov-2026-09-17",
+          "stage1-designsystem.digital.gov-2026-09-16"
+        ],
+        "description": "Which record there.",
+        "semanticType": "provenance.record"
+      },
+      "provenance_locator": {
+        "type": "string",
+        "required": false,
+        "examples": [
+          "manifest.json",
+          "manifest.json",
+          "manifest.json",
+          "manifest.json",
+          "manifest.json",
+          "manifest.json"
+        ],
+        "description": "Where in that record the values were read.",
+        "semanticType": "provenance.locator"
+      },
+      "provenance_method": {
+        "type": "string",
+        "required": true,
+        "examples": [
+          "Stage1 app capture, 28 passes",
+          "Stage1 app capture, 18 passes",
+          "Stage1 app capture, 20 passes",
+          "Stage1 app capture, 16 passes",
+          "Stage1 app capture, 30 passes",
+          "Stage1 app capture, 20 passes"
+        ],
+        "description": "How the values were obtained.",
+        "semanticType": "provenance.method"
+      },
+      "provenance_at": {
+        "type": "datetime",
+        "required": true,
+        "examples": [
+          "2026-09-18T00:34:54.671Z",
+          "2026-09-17T21:55:36.491Z",
+          "2026-09-17T21:53:41.439Z",
+          "2026-09-17T21:52:21.293Z",
+          "2026-09-17T00:44:54.052Z",
+          "2026-09-16T03:40:54.031Z"
+        ],
+        "description": "When they were obtained.",
+        "semanticType": "provenance.at"
+      },
+      "run_id": {
+        "type": "string",
+        "required": true,
+        "examples": [
+          "d0a43821-5730-4bf3-8b40-20f6fcb6b69c",
+          "edb8954d-44a6-4e48-b9d9-aad676f2bf18",
+          "924005a5-e31e-4430-80ca-84c5b974fd86",
+          "2af80ee6-d74f-4922-8c9e-1763b4f7c2d2",
+          "6e435ce7-eaab-46b4-be6b-cea9b80defa6",
+          "b78461bc-2138-49ae-a82a-188d9d01ff78"
+        ],
+        "description": "The capture's own id, a uuid Stage1 assigns; the directory name under out/stage1/<suite>/.",
+        "semanticType": "capture.run.run_id"
+      },
+      "target_name": {
+        "type": "string",
+        "required": true,
+        "examples": [
+          "tracelab-production-infer",
+          "tracelab-production",
+          "tracelab-production",
+          "tracelab-production",
+          "uswds-designsystem",
+          "uswds-designsystem"
+        ],
+        "description": "What was captured, as the run names it (targets[0].name). Every run read carries exactly one target, so the subject is two fields here rather than an object of its own.",
+        "semanticType": "text.label"
+      },
+      "target_url": {
+        "type": "string",
+        "required": true,
+        "examples": [
+          "https://tracelab.aquex.ai/",
+          "https://tracelab.aquex.ai/",
+          "https://tracelab.aquex.ai/",
+          "https://frontend-production-43c3.up.railway.app/",
+          "https://designsystem.digital.gov/",
+          "https://designsystem.digital.gov/"
+        ],
+        "description": "Where the capture started (targets[0].url).",
+        "semanticType": "capture.run.target_url"
+      },
+      "mode": {
+        "type": "string",
+        "required": true,
+        "examples": [
+          "app",
+          "app",
+          "app",
+          "app",
+          "app",
+          "app"
+        ],
+        "description": "The capture mode. Every run a run view reads is app; suite runs aggregate targets and carry no a11y report of their own.",
+        "enum": [
+          "app",
+          "suite"
+        ],
+        "semanticType": "capture.run.mode"
+      },
+      "auth_type": {
+        "type": "string",
+        "required": true,
+        "examples": [
+          "none",
+          "none",
+          "none",
+          "none",
+          "none",
+          "none"
+        ],
+        "description": "The authentication the manifest RECORDS. Shown as recorded, never inferred: Sprint 204 measured \"none\" on a capture that was authenticated, which is Stage1's to correct.",
+        "semanticType": "capture.run.auth_type"
+      },
+      "page_count": {
+        "type": "integer",
+        "required": true,
+        "examples": [
+          25,
+          25,
+          25,
+          10,
+          40,
+          40
+        ],
+        "description": "How many pages the accessibility pass read.",
+        "semanticType": "capture.run.page_count"
+      },
+      "finding_count": {
+        "type": "integer",
+        "required": true,
+        "examples": [
+          0,
+          0,
+          0,
+          0,
+          6,
+          6
+        ],
+        "description": "How many rule failures the run found across its pages (a11y rollup.violation_count).",
+        "semanticType": "capture.run.finding_count"
+      },
+      "critical_count": {
+        "type": "integer",
+        "required": true,
+        "examples": [
+          0,
+          0,
+          0,
+          0,
+          2,
+          2
+        ],
+        "description": "Findings of critical impact.",
+        "semanticType": "capture.run.critical_count"
+      },
+      "serious_count": {
+        "type": "integer",
+        "required": true,
+        "examples": [
+          0,
+          0,
+          0,
+          0,
+          1,
+          1
+        ],
+        "description": "Findings of serious impact.",
+        "semanticType": "capture.run.serious_count"
+      },
+      "moderate_count": {
+        "type": "integer",
+        "required": true,
+        "examples": [
+          0,
+          0,
+          0,
+          0,
+          1,
+          1
+        ],
+        "description": "Findings of moderate impact.",
+        "semanticType": "capture.run.moderate_count"
+      },
+      "minor_count": {
+        "type": "integer",
+        "required": true,
+        "examples": [
+          0,
+          0,
+          0,
+          0,
+          2,
+          2
+        ],
+        "description": "Findings of minor impact.",
+        "semanticType": "capture.run.minor_count"
+      },
+      "unknown_count": {
+        "type": "integer",
+        "required": true,
+        "examples": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "description": "Findings whose impact the engine did not state. Its own bucket: never folded into minor.",
+        "semanticType": "capture.run.unknown_count"
+      },
+      "pass_count": {
+        "type": "integer",
+        "required": true,
+        "examples": [
+          28,
+          18,
+          20,
+          16,
+          30,
+          20
+        ],
+        "description": "How many capture passes ran.",
+        "semanticType": "capture.run.pass_count"
+      },
+      "passes_failed": {
+        "type": "integer",
+        "required": true,
+        "examples": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "description": "How many of those passes did not finish ok.",
+        "semanticType": "capture.run.passes_failed"
+      },
+      "artifact_count": {
+        "type": "integer",
+        "required": true,
+        "examples": [
+          25,
+          18,
+          20,
+          16,
+          27,
+          20
+        ],
+        "description": "How many artifacts the run's index lists.",
+        "semanticType": "capture.run.artifact_count"
+      },
+      "evidence_retained": {
+        "type": "boolean",
+        "required": false,
+        "examples": [
+          true,
+          true,
+          null,
+          null,
+          true,
+          null
+        ],
+        "description": "Whether the run kept its evidence directory (evidence_retention.retained).",
+        "semanticType": "capture.run.evidence_retained"
+      }
+    }
+  },
+  "schemaRef": "compose-9aa7780c",
+  "schemaRefCreatedAt": "2026-09-18T10:17:59.878Z",
+  "schemaRefExpiresAt": "2026-09-18T10:47:59.878Z",
+  "compositionId": "cmp-d6d15ed77765",
+  "version": 1,
+  "parentVersion": null,
+  "operation": "compose",
+  "head": null,
+  "selections": [
+    {
+      "slotName": "title",
+      "intent": "page-header",
+      "selectedComponent": "DetailHeader",
+      "confidence": 0.7,
+      "confidenceLevel": "medium",
+      "explanation": "DetailHeader was selected for slot \"title\" because preferred for \"page-header\" (rank 2); 1 context match(es); 1 trait(s); name contains \"header\"; position affinity: DetailHeader fits well in header. Confidence is medium (0.70).",
+      "candidates": [
+        {
+          "name": "DetailHeader",
+          "reason": "preferred for \"page-header\" (rank 2); 1 context match(es); 1 trait(s); name contains \"header\"; position affinity: DetailHeader fits well in header",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 1
+        },
+        {
+          "name": "Text",
+          "reason": "preferred for \"page-header\" (rank 1); 1 context match(es); 1 region match(es); position affinity: Text fits well in header",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.92
+        },
+        {
+          "name": "Badge",
+          "reason": "1 context match(es); 1 region match(es); 1 trait(s); position affinity: Badge fits well in header",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.3
+        }
+      ]
+    },
+    {
+      "slotName": "field-0",
+      "intent": "long-text-input",
+      "selectedComponent": "Textarea",
+      "confidence": 1,
+      "confidenceLevel": "high",
+      "explanation": "Textarea was selected for slot \"field-0\" because preferred for \"long-text-input\" (rank 1); 3 tag match(es); tag match (text, input); 1 context match(es); 1 region match(es); 1 category match(es); name contains \"text\"; position affinity: Textarea fits well in main. Confidence is high (1.00).",
+      "candidates": [
+        {
+          "name": "Textarea",
+          "reason": "preferred for \"long-text-input\" (rank 1); 3 tag match(es); tag match (text, input); 1 context match(es); 1 region match(es); 1 category match(es); name contains \"text\"; position affinity: Textarea fits well in main",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 1
+        },
+        {
+          "name": "Input",
+          "reason": "preferred for \"long-text-input\" (rank 2); 2 tag match(es); tag match (input); 1 context match(es); 1 region match(es); 1 category match(es); name contains \"input\"",
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.98
+        },
+        {
+          "name": "Checkbox",
+          "reason": "2 tag match(es); tag match (input); 1 context match(es); 1 region match(es); 1 category match(es); position affinity: Checkbox fits well in main",
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.56
+        }
+      ]
+    },
+    {
+      "slotName": "field-1",
+      "intent": "boolean-input",
+      "selectedComponent": "Checkbox",
+      "confidence": 1,
+      "confidenceLevel": "high",
+      "explanation": "Checkbox was selected for slot \"field-1\" because preferred for \"boolean-input\" (rank 2); 2 tag match(es); tag match (boolean, input); 1 context match(es); 1 region match(es); 1 category match(es); position affinity: Checkbox fits well in main. Confidence is high (1.00).",
+      "candidates": [
+        {
+          "name": "Checkbox",
+          "reason": "preferred for \"boolean-input\" (rank 2); 2 tag match(es); tag match (boolean, input); 1 context match(es); 1 region match(es); 1 category match(es); position affinity: Checkbox fits well in main",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 1
+        },
+        {
+          "name": "Input",
+          "reason": "2 tag match(es); tag match (input); 1 context match(es); 1 region match(es); 1 category match(es); name contains \"input\"",
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.64
+        },
+        {
+          "name": "DatePicker",
+          "reason": "2 tag match(es); tag match (input); 1 context match(es); 1 region match(es); 1 category match(es); position affinity: DatePicker fits well in main",
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.56
+        }
+      ]
+    },
+    {
+      "slotName": "field-2",
+      "intent": "form-input",
+      "selectedComponent": "Input",
+      "confidence": 1,
+      "confidenceLevel": "high",
+      "explanation": "Input was selected for slot \"field-2\" because preferred for \"form-input\" (rank 1); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); name contains \"input\". Confidence is high (1.00).",
+      "candidates": [
+        {
+          "name": "Input",
+          "reason": "preferred for \"form-input\" (rank 1); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); name contains \"input\"",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 1
+        },
+        {
+          "name": "Select",
+          "reason": "preferred for \"form-input\" (rank 2); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); position affinity: Select fits well in main",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 1
+        },
+        {
+          "name": "Checkbox",
+          "reason": "2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); position affinity: Checkbox fits well in main",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.78
+        }
+      ]
+    },
+    {
+      "slotName": "field-3",
+      "intent": "date-input",
+      "selectedComponent": "DatePicker",
+      "confidence": 1,
+      "confidenceLevel": "high",
+      "explanation": "DatePicker was selected for slot \"field-3\" because preferred for \"date-input\" (rank 1); 3 tag match(es); tag match (date, input); 1 context match(es); 1 region match(es); 1 category match(es); name contains \"date\"; position affinity: DatePicker fits well in main. Confidence is high (1.00).",
+      "candidates": [
+        {
+          "name": "DatePicker",
+          "reason": "preferred for \"date-input\" (rank 1); 3 tag match(es); tag match (date, input); 1 context match(es); 1 region match(es); 1 category match(es); name contains \"date\"; position affinity: DatePicker fits well in main",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 1
+        },
+        {
+          "name": "Input",
+          "reason": "preferred for \"date-input\" (rank 2); 2 tag match(es); tag match (input); 1 context match(es); 1 region match(es); 1 category match(es); name contains \"input\"",
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.98
+        },
+        {
+          "name": "Checkbox",
+          "reason": "2 tag match(es); tag match (input); 1 context match(es); 1 region match(es); 1 category match(es); position affinity: Checkbox fits well in main",
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.56
+        }
+      ]
+    },
+    {
+      "slotName": "field-4",
+      "intent": "enum-input",
+      "selectedComponent": "Select",
+      "confidence": 1,
+      "confidenceLevel": "high",
+      "explanation": "Select was selected for slot \"field-4\" because preferred for \"enum-input\" (rank 1); 3 tag match(es); tag match (input); 1 context match(es); 1 region match(es); 1 category match(es); position affinity: Select fits well in main. Confidence is high (1.00).",
+      "candidates": [
+        {
+          "name": "Select",
+          "reason": "preferred for \"enum-input\" (rank 1); 3 tag match(es); tag match (input); 1 context match(es); 1 region match(es); 1 category match(es); position affinity: Select fits well in main",
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 1
+        },
+        {
+          "name": "Input",
+          "reason": "preferred for \"enum-input\" (rank 3); 2 tag match(es); tag match (input); 1 context match(es); 1 region match(es); 1 category match(es); name contains \"input\"",
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.92
+        },
+        {
+          "name": "TagInput",
+          "reason": "preferred for \"enum-input\" (rank 2); 1 context match(es); 1 region match(es); 1 category match(es); 1 trait(s); name contains \"input\"",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.72
+        }
+      ]
+    },
+    {
+      "slotName": "field-5",
+      "intent": "form-input",
+      "selectedComponent": "Input",
+      "confidence": 1,
+      "confidenceLevel": "high",
+      "explanation": "Input was selected for slot \"field-5\" because preferred for \"form-input\" (rank 1); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); name contains \"input\". Confidence is high (1.00).",
+      "candidates": [
+        {
+          "name": "Input",
+          "reason": "preferred for \"form-input\" (rank 1); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); name contains \"input\"",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 1
+        },
+        {
+          "name": "Select",
+          "reason": "preferred for \"form-input\" (rank 2); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); position affinity: Select fits well in main",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 1
+        },
+        {
+          "name": "Checkbox",
+          "reason": "2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); position affinity: Checkbox fits well in main",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.78
+        }
+      ]
+    },
+    {
+      "slotName": "field-6",
+      "intent": "form-input",
+      "selectedComponent": "Input",
+      "confidence": 1,
+      "confidenceLevel": "high",
+      "explanation": "Input was selected for slot \"field-6\" because preferred for \"form-input\" (rank 1); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); name contains \"input\". Confidence is high (1.00).",
+      "candidates": [
+        {
+          "name": "Input",
+          "reason": "preferred for \"form-input\" (rank 1); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); name contains \"input\"",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 1
+        },
+        {
+          "name": "Select",
+          "reason": "preferred for \"form-input\" (rank 2); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); position affinity: Select fits well in main",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 1
+        },
+        {
+          "name": "Checkbox",
+          "reason": "2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); position affinity: Checkbox fits well in main",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.78
+        }
+      ]
+    },
+    {
+      "slotName": "field-7",
+      "intent": "form-input",
+      "selectedComponent": "Input",
+      "confidence": 1,
+      "confidenceLevel": "high",
+      "explanation": "Input was selected for slot \"field-7\" because preferred for \"form-input\" (rank 1); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); name contains \"input\". Confidence is high (1.00).",
+      "candidates": [
+        {
+          "name": "Input",
+          "reason": "preferred for \"form-input\" (rank 1); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); name contains \"input\"",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 1
+        },
+        {
+          "name": "Select",
+          "reason": "preferred for \"form-input\" (rank 2); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); position affinity: Select fits well in main",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 1
+        },
+        {
+          "name": "Checkbox",
+          "reason": "2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); position affinity: Checkbox fits well in main",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.78
+        }
+      ]
+    },
+    {
+      "slotName": "field-8",
+      "intent": "form-input",
+      "selectedComponent": "Input",
+      "confidence": 1,
+      "confidenceLevel": "high",
+      "explanation": "Input was selected for slot \"field-8\" because preferred for \"form-input\" (rank 1); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); name contains \"input\". Confidence is high (1.00).",
+      "candidates": [
+        {
+          "name": "Input",
+          "reason": "preferred for \"form-input\" (rank 1); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); name contains \"input\"",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 1
+        },
+        {
+          "name": "Select",
+          "reason": "preferred for \"form-input\" (rank 2); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); position affinity: Select fits well in main",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 1
+        },
+        {
+          "name": "Checkbox",
+          "reason": "2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); position affinity: Checkbox fits well in main",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.78
+        }
+      ]
+    },
+    {
+      "slotName": "field-9",
+      "intent": "form-input",
+      "selectedComponent": "Input",
+      "confidence": 1,
+      "confidenceLevel": "high",
+      "explanation": "Input was selected for slot \"field-9\" because preferred for \"form-input\" (rank 1); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); name contains \"input\". Confidence is high (1.00).",
+      "candidates": [
+        {
+          "name": "Input",
+          "reason": "preferred for \"form-input\" (rank 1); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); name contains \"input\"",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 1
+        },
+        {
+          "name": "Select",
+          "reason": "preferred for \"form-input\" (rank 2); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); position affinity: Select fits well in main",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 1
+        },
+        {
+          "name": "Checkbox",
+          "reason": "2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); position affinity: Checkbox fits well in main",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.78
+        }
+      ]
+    }
+  ],
+  "validation": {
+    "status": "ok",
+    "errors": [],
+    "warnings": []
+  },
+  "warnings": [
+    {
+      "code": "OODS-V121",
+      "message": "Object 'Run' has maturity 'alpha' — composed output may change.",
+      "hint": "Consider using stable objects for production compositions."
+    },
+    {
+      "code": "OODS-V117",
+      "message": "Field collision: \"provenance_source\" in object schema overrides trait definition"
+    },
+    {
+      "code": "OODS-V117",
+      "message": "Field collision: \"provenance_record\" in object schema overrides trait definition"
+    },
+    {
+      "code": "OODS-V117",
+      "message": "Field collision: \"provenance_locator\" in object schema overrides trait definition"
+    },
+    {
+      "code": "OODS-V117",
+      "message": "Field collision: \"provenance_method\" in object schema overrides trait definition"
+    },
+    {
+      "code": "OODS-V117",
+      "message": "Field collision: \"provenance_at\" in object schema overrides trait definition"
+    },
+    {
+      "code": "OODS-V119",
+      "message": "No view_extensions found for context \"form\" in object \"Run\". Available contexts: list, detail, card"
+    }
+  ],
+  "objectUsed": {
+    "name": "Run",
+    "version": "0.1.0",
+    "traits": [
+      "behavioral/Searchable",
+      "behavioral/Filterable",
+      "behavioral/Pageable",
+      "core/Provenanced"
+    ],
+    "fieldsComposed": 30,
+    "viewExtensionsApplied": {
+      "list": 4,
+      "detail": 6,
+      "card": 2
+    }
+  },
+  "meta": {
+    "intentParsed": "Run form view",
+    "layoutDetected": "context-inferred: form (from context=\"form\")",
+    "slotCount": 11,
+    "nodeCount": 25,
+    "intentSynthetic": true,
+    "warnings": [
+      "Object 'Run' has maturity 'alpha' — composed output may change.",
+      "Field collision: \"provenance_source\" in object schema overrides trait definition",
+      "Field collision: \"provenance_record\" in object schema overrides trait definition",
+      "Field collision: \"provenance_locator\" in object schema overrides trait definition",
+      "Field collision: \"provenance_method\" in object schema overrides trait definition",
+      "Field collision: \"provenance_at\" in object schema overrides trait definition",
+      "No view_extensions found for context \"form\" in object \"Run\". Available contexts: list, detail, card"
+    ],
+    "intelligence": {
+      "fieldsExpanded": true,
+      "slotsExpanded": 7,
+      "expansionReason": "Expanded from 3 to 10 field groups for 28 fields",
+      "patternsApplied": 30,
+      "positionAffinityUsed": true,
+      "fieldAffinityUsed": true,
+      "compositionConfidence": 0.97
+    }
+  }
+}

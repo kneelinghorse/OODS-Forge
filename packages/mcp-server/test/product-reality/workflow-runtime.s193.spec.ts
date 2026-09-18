@@ -65,7 +65,10 @@ describe('current workflow runtime accountability', () => {
     const probe = workflowEditProbe(result.schema);
     expect(probe.field).not.toBe(result.schema.workflow!.data.idField);
     if (object === 'Invoice') {
-      expect(probe.field).toBe('invoice_number');
+      // s205-m06: the form's title-slot Input (billing_contact_name) became editable when it got its change handler, and
+      // the probe takes the first editable _name/_number field; before, that input was a value that snapped back. The
+      // 352-cell sweep proves the save persists in React and Vue.
+      expect(probe.field).toBe('billing_contact_name');
       expect(expectedWorkflowFlow(result.schema)).toContain('save-record-field');
     }
     if (object === 'Plan' || object === 'Subscription') expect(probe.field).toBe('plan_name');

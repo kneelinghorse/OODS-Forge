@@ -105,13 +105,17 @@ if (command === 'plan') {
       const base = JSON.parse(execFileSync('git', ['show', `${BASE_HEAD}:${runtimeFile}`], { cwd: root, maxBuffer: 64 * 1024 * 1024 }).toString());
       const current = JSON.parse(fs.readFileSync(path.join(root, runtimeFile), 'utf8'));
       const baseRows = new Map<string, string>(base.rows.map((row: never) => [identity(row), hashOf(row)]));
+      // Chained per row (s205-m06): a row's before is its last recorded after in an earlier mission, else the base.
+      // Comparing every append with the BASE registry re-recorded m01's 92 moves under m06.
+      const lastAfter = new Map<string, string>();
+      for (const entry of ledger.entries) if (entry.file === runtimeFile && entry.pin.endsWith(' artifactHash')) lastAfter.set(entry.pin.slice(0, -' artifactHash'.length), entry.after);
       for (const row of current.rows) {
         const rowAfter = hashOf(row);
-        const rowBefore = baseRows.get(identity(row));
+        const rowBefore = lastAfter.get(identity(row)) ?? baseRows.get(identity(row));
         if (rowBefore === undefined) entries.push({ file: runtimeFile, pin: `${identity(row)} artifactHash`, before: 'born', after: rowAfter, mission, reason: `${reason} (cell born this sprint)` });
         else if (rowBefore !== rowAfter) entries.push({ file: runtimeFile, pin: `${identity(row)} artifactHash`, before: rowBefore, after: rowAfter, mission, reason });
       }
-      entries.push({ file: runtimeFile, pin: 'ledger head', before: base.head, after: current.head, mission, reason: `Re-sweep at the ${mission} head (run ${current.runId}); ${base.rows.length} rows in, ${current.rows.length} out.` });
+      entries.push({ file: runtimeFile, pin: 'ledger head', before: ledger.entries.filter(entry => entry.file === runtimeFile && entry.pin === 'ledger head').at(-1)?.after ?? base.head, after: current.head, mission, reason: `Re-sweep at the ${mission} head (run ${current.runId}); ${base.rows.length} rows in, ${current.rows.length} out.` });
     } else entries.push({ file: pin.file, pin: pin.file.endsWith('.snap') ? 'snapshot' : pin.file.startsWith('docs/') ? 'generated doc' : 'registry', before, after, mission, reason });
   }
   // Twice within one mission is unattributed churn; once per declared mission is the sprint's plan.
