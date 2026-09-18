@@ -19,7 +19,15 @@ describe('Statusable trait', () => {
     expect(def.schema.status.type).toBe('string');
     expect(def.schema.domain.type).toBe('StatusDomain');
     expect(def.semantics?.status?.token_mapping).toBe('tokenMap(status.registry.*)');
-    expect(def.view_extensions?.list?.[0]?.component).toBe('Badge');
+    // MOVED in s204-m02. This authored `Badge` with `statusField`, `domainField` and `showIcon`, and
+    // the canonical Badge contract carries no field directive at all, so the target contracts refuse
+    // three of those four props (OODS-V007) in both React and Vue. `StatusBadge` takes all four, which
+    // is what `lifecycle/Supersedable` already worked out and what every other context in this trait
+    // already authored — the list context was the odd one out. No object composes Statusable, so the
+    // refusal had never fired on a real screen; it was latent, waiting for the first object to compose
+    // it. `statusable-badge-contract.s204.spec.ts` holds both halves, including a negative control
+    // that the original authoring still reds.
+    expect(def.view_extensions?.list?.[0]?.component).toBe('StatusBadge');
   });
 
   it('exposes TypeScript definition with 6 tone token sets', () => {

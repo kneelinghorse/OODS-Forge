@@ -5,6 +5,7 @@ import { SchemaStore } from '../schema-store/index.js';
 import { ToolError } from '../errors/tool-error.js';
 import { CURRENT_VERSION, getChangelogSince, type ChangelogEntry } from '../versioning/versions.js';
 import { listObjects } from '../objects/object-loader.js';
+import { listTraits } from '../objects/trait-loader.js';
 import { readRuntimeSummary, type RuntimeSummary } from '../lib/runtime-ledger.js';
 import { readReleaseSummary, type ReleaseSummary } from '../lib/release-ledger.js';
 import { readToolSummary, type ToolSummary } from '../lib/tool-ledger.js';
@@ -27,10 +28,25 @@ type HealthInput = {
   sinceVersion?: string;
 };
 
+/** 'live' moves when the registry moves; 'snapshot' is frozen at `registry.lastSync`. */
+type CountSource = 'live' | 'snapshot';
+
 type HealthOutput = {
   status: 'ok' | 'degraded';
   server: { version: string; uptime: number };
-  registry: { components: number; traits: number; objects: number; lastSync: string };
+  registry: {
+    components: number;
+    traits: number;
+    objects: number;
+    lastSync: string;
+    /**
+     * Where each count above was read from on this call. An advertised count that cannot move is
+     * worse than no count: through Sprint 203 this tool reported the object count live while traits
+     * and components came from a frozen structured-data export, so it advertised 46 traits where the
+     * registry held 47 and nothing said which number was which (learning #657).
+     */
+    countsFrom: { components: CountSource; traits: CountSource; objects: CountSource };
+  };
   tokens: TokenInfo;
   schemas: { savedCount: number; storeDir: string };
   latency: number;
@@ -174,23 +190,41 @@ export async function handle(input?: HealthInput): Promise<HealthOutput> {
   const warnings: string[] = [];
   const structuredDataDir = resolveStructuredDataDir();
 
-  let registry = { components: 0, traits: 0, objects: 0, lastSync: EPOCH_ISO };
+  let registry: HealthOutput['registry'] = {
+    components: 0, traits: 0, objects: 0, lastSync: EPOCH_ISO,
+    countsFrom: { components: 'snapshot', traits: 'snapshot', objects: 'snapshot' },
+  };
   let tokenInfo: TokenInfo = { built: false, brands: [], themes: [], scopes: {}, defaultScope: null };
   try { tokenInfo = readTokenInfo(); }
   catch (error) { warnings.push(`tokens subsystem unavailable: ${(error as Error).message}`); }
   try {
     const registryInfo = readRegistryInfo(structuredDataDir);
+    // Each count is computed from the registry itself where a loader exists, and falls back to the
+    // frozen structured-data export where one does not — and `countsFrom` says which happened, so a
+    // reader can tell a number that tracks the registry from one that is pinned at `lastSync`.
+    // Components have no live loader, so that one stays frozen and says so.
     let objectCount = registryInfo.objects;
+    let objectsFrom: CountSource = 'snapshot';
     try {
       objectCount = listObjects().length;
+      objectsFrom = 'live';
     } catch {
       // Fall back to structured data stats if object loader unavailable
     }
+    let traitCount = registryInfo.traits;
+    let traitsFrom: CountSource = 'snapshot';
+    try {
+      traitCount = listTraits().length;
+      traitsFrom = 'live';
+    } catch {
+      // Fall back to structured data stats if trait loader unavailable
+    }
     registry = {
       components: registryInfo.components,
-      traits: registryInfo.traits,
+      traits: traitCount,
       objects: objectCount,
       lastSync: registryInfo.lastSync,
+      countsFrom: { components: 'snapshot', traits: traitsFrom, objects: objectsFrom },
     };
   } catch (error) {
     warnings.push(`registry subsystem unavailable: ${(error as Error).message}`);

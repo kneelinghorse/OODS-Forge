@@ -1,0 +1,81 @@
+{
+  "schemaVersion": "1.0.0",
+  "sprintId": "sprint-204",
+  "missionId": "s204-m01",
+  "kind": "viz-census-phase-profile",
+  "host": {
+    "hostname": "Mac",
+    "cpuCount": 8,
+    "cpuModel": "Apple M2",
+    "node": "v24.6.0",
+    "loadAverageBefore": [
+      7.5966796875,
+      14.60107421875,
+      18.654296875
+    ],
+    "loadAverageAfter": [
+      12.2099609375,
+      14.5556640625,
+      18.2587890625
+    ]
+  },
+  "phases": {
+    "placements": {
+      "ms": 23433.8,
+      "compositions": 88,
+      "msPerComposition": 266.3
+    },
+    "accuracyControls": {
+      "ms": 283.6,
+      "controls": 2
+    },
+    "fullCensus": {
+      "ms": 23754,
+      "chartTypes": 13,
+      "registryRows": 13,
+      "scopeIdentities": 78
+    }
+  },
+  "ledgerRead": {
+    "direct": {
+      "runtimeLedger": {
+        "path": "packages/mcp-server/registry/runtime-cells.v1.json",
+        "bytes": 3787944,
+        "cells": 310,
+        "coldReadAndValidateMs": 24,
+        "memoizedMs": 0.008,
+        "savedPerCompositionMs": 24,
+        "savedAcross88CompositionsMs": 2107.9
+      },
+      "componentsSnapshot": {
+        "path": "artifacts/structured-data/oods-components-2026-09-14-s199-m07.json",
+        "bytes": 1064876,
+        "coldReadAndParseMs": 3.4,
+        "memoizedParseOnlyMs": 2.1,
+        "savedPerCompositionMs": 1.3,
+        "savedAcross88CompositionsMs": 116.7
+      }
+    },
+    "wallClockAB": {
+      "verdict": "INCONCLUSIVE, and retained to show why rather than dropped.",
+      "note": "Both arms ran in one process on one host; perCallLedgerRead clears the memo before every composition, reproducing the pre-fix behaviour exactly. The arms differ by less than the load noise: a ~23ms saving per composition cannot be read off a ~300ms baseline while the host's load average swings between 16 and 33. Wall-clock A/B is the wrong instrument for an effect this size; the direct measurement above is the sound one.",
+      "perCallLedgerRead": {
+        "ms": 9112,
+        "compositions": 88,
+        "msPerComposition": 103.5
+      },
+      "memoizedLedgerRead": {
+        "ms": 9859.8,
+        "compositions": 88,
+        "msPerComposition": 112
+      },
+      "ratio": 0.9
+    }
+  },
+  "derived": {
+    "note": "fullCensus contains placements and accuracyControls; the phases are attribution, not a sum.",
+    "censusRepeatMs": 10567.8,
+    "renderAndCertifyMs": -13149.6,
+    "placementShareOfCensusRepeat": 221.7
+  }
+}

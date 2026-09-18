@@ -328,6 +328,19 @@ export type Stage1ObjectRollup = {
   run_id: string;
   target: { id: string; url?: string };
   objects: Stage1RollupObject[];
+  /**
+   * Stage1 schema_version 1.2.0 and later. True when any object's reconciliation verdict is gated:
+   * the rolled-up semantic→OODS mappings are PROPOSALS requiring human adjudication, never
+   * auto-apply directives. Structural rollup data is unaffected either way.
+   *
+   * Surfaced in s204-m03 because Phase E turns on exactly this distinction — near.md §8 rules out
+   * autonomous semantic reconciliation by name, and Stage1 shelved it after confident errors. A
+   * consumer that reads this flag can refuse to treat gated mappings as instructions instead of
+   * having to know the rule out of band.
+   *
+   * Optional: absent on 1.0.0 and 1.1.0 payloads, which predate it.
+   */
+  requires_human_adjudication?: boolean;
 };
 
 export type CatalogListDetail = "summary" | "full";

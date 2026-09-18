@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "1.0.0",
+  "kind": "on-demand-gate-roster",
+  "why": "A proof removed from a default suite is one nobody runs unless something names it. This roster is that name. scripts/product-reality/run-on-demand-gates.mjs runs every entry, pre-freeze part B calls that one script, and packages/mcp-server/test/product-reality/gate-roster.s204.spec.ts asserts the roster agrees with the configs it describes.",
+  "gates": [
+    {
+      "id": "runtime-gate-bites",
+      "specFile": "packages/mcp-server/test/product-reality/m06-gate-bites.s184.spec.ts",
+      "config": "packages/mcp-server/vitest.gates.config.ts",
+      "command": ["pnpm", "--filter", "@oods/mcp-server", "run", "test:gates"],
+      "excludedFrom": [
+        "packages/mcp-server/vitest.config.ts",
+        "vitest.config.ts"
+      ],
+      "proves": "each of the eight runtime gates detects a unique injected defect on both framework targets",
+      "movesWhen": "the gate harness (scripts/product-reality/s184-m06-*) or the generation path changes",
+      "measuredCost": {
+        "seconds": 170.4,
+        "tests": 1,
+        "shareOfMcpServerFileTime": 0.158,
+        "source": "artifacts/product-reality/sprint-202/m06/capture/forge-s202-m06-head/four-suite-baseline.json",
+        "note": "336s in the Sprint 203 run, which was measured at load average 24.6 on 8 cores"
+      },
+      "removedIn": "s204-m01"
+    },
+    {
+      "id": "scale-determinism",
+      "specFile": "packages/mcp-server/test/scale",
+      "config": "packages/mcp-server/vitest.scale.config.ts",
+      "command": ["pnpm", "--filter", "@oods/mcp-server", "run", "test:scale"],
+      "excludedFrom": [
+        "packages/mcp-server/vitest.config.ts"
+      ],
+      "proves": "map.apply stays deterministic at 100/500/1000 candidate_objects",
+      "movesWhen": "the mission-graph determinism path changes",
+      "measuredCost": {
+        "seconds": null,
+        "tests": null,
+        "note": "the 1000-tier dry run measures ~1.2s per its config; not separately measured in s204-m01"
+      },
+      "removedIn": "decision #614 (s105-m03); already a standing closeout gate, listed here so one roster holds every on-demand gate"
+    }
+  ],
+  "notStandingGates": [
+    {
+      "id": "echarts-soak",
+      "config": "packages/mcp-server/vitest.echarts-soak.config.ts",
+      "reason": "a soak run, not a release gate; no closeout obligation has ever been recorded for it"
+    }
+  ]
+}

@@ -29,6 +29,7 @@ describe('tool truth derives claims without upgrading source references to runti
       if (ledger.mode === 's201') expect(row.receiptRefs.some((ref: any) => /\/sprint-(?:196|200|201)\/m07\//.test(ref.path))).toBe(false);
       if (ledger.mode === 's202') expect(row.receiptRefs.some((ref: any) => /\/sprint-(?:196|200|201)\/m07\/|\/sprint-202\/m06\//.test(ref.path))).toBe(false);
       if (ledger.mode === 's203') expect(row.receiptRefs.some((ref: any) => /\/sprint-(?:196|200|201)\/m07\/|\/sprint-(?:202|203)\/m06\//.test(ref.path))).toBe(false);
+      if (ledger.mode === 's204') expect(row.receiptRefs.some((ref: any) => /\/sprint-(?:196|200|201)\/m07\/|\/sprint-(?:202|203|204)\/m06\//.test(ref.path))).toBe(false);
     }
     if (ledger.mode === 's196') {
       const execution = derivePortableExecution(fs.readFileSync(path.join(root, PORTABLE_RECEIPT_PATH), 'utf8'), ledger.rows.filter((row: any) => row.registration === 'auto').map((row: any) => row.name));
@@ -60,6 +61,20 @@ describe('tool truth derives claims without upgrading source references to runti
       const receipt = JSON.parse(bytes);
       expect(receipt.calls.mcpApps).toMatchObject({ protocolVersion: '2025-06-18', capabilities: { resources: {}, extensions: { 'io.modelcontextprotocol/ui': {} } }, app: { readEqualsShipped: true, listed: 1 }, preview: { structuredContentEqualsText: true, versions: { count: 1, accepted: null } } });
       expect(receipt.calls.mcpApps.negotiation).toMatch(/MCP Apps io\.modelcontextprotocol\/ui: negotiated .*preview app offered on design_preview/);
+      expect(receipt.lifecycle.restart.negotiation).toMatch(/MCP Apps io\.modelcontextprotocol\/ui: not advertised; preview app kept as the text result/);
+    }
+    if (ledger.mode === 's204') {
+      // s204 binds the E2E of a bundle whose health reports its trait count LIVE: 47, where every earlier
+      // archive reported the Sprint 199 snapshot of 46. Components are still a snapshot, and health says so.
+      const bytes = fs.readFileSync(path.join(root, PORTABLE_RECEIPT_PATHS.s204), 'utf8');
+      const execution = derivePortableExecution(bytes, ledger.rows.filter((row: any) => row.registration === 'auto').map((row: any) => row.name), 's204');
+      expect(ledger.portableExecution).toEqual(execution.proof);
+      expect(ledger.portableExecution).toMatchObject({ path: 'artifacts/product-reality/sprint-204/m06/pre-freeze/e2e-host.json', dirty: false, tools: 19, pass: 19, typed: 0 });
+      expect(ledger.rows.flatMap((row: any) => row.portableLimits)).toEqual([]);
+      expect(ledger.rows.find((row: any) => row.name === 'design.preview').portableOutcome).toEqual({ outcome: 'pass', receiptSha256: execution.proof.sha256 });
+      const receipt = JSON.parse(bytes);
+      expect(receipt.calls.health.registry).toMatchObject({ objects: 23, components: 110, traits: 47, countsFrom: { objects: 'live', traits: 'live', components: 'snapshot' } });
+      expect(receipt.calls.mcpApps).toMatchObject({ protocolVersion: '2025-06-18', capabilities: { resources: {}, extensions: { 'io.modelcontextprotocol/ui': {} } }, app: { readEqualsShipped: true, listed: 1 } });
       expect(receipt.lifecycle.restart.negotiation).toMatch(/MCP Apps io\.modelcontextprotocol\/ui: not advertised; preview app kept as the text result/);
     }
     if (ledger.mode === 's203') {

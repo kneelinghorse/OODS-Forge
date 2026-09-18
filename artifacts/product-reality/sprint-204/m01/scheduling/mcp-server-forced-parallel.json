@@ -1,0 +1,440 @@
+{
+  "schemaVersion": "1.0.0",
+  "sprintId": "sprint-204",
+  "missionId": "s204-m01",
+  "kind": "mcp-server-forced-parallel-measurement",
+  "measuredHead": "8ef91bd13 plus the s204-m01 working tree at the time of the run",
+  "executedCommand": "pnpm --filter @oods/mcp-server exec vitest run --file-parallelism --testTimeout=60000",
+  "why": "The mission's premise was that policy #1833 constrains root-core alone and that mcp-server pays ~30 extra minutes for another suite's flake. That is false for mcp-server, and this is the measurement. packages/mcp-server/vitest.config.ts sets fileParallelism:false itself, because its pack specs run prepack builds that replace shared workspace dist trees. Forcing parallelism does not un-serialise a suite that serialises itself for a reason.",
+  "serialBaseline": {
+    "source": "sprint-203 builder run, CMOS learning #655",
+    "tests": 7263,
+    "passed": 7247,
+    "skipped": 16,
+    "files": 412,
+    "wallSeconds": 2249
+  },
+  "serialBaselineCertified": {
+    "source": "artifacts/product-reality/sprint-202/m06/capture/forge-s202-m06-head/four-suite-baseline.json",
+    "tests": 7197,
+    "passed": 7181,
+    "skipped": 16,
+    "files": 406,
+    "wallSeconds": 1420
+  },
+  "forcedParallel": {
+    "testsCollected": 6801,
+    "passed": 6683,
+    "failed": 80,
+    "skipped": 38,
+    "totalTestSuites": 1502,
+    "failedTestSuites": 120,
+    "failedFiles": 80,
+    "wallSeconds": 1001
+  },
+  "verdict": "RED and unusable. 462 of the serial 7,263 tests were never even collected, because 80 files failed to run at all. The wall fell 1,420s to 1,001s \u2014 a 30% saving for a destroyed run.",
+  "failureSignatures": [
+    {
+      "count": 6,
+      "firstFailureLine": "Error: STACK_TRACE_ERROR"
+    },
+    {
+      "count": 3,
+      "firstFailureLine": "AssertionError: [{\"code\":\"OODS-N015\",\"message\":\"Component Stack is not emission-eligible for react; "
+    },
+    {
+      "count": 3,
+      "firstFailureLine": "Error: Preview host runtime is missing: /Users/systemsystems/portfolio/Design-Tools/OODS-Forge/.work"
+    },
+    {
+      "count": 2,
+      "firstFailureLine": "AssertionError: expected null to be +0 // Object.is equality"
+    },
+    {
+      "count": 2,
+      "firstFailureLine": "AssertionError: [{\"code\":\"OODS-N015\",\"message\":\"Component Stack is not emission-eligible for vue; ev"
+    },
+    {
+      "count": 2,
+      "firstFailureLine": "AssertionError: the preview app must be built: expected false to be true // Object.is equality"
+    },
+    {
+      "count": 1,
+      "firstFailureLine": "AssertionError: expected 0 to be greater than 0"
+    },
+    {
+      "count": 1,
+      "firstFailureLine": "AssertionError: expected [ { code: 'OODS-N015', \u2026(3) }, \u2026(27) ] to be undefined"
+    },
+    {
+      "count": 1,
+      "firstFailureLine": "AssertionError: expected '{\\n  \"schemaVersion\": \"1.0.0\",\\n  \"mo\u2026' to be '{\\n  \"schemaVersion\": \"1.0."
+    },
+    {
+      "count": 1,
+      "firstFailureLine": "AssertionError: Person/card/vue: [{\"code\":\"OODS-N015\",\"message\":\"Component Card is not emission-elig"
+    },
+    {
+      "count": 1,
+      "firstFailureLine": "AssertionError: expected 4206 to be less than 4135"
+    },
+    {
+      "count": 1,
+      "firstFailureLine": "AssertionError: packages/mcp-bridge/dist/preview-runtime/manifest.json must be built: expected false"
+    },
+    {
+      "count": 1,
+      "firstFailureLine": "AssertionError: ../../../../../../../../../var/folders/gd/rty3217130vdbr9_q713nvg80000gn/T/oods-s188"
+    },
+    {
+      "count": 1,
+      "firstFailureLine": "AssertionError: expected [ { code: 'OODS-N015', \u2026(3) } ] to deeply equal []"
+    },
+    {
+      "count": 1,
+      "firstFailureLine": "Error: Cannot find module '@vue/compiler-sfc'"
+    },
+    {
+      "count": 1,
+      "firstFailureLine": "Error: Build failed with 1 error:"
+    },
+    {
+      "count": 1,
+      "firstFailureLine": "AssertionError: expected '[{\"code\":\"OODS-N015\",\"message\":\"Compo\u2026' to contain 'self-contained'"
+    },
+    {
+      "count": 1,
+      "firstFailureLine": "Error: Cannot find module '@oods/components-react'"
+    },
+    {
+      "count": 1,
+      "firstFailureLine": "AssertionError: {\"status\":\"error\",\"framework\":\"vue\",\"code\":\"\",\"fileExtension\":\"\",\"imports\":[],\"warni"
+    },
+    {
+      "count": 1,
+      "firstFailureLine": "AssertionError: expected +0 to be 1 // Object.is equality"
+    }
+  ],
+  "failedFiles": [
+    {
+      "path": "packages/mcp-server/src/codegen/branded-mockup-emitter.test.ts",
+      "firstFailure": ""
+    },
+    {
+      "path": "packages/mcp-server/src/render/document.test.ts",
+      "firstFailure": "AssertionError: expected 0 to be greater than 0"
+    },
+    {
+      "path": "packages/mcp-server/src/tools/__tests__/health.test.ts",
+      "firstFailure": ""
+    },
+    {
+      "path": "packages/mcp-server/src/tools/fidelity.preview.test.ts",
+      "firstFailure": ""
+    },
+    {
+      "path": "packages/mcp-server/src/tools/viz.render.geo-fidelity.test.ts",
+      "firstFailure": ""
+    },
+    {
+      "path": "packages/mcp-server/src/tools/viz.render.network-fidelity.test.ts",
+      "firstFailure": ""
+    },
+    {
+      "path": "packages/mcp-server/test/bridge/fragment-parity.spec.ts",
+      "firstFailure": ""
+    },
+    {
+      "path": "packages/mcp-server/test/codegen/codegen-invalid-schema.spec.ts",
+      "firstFailure": ""
+    },
+    {
+      "path": "packages/mcp-server/test/codegen/collections.s189.spec.ts",
+      "firstFailure": "Error: STACK_TRACE_ERROR"
+    },
+    {
+      "path": "packages/mcp-server/test/codegen/form-detail.s189.spec.ts",
+      "firstFailure": "AssertionError: [{\"code\":\"OODS-N015\",\"message\":\"Component Stack is not emission-eligible for react; evidence state: declaration-unbuilt.\",\"nodeId\":\"screen-form-11\",\"component\":\"Stack\"},{\"code\":\"OODS-N"
+    },
+    {
+      "path": "packages/mcp-server/test/codegen/form-seeds.s198.spec.ts",
+      "firstFailure": ""
+    },
+    {
+      "path": "packages/mcp-server/test/compose/form-field-differentiation.spec.ts",
+      "firstFailure": "AssertionError: expected [ { code: 'OODS-N015', \u2026(3) }, \u2026(27) ] to be undefined"
+    },
+    {
+      "path": "packages/mcp-server/test/contracts/error-observability.contract.spec.ts",
+      "firstFailure": ""
+    },
+    {
+      "path": "packages/mcp-server/test/contracts/portable-fixtures.s194.spec.ts",
+      "firstFailure": ""
+    },
+    {
+      "path": "packages/mcp-server/test/contracts/readiness-attestation.s196.spec.ts",
+      "firstFailure": ""
+    },
+    {
+      "path": "packages/mcp-server/test/contracts/tool-truth.s193.spec.ts",
+      "firstFailure": "AssertionError: expected '{\\n  \"schemaVersion\": \"1.0.0\",\\n  \"mo\u2026' to be '{\\n  \"schemaVersion\": \"1.0.0\",\\n  \"mo\u2026' // Object.is equality"
+    },
+    {
+      "path": "packages/mcp-server/test/contracts/viz-recipes.s190.spec.ts",
+      "firstFailure": "Error: STACK_TRACE_ERROR"
+    },
+    {
+      "path": "packages/mcp-server/test/e2e/a11y-pipeline.e2e.spec.ts",
+      "firstFailure": ""
+    },
+    {
+      "path": "packages/mcp-server/test/e2e/design-compose.e2e.spec.ts",
+      "firstFailure": ""
+    },
+    {
+      "path": "packages/mcp-server/test/e2e/fragment-integration.e2e.spec.ts",
+      "firstFailure": ""
+    },
+    {
+      "path": "packages/mcp-server/test/e2e/mapping-versioning.e2e.spec.ts",
+      "firstFailure": ""
+    },
+    {
+      "path": "packages/mcp-server/test/e2e/object-codegen-pipeline.spec.ts",
+      "firstFailure": ""
+    },
+    {
+      "path": "packages/mcp-server/test/e2e/registry-gaps.e2e.spec.ts",
+      "firstFailure": ""
+    },
+    {
+      "path": "packages/mcp-server/test/e2e/tier1-acceptance.e2e.spec.ts",
+      "firstFailure": ""
+    },
+    {
+      "path": "packages/mcp-server/test/objects/intelligence.spec.ts",
+      "firstFailure": "AssertionError: Person/card/vue: [{\"code\":\"OODS-N015\",\"message\":\"Component Card is not emission-eligible for vue; evidence state: declaration-unbuilt.\",\"nodeId\":\"screen-card-7\",\"component\":\"Card\"},{\"c"
+    },
+    {
+      "path": "packages/mcp-server/test/objects/research.spec.ts",
+      "firstFailure": ""
+    },
+    {
+      "path": "packages/mcp-server/test/product-reality/adapter-preview-host.s201.spec.ts",
+      "firstFailure": "AssertionError: packages/mcp-bridge/dist/preview-runtime/manifest.json must be built: expected false to be true // Object.is equality"
+    },
+    {
+      "path": "packages/mcp-server/test/product-reality/archive-workflow.s188.spec.ts",
+      "firstFailure": "AssertionError: ../../../../../../../../../var/folders/gd/rty3217130vdbr9_q713nvg80000gn/T/oods-s188-react-6uv1KW/src/application.ts(1,36): error TS7016: Could not find a declaration file for module '"
+    },
+    {
+      "path": "packages/mcp-server/test/product-reality/artifact.certify.s194.spec.ts",
+      "firstFailure": ""
+    },
+    {
+      "path": "packages/mcp-server/test/product-reality/axe-scope.s203.spec.ts",
+      "firstFailure": ""
+    },
+    {
+      "path": "packages/mcp-server/test/product-reality/billing-export-cells.s188.spec.ts",
+      "firstFailure": ""
+    },
+    {
+      "path": "packages/mcp-server/test/product-reality/breadth-contracts.s185.spec.ts",
+      "firstFailure": ""
+    },
+    {
+      "path": "packages/mcp-server/test/product-reality/breadth-export-cells.s185.spec.ts",
+      "firstFailure": "AssertionError: expected [ { code: 'OODS-N015', \u2026(3) } ] to deeply equal []"
+    },
+    {
+      "path": "packages/mcp-server/test/product-reality/breadth-live-generation.s186.spec.ts",
+      "firstFailure": "Error: Cannot find module '@vue/compiler-sfc'"
+    },
+    {
+      "path": "packages/mcp-server/test/product-reality/certify-missing-palette.s195.spec.ts",
+      "firstFailure": ""
+    },
+    {
+      "path": "packages/mcp-server/test/product-reality/certify-operand-profile.s195.spec.ts",
+      "firstFailure": ""
+    },
+    {
+      "path": "packages/mcp-server/test/product-reality/chart-placement-codegen.s195.spec.ts",
+      "firstFailure": "AssertionError: expected null to be +0 // Object.is equality"
+    },
+    {
+      "path": "packages/mcp-server/test/product-reality/codegen-matrix.s182.spec.ts",
+      "firstFailure": ""
+    },
+    {
+      "path": "packages/mcp-server/test/product-reality/collections.s191.spec.ts",
+      "firstFailure": "AssertionError: [{\"code\":\"OODS-N015\",\"message\":\"Component Stack is not emission-eligible for vue; evidence state: declaration-unbuilt.\",\"nodeId\":\"list-screen\",\"component\":\"Stack\"},{\"code\":\"OODS-N015\","
+    },
+    {
+      "path": "packages/mcp-server/test/product-reality/context-in-conversation.s203.spec.ts",
+      "firstFailure": "AssertionError: the preview app must be built: expected false to be true // Object.is equality"
+    },
+    {
+      "path": "packages/mcp-server/test/product-reality/disputed.s192.spec.ts",
+      "firstFailure": "AssertionError: [{\"code\":\"OODS-N015\",\"message\":\"Component Stack is not emission-eligible for react; evidence state: declaration-unbuilt.\",\"nodeId\":\"screen-detail-13\",\"component\":\"Stack\"},{\"code\":\"OODS"
+    },
+    {
+      "path": "packages/mcp-server/test/product-reality/emitter-directives.s184.spec.ts",
+      "firstFailure": "Error: STACK_TRACE_ERROR"
+    },
+    {
+      "path": "packages/mcp-server/test/product-reality/generated-heading-update.s185.spec.ts",
+      "firstFailure": "Error: Build failed with 1 error:"
+    },
+    {
+      "path": "packages/mcp-server/test/product-reality/graph-placement-codegen.s199.spec.ts",
+      "firstFailure": ""
+    },
+    {
+      "path": "packages/mcp-server/test/product-reality/hc-scope.s197.spec.ts",
+      "firstFailure": ""
+    },
+    {
+      "path": "packages/mcp-server/test/product-reality/heading-order.s203.spec.ts",
+      "firstFailure": "Error: Preview host runtime is missing: /Users/systemsystems/portfolio/Design-Tools/OODS-Forge/.worktrees/s204/packages/mcp-bridge/dist/preview-runtime/manifest.json. Build @oods/mcp-bridge (pnpm --fi"
+    },
+    {
+      "path": "packages/mcp-server/test/product-reality/high-contrast.s195.spec.ts",
+      "firstFailure": ""
+    },
+    {
+      "path": "packages/mcp-server/test/product-reality/html-tailwind-gap.s185.spec.ts",
+      "firstFailure": ""
+    },
+    {
+      "path": "packages/mcp-server/test/product-reality/input-validation-state.s184.spec.ts",
+      "firstFailure": ""
+    },
+    {
+      "path": "packages/mcp-server/test/product-reality/list-states.s193.spec.ts",
+      "firstFailure": "AssertionError: [{\"code\":\"OODS-N015\",\"message\":\"Component Stack is not emission-eligible for vue; evidence state: declaration-unbuilt.\",\"nodeId\":\"screen-list-9\",\"component\":\"Stack\"},{\"code\":\"OODS-N015"
+    },
+    {
+      "path": "packages/mcp-server/test/product-reality/palette-golden-migration.s197.spec.ts",
+      "firstFailure": "Error: STACK_TRACE_ERROR"
+    },
+    {
+      "path": "packages/mcp-server/test/product-reality/patch-disposition.s184.spec.ts",
+      "firstFailure": "Error: STACK_TRACE_ERROR"
+    },
+    {
+      "path": "packages/mcp-server/test/product-reality/payment-chart.s190.spec.ts",
+      "firstFailure": "AssertionError: expected '[{\"code\":\"OODS-N015\",\"message\":\"Compo\u2026' to contain 'self-contained'"
+    },
+    {
+      "path": "packages/mcp-server/test/product-reality/ported-mutation-matrix.s184.spec.ts",
+      "firstFailure": ""
+    },
+    {
+      "path": "packages/mcp-server/test/product-reality/ported-workflow.s184.spec.ts",
+      "firstFailure": "Error: Cannot find module '@oods/components-react'"
+    },
+    {
+      "path": "packages/mcp-server/test/product-reality/read-only-field-binding.s185.spec.ts",
+      "firstFailure": "AssertionError: {\"status\":\"error\",\"framework\":\"vue\",\"code\":\"\",\"fileExtension\":\"\",\"imports\":[],\"warnings\":[],\"validationReceipt\":{\"profile\":\"build\",\"defaulted\":false,\"rationale\":\"Build is the default m"
+    },
+    {
+      "path": "packages/mcp-server/test/product-reality/reference-host.s202.spec.ts",
+      "firstFailure": "AssertionError: the preview app must be built: expected false to be true // Object.is equality"
+    },
+    {
+      "path": "packages/mcp-server/test/product-reality/release-limit.s198.spec.ts",
+      "firstFailure": ""
+    },
+    {
+      "path": "packages/mcp-server/test/product-reality/runtime-bite-selector.s196.spec.ts",
+      "firstFailure": "AssertionError: expected +0 to be 1 // Object.is equality"
+    },
+    {
+      "path": "packages/mcp-server/test/product-reality/screen-action-surface.s184.spec.ts",
+      "firstFailure": "AssertionError: [{\"code\":\"OODS-N015\",\"message\":\"Component Stack is not emission-eligible for react; evidence state: declaration-unbuilt.\",\"nodeId\":\"screen-list-9\",\"component\":\"Stack\"},{\"code\":\"OODS-N0"
+    },
+    {
+      "path": "packages/mcp-server/test/product-reality/shell-landmarks.s202.spec.ts",
+      "firstFailure": "Error: Preview host runtime is missing: /Users/systemsystems/portfolio/Design-Tools/OODS-Forge/.worktrees/s204/packages/mcp-bridge/dist/preview-runtime/manifest.json. Build @oods/mcp-bridge (pnpm --fi"
+    },
+    {
+      "path": "packages/mcp-server/test/product-reality/static-server-teardown.s195.spec.ts",
+      "firstFailure": ""
+    },
+    {
+      "path": "packages/mcp-server/test/product-reality/temporal-placement-migration.s196.spec.ts",
+      "firstFailure": ""
+    },
+    {
+      "path": "packages/mcp-server/test/product-reality/theme.s191.spec.ts",
+      "firstFailure": ""
+    },
+    {
+      "path": "packages/mcp-server/test/product-reality/theme.s197.spec.ts",
+      "firstFailure": ""
+    },
+    {
+      "path": "packages/mcp-server/test/product-reality/typed-action-protocol.s183.spec.ts",
+      "firstFailure": "Error: STACK_TRACE_ERROR"
+    },
+    {
+      "path": "packages/mcp-server/test/product-reality/viz-certification.s195.spec.ts",
+      "firstFailure": ""
+    },
+    {
+      "path": "packages/mcp-server/test/product-reality/workflow.s188.spec.ts",
+      "firstFailure": "AssertionError: expected null to be +0 // Object.is equality"
+    },
+    {
+      "path": "packages/mcp-server/test/tools/artifact.certify.accuracy-fault.spec.ts",
+      "firstFailure": ""
+    },
+    {
+      "path": "packages/mcp-server/test/tools/artifact.certify.bubble-area.s199.spec.ts",
+      "firstFailure": ""
+    },
+    {
+      "path": "packages/mcp-server/test/tools/artifact.certify.contrast-fault.spec.ts",
+      "firstFailure": ""
+    },
+    {
+      "path": "packages/mcp-server/test/tools/artifact.certify.echarts-render-grading.s179.spec.ts",
+      "firstFailure": ""
+    },
+    {
+      "path": "packages/mcp-server/test/tools/certify-contrast.echarts-caveat-pin.spec.ts",
+      "firstFailure": ""
+    },
+    {
+      "path": "packages/mcp-server/test/tools/dashboard-token-css-ref-honor.s179.spec.ts",
+      "firstFailure": ""
+    },
+    {
+      "path": "packages/mcp-server/test/tools/design.compose.s202.spec.ts",
+      "firstFailure": ""
+    },
+    {
+      "path": "packages/mcp-server/test/tools/design.preview.accept.s202.spec.ts",
+      "firstFailure": "Error: Preview host runtime is missing: /Users/systemsystems/portfolio/Design-Tools/OODS-Forge/.worktrees/s204/packages/mcp-bridge/dist/preview-runtime/manifest.json. Build @oods/mcp-bridge (pnpm --fi"
+    },
+    {
+      "path": "packages/mcp-server/test/tools/design.preview.s202.spec.ts",
+      "firstFailure": ""
+    },
+    {
+      "path": "packages/mcp-server/test/tools/echarts-role-a-assignment.s179.spec.ts",
+      "firstFailure": ""
+    },
+    {
+      "path": "packages/mcp-server/test/tools/payload-mode.s201.spec.ts",
+      "firstFailure": ""
+    },
+    {
+      "path": "packages/mcp-server/test/tools/repl.render.compact.spec.ts",
+      "firstFailure": "AssertionError: expected 4206 to be less than 4135"
+    }
+  ]
+}

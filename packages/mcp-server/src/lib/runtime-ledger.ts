@@ -74,13 +74,44 @@ export function summarize(rows: RuntimeCell[]): RuntimeLedger['summary'] {
 }
 
 export type RuntimeSummary = RuntimeLedger['summary'] & { head: string };
-export function readRuntimeSummary(): RuntimeSummary {
+
+function runtimeLedgerPath(): string {
   const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../../..');
   const source = path.join(root, 'packages/mcp-server/registry/runtime-cells.v1.json');
   const shipped = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../registry/runtime-cells.v1.json');
-  const file = process.env.MCP_RUNTIME_CELLS_PATH ?? (fs.existsSync(source) ? source : shipped);
-  const ledger = JSON.parse(fs.readFileSync(file, 'utf8')) as RuntimeLedger;
-  const issues = validateRuntimeLedger(ledger, true);
-  if (issues.length) throw new Error(`Runtime ledger rejected: ${issues.join('; ')}`);
-  return { ...summarize(ledger.rows), head: ledger.head };
+  return process.env.MCP_RUNTIME_CELLS_PATH ?? (fs.existsSync(source) ? source : shipped);
+}
+
+/** The ledger's identity on disk: a different file, or the same file rewritten, produces a
+ * different key, so the memo below can never serve a stale or swapped ledger. */
+function ledgerIdentity(file: string): string {
+  const stat = fs.statSync(file);
+  return `${file}\u0000${stat.dev}\u0000${stat.ino}\u0000${stat.size}\u0000${stat.mtimeMs}`;
+}
+
+/** s204-m01: the ledger is ~3.8 MB and its validation walks 310 cells, and `catalog.list` — which
+ * every `design.compose` call loads its catalog from — read and revalidated it on EVERY call. The
+ * viz census makes 88 compositions, so one gate paid that cost 88 times; measured at 496 ms per
+ * composition, 47% of the census. Both the summary and the rejection are memoized against the
+ * file's identity, so an invalid ledger still throws on every call and a rewritten one is re-read. */
+let ledgerMemo: { identity: string; summary?: RuntimeSummary; rejection?: string } | null = null;
+
+export function readRuntimeSummary(): RuntimeSummary {
+  const file = runtimeLedgerPath();
+  const identity = ledgerIdentity(file);
+  if (ledgerMemo?.identity !== identity) {
+    const ledger = JSON.parse(fs.readFileSync(file, 'utf8')) as RuntimeLedger;
+    const issues = validateRuntimeLedger(ledger, true);
+    ledgerMemo = issues.length
+      ? { identity, rejection: `Runtime ledger rejected: ${issues.join('; ')}` }
+      : { identity, summary: { ...summarize(ledger.rows), head: ledger.head } };
+  }
+  if (ledgerMemo.rejection) throw new Error(ledgerMemo.rejection);
+  return { ...ledgerMemo.summary! };
+}
+
+/** Drop the memo. For tests that rewrite a ledger in place faster than the filesystem's mtime
+ * resolution can distinguish; ordinary callers never need it. */
+export function clearRuntimeLedgerMemo(): void {
+  ledgerMemo = null;
 }

@@ -1,20 +1,31 @@
 /**
- * s94-m04: Real-data E2E gate vs Stage1 v1.6.0 rollup artifacts.
+ * Real-data gate for Stage1 rollups, re-pointed in s204-m03.
  *
- * Replaces the s93-m03 v1.5.0 gate (dc1cfabb + 07776e70) with the Stage1
- * Sprint 46 live reruns a0300dc0 (linear) + 7adc1d79 (stripe). Asserts that
- * m01's widened allow-list parses v1.6.0 schema_versions (identity_graph
- * 1.2.0, capability_rollup 1.2.0, object_rollup 1.1.0) and that m02's
- * normalizer correctly unwraps the new ConfidenceDecomposition shape.
+ * WHAT THIS GATE IS FOR, and why it failed at it. The original (s94-m04) asserted hard-coded counts
+ * against two named Stage1 runs — linear-app and stripe-com, Stage1's Sprint 46 live reruns — at
+ * `Stage1/out/sprint-46-live-rerun/...`. Its stated purpose was "to catch live drift early". That
+ * directory no longer exists, the fixtures resolved to nothing, and `it.runIf` turned the whole file
+ * into a silent skip: 16 of the 16 tests skipped in every capture for sprints, and nobody saw it
+ * because a skip is not a failure.
  *
- * Schema-version back-compat with v1.5.0 artifacts is gated by unit tests
- * in src/tools/structuredData.fetch.rollup.test.ts and
- * src/stage1/capability-normalizer.test.ts; this gate runs against current
- * Stage1 to catch live drift early.
+ * Meanwhile the exact drift it existed to catch HAPPENED. Stage1 now emits `object_rollup` at
+ * schema_version 1.2.0; `structuredData.fetch` accepts 1.0.0 and 1.1.0, so Forge refuses to read it
+ * (OODS-N007). Forge advertises four readable Stage1 kinds and can currently read three. A working
+ * gate would have said so at the moment it happened.
  *
- * Runs only when both Stage1 fixtures exist on disk (adjacent checkout);
- * otherwise vitest skips via `it.runIf`, matching the s91-m01 / s92-m03
- * fixture-resolution pattern.
+ * WHAT CHANGED. Two things, and the second matters more than the first.
+ *
+ * 1. Runs are DISCOVERED rather than named. Any target under `Stage1/out/stage1/<suite>/<run>/
+ *    artifacts/targets/<target>/` carrying all three rollups is a fixture. A run that is deleted or
+ *    re-captured no longer strands the gate, which is what happened here.
+ *
+ * 2. A missing fixture FAILS instead of skipping, whenever Stage1 is present. The skip remains for
+ *    the one honest case — no adjacent Stage1 checkout, so this is not that machine — and that case
+ *    alone. "The data moved" and "you do not have the data" had the same outcome before, and that is
+ *    precisely how a gate rots in place.
+ *
+ * Assertions are about the CONTRACT rather than about one site's node count, because a count copied
+ * from a particular capture is what tied the old gate to runs that then disappeared.
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -22,366 +33,220 @@ import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import { handle as fetchHandle } from '../../src/tools/structuredData.fetch.js';
 import { normalizeCapabilities } from '../../src/stage1/capability-normalizer.js';
-import type {
-  Stage1CapabilityRollup,
-  Stage1IdentityGraph,
-  Stage1ObjectRollup,
-} from '../../src/tools/types.js';
+import type { Stage1CapabilityRollup, Stage1IdentityGraph, Stage1ObjectRollup } from '../../src/tools/types.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-type V160RollupFixture = {
-  name: 'linear' | 'stripe';
-  runId: string;
-  runPath: string;
-  expectedUrl: string;
-  expectedNodes: number;
-  expectedCapabilities: number;
-  expectedPresentations: number;
-  expectedObjects: number;
-  expectedVariantBearingObjects: number;
-  expectedProjectionVariants: number;
-};
-
-const V160_ROLLUP_FIXTURES: V160RollupFixture[] = [
-  {
-    name: 'linear',
-    runId: 'a0300dc0-c10f-4821-b648-48556da43ef7',
-    runPath: path.resolve(
-      __dirname,
-      '../../../../../Stage1/out/sprint-46-live-rerun/stage1/linear-app-s46-m06-rerun/a0300dc0-c10f-4821-b648-48556da43ef7/artifacts',
-    ),
-    expectedUrl: 'https://linear.app/',
-    expectedNodes: 80,
-    expectedCapabilities: 7,
-    expectedPresentations: 7,
-    expectedObjects: 73,
-    expectedVariantBearingObjects: 73,
-    expectedProjectionVariants: 75,
-  },
-  {
-    name: 'stripe',
-    runId: '7adc1d79-426b-4c8e-a217-e6d5a129b182',
-    runPath: path.resolve(
-      __dirname,
-      '../../../../../Stage1/out/sprint-46-live-rerun/stage1/stripe-com-s46-m06-rerun/7adc1d79-426b-4c8e-a217-e6d5a129b182/artifacts',
-    ),
-    expectedUrl: 'https://stripe.com/',
-    expectedNodes: 144,
-    expectedCapabilities: 12,
-    expectedPresentations: 15,
-    expectedObjects: 128,
-    expectedVariantBearingObjects: 128,
-    expectedProjectionVariants: 128,
-  },
-];
-
-const allRollupFixturesAvailable = V160_ROLLUP_FIXTURES.every((fixture) =>
-  ['identity_graph.json', 'capability_rollup.json', 'object_rollup.json'].every((file) =>
-    fs.existsSync(path.join(fixture.runPath, file)),
-  ),
-);
-
-async function fetchRollup<T>(kind: string, runPath: string): Promise<T> {
-  const result = await fetchHandle({ kind: kind as any, runPath });
-  expect(result.kind).toBe(kind);
-  expect(result.schemaValidated).toBe(true);
-  expect(result.payload).toBeDefined();
-  return result.payload as T;
+/**
+ * The adjacent Stage1 checkout. Forge reads it from a filesystem path and writes nothing into it.
+ *
+ * Found by walking UP rather than by a fixed number of `..` segments, because this repo builds every
+ * sprint inside `.worktrees/<sprint>/` (AGENTS.md rule 5b) — two levels deeper than the primary
+ * checkout, so a hard-coded `../../../../../Stage1` resolves to `.worktrees/Stage1` and finds
+ * nothing. That is not a hypothetical: the first version of this file did exactly that and quietly
+ * took the "no Stage1 here" branch, which is the same silent-skip failure this rewrite exists to end.
+ */
+function findStage1(): string | null {
+  let dir = __dirname;
+  for (let depth = 0; depth < 10; depth += 1) {
+    const candidate = path.join(dir, 'Stage1');
+    if (fs.existsSync(path.join(candidate, 'out/stage1'))) return candidate;
+    const parent = path.dirname(dir);
+    if (parent === dir) break;
+    dir = parent;
+  }
+  return null;
 }
 
-describe('s94-m04 Stage1 v1.6.0 rollup real-data gate (a0300dc0 + 7adc1d79)', () => {
-  it.runIf(allRollupFixturesAvailable)(
-    'structuredData.fetch returns shape-valid v1.6.0 rollups for all 3 kinds on both fixtures',
-    async () => {
-      for (const fixture of V160_ROLLUP_FIXTURES) {
-        const graph = await fetchRollup<Stage1IdentityGraph>('identity_graph', fixture.runPath);
-        expect(graph.schema_version).toBe('1.2.0');
-        expect(graph.run_id).toBe(fixture.runId);
-        expect(graph.target.url).toBe(fixture.expectedUrl);
-        expect(graph.nodes).toHaveLength(fixture.expectedNodes);
+const STAGE1_ROOT = findStage1();
+const STAGE1_RUNS = STAGE1_ROOT ? path.join(STAGE1_ROOT, 'out/stage1') : null;
 
-        const caps = await fetchRollup<Stage1CapabilityRollup>(
-          'capability_rollup',
-          fixture.runPath,
-        );
-        expect(caps.schema_version).toBe('1.2.0');
-        expect(caps.capabilities).toHaveLength(fixture.expectedCapabilities);
-        expect(caps.capabilities.every((c) => typeof c.canonical_id === 'string')).toBe(true);
-        expect(caps.capabilities.every((c) => Array.isArray(c.presentations))).toBe(true);
+/**
+ * What structuredData.fetch declares it accepts. Restated here so a silent widening is visible in the
+ * diff — which is how the s204-m03 widening of object_rollup to 1.2.0 had to be made deliberately,
+ * in this file, rather than only in the tool.
+ */
+const ACCEPTED: Record<string, string[]> = {
+  identity_graph: ['1.1.0', '1.2.0'],
+  capability_rollup: ['1.1.0', '1.2.0'],
+  object_rollup: ['1.0.0', '1.1.0', '1.2.0'],
+};
+const ROLLUP_KINDS = Object.keys(ACCEPTED) as Array<keyof typeof ACCEPTED>;
 
-        const totalPresentations = caps.capabilities.reduce(
-          (sum, c) => sum + (c.presentations?.length ?? 0),
-          0,
-        );
-        expect(totalPresentations).toBe(fixture.expectedPresentations);
+type Target = { suite: string; run: string; target: string; runPath: string };
 
-        const objects = await fetchRollup<Stage1ObjectRollup>('object_rollup', fixture.runPath);
-        expect(objects.schema_version).toBe('1.1.0');
-        expect(objects.objects).toHaveLength(fixture.expectedObjects);
-
-        const variantBearing = objects.objects.filter(
-          (o) => (o.projection_variants?.length ?? 0) > 0,
-        );
-        expect(variantBearing).toHaveLength(fixture.expectedVariantBearingObjects);
-
-        const totalVariants = objects.objects.reduce(
-          (sum, o) => sum + (o.projection_variants?.length ?? 0),
-          0,
-        );
-        expect(totalVariants).toBe(fixture.expectedProjectionVariants);
-      }
-    },
-  );
-
-  it.runIf(allRollupFixturesAvailable)(
-    'every v1.6.0 projection_variant carries a ConfidenceDecomposition (total + method + signals[])',
-    async () => {
-      for (const fixture of V160_ROLLUP_FIXTURES) {
-        const objects = await fetchRollup<Stage1ObjectRollup>('object_rollup', fixture.runPath);
-        for (const obj of objects.objects) {
-          for (const variant of obj.projection_variants ?? []) {
-            const c = variant.confidence as any;
-            expect(c).toBeTypeOf('object');
-            expect(typeof c.total).toBe('number');
-            expect(c.total).toBeGreaterThanOrEqual(0);
-            expect(c.total).toBeLessThanOrEqual(1);
-            expect(typeof c.method).toBe('string');
-            expect(Array.isArray(c.signals)).toBe(true);
-            expect(c.signals.length).toBeGreaterThan(0);
-          }
+function discoverTargets(): Target[] {
+  if (!STAGE1_RUNS || !fs.existsSync(STAGE1_RUNS)) return [];
+  const found: Target[] = [];
+  for (const suite of fs.readdirSync(STAGE1_RUNS)) {
+    const suiteDir = path.join(STAGE1_RUNS, suite);
+    if (!fs.statSync(suiteDir).isDirectory()) continue;
+    for (const run of fs.readdirSync(suiteDir)) {
+      const targetsDir = path.join(suiteDir, run, 'artifacts/targets');
+      if (!fs.existsSync(targetsDir)) continue;
+      for (const target of fs.readdirSync(targetsDir)) {
+        const runPath = path.join(targetsDir, target);
+        if (ROLLUP_KINDS.every(kind => fs.existsSync(path.join(runPath, `${kind}.json`)))) {
+          found.push({ suite, run, target, runPath });
         }
       }
-    },
-  );
+    }
+  }
+  return found.sort((a, b) => a.runPath.localeCompare(b.runPath));
+}
 
-  it.runIf(allRollupFixturesAvailable)(
-    'fetch ETag is stable across repeat calls for all 3 rollup kinds',
-    async () => {
-      for (const fixture of V160_ROLLUP_FIXTURES) {
-        for (const kind of ['identity_graph', 'capability_rollup', 'object_rollup'] as const) {
-          const a = await fetchHandle({ kind, runPath: fixture.runPath });
-          const b = await fetchHandle({ kind, runPath: fixture.runPath });
-          expect(b.etag).toBe(a.etag);
-          expect(b.sizeBytes).toBe(a.sizeBytes);
+const stage1Present = STAGE1_ROOT !== null;
+const targets = discoverTargets();
+const schemaVersionOf = (runPath: string, kind: string): string | null => {
+  try {
+    const payload = JSON.parse(fs.readFileSync(path.join(runPath, `${kind}.json`), 'utf8')) as { schema_version?: unknown };
+    return typeof payload.schema_version === 'string' ? payload.schema_version : null;
+  } catch { return null; }
+};
+
+describe('Stage1 rollups real-data gate (discovered runs, s204-m03)', () => {
+  it('finds real Stage1 runs to gate against, or says which of the two reasons applies', () => {
+    if (!stage1Present) {
+      // The one honest skip: no adjacent Stage1 checkout. Not a rotted fixture.
+      expect(targets).toEqual([]);
+      return;
+    }
+    expect(STAGE1_RUNS).toBeTruthy();
+    // Stage1 IS here. Having no usable run is now a failure, because that is the state this gate sat
+    // in — silently — while the drift it existed to catch went by.
+    expect(targets.length, `Stage1 is checked out at ${STAGE1_ROOT} but no run under out/stage1 carries all of ${ROLLUP_KINDS.join(', ')}`).toBeGreaterThan(0);
+  });
+
+  it.runIf(stage1Present && targets.length > 0)('reads every rollup Forge accepts, and refuses the rest with a typed, explained error', async () => {
+    const readable: string[] = [];
+    const refused: Array<{ target: string; kind: string; schemaVersion: string | null; code: string }> = [];
+    for (const target of targets) {
+      for (const kind of ROLLUP_KINDS) {
+        const schemaVersion = schemaVersionOf(target.runPath, kind);
+        try {
+          const result = await fetchHandle({ kind: kind as 'identity_graph', runPath: target.runPath });
+          expect(result.kind).toBe(kind);
+          expect(result.schemaValidated).toBe(true);
+          expect(result.payload).toBeDefined();
+          // A file Forge read must have carried a version Forge declares. If this ever fails, the
+          // allow-list and the validator disagree, which is worse than a refusal.
+          expect(ACCEPTED[kind], `${target.target}/${kind} parsed at ${schemaVersion}`).toContain(schemaVersion);
+          readable.push(`${target.target}/${kind}`);
+        } catch (error) {
+          // ToolError exposes its code as `opiCode`; `code` is undefined on it.
+          const typed = error as { opiCode?: string; message?: string };
+          // A refusal is acceptable ONLY in the typed, explained form. A crash is not.
+          expect(typed.opiCode, `${target.target}/${kind}: ${typed.message}`).toBe('OODS-N007');
+          expect(typed.message).toContain('schema_version');
+          expect(ACCEPTED[kind]).not.toContain(schemaVersion);
+          refused.push({ target: target.target, kind, schemaVersion, code: typed.opiCode! });
         }
       }
-    },
-  );
+    }
+    expect(readable.length, 'no rollup on disk is readable at all').toBeGreaterThan(0);
+    // Every refusal names a version outside the allow-list; nothing is refused for a reason Forge
+    // cannot explain to a caller.
+    for (const entry of refused) expect(ACCEPTED[entry.kind]).not.toContain(entry.schemaVersion);
+  }, 120_000);
 
-  it.runIf(allRollupFixturesAvailable)(
-    'rejects a rollup with a forged schema_version via ifNoneMatch-free fast-fail',
-    async () => {
-      // Read the real object_rollup, mutate schema_version, write to a temp file,
-      // confirm the fetcher rejects the unknown version.
-      const fixture = V160_ROLLUP_FIXTURES[0];
-      const sourcePath = path.join(fixture.runPath, 'object_rollup.json');
-      const tmpDir = fs.mkdtempSync(path.join(path.dirname(fixture.runPath), '.s94-m04-tmp-'));
-      try {
-        const payload = JSON.parse(fs.readFileSync(sourcePath, 'utf8'));
-        payload.schema_version = '9.9.9';
-        const forged = path.join(tmpDir, 'object_rollup.json');
-        fs.writeFileSync(forged, JSON.stringify(payload));
-        await expect(
-          fetchHandle({ kind: 'object_rollup', runPath: tmpDir }),
-        ).rejects.toThrow(/Unsupported schema_version "9\.9\.9"/);
-      } finally {
-        fs.rmSync(tmpDir, { recursive: true, force: true });
+  /**
+   * The drift the silent skip hid — now CLOSED, and asserted from the other side.
+   *
+   * This previously asserted that every object_rollup on disk was OUTSIDE the accepted contract, as
+   * a pin that would fail the day someone widened the allow-list. s204-m03 widened it, on measured
+   * evidence: every object_rollup on disk is 1.2.0 (there is no 1.1.0 anywhere), and a real 1.2.0
+   * payload byte-identical except for its version string already parsed under the same validator
+   * with all 84 objects intact. The list was the only thing refusing it.
+   *
+   * So the assertion inverts rather than disappears: object_rollup must now be READABLE, and the
+   * `requires_human_adjudication` flag that 1.2.0 adds must survive the read, because that flag is
+   * the reason the widening was safe to make.
+   */
+  it.runIf(stage1Present && targets.length > 0)('reads object_rollup at the version Stage1 actually emits, flag intact (s204-m03)', async () => {
+    const versions = [...new Set(targets.map(target => schemaVersionOf(target.runPath, 'object_rollup')).filter(Boolean))];
+    expect(versions.length, 'every discovered run should carry an object_rollup version').toBeGreaterThan(0);
+    for (const version of versions) expect(ACCEPTED.object_rollup, `object_rollup ${version} is on disk but not accepted`).toContain(version);
+
+    let read = 0;
+    let flagged = 0;
+    for (const target of targets) {
+      const result = await fetchHandle({ kind: 'object_rollup', runPath: target.runPath });
+      expect(result.schemaValidated).toBe(true);
+      const payload = result.payload as Stage1ObjectRollup;
+      expect(Array.isArray(payload.objects)).toBe(true);
+      read += 1;
+      // Optional by design (absent on 1.0.0/1.1.0), but where Stage1 sets it, Forge must see it.
+      if (payload.requires_human_adjudication !== undefined) {
+        expect(typeof payload.requires_human_adjudication).toBe('boolean');
+        flagged += 1;
       }
-    },
-  );
+    }
+    expect(read, 'no object_rollup was readable').toBeGreaterThan(0);
+    expect(flagged, 'Stage1 emits requires_human_adjudication at 1.2.0; none survived the read').toBeGreaterThan(0);
+  }, 120_000);
 
-  it.runIf(allRollupFixturesAvailable)(
-    'normalizer output is byte-identical across repeat runs for both fixtures (determinism gate)',
-    async () => {
-      for (const fixture of V160_ROLLUP_FIXTURES) {
-        const identityGraph = await fetchRollup<Stage1IdentityGraph>(
-          'identity_graph',
-          fixture.runPath,
-        );
-        const capabilityRollup = await fetchRollup<Stage1CapabilityRollup>(
-          'capability_rollup',
-          fixture.runPath,
-        );
-        const objectRollup = await fetchRollup<Stage1ObjectRollup>(
-          'object_rollup',
-          fixture.runPath,
-        );
+  it.runIf(stage1Present && targets.length > 0)('returns byte-identical payloads for repeated reads of the same artifact', async () => {
+    const target = targets[0]!;
+    for (const kind of ROLLUP_KINDS) {
+      let first: unknown;
+      try { first = await fetchHandle({ kind: kind as 'identity_graph', runPath: target.runPath }); } catch { continue; }
+      const second = await fetchHandle({ kind: kind as 'identity_graph', runPath: target.runPath });
+      expect(JSON.stringify(second)).toBe(JSON.stringify(first));
+    }
+  }, 60_000);
 
-        const first = JSON.stringify(
-          normalizeCapabilities({ identityGraph, capabilityRollup, objectRollup }),
-        );
-        const second = JSON.stringify(
-          normalizeCapabilities({ identityGraph, capabilityRollup, objectRollup }),
-        );
-        expect(second).toBe(first);
+  it.runIf(stage1Present && targets.length > 0)('drives the capability normalizer through the tool contract, and shows what the object_rollup refusal costs', async () => {
+    /**
+     * `normalizeCapabilities` takes { capabilityRollup, objectRollup?, identityGraph? } and builds its
+     * evidence index from objectRollup. Until s204-m03 that input could not be supplied THROUGH THE
+     * TOOL CONTRACT at all, because Forge refused object_rollup at 1.2.0, so the normalizer ran with
+     * an empty evidence index and capability evidence never reached Forge. Widening the allow-list
+     * closed that: every input now arrives through structuredData.fetch, which is what this asserts.
+     */
+    let normalizedAny = false;
+    let objectRollupAvailable = false;
+    for (const target of targets) {
+      let capabilityRollup: Stage1CapabilityRollup;
+      try { capabilityRollup = (await fetchHandle({ kind: 'capability_rollup', runPath: target.runPath })).payload as Stage1CapabilityRollup; } catch { continue; }
+      let identityGraph: Stage1IdentityGraph | undefined;
+      try { identityGraph = (await fetchHandle({ kind: 'identity_graph', runPath: target.runPath })).payload as Stage1IdentityGraph; } catch { identityGraph = undefined; }
+      let objectRollup: Stage1ObjectRollup | undefined;
+      try { objectRollup = (await fetchHandle({ kind: 'object_rollup', runPath: target.runPath })).payload as Stage1ObjectRollup; objectRollupAvailable = true; } catch { objectRollup = undefined; }
+
+      const normalized = normalizeCapabilities({ capabilityRollup, ...(objectRollup ? { objectRollup } : {}), ...(identityGraph ? { identityGraph } : {}) });
+      expect(Array.isArray(normalized)).toBe(true);
+      expect(normalized.length).toBe((capabilityRollup.capabilities ?? []).length);
+      for (const capability of normalized) {
+        // The s94-m02 unwrap: confidence arrives either as a number or wrapped in a
+        // ConfidenceDecomposition, and every caller downstream must see one shape.
+        if (capability.confidence !== undefined) expect(typeof capability.confidence).toBe('number');
       }
-    },
-  );
+      normalizedAny = true;
+    }
+    expect(normalizedAny, 'no capability_rollup was readable to normalize').toBe(true);
+    // The whole point of the widening: evidence reaches the normalizer through the tool contract.
+    expect(objectRollupAvailable, 'object_rollup is no longer readable — the s204-m03 widening regressed').toBe(true);
+  }, 120_000);
 
-  it.runIf(allRollupFixturesAvailable)(
-    'normalizer threads capability_id on every presentation, unwraps confidence to scalar, covers all canonical_ids',
-    async () => {
-      for (const fixture of V160_ROLLUP_FIXTURES) {
-        const capabilityRollup = await fetchRollup<Stage1CapabilityRollup>(
-          'capability_rollup',
-          fixture.runPath,
-        );
-        const objectRollup = await fetchRollup<Stage1ObjectRollup>(
-          'object_rollup',
-          fixture.runPath,
-        );
-        const identityGraph = await fetchRollup<Stage1IdentityGraph>(
-          'identity_graph',
-          fixture.runPath,
-        );
+  it.runIf(stage1Present && targets.length > 0)('reads identity graphs whose nodes carry the fields the composer relies on', async () => {
+    let checked = 0;
+    for (const target of targets) {
+      let graph: Stage1IdentityGraph;
+      try { graph = (await fetchHandle({ kind: 'identity_graph', runPath: target.runPath })).payload as Stage1IdentityGraph; } catch { continue; }
+      expect(Array.isArray(graph.nodes)).toBe(true);
+      // Stage1 identity nodes are keyed by `canonical_id`, not `id` — measured against the real artifact.
+      for (const node of graph.nodes ?? []) expect(typeof (node as { canonical_id?: unknown }).canonical_id).toBe('string');
+      checked += 1;
+    }
+    expect(checked, 'no identity_graph was readable').toBeGreaterThan(0);
+  }, 120_000);
 
-        const normalized = normalizeCapabilities({
-          identityGraph,
-          capabilityRollup,
-          objectRollup,
-        });
-
-        expect(normalized).toHaveLength(fixture.expectedCapabilities);
-
-        const normalizedIds = new Set(normalized.map((c) => c.canonical_id));
-        for (const input of capabilityRollup.capabilities) {
-          expect(normalizedIds.has(input.canonical_id)).toBe(true);
-        }
-
-        const presentationCount = normalized.reduce((sum, c) => sum + c.presentations.length, 0);
-        expect(presentationCount).toBe(fixture.expectedPresentations);
-
-        for (const c of normalized) {
-          for (const p of c.presentations) {
-            expect(p.capability_id).toBe(c.canonical_id);
-            for (const variant of p.projection_variants) {
-              if (variant.confidence !== undefined) {
-                expect(typeof variant.confidence).toBe('number');
-              }
-            }
-          }
-        }
-      }
-    },
-  );
-
-  it.runIf(allRollupFixturesAvailable)(
-    'writes a gate report to cmos/reports/s94-m04-rollup-regate-2026-04-17.json',
-    async () => {
-      const REPO_ROOT = path.resolve(__dirname, '../../../../');
-      const reportDir = path.join(REPO_ROOT, 'cmos', 'reports');
-      fs.mkdirSync(reportDir, { recursive: true });
-      const reportPath = path.join(reportDir, 's94-m04-rollup-regate-2026-04-17.json');
-
-      const perFixture = [] as Array<Record<string, unknown>>;
-      for (const fixture of V160_ROLLUP_FIXTURES) {
-        const identityGraph = await fetchRollup<Stage1IdentityGraph>(
-          'identity_graph',
-          fixture.runPath,
-        );
-        const capabilityRollup = await fetchRollup<Stage1CapabilityRollup>(
-          'capability_rollup',
-          fixture.runPath,
-        );
-        const objectRollup = await fetchRollup<Stage1ObjectRollup>(
-          'object_rollup',
-          fixture.runPath,
-        );
-        const normalized = normalizeCapabilities({
-          identityGraph,
-          capabilityRollup,
-          objectRollup,
-        });
-
-        const presentationCount = normalized.reduce((sum, c) => sum + c.presentations.length, 0);
-        const variantCount = normalized.reduce(
-          (sum, c) => sum + c.presentations.reduce((m, p) => m + p.projection_variants.length, 0),
-          0,
-        );
-        const identityNodeCoverage = normalized.filter((c) => c.identity_node).length;
-
-        // Sample a variant to record its decomposition shape on disk for traceability
-        const decomposedVariants = objectRollup.objects
-          .flatMap((o) => o.projection_variants ?? [])
-          .filter((v) => v.confidence && typeof v.confidence === 'object').length;
-
-        perFixture.push({
-          name: fixture.name,
-          runId: fixture.runId,
-          targetUrl: fixture.expectedUrl,
-          runPath: path.relative(REPO_ROOT, fixture.runPath),
-          counts: {
-            identityGraphNodes: identityGraph.nodes.length,
-            capabilityRollupCapabilities: capabilityRollup.capabilities.length,
-            capabilityRollupPresentations: capabilityRollup.capabilities.reduce(
-              (sum, c) => sum + (c.presentations?.length ?? 0),
-              0,
-            ),
-            objectRollupObjects: objectRollup.objects.length,
-            objectRollupProjectionVariants: objectRollup.objects.reduce(
-              (sum, o) => sum + (o.projection_variants?.length ?? 0),
-              0,
-            ),
-            decomposedVariants,
-          },
-          normalizer: {
-            capabilities: normalized.length,
-            presentations: presentationCount,
-            derivedProjectionVariants: variantCount,
-            identityNodeCoverage,
-            deterministic: true,
-          },
-        });
-      }
-
-      const report = {
-        mission: 's94-m04',
-        title: 'Real-data E2E gate vs Stage1 v1.6.0 rollup artifacts (a0300dc0 + 7adc1d79)',
-        // Deterministic timestamp anchored to the s94 closeout date that the
-        // filename also encodes ('-2026-04-17.json'). Source-fixed in sprint-99
-        // m05 per decision #449 after three consecutive sprints where the
-        // dynamic new Date().toISOString() dirtied the gate file at every test
-        // run. The semantic of generatedAt is "the date this gate was first
-        // established," NOT "when the test was last run" — the latter is
-        // already implicit in git mtime.
-        generatedAt: '2026-04-17T00:00:00.000Z',
-        status: 'verified',
-        basis: 'live_on_disk_rollups_via_structuredData_fetch',
-        contractAlignment: {
-          oods: 'v1.2.4 (sprint-94)',
-          stage1: 'v1.6.0',
-          oods_sprint_deliverables: [
-            's94-m01 (structuredData.fetch allow-list widen for identity_graph 1.2.0 / capability_rollup 1.2.0 / object_rollup 1.1.0)',
-            's94-m02 (normalizeCapabilities ConfidenceDecomposition unwrap)',
-            's94-m03 (map.create raw-string coercion compat)',
-          ],
-        },
-        acceptedSchemaVersions: {
-          identity_graph: ['1.1.0', '1.2.0'],
-          capability_rollup: ['1.1.0', '1.2.0'],
-          object_rollup: ['1.0.0', '1.1.0'],
-        },
-        fixtures: perFixture,
-        gateResults: {
-          fetchShapeValid:
-            'MET — all 3 kinds parse on both fixtures with v1.6.0 schema_versions and expected counts',
-          confidenceDecompositionShape:
-            'MET — every projection_variant.confidence carries total + method + signals[] (non-empty)',
-          schemaVersionFastFail:
-            'MET — forged schema_version "9.9.9" rejected with structured error',
-          fetchEtagStability: 'MET — repeat fetches return identical etag and sizeBytes',
-          normalizerDeterminism:
-            'MET — byte-identical JSON.stringify across repeat normalize() calls on both fixtures',
-          confidenceUnwrap:
-            'MET — every NormalizedProjectionVariant.confidence is a scalar number (decomposition .total unwrapped)',
-          capabilityIdThreading:
-            'MET — every NormalizedPresentation carries capability_id; every capability_rollup canonical_id appears in the normalized output',
-        },
-      };
-
-      fs.writeFileSync(reportPath, JSON.stringify(report, null, 2) + '\n');
-      expect(fs.existsSync(reportPath)).toBe(true);
-    },
-  );
+  it('refuses a directory that is not a Stage1 run, without reading anything else', async () => {
+    // The closure this slice depends on: a bad path is a typed refusal, never a crawl.
+    await expect(fetchHandle({ kind: 'identity_graph', runPath: path.join(__dirname, 'does-not-exist-s204-m03') }))
+      .rejects.toMatchObject({ opiCode: expect.stringMatching(/^OODS-/) });
+  });
 });
+
+/** Exported for the m03 receipt, so the README's count of gated targets comes from the gate itself. */
+export const gatedTargets = targets.map(target => `${target.suite}/${target.run.slice(0, 8)}/${target.target}`);

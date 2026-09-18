@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en" data-theme="light" data-brand="A">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mission list v1 · react</title>
+<style>
+html,body{margin:0;font:14px/1.45 system-ui,sans-serif;background:#f4f4f5;color:#18181b}
+.shell{display:grid;grid-template-columns:minmax(260px,320px) 1fr;min-height:100vh}
+aside{padding:16px;border-right:1px solid #d4d4d8;background:#fafafa;overflow:auto}
+aside h1{font-size:16px;margin:0 0 4px}aside h2{font-size:12px;text-transform:uppercase;letter-spacing:.04em;margin:18px 0 6px;color:#52525b}
+dl{margin:0}.row{display:grid;grid-template-columns:96px 1fr;gap:6px;padding:3px 0;border-bottom:1px solid #e4e4e7}dt{color:#52525b}dd{margin:0;word-break:break-all}
+code{font:12px ui-monospace,monospace}
+.controls button{margin:0 4px 4px 0;padding:4px 10px;border:1px solid #a1a1aa;border-radius:6px;background:#fff;cursor:pointer}
+.controls button[aria-pressed="true"]{background:#18181b;color:#fff;border-color:#18181b}
+.controls input{width:80px;padding:4px 6px;border:1px solid #a1a1aa;border-radius:6px}
+ul{padding-left:18px;margin:0}li[aria-current="true"]{list-style:"▸ "}
+.edit ol{padding-left:18px;margin:0 0 8px}.edit li{margin:0 0 4px}.edit button.move{padding:0 6px;border:1px solid #a1a1aa;border-radius:4px;background:#fff;cursor:pointer;font-size:11px}.edit select,.edit input{padding:3px 6px;border:1px solid #a1a1aa;border-radius:6px;max-width:100%}.edit h3{font-size:12px;margin:10px 0 4px}.edit form{margin:0 0 6px}.edit-status{font-size:12px;color:#52525b;min-height:1.2em}
+main{padding:16px;overflow:auto}
+.frame{display:inline-block;border:1px solid #d4d4d8;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.08)}
+iframe{display:block;border:0;width:100%;height:calc(100vh - 32px)}
+.status{margin:0 0 8px;color:#52525b;font-size:12px}
+.measurements{margin-top:16px;max-width:1440px}.measurements section{background:#fafafa;border:1px solid #d4d4d8;border-radius:8px;padding:12px}.measurements h3{font-size:13px;margin:0 0 8px}.measurements h4{font-size:12px;margin:12px 0 4px;color:#52525b}.measurements ul{padding-left:18px;margin:0}.measurements li{margin:0 0 4px;word-break:break-word}.count{color:#52525b;font-weight:400}
+@media (max-width:820px){.shell{grid-template-columns:1fr}aside{border-right:0;border-bottom:1px solid #d4d4d8}}
+</style>
+</head>
+<body>
+<div class="shell">
+<aside data-oods-lineage="true">
+<h1>Mission list</h1>
+<h2>Lineage</h2>
+<dl><div class="row"><dt>Composition</dt><dd><code>cmp-000000000204</code></dd></div><div class="row"><dt>Version</dt><dd><strong>1</strong> of 1</dd></div><div class="row"><dt>Parent</dt><dd>none (first version)</dd></div><div class="row"><dt>Operation</dt><dd><code>compose</code></dd></div><div class="row"><dt>Forge head</dt><dd><code>golden</code></dd></div><div class="row"><dt>Schema</dt><dd><code>5fdc60661a2e</code></dd></div><div class="row"><dt>Created</dt><dd>2026-09-18T00:00:00.000Z</dd></div><div class="row"><dt>Generated for</dt><dd>A / light</dd></div></dl>
+<h2>Versions</h2>
+<ul data-oods-versions="true"><li aria-current="true"><strong>v1</strong> · compose</li></ul>
+<h2>Framework</h2>
+<div class="controls" data-oods-controls="framework"><button type="button" data-control="framework" data-value="react" aria-pressed="true">react</button></div>
+<h2>Brand</h2>
+<div class="controls" data-oods-controls="brand"><button type="button" data-control="brand" data-value="A" aria-pressed="true">A</button><button type="button" data-control="brand" data-value="B" aria-pressed="false">B</button></div>
+<h2>Theme</h2>
+<div class="controls" data-oods-controls="theme"><button type="button" data-control="theme" data-value="light" aria-pressed="true">light</button><button type="button" data-control="theme" data-value="dark" aria-pressed="false">dark</button><button type="button" data-control="theme" data-value="hc" aria-pressed="false">hc</button></div>
+<h2>Width</h2>
+<div class="controls" data-oods-controls="width"><button type="button" data-control="width" data-value="390" aria-pressed="false">390</button><button type="button" data-control="width" data-value="820" aria-pressed="false">820</button><button type="button" data-control="width" data-value="1440" aria-pressed="true">1440</button><button type="button" data-control="width" data-value="free" aria-pressed="false">free</button> <input type="number" min="200" max="3840" step="10" value="1440" aria-label="Free width in pixels" data-control="width-input" disabled></div>
+<h2>Edit</h2>
+<div class="edit" data-oods-edit="true"><h3>Regions</h3><ol data-regions="[&quot;screen-list-9-loading&quot;,&quot;screen-list-9-error&quot;,&quot;screen-list-9-success&quot;]"><li><code>screen-list-9-loading</code> Banner <button type="button" class="move" data-kind="region" data-index="0" data-delta="-1" aria-label="Move screen-list-9-loading up" disabled>↑</button><button type="button" class="move" data-kind="region" data-index="0" data-delta="1" aria-label="Move screen-list-9-loading down">↓</button></li><li><code>screen-list-9-error</code> Banner <button type="button" class="move" data-kind="region" data-index="1" data-delta="-1" aria-label="Move screen-list-9-error up">↑</button><button type="button" class="move" data-kind="region" data-index="1" data-delta="1" aria-label="Move screen-list-9-error down">↓</button></li><li><code>screen-list-9-success</code> Stack <button type="button" class="move" data-kind="region" data-index="2" data-delta="-1" aria-label="Move screen-list-9-success up">↑</button><button type="button" class="move" data-kind="region" data-index="2" data-delta="1" aria-label="Move screen-list-9-success down" disabled>↓</button></li></ol><h3>Slots</h3><form data-edit="swap-slot" data-slot="pagination" data-current="PaginationBar"><label>pagination <select name="component" aria-label="Component for slot pagination"><option value="PaginationBar" selected>PaginationBar</option><option value="Button">Button</option><option value="Text">Text</option></select></label> <button type="submit">Swap</button></form><h3>Fields</h3><h3>screen-list-9-success</h3><ol data-fields="[&quot;title&quot;,&quot;id&quot;,&quot;updated_at&quot;,&quot;tags&quot;]" data-region="screen-list-9-success"><li><code>title</code> <button type="button" class="move" data-kind="field" data-index="0" data-delta="-1" aria-label="Move title up" disabled>↑</button><button type="button" class="move" data-kind="field" data-index="0" data-delta="1" aria-label="Move title down">↓</button></li><li><code>id</code> <button type="button" class="move" data-kind="field" data-index="1" data-delta="-1" aria-label="Move id up">↑</button><button type="button" class="move" data-kind="field" data-index="1" data-delta="1" aria-label="Move id down">↓</button></li><li><code>updated_at</code> <button type="button" class="move" data-kind="field" data-index="2" data-delta="-1" aria-label="Move updated_at up">↑</button><button type="button" class="move" data-kind="field" data-index="2" data-delta="1" aria-label="Move updated_at down">↓</button></li><li><code>tags</code> <button type="button" class="move" data-kind="field" data-index="3" data-delta="-1" aria-label="Move tags up">↑</button><button type="button" class="move" data-kind="field" data-index="3" data-delta="1" aria-label="Move tags down" disabled>↓</button></li></ol><h3>Seed</h3><form data-edit="seed" data-current=""><input name="seed" value="" maxlength="64" placeholder="sample-data seed" aria-label="Sample-data seed"> <button type="submit">Re-seed</button></form></div>
+<p class="edit-status" data-oods-edit-status="true" aria-live="polite"></p>
+</aside>
+<main>
+<p class="status" data-oods-status="true">react · brand A · light · 1440px</p>
+<div class="frame" data-oods-frame="true" style="width:1440px"><iframe data-oods-app="true" src="/preview/cmp-000000000204/1/app?framework=react&brand=A&theme=light" title="Mission list running (react)"></iframe></div>
+<div class="measurements"><section data-oods-measurements="cmp-000000000204@1" data-oods-not-measured-count="8"><h3>Measurements · v1</h3><h4>Generation receipt (code.generate)</h4><ul><li data-oods-not-measured="validation:react"><strong>react</strong>: generation receipt not stored (not run).</li></ul><h4>Placed charts (artifact.certify)</h4><ul><li data-oods-not-measured="charts">Placed charts not certified (not run).</li></ul><h4>Accessibility in the running page (axe-core)</h4><ul><li data-oods-not-measured="axe:react:A/light"><strong>react</strong> A/light: axe not run.</li><li data-oods-not-measured="axe:react:A/dark"><strong>react</strong> A/dark: axe not run.</li><li data-oods-not-measured="axe:react:A/hc"><strong>react</strong> A/hc: axe not run.</li><li data-oods-not-measured="axe:react:B/light"><strong>react</strong> B/light: axe not run.</li><li data-oods-not-measured="axe:react:B/dark"><strong>react</strong> B/dark: axe not run.</li><li data-oods-not-measured="axe:react:B/hc"><strong>react</strong> B/hc: axe not run.</li></ul></section></div>
+</main>
+</div>
+<script type="module">
+const state = {"compositionId":"cmp-000000000204","version":1,"framework":"react","brand":"A","theme":"light","width":1440,"base":"/preview"};
+const frame = document.querySelector('[data-oods-app]');
+const box = document.querySelector('[data-oods-frame]');
+const status = document.querySelector('[data-oods-status]');
+const input = document.querySelector('[data-control="width-input"]');
+function press(name, value) { for (const button of document.querySelectorAll('button[data-control="' + name + '"]')) button.setAttribute('aria-pressed', String(button.dataset.value === String(value))); }
+function syncUrl() { const url = new URL(location.href); url.searchParams.set('framework', state.framework); url.searchParams.set('brand', state.brand); url.searchParams.set('theme', state.theme); url.searchParams.set('width', String(state.width)); history.replaceState(null, '', url); }
+function describe() { const px = state.width === 'free' ? input.value + 'px (free)' : state.width + 'px'; status.textContent = state.framework + ' · brand ' + state.brand + ' · ' + state.theme + ' · ' + px; }
+function applyWidth() { const px = state.width === 'free' ? Number(input.value) : state.width; box.style.width = px + 'px'; input.disabled = state.width !== 'free'; press('width', state.width); describe(); syncUrl(); }
+document.addEventListener('click', event => {
+  const button = event.target.closest('button[data-control]');
+  if (!button) return;
+  const { control, value } = button.dataset;
+  if (control === 'framework') { location.href = state.base + '/' + state.compositionId + '/' + state.version + '?framework=' + value + '&brand=' + state.brand + '&theme=' + state.theme + '&width=' + state.width; return; }
+  if (control === 'brand' || control === 'theme') {
+    state[control] = value; press(control, value);
+    document.documentElement.dataset[control] = value;
+    frame.contentWindow.postMessage({ type: 'oods-preview-scope', brand: state.brand, theme: state.theme }, '*');
+    describe(); syncUrl(); return;
+  }
+  if (control === 'width') { state.width = value === 'free' ? 'free' : Number(value); applyWidth(); }
+});
+input.addEventListener('input', () => { if (state.width === 'free') applyWidth(); });
+window.addEventListener('message', async event => {
+  if (!event.data) return;
+  if (event.data.type === 'oods-preview-mounted') { document.documentElement.dataset.oodsAppMounted = 'true'; window.__oodsPreviewApp = event.data; }
+  if (event.data.type === 'oods-preview-measured') { const panel = document.querySelector('[data-oods-measurements]'); const response = await fetch(state.base + '/' + state.compositionId + '/' + state.version + '/measurements'); if (panel && response.ok) { panel.outerHTML = await response.text(); document.documentElement.dataset.oodsMeasured = String(Number(document.documentElement.dataset.oodsMeasured || 0) + 1); } }
+});
+// Edits: one operation each, POSTed to the host, which re-composes and re-generates a new version; the page then opens it.
+const editStatus = document.querySelector('[data-oods-edit-status]');
+async function edit(operation, fields) {
+  editStatus.textContent = 'Re-composing ' + operation + '…';
+  const response = await fetch(state.base + '/' + state.compositionId + '/' + state.version + '/edit', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ operation, ...fields, framework: state.framework, brand: state.brand, theme: state.theme }) });
+  const body = await response.json().catch(() => ({}));
+  if (!response.ok) { editStatus.textContent = 'Refused: ' + (body.error && body.error.message ? body.error.message : response.status); document.documentElement.dataset.oodsEditRefused = String(body.error && body.error.code || response.status); return; }
+  editStatus.textContent = 'Version ' + body.version + ' recorded (' + body.operation + ' ← v' + body.parentVersion + '); opening…';
+  location.href = body.url + '&width=' + state.width;
+}
+function moveIn(list, index, delta) { const next = [...list]; const target = index + delta; if (target < 0 || target >= next.length) return null; [next[index], next[target]] = [next[target], next[index]]; return next; }
+document.addEventListener('click', event => {
+  const move = event.target.closest('button.move');
+  if (!move) return;
+  const kind = move.dataset.kind, index = Number(move.dataset.index), delta = Number(move.dataset.delta);
+  if (kind === 'region') { const order = moveIn(JSON.parse(move.closest('[data-regions]').dataset.regions), index, delta); if (order) edit('reorder-region', { regionOrder: order }); }
+  if (kind === 'field') { const holder = move.closest('[data-fields]'); const order = moveIn(JSON.parse(holder.dataset.fields), index, delta); if (order) edit('reorder-fields', { region: holder.dataset.region, fieldOrder: order }); }
+});
+document.addEventListener('submit', event => {
+  const form = event.target.closest('form[data-edit]');
+  if (!form) return;
+  event.preventDefault();
+  if (form.dataset.edit === 'swap-slot') { const select = form.querySelector('select'); if (select.value && select.value !== form.dataset.current) edit('swap-slot', { slot: form.dataset.slot, component: select.value }); else editStatus.textContent = 'Choose a different candidate.'; }
+  if (form.dataset.edit === 'seed') { const input = form.querySelector('input'); if (input.value && input.value !== form.dataset.current) edit('seed', { seed: input.value }); else editStatus.textContent = 'Enter a different seed.'; }
+});
+window.__oodsPreviewShell = state;
+</script>
+</body>
+</html>

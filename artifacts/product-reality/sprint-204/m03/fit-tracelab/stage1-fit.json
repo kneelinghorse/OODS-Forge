@@ -1,0 +1,250 @@
+{
+  "kind": "s204-m03 Stage1 fit read",
+  "run": "/Users/systemsystems/portfolio/Design-Tools/Stage1/out/stage1/tracelab-production/edb8954d-44a6-4e48-b9d9-aad676f2bf18",
+  "layout": "single-target run (artifacts/)",
+  "targets": [
+    {
+      "target": "edb8954d-44a6-4e48-b9d9-aad676f2bf18",
+      "artifacts": 18,
+      "readable": 0
+    }
+  ],
+  "kindsSeen": [
+    "a11y_report",
+    "app_profile",
+    "baseline_metrics",
+    "component_clusters",
+    "component_signatures",
+    "composition_patterns",
+    "entity_catalog",
+    "ia_outline",
+    "implicit_object_model",
+    "orca_candidates",
+    "overlay_messaging",
+    "report-index",
+    "style_fingerprint",
+    "stylesheet_rules",
+    "surface_snapshot",
+    "theming",
+    "token-guess",
+    "ui_manifest"
+  ],
+  "verdicts": {
+    "readable-today": [],
+    "corresponds": [
+      "a11y_report",
+      "component_clusters",
+      "component_signatures",
+      "composition_patterns",
+      "entity_catalog",
+      "ia_outline",
+      "implicit_object_model",
+      "overlay_messaging",
+      "theming",
+      "token-guess",
+      "ui_manifest"
+    ],
+    "not-comparable": [
+      "app_profile",
+      "baseline_metrics",
+      "orca_candidates",
+      "report-index",
+      "style_fingerprint",
+      "stylesheet_rules",
+      "surface_snapshot"
+    ]
+  },
+  "acceptedContract": {
+    "identity_graph": [
+      "1.1.0",
+      "1.2.0"
+    ],
+    "capability_rollup": [
+      "1.1.0",
+      "1.2.0"
+    ],
+    "object_rollup": [
+      "1.0.0",
+      "1.1.0"
+    ],
+    "drift_report": [
+      "1.0.0"
+    ]
+  },
+  "refusals": [],
+  "rows": [
+    {
+      "target": "edb8954d-44a6-4e48-b9d9-aad676f2bf18",
+      "artifact": "a11y_report.json",
+      "kind": "a11y_report",
+      "bytes": 10090,
+      "schemaVersion": "2.2.0",
+      "verdict": "corresponds",
+      "note": "observed axe findings; Forge runs axe over its own generated screens, so both sides measure the same rules against different artifacts",
+      "forge": "artifact.certify, a11y.scan"
+    },
+    {
+      "target": "edb8954d-44a6-4e48-b9d9-aad676f2bf18",
+      "artifact": "app_profile.json",
+      "kind": "app_profile",
+      "bytes": 3072,
+      "schemaVersion": "1.0.0",
+      "verdict": "not-comparable",
+      "note": "describes the captured application as a deployment — framework, hosting, routing. Forge composes screens from objects and has no notion of a deployed app"
+    },
+    {
+      "target": "edb8954d-44a6-4e48-b9d9-aad676f2bf18",
+      "artifact": "baseline_metrics.json",
+      "kind": "baseline_metrics",
+      "bytes": 15774,
+      "schemaVersion": "1.0.0",
+      "verdict": "not-comparable",
+      "note": "runtime page metrics of a live site; Forge generates artifacts and never serves the thing being measured"
+    },
+    {
+      "target": "edb8954d-44a6-4e48-b9d9-aad676f2bf18",
+      "artifact": "component_clusters.json",
+      "kind": "component_clusters",
+      "bytes": 268486,
+      "schemaVersion": "1.3.0",
+      "verdict": "corresponds",
+      "note": "observed components grouped by similarity; the registry equivalent is the component catalog, which is authored rather than inferred",
+      "forge": "catalog.list"
+    },
+    {
+      "target": "edb8954d-44a6-4e48-b9d9-aad676f2bf18",
+      "artifact": "component_signatures.json",
+      "kind": "component_signatures",
+      "bytes": 354,
+      "schemaVersion": "0.1.0",
+      "verdict": "corresponds",
+      "note": "observed recurring element shapes; Forge holds 110 canonical component contracts that name the same kind of thing from the other direction",
+      "forge": "@oods/component-contracts"
+    },
+    {
+      "target": "edb8954d-44a6-4e48-b9d9-aad676f2bf18",
+      "artifact": "composition_patterns.json",
+      "kind": "composition_patterns",
+      "bytes": 1316,
+      "schemaVersion": "1.0.0",
+      "verdict": "corresponds",
+      "note": "observed layout regularities; Forge has authored pattern rules in compose/field-patterns.ts, which is the same idea authored rather than observed",
+      "forge": "compose/field-patterns"
+    },
+    {
+      "target": "edb8954d-44a6-4e48-b9d9-aad676f2bf18",
+      "artifact": "entity_catalog.json",
+      "kind": "entity_catalog",
+      "bytes": 1272,
+      "schemaVersion": null,
+      "verdict": "corresponds",
+      "note": "the entities a site appears to be about; this is the nearest thing to a Forge object and is the natural seam for a later mission",
+      "forge": "objects/ registry"
+    },
+    {
+      "target": "edb8954d-44a6-4e48-b9d9-aad676f2bf18",
+      "artifact": "ia_outline.json",
+      "kind": "ia_outline",
+      "bytes": 26685,
+      "schemaVersion": "1.10.0",
+      "verdict": "corresponds",
+      "note": "the observed page hierarchy of a site; Forge composes a screen per object and context, so the comparable unit is a screen, not a route tree",
+      "forge": "design.compose contexts"
+    },
+    {
+      "target": "edb8954d-44a6-4e48-b9d9-aad676f2bf18",
+      "artifact": "implicit_object_model.json",
+      "kind": "implicit_object_model",
+      "bytes": 10940,
+      "schemaVersion": "1.1.0",
+      "verdict": "corresponds",
+      "note": "objects inferred from the surface; the same seam as entity_catalog and the one the comparison in m04 works from",
+      "forge": "objects/ registry"
+    },
+    {
+      "target": "edb8954d-44a6-4e48-b9d9-aad676f2bf18",
+      "artifact": "orca_candidates.json",
+      "kind": "orca_candidates",
+      "bytes": 234805,
+      "schemaVersion": "2.0.0",
+      "verdict": "not-comparable",
+      "note": "a Stage1 research surface with no Forge counterpart"
+    },
+    {
+      "target": "edb8954d-44a6-4e48-b9d9-aad676f2bf18",
+      "artifact": "overlay_messaging.json",
+      "kind": "overlay_messaging",
+      "bytes": 19365,
+      "schemaVersion": "1.0.0",
+      "verdict": "corresponds",
+      "note": "observed overlays (drawer, modal, message mount) and conditional copy; Forge composes overlay surfaces only as Banner and ArchivedRowOverlay, so the concept exists on both sides but at very different coverage — the observed side has drawers and modals Forge composes nothing for",
+      "forge": "Banner, ArchivedRowOverlay"
+    },
+    {
+      "target": "edb8954d-44a6-4e48-b9d9-aad676f2bf18",
+      "artifact": "report-index.json",
+      "kind": "report-index",
+      "bytes": 5455,
+      "schemaVersion": "1.0.0",
+      "verdict": "not-comparable",
+      "note": "an index of Stage1's own generated reports"
+    },
+    {
+      "target": "edb8954d-44a6-4e48-b9d9-aad676f2bf18",
+      "artifact": "style_fingerprint.json",
+      "kind": "style_fingerprint",
+      "bytes": 10339,
+      "schemaVersion": null,
+      "verdict": "not-comparable",
+      "note": "a similarity hash for matching sites to each other, which is a Stage1-internal concern"
+    },
+    {
+      "target": "edb8954d-44a6-4e48-b9d9-aad676f2bf18",
+      "artifact": "stylesheet_rules.json",
+      "kind": "stylesheet_rules",
+      "bytes": 9772,
+      "schemaVersion": null,
+      "verdict": "not-comparable",
+      "note": "raw CSS rules as authored by the observed site; Forge emits token-scoped CSS and a rule-level diff would compare two unrelated authoring styles"
+    },
+    {
+      "target": "edb8954d-44a6-4e48-b9d9-aad676f2bf18",
+      "artifact": "surface_snapshot.json",
+      "kind": "surface_snapshot",
+      "bytes": 5537,
+      "schemaVersion": "1.0.0",
+      "verdict": "not-comparable",
+      "note": "the raw captured DOM surface; it is the input the other artifacts are derived from, not a comparable"
+    },
+    {
+      "target": "edb8954d-44a6-4e48-b9d9-aad676f2bf18",
+      "artifact": "theming.json",
+      "kind": "theming",
+      "bytes": 402872,
+      "schemaVersion": "1.0.0",
+      "verdict": "corresponds",
+      "note": "observed theme variables; Forge builds DTCG tokens through Style Dictionary, and s81 fixed the token seam on the Stage1 side",
+      "forge": "tokens.build"
+    },
+    {
+      "target": "edb8954d-44a6-4e48-b9d9-aad676f2bf18",
+      "artifact": "token-guess.json",
+      "kind": "token-guess",
+      "bytes": 1049,
+      "schemaVersion": "2.1.0",
+      "verdict": "corresponds",
+      "note": "inferred token values; the authored equivalent is the token pipeline, and a guess is not evidence against an authored token",
+      "forge": "packages/tokens"
+    },
+    {
+      "target": "edb8954d-44a6-4e48-b9d9-aad676f2bf18",
+      "artifact": "ui_manifest.drafts.json",
+      "kind": "ui_manifest",
+      "bytes": 8324,
+      "schemaVersion": "1.0.0",
+      "verdict": "corresponds",
+      "note": "a draft UI manifest; drafts are proposals and Phase E rules out consuming proposals automatically",
+      "forge": "design.compose"
+    }
+  ]
+}

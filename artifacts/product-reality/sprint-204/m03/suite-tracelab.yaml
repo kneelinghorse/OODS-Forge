@@ -1,0 +1,23 @@
+# s204-m03 — the Stage1 suite that captures TraceLab's live frontend.
+#
+# Retained in Forge's tree rather than authored into the Stage1 repository, because this sprint writes
+# nothing into Stage1 or TraceLab. Stage1 reads this file by path and writes its run to its own
+# gitignored `out/`, where every other run on this machine already lives.
+#
+# The app under capture is TraceLab's Next.js frontend on 127.0.0.1:3000, backed by the docker stack
+# (postgres + qdrant + FastAPI on :8000). It is a FRESHLY MIGRATED instance: 38 tables, and 4 rows
+# across them — one user, one workspace, one invite code. There is no demo corpus, and inventing one
+# inside another team's product is not this mission's to do. So the capture sees the real application
+# in its empty state: real routes, real chrome, real components, real tokens, and empty collections.
+# That is stated here so a reader of the run never mistakes thin per-record output for a thin app.
+#
+# The seed routes are the seven the comparison in m04 cares about, because Forge already holds
+# TraceLab's seven research objects (Chunk, Collection, Document, Evidence, Mission, Project, Report)
+# from TraceLab's own PR #105. Detail routes are deliberately NOT seeded: they are `[id]` pages and
+# there are no ids to visit.
+suite:
+  name: "tracelab-frontend-s204"
+  apps:
+    - name: "tracelab-local"
+      url: "http://127.0.0.1:3000"
+      maxPages: 30

@@ -24,6 +24,13 @@ import {
   ownFieldSchemaEntry,
   resolveFieldProps,
   hasReadOnlyFields,
+  hasSlotBoundDates,
+  isDateFieldEntry,
+  slotDateHelperSource,
+  SLOT_DATE_HELPER,
+  hasHeadingExcerpts,
+  slotExcerptHelperSource,
+  SLOT_EXCERPT_HELPER,
 } from './binding-utils.js';
 import { artifactActionsFromBindings, bindingsForNode } from './action-protocol.js';
 import {
@@ -384,6 +391,16 @@ function vueFieldExpression(
   if (node.component === 'Text' && isChildren && entry && node.meta?.intent === 'read-only-field') {
     const code = Boolean(entry.enum?.length || /(?:status|state|event\.type|collection_method|pricing_model|interval)$/.test(entry.semanticType ?? ''));
     return `formatReadOnlyValue(${fieldName}, ${JSON.stringify(entry.type.replace(/\?$/, ''))}, ${code})`;
+  }
+  // A heading standing in for a record with no title shows the record's first line only.
+  if (node.component === 'Text' && isChildren && node.meta?.headingExcerpt === true) {
+    return `${SLOT_EXCERPT_HELPER}(${fieldName})`;
+  }
+  // A date bound through a slot reads as a date, not as its raw stored value. Lowered to a
+  // module-local helper so the artifact's declared dependency surface does not move; the guard
+  // `hasSlotBoundDates` tracks this condition exactly.
+  if (node.component === 'Text' && isChildren && isDateFieldEntry(entry)) {
+    return `${SLOT_DATE_HELPER}(${fieldName})`;
   }
   if (node.component === 'Text' && isChildren && entry?.type === 'boolean') {
     return `${fieldName} == null ? '' : ${fieldName} ? 'Yes' : 'No'`;
@@ -1138,6 +1155,10 @@ function buildScriptSetup(
 
   if (hasReadOnlyFields(screens)) lines.push("import { formatReadOnlyValue } from '@oods/component-contracts';");
   if (collectionSources(screens).has('events')) lines.push(`import { chronologicalEvents, formatDateTime${options.typescript ? ', type CollectionEvent' : ''} } from '@oods/component-contracts';`);
+  // Defined, never imported: lowering the formatter keeps this artifact's declared dependency
+  // surface exactly where it was before dates were formatted at all.
+  if (hasSlotBoundDates(screens, objectSchema)) lines.push(slotDateHelperSource(Boolean(options.typescript)));
+  if (hasHeadingExcerpts(screens)) lines.push(slotExcerptHelperSource(Boolean(options.typescript)));
 
   // Vue reactivity imports
   if (shouldImportVueRuntime(objectSchema, screens, bindingAnalysis)) {

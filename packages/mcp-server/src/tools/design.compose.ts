@@ -46,7 +46,7 @@ import type { FieldDefinition, SemanticMapping, StateMachineDefinition, TraitAct
 import { resolveIntentObject, fuzzyMatchObject } from '../compose/intent-object-resolver.js';
 import { populateCollections, populateListStates } from '../compose/collections.js';
 import { reconcileFormDetail } from '../compose/form-detail.js';
-import { populateObjectSchema, populateBindings, fillSlotsWithObject, wireFieldProps, applySelectionsToSchema, dropUnfilledInteractiveSlots } from '../compose/object-slot-filler.js';
+import { populateObjectSchema, populateBindings, fillSlotsWithObject, wireFieldProps, applySelectionsToSchema, dropUnfilledInteractiveSlots, neutralizeUnfilledSurfaceSlots, bindCardHeadingField } from '../compose/object-slot-filler.js';
 import { isTraitRecipe } from '../compose/trait-recipes.js';
 import { collectDashboardViewExtensions, collectViewExtensions } from '../compose/view-extension-collector.js';
 import type { SlotPlan } from '../compose/view-extension-collector.js';
@@ -2118,6 +2118,11 @@ export async function handle(input: DesignComposeInput): Promise<DesignComposeOu
   }
   // A slot nothing filled must not leave a focusable control with no accessible name on the page.
   dropUnfilledInteractiveSlots(schema);
+  // A card header must not bind a field that says nothing about the record (s203 review #2180).
+  bindCardHeadingField(schema, effectiveContext);
+  // Nor an empty bordered box. The anchor stays where overrides and slot swaps expect it; only the
+  // paint goes (s203 review #2180).
+  neutralizeUnfilledSurfaceSlots(schema);
   // Every screen root is named after its object and context: the generated shell's heading when the screen places none.
   labelScreens(schema, effectiveObject, effectiveContext);
 

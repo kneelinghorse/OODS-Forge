@@ -321,6 +321,10 @@ const registry: ReadonlyMap<string, ErrorDefinition> = new Map<string, ErrorDefi
   ['OODS-V205', { code: 'OODS-V205', category: 'validation', message: 'Composition version cannot be accepted', retryable: false }],
   ['OODS-V203', { code: 'OODS-V203', category: 'validation', message: 'Composition id or version is not well-formed', retryable: false }],
   ['OODS-V202', { code: 'OODS-V202', category: 'validation', message: 'structuredData.fetch input invalid', retryable: true }],
+  // Observation against intent (s204-m04): each refusal writes nothing at all.
+  ['OODS-V208', { code: 'OODS-V208', category: 'validation', message: 'Observation run path is not one Stage1 run', retryable: false }],
+  ['OODS-V209', { code: 'OODS-V209', category: 'validation', message: 'Observation artifact schema_version is outside the accepted contract', retryable: false }],
+  ['OODS-V210', { code: 'OODS-V210', category: 'validation', message: 'Observation names an object the registry does not hold', retryable: false }],
 
   // ── Not Found ───────────────────────────────────────────────────────────
   ['OODS-N001', { code: 'OODS-N001', category: 'not_found', message: 'Unknown tool', retryable: false }],

@@ -24,6 +24,7 @@ export interface ScopedGeneration {
 }
 
 import type { StoredContext } from './preview-context.js';
+import type { StoredObservation } from './preview-observation.js';
 
 export interface CompositionVersion {
   recordVersion: typeof COMPOSITION_RECORD_VERSION;
@@ -56,6 +57,12 @@ export interface CompositionVersion {
    * Forge fetches none of it — see lib/preview-context.ts.
    */
   context?: StoredContext;
+  /**
+   * Attached by design.preview's observationRunPath input (s204 m05): the rows of a Stage1-against-Forge
+   * comparison about this object, read from a run on disk through structuredData.fetch. Evidence for
+   * review; see lib/preview-observation.ts.
+   */
+  observation?: StoredObservation;
   /** Attached when a brand or theme switch needs the placed charts rendered for that scope, keyed brand/theme. */
   scopes?: Partial<Record<PreviewScope, ScopedGeneration>>;
 }
@@ -134,7 +141,7 @@ export async function nextVersion(directory: string, compositionId: string, pare
  * Attach derived, deterministic data (artifacts, model, measurements) to an existing version. The
  * schema is asserted unchanged; the file is replaced atomically.
  */
-export async function attachToVersion(directory: string, compositionId: string, version: number, patch: Partial<Pick<CompositionVersion, 'artifacts' | 'model' | 'measurements' | 'scopes' | 'context'>>): Promise<CompositionVersion> {
+export async function attachToVersion(directory: string, compositionId: string, version: number, patch: Partial<Pick<CompositionVersion, 'artifacts' | 'model' | 'measurements' | 'scopes' | 'context' | 'observation'>>): Promise<CompositionVersion> {
   const record = await readVersion(directory, compositionId, version);
   const scopes = { ...(record.scopes ?? {}) } as NonNullable<CompositionVersion['scopes']>;
   for (const [key, generation] of Object.entries(patch.scopes ?? {}) as Array<[PreviewScope, ScopedGeneration]>) {
@@ -143,7 +150,7 @@ export async function attachToVersion(directory: string, compositionId: string, 
   }
   // Context replaces rather than merges: a panel is what one call attached, so a later call supplying
   // fewer items must not leave the earlier ones standing beside a design they were not fetched for.
-  const updated: CompositionVersion = { ...record, ...(patch.model ? { model: patch.model } : {}), artifacts: { ...record.artifacts, ...(patch.artifacts ?? {}) }, measurements: { ...record.measurements, ...(patch.measurements ?? {}) }, ...(Object.keys(scopes).length ? { scopes } : {}), ...(patch.context ? { context: patch.context } : {}) };
+  const updated: CompositionVersion = { ...record, ...(patch.model ? { model: patch.model } : {}), artifacts: { ...record.artifacts, ...(patch.artifacts ?? {}) }, measurements: { ...record.measurements, ...(patch.measurements ?? {}) }, ...(Object.keys(scopes).length ? { scopes } : {}), ...(patch.context ? { context: patch.context } : {}), ...(patch.observation ? { observation: patch.observation } : {}) };
   const file = versionPath(directory, compositionId, version);
   const temporary = `${file}.${process.pid}.tmp`;
   await fsp.writeFile(temporary, JSON.stringify(updated, null, 2) + '\n');

@@ -78,6 +78,55 @@ export function renderContext(record: CompositionVersion, link: ContextLink): st
   ].filter(Boolean).join('');
 }
 
+/** A link to the screen a row was observed on: an anchor on the page, the destination as text in the app. */
+export type ObservationLink = (href: string, text: string) => string;
+
+const CATEGORY_LABEL: Record<string, string> = { disagreeing: 'Disagrees', agreeing: 'Agrees', 'observed-only': 'Observed only', 'composed-only': 'Composed only' };
+
+/**
+ * What Stage1 observed on the live app beside what Forge composes for this object (Sprint 204 m05).
+ *
+ * The same renderer serves the browser page and the conversation app, each passing the link callback
+ * that suits it, as renderContext does. Every row names both sides' provenance — the Stage1 run, target,
+ * artifact and capture time, and the Forge object, context and URN — or the reader has no reason to
+ * believe it. Rows gathered for an earlier version are marked, never re-dated. There is nothing to act on
+ * here: no approve, no reject, no queue. A person reads the difference and decides outside Forge.
+ *
+ * A version with no observation renders nothing at all, and neither does its stylesheet.
+ */
+export function renderObservation(record: CompositionVersion, link: ObservationLink): string {
+  const observation = record.observation;
+  if (!observation) return '';
+  const { run, rows } = observation;
+  const stale = rows.filter(row => row.staleForVersion).length;
+  const count = (category: string) => rows.filter(row => row.category === category).length;
+  const tally = ['disagreeing', 'agreeing', 'observed-only', 'composed-only'].map(category => [category, count(category)] as const).filter(([, n]) => n > 0).map(([category, n]) => `${n} ${CATEGORY_LABEL[category]!.toLowerCase()}`).join(', ');
+  const screenOf = (row: typeof rows[number]) => {
+    if (!row.screen) return 'no observed screen';
+    const route = row.routes[0];
+    return route ? link(new URL(route, run.target).href, row.screen) : escapeHtml(row.screen);
+  };
+  const items = rows.map(row => [
+    `<li data-oods-observation-row="${escapeHtml(row.category)}" data-oods-observation-axis="${escapeHtml(row.axis)}"${row.staleForVersion ? ' data-oods-observation-stale="true"' : ''}>`,
+    `<strong>${escapeHtml(CATEGORY_LABEL[row.category] ?? row.category)} · ${escapeHtml(row.axis)}</strong> · ${screenOf(row)}`,
+    row.staleForVersion ? ' <span data-oods-observation-stale-note="true">compared an earlier version</span>' : '',
+    `<p class="observation-side"><span>Observed</span> ${escapeHtml(row.observed)}</p>`,
+    `<p class="observation-side"><span>Composed</span> ${escapeHtml(row.composed)}</p>`,
+    `<p class="observation-provenance">Stage1 run <code>${escapeHtml(row.stage1.runId)}</code> · ${escapeHtml(row.stage1.target)} · <code>${escapeHtml(row.stage1.artifactKind)}</code> ${escapeHtml(row.stage1.readPath)}${row.stage1.pointers.length ? ` (${row.stage1.pointers.length} pointer${row.stage1.pointers.length === 1 ? '' : 's'})` : ' (none found)'} · captured ${escapeHtml(row.stage1.capturedAt ?? 'unrecorded')}</p>`,
+    `<p class="observation-provenance">Forge ${row.forge.object ? `${escapeHtml(row.forge.object)} ${escapeHtml(row.forge.context ?? '')} · <code>${escapeHtml(row.forge.urn ?? '')}</code>` : 'no compared object'} · searched ${escapeHtml(row.forge.searched)}</p>`,
+    '</li>',
+  ].join('')).join('');
+  return [
+    '<section class="observation" data-oods-observation="true">',
+    `<h3>Observed on the live app <span class="count">${rows.length ? `${rows.length} ${rows.length === 1 ? 'row' : 'rows'} about ${escapeHtml(observation.object)}: ${tally}` : `nothing found about ${escapeHtml(observation.object)}`}${stale ? `, ${stale} compared an earlier version` : ''}</span></h3>`,
+    `<p class="observation-keyed">Stage1 run <code>${escapeHtml(run.runId)}</code> of ${escapeHtml(run.target)}, captured ${escapeHtml(run.capturedAt ?? 'unrecorded')}, compared with <code>${escapeHtml(observation.urn)}</code> (${escapeHtml(observation.context)}). ${escapeHtml(observation.judgement)}</p>`,
+    rows.length
+      ? `<ul data-oods-observation-rows="true">${items}</ul>`
+      : `<p data-oods-observation-empty="true">Searched ${escapeHtml(observation.searched.screens.join(', ') || 'no comparable screen of this context')} against ${observation.searched.observedScreens} observed screens (${observation.searched.observedRoutes} routes) in run <code>${escapeHtml(run.runId)}</code>: nothing found.</p>`,
+    '</section>',
+  ].join('');
+}
+
 /**
  * The four edits, from the page: regions up/down, a slot swapped to one of the composer's candidates,
  * fields up/down per region, a new seed. Each posts one operation; the host re-composes a new version.
@@ -154,6 +203,8 @@ export function renderPreviewShell({ record, versions, framework, brand, theme, 
     ? `<a href="${escapeHtml(item.url)}" rel="noreferrer noopener" target="_blank">${escapeHtml(item.title)}</a>`
     : escapeHtml(item.title);
   const context = renderContext(record, contextLink);
+  const observationLink: ObservationLink = (href, text) => `<a href="${escapeHtml(href)}" rel="noreferrer noopener" target="_blank">${escapeHtml(text)}</a>`;
+  const observation = renderObservation(record, observationLink);
   const versionList = renderVersionList(versions, record.version, link, accepted?.version);
   const options = <T extends string | number>(name: string, values: readonly T[], current: T) => values.map(value => `<button type="button" data-control="${name}" data-value="${escapeHtml(String(value))}" aria-pressed="${String(value === current)}">${escapeHtml(String(value))}</button>`).join('');
   return [
@@ -181,6 +232,8 @@ export function renderPreviewShell({ record, versions, framework, brand, theme, 
     '.status{margin:0 0 8px;color:#52525b;font-size:12px}',
     // Emitted only when there is context to style, so a version carrying none produces the same page it did before this existed.
     ...(context ? ['.context{background:#fafafa;border:1px solid #d4d4d8;border-radius:8px;padding:12px;margin-top:12px}.context h3{font-size:13px;margin:0 0 4px}.context h4{font-size:12px;margin:12px 0 4px;color:#52525b}.context ul{padding-left:18px;margin:0}.context li{margin:0 0 10px}.context-body{margin:2px 0;white-space:pre-wrap}.context-provenance{margin:2px 0;font-size:12px;color:#52525b}.context-keyed{margin:0 0 8px;font-size:12px;color:#52525b}[data-oods-context-stale="true"] .context-body{color:#52525b}[data-oods-context-stale-note]{font-size:11px;border:1px solid #a1a1aa;border-radius:4px;padding:0 4px;color:#52525b}'] : []),
+    // Likewise only when there is an observation, so a version carrying none keeps its page byte for byte.
+    ...(observation ? ['.observation{background:#fafafa;border:1px solid #d4d4d8;border-radius:8px;padding:12px;margin-top:12px}.observation h3{font-size:13px;margin:0 0 4px}.observation ul{padding-left:18px;margin:0}.observation li{margin:0 0 10px}.observation-side{margin:2px 0}.observation-side span{display:inline-block;min-width:72px;color:#52525b}.observation-provenance,.observation-keyed{margin:2px 0;font-size:12px;color:#52525b;word-break:break-word}.observation-keyed{margin:0 0 8px}[data-oods-observation-row="disagreeing"]>strong{color:#9a3412}[data-oods-observation-stale-note]{font-size:11px;border:1px solid #a1a1aa;border-radius:4px;padding:0 4px;color:#52525b}'] : []),
     '.measurements{margin-top:16px;max-width:1440px}.measurements section{background:#fafafa;border:1px solid #d4d4d8;border-radius:8px;padding:12px}.measurements h3{font-size:13px;margin:0 0 8px}.measurements h4{font-size:12px;margin:12px 0 4px;color:#52525b}.measurements ul{padding-left:18px;margin:0}.measurements li{margin:0 0 4px;word-break:break-word}.count{color:#52525b;font-weight:400}',
     '@media (max-width:820px){.shell{grid-template-columns:1fr}aside{border-right:0;border-bottom:1px solid #d4d4d8}}',
     '</style>',
@@ -208,7 +261,7 @@ export function renderPreviewShell({ record, versions, framework, brand, theme, 
     '<main>',
     `<p class="status" data-oods-status="true">${escapeHtml(framework)} · brand ${escapeHtml(brand)} · ${escapeHtml(theme)} · ${width === 'free' ? `${pixelWidth}px (free)` : `${width}px`}</p>`,
     `<div class="frame" data-oods-frame="true" style="width:${pixelWidth}px"><iframe data-oods-app="true" src="${appUrl}" title="${escapeHtml(label)} running (${escapeHtml(framework)})"></iframe></div>`,
-    `<div class="measurements">${renderMeasurementPanel(record)}${context}</div>`,
+    `<div class="measurements">${renderMeasurementPanel(record)}${context}${observation}</div>`,
     '</main>',
     '</div>',
     `<script type="module">\nconst state = ${scriptJson(state)};\nconst frame = document.querySelector('[data-oods-app]');\nconst box = document.querySelector('[data-oods-frame]');\nconst status = document.querySelector('[data-oods-status]');\nconst input = document.querySelector('[data-control="width-input"]');\nfunction press(name, value) { for (const button of document.querySelectorAll('button[data-control="' + name + '"]')) button.setAttribute('aria-pressed', String(button.dataset.value === String(value))); }\nfunction syncUrl() { const url = new URL(location.href); url.searchParams.set('framework', state.framework); url.searchParams.set('brand', state.brand); url.searchParams.set('theme', state.theme); url.searchParams.set('width', String(state.width)); history.replaceState(null, '', url); }\nfunction describe() { const px = state.width === 'free' ? input.value + 'px (free)' : state.width + 'px'; status.textContent = state.framework + ' · brand ' + state.brand + ' · ' + state.theme + ' · ' + px; }\nfunction applyWidth() { const px = state.width === 'free' ? Number(input.value) : state.width; box.style.width = px + 'px'; input.disabled = state.width !== 'free'; press('width', state.width); describe(); syncUrl(); }\ndocument.addEventListener('click', event => {\n  const button = event.target.closest('button[data-control]');\n  if (!button) return;\n  const { control, value } = button.dataset;\n  if (control === 'framework') { location.href = state.base + '/' + state.compositionId + '/' + state.version + '?framework=' + value + '&brand=' + state.brand + '&theme=' + state.theme + '&width=' + state.width; return; }\n  if (control === 'brand' || control === 'theme') {\n    state[control] = value; press(control, value);\n    document.documentElement.dataset[control] = value;\n    frame.contentWindow.postMessage({ type: 'oods-preview-scope', brand: state.brand, theme: state.theme }, '*');\n    describe(); syncUrl(); return;\n  }\n  if (control === 'width') { state.width = value === 'free' ? 'free' : Number(value); applyWidth(); }\n});\ninput.addEventListener('input', () => { if (state.width === 'free') applyWidth(); });\nwindow.addEventListener('message', async event => {\n  if (!event.data) return;\n  if (event.data.type === 'oods-preview-mounted') { document.documentElement.dataset.oodsAppMounted = 'true'; window.__oodsPreviewApp = event.data; }\n  if (event.data.type === 'oods-preview-measured') { const panel = document.querySelector('[data-oods-measurements]'); const response = await fetch(state.base + '/' + state.compositionId + '/' + state.version + '/measurements'); if (panel && response.ok) { panel.outerHTML = await response.text(); document.documentElement.dataset.oodsMeasured = String(Number(document.documentElement.dataset.oodsMeasured || 0) + 1); } }\n});\n// Edits: one operation each, POSTed to the host, which re-composes and re-generates a new version; the page then opens it.\nconst editStatus = document.querySelector('[data-oods-edit-status]');\nasync function edit(operation, fields) {\n  editStatus.textContent = 'Re-composing ' + operation + '…';\n  const response = await fetch(state.base + '/' + state.compositionId + '/' + state.version + '/edit', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ operation, ...fields, framework: state.framework, brand: state.brand, theme: state.theme }) });\n  const body = await response.json().catch(() => ({}));\n  if (!response.ok) { editStatus.textContent = 'Refused: ' + (body.error && body.error.message ? body.error.message : response.status); document.documentElement.dataset.oodsEditRefused = String(body.error && body.error.code || response.status); return; }\n  editStatus.textContent = 'Version ' + body.version + ' recorded (' + body.operation + ' ← v' + body.parentVersion + '); opening…';\n  location.href = body.url + '&width=' + state.width;\n}\nfunction moveIn(list, index, delta) { const next = [...list]; const target = index + delta; if (target < 0 || target >= next.length) return null; [next[index], next[target]] = [next[target], next[index]]; return next; }\ndocument.addEventListener('click', event => {\n  const move = event.target.closest('button.move');\n  if (!move) return;\n  const kind = move.dataset.kind, index = Number(move.dataset.index), delta = Number(move.dataset.delta);\n  if (kind === 'region') { const order = moveIn(JSON.parse(move.closest('[data-regions]').dataset.regions), index, delta); if (order) edit('reorder-region', { regionOrder: order }); }\n  if (kind === 'field') { const holder = move.closest('[data-fields]'); const order = moveIn(JSON.parse(holder.dataset.fields), index, delta); if (order) edit('reorder-fields', { region: holder.dataset.region, fieldOrder: order }); }\n});\ndocument.addEventListener('submit', event => {\n  const form = event.target.closest('form[data-edit]');\n  if (!form) return;\n  event.preventDefault();\n  if (form.dataset.edit === 'swap-slot') { const select = form.querySelector('select'); if (select.value && select.value !== form.dataset.current) edit('swap-slot', { slot: form.dataset.slot, component: select.value }); else editStatus.textContent = 'Choose a different candidate.'; }\n  if (form.dataset.edit === 'seed') { const input = form.querySelector('input'); if (input.value && input.value !== form.dataset.current) edit('seed', { seed: input.value }); else editStatus.textContent = 'Enter a different seed.'; }\n});\nwindow.__oodsPreviewShell = state;\n</script>`,

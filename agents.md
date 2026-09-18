@@ -38,6 +38,22 @@ Strong success criteria let Claude loop independently.
 Non-trivial choices belong in CMOS. Decisions to `cmos_decisions`, cross-cutting patterns to `cmos_learnings`.
 If future-you needs to know why, capture it now.
 
+### Rule 5b — Never write this app's code outside this repository. Ever.
+
+Every file you create or edit for this project lives under `/Users/systemsystems/portfolio/Design-Tools/OODS-Forge`. No exceptions, no temporary exceptions, no "it's the same git object store anyway."
+
+**Sprint build checkouts belong in `.worktrees/<sprint>/` inside this repo** — gitignored, but present and visible where Derek works. Create one with:
+
+```
+git worktree add .worktrees/s205 codex/sprint-205-<name>
+```
+
+Never `~/.codex/worktrees/`, never `/tmp`, never a sibling directory, never anywhere outside this tree. If you find an existing checkout outside the repo, move it in with `git worktree move <old-path> .worktrees/<sprint>` — that preserves `node_modules` and built `dist` directories — and say you did.
+
+**Why a second checkout exists at all:** the repo root is what pm2 serves the live bridge from, so building or testing there swaps `dist` under a running bridge. That is the entire reason. It has never been a reason to put code somewhere hidden.
+
+The only writes allowed outside this repo are to your session scratchpad for throwaway logs and intermediate output that is not app code and not a receipt. Receipts are app-repo content: they go under `artifacts/`.
+
 ### Rule 6 — Commit at coherent boundaries
 
 Commit at mission close, sprint close, or day boundary. Per-mission commits only when a sprint surfaces a real bisection need.

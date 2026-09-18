@@ -68,11 +68,23 @@ describe('Sprint 188 remaining trait placement obligations', () => {
     const current = await compose({ object: 'Article', context: 'detail' });
     expect(nodes(historical.rows.find(row => row.object === 'Article' && row.context === 'detail')!.schema).find(node => node.id === expected.id)).toEqual(expected);
     const group = nodes(current.schema).find(node => node.meta?.notes === 'pattern-group:status-timeline')!;
-    // The declared StatusTimeline owns status; navigation stays a read-only row
-    // instead of presenting the scalar group as a second history log.
+    // The declared StatusTimeline owns status; the group beside it stays a read-only row instead of
+    // presenting the scalar group as a second history log.
+    //
+    // MOVED in s204-m02, with the s203 review's ruling (#2180) behind it. This row used to read
+    // `allowed_transitions` and print "Allowed transitions: None recorded" on the detail of every
+    // object composing Stateful — 24 screens. The status-timeline rule matched that field on its name
+    // via /transition/i, though it is a `string[]` of state names and not a moment in time at all, and
+    // the rule pairs a status with WHEN it was last set. Requiring the second field to be date-typed
+    // re-pairs the group with `updated_at`, which is what this now asserts.
+    //
+    // The consequence is real and is recorded rather than hidden: `allowed_transitions` is no longer
+    // placed on this detail by anything, because the pattern rule was the only thing placing it.
+    // Article/detail binds 17 fields where it bound 18. That is the intended trade — an internal
+    // navigation list a reader has no use for, against a status paired with its real timestamp.
     expect(group.component).toBe('Stack');
     expect(group.props).toBeUndefined();
-    expect(group.children?.map(node => node.children?.find(child => child.meta?.intent === 'read-only-field')?.props?.field)).toEqual(['allowed_transitions']);
+    expect(group.children?.map(node => node.children?.find(child => child.meta?.intent === 'read-only-field')?.props?.field)).toEqual(['updated_at']);
     const timelines = nodes(current.schema).filter(node => node.component === 'StatusTimeline');
     expect(timelines).toHaveLength(1);
     expect(timelines[0].props).toMatchObject({ field: 'status', historyField: 'state_history' });

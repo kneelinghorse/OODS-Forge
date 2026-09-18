@@ -21,11 +21,30 @@ import { ToolError } from '../errors/tool-error.js';
  * Sprint-95 m02 adds read-side acceptance for Stage1's additive drift_report
  * side artifact at schema_version 1.0.0 without activating any downstream
  * consumer surfaces.
+ *
+ * s204-m03 adds object_rollup 1.2.0, on measured evidence rather than on a version bump alone:
+ *
+ *   - EVERY object_rollup on disk is 1.2.0. There is no 1.1.0 anywhere, so this list was stale
+ *     against ALL current Stage1 output, not part of it — Forge advertised four readable kinds and
+ *     could read three.
+ *   - The payload is already compatible. A real 1.2.0 rollup, byte-identical except for the version
+ *     string, parses under this same validator with schemaValidated true and all 84 objects intact.
+ *     The list was the only thing refusing it.
+ *   - Stage1 validates 1.0.0, 1.1.0 and 1.2.0 with ONE zod schema; 1.2.0 adds a single optional
+ *     boolean, `requires_human_adjudication`.
+ *
+ * That field is one Forge wants rather than tolerates. It is true when a rollup's semantic→OODS
+ * mappings are gated, marking them as PROPOSALS requiring human adjudication and never auto-apply
+ * directives — the machine-readable form of the rule near.md §8 states in prose and that Phase E is
+ * built around. It is surfaced on `Stage1ObjectRollup` so a consumer can read it rather than infer it.
+ *
+ * The fast-fail intent above is unchanged: this list still rejects anything outside it, and a future
+ * Stage1 bump still lands as a refusal rather than a silent parse.
  */
 const ROLLUP_ALLOWED_SCHEMA_VERSIONS: Record<Stage1RollupKind, string[]> = {
   identity_graph: ['1.1.0', '1.2.0'],
   capability_rollup: ['1.1.0', '1.2.0'],
-  object_rollup: ['1.0.0', '1.1.0'],
+  object_rollup: ['1.0.0', '1.1.0', '1.2.0'],
   drift_report: ['1.0.0'],
 };
 

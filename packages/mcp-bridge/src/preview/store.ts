@@ -42,6 +42,35 @@ export interface CompositionVersion {
     items: Array<{ source: string; id: string; title: string; body?: string; excerpt?: string; url?: string; timestamp?: string; query: string; fetchedAt: string; staleForVersion: boolean }>;
     searched: Array<{ source: string; query: string; fetchedAt: string; found: number }>;
   };
+  /**
+   * The rows of a Stage1-against-Forge comparison about this object (s204 m05), read from a Stage1 run on
+   * disk and stored on the version. Evidence a person judges: nothing in it is proposed or applied.
+   */
+  observation?: {
+    object: string;
+    urn: string;
+    context: string;
+    nature: string;
+    judgement: string;
+    requiresHumanAdjudication: boolean;
+    run: { runId: string; target: string; runPath: string; capturedAt: string | null; reads: Array<{ kind: string; schemaVersion: string; path: string; generatedAt: string | null }> };
+    searched: { screens: string[]; observedRoutes: number; observedScreens: number; found: number };
+    rows: ObservationRow[];
+    attachedAt: string;
+    attachedToVersion: number;
+  };
+}
+export interface ObservationRow {
+  id: string;
+  category: 'observed-only' | 'composed-only' | 'agreeing' | 'disagreeing';
+  axis: 'screen' | 'entity' | 'input' | 'data-bound';
+  screen: string | null;
+  routes: string[];
+  observed: string;
+  composed: string;
+  stage1: { runId: string; target: string; artifactKind: string; readPath: string; capturedAt: string | null; pointers: string[]; found: number };
+  forge: { object: string | null; context: string | null; urn: string | null; schemaDigest: string | null; searched: string; found: number };
+  staleForVersion: boolean;
 }
 export interface VersionSummary { version: number; parentVersion: number | null; operation: string; createdAt: string; schemaHash: string; head: string | null; artifacts: PreviewFramework[] }
 

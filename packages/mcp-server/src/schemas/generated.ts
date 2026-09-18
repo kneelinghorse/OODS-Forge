@@ -320,6 +320,10 @@ export namespace A11yScanInputSchema {
      * Raw Stage1 `entity-<slug>` id retained on a composed node when the OODS entity resolver could not map it to an indexed object (Path B, Sprint 89). Consumers surface this so authors can fill the alias table incrementally.
      */
     unresolvedEntity?: string;
+    /**
+     * Set on a slot-bound Text that stands in as a heading for a record whose object carries no title field, so the generated artifact shows the field's FIRST LINE rather than the whole value (s204-m02). A CMOS Decision is the case this exists for: its only content is decision_text, up to 8,418 characters, and a card header that printed all of it — or printed a stored timestamp instead, which is what it did — says nothing about the record. Scoped to the heading on purpose: the same field must still render IN FULL on a detail, which Sprint 203 m04 certified at 390 in both frameworks.
+     */
+    headingExcerpt?: boolean;
   }
   export interface FieldSchemaEntry {
     /**
@@ -1708,6 +1712,10 @@ export namespace CodeGenerateInputSchema {
      * Raw Stage1 `entity-<slug>` id retained on a composed node when the OODS entity resolver could not map it to an indexed object (Path B, Sprint 89). Consumers surface this so authors can fill the alias table incrementally.
      */
     unresolvedEntity?: string;
+    /**
+     * Set on a slot-bound Text that stands in as a heading for a record whose object carries no title field, so the generated artifact shows the field's FIRST LINE rather than the whole value (s204-m02). A CMOS Decision is the case this exists for: its only content is decision_text, up to 8,418 characters, and a card header that printed all of it — or printed a stored timestamp instead, which is what it did — says nothing about the record. Scoped to the heading on purpose: the same field must still render IN FULL on a detail, which Sprint 203 m04 certified at 390 in both frameworks.
+     */
+    headingExcerpt?: boolean;
   }
   export interface FieldSchemaEntry {
     /**
@@ -3697,6 +3705,10 @@ export namespace DesignComposeOutputSchema {
      * Raw Stage1 `entity-<slug>` id retained on a composed node when the OODS entity resolver could not map it to an indexed object (Path B, Sprint 89). Consumers surface this so authors can fill the alias table incrementally.
      */
     unresolvedEntity?: string;
+    /**
+     * Set on a slot-bound Text that stands in as a heading for a record whose object carries no title field, so the generated artifact shows the field's FIRST LINE rather than the whole value (s204-m02). A CMOS Decision is the case this exists for: its only content is decision_text, up to 8,418 characters, and a card header that printed all of it — or printed a stored timestamp instead, which is what it did — says nothing about the record. Scoped to the heading on purpose: the same field must still render IN FULL on a detail, which Sprint 203 m04 certified at 390 in both frameworks.
+     */
+    headingExcerpt?: boolean;
   }
   export interface FieldSchemaEntry {
     /**
@@ -3956,6 +3968,10 @@ export namespace DesignPreviewInputSchema {
       fetchedAt: string;
       found: number;
     }[];
+    /**
+     * A Stage1 run directory on this machine (out/stage1/<suite>/<run-uuid>). Forge reads its identity_graph and object_rollup through structuredData.fetch, compares them with this version's own schema for the object on screen, and stores the rows beside the running app on both surfaces: observed-only, composed-only, agreeing and disagreeing, each disagreement naming its axis (entity, input, data-bound), and every row naming the Stage1 run, target, artifact and capture time beside the Forge object, context and URN. The rows are evidence a person judges; nothing is proposed, applied or queued. Forge opens no other product's store and writes nothing into the run. A path that is not one Stage1 run is refused with OODS-V208, an artifact outside the accepted schema_version with OODS-V209, and a composition whose object the registry does not hold with OODS-V210; each refusal writes nothing. An edit carries the rows onto the new version and marks every one, because they compared the design as it was.
+     */
+    observationRunPath?: string;
   }
 }
 export type DesignPreviewInput = DesignPreviewInputSchema.DesignPreviewInput;
@@ -4584,6 +4600,14 @@ export namespace HealthOutputSchema {
       traits: number;
       objects: number;
       lastSync: string;
+      /**
+       * Where each count above was read from on this call. "live" is computed from the registry itself and moves when the registry moves; "snapshot" is read from the structured-data export named in the manifest and stays frozen at lastSync until that export is regenerated.
+       */
+      countsFrom: {
+        components: 'live' | 'snapshot';
+        traits: 'live' | 'snapshot';
+        objects: 'live' | 'snapshot';
+      };
     };
     tokens: {
       built: boolean;
@@ -6931,6 +6955,10 @@ export namespace ReplOutputSchema {
      * Raw Stage1 `entity-<slug>` id retained on a composed node when the OODS entity resolver could not map it to an indexed object (Path B, Sprint 89). Consumers surface this so authors can fill the alias table incrementally.
      */
     unresolvedEntity?: string;
+    /**
+     * Set on a slot-bound Text that stands in as a heading for a record whose object carries no title field, so the generated artifact shows the field's FIRST LINE rather than the whole value (s204-m02). A CMOS Decision is the case this exists for: its only content is decision_text, up to 8,418 characters, and a card header that printed all of it — or printed a stored timestamp instead, which is what it did — says nothing about the record. Scoped to the heading on purpose: the same field must still render IN FULL on a detail, which Sprint 203 m04 certified at 390 in both frameworks.
+     */
+    headingExcerpt?: boolean;
   }
   export interface FieldSchemaEntry {
     /**
@@ -7367,6 +7395,10 @@ export namespace ReplRenderInputSchema {
      * Raw Stage1 `entity-<slug>` id retained on a composed node when the OODS entity resolver could not map it to an indexed object (Path B, Sprint 89). Consumers surface this so authors can fill the alias table incrementally.
      */
     unresolvedEntity?: string;
+    /**
+     * Set on a slot-bound Text that stands in as a heading for a record whose object carries no title field, so the generated artifact shows the field's FIRST LINE rather than the whole value (s204-m02). A CMOS Decision is the case this exists for: its only content is decision_text, up to 8,418 characters, and a card header that printed all of it — or printed a stored timestamp instead, which is what it did — says nothing about the record. Scoped to the heading on purpose: the same field must still render IN FULL on a detail, which Sprint 203 m04 certified at 390 in both frameworks.
+     */
+    headingExcerpt?: boolean;
   }
   export interface FieldSchemaEntry {
     /**
@@ -7783,6 +7815,10 @@ export namespace ReplRenderOutputSchema {
      * Raw Stage1 `entity-<slug>` id retained on a composed node when the OODS entity resolver could not map it to an indexed object (Path B, Sprint 89). Consumers surface this so authors can fill the alias table incrementally.
      */
     unresolvedEntity?: string;
+    /**
+     * Set on a slot-bound Text that stands in as a heading for a record whose object carries no title field, so the generated artifact shows the field's FIRST LINE rather than the whole value (s204-m02). A CMOS Decision is the case this exists for: its only content is decision_text, up to 8,418 characters, and a card header that printed all of it — or printed a stored timestamp instead, which is what it did — says nothing about the record. Scoped to the heading on purpose: the same field must still render IN FULL on a detail, which Sprint 203 m04 certified at 390 in both frameworks.
+     */
+    headingExcerpt?: boolean;
   }
   export interface FieldSchemaEntry {
     /**
@@ -8095,6 +8131,10 @@ export namespace UiSchemaSchema {
      * Raw Stage1 `entity-<slug>` id retained on a composed node when the OODS entity resolver could not map it to an indexed object (Path B, Sprint 89). Consumers surface this so authors can fill the alias table incrementally.
      */
     unresolvedEntity?: string;
+    /**
+     * Set on a slot-bound Text that stands in as a heading for a record whose object carries no title field, so the generated artifact shows the field's FIRST LINE rather than the whole value (s204-m02). A CMOS Decision is the case this exists for: its only content is decision_text, up to 8,418 characters, and a card header that printed all of it — or printed a stored timestamp instead, which is what it did — says nothing about the record. Scoped to the heading on purpose: the same field must still render IN FULL on a detail, which Sprint 203 m04 certified at 390 in both frameworks.
+     */
+    headingExcerpt?: boolean;
   }
   export interface FieldSchemaEntry {
     /**
@@ -8422,6 +8462,10 @@ export namespace ReplValidateInputSchema {
      * Raw Stage1 `entity-<slug>` id retained on a composed node when the OODS entity resolver could not map it to an indexed object (Path B, Sprint 89). Consumers surface this so authors can fill the alias table incrementally.
      */
     unresolvedEntity?: string;
+    /**
+     * Set on a slot-bound Text that stands in as a heading for a record whose object carries no title field, so the generated artifact shows the field's FIRST LINE rather than the whole value (s204-m02). A CMOS Decision is the case this exists for: its only content is decision_text, up to 8,418 characters, and a card header that printed all of it — or printed a stored timestamp instead, which is what it did — says nothing about the record. Scoped to the heading on purpose: the same field must still render IN FULL on a detail, which Sprint 203 m04 certified at 390 in both frameworks.
+     */
+    headingExcerpt?: boolean;
   }
   export interface FieldSchemaEntry {
     /**
@@ -8800,6 +8844,10 @@ export namespace ReplValidateOutputSchema {
      * Raw Stage1 `entity-<slug>` id retained on a composed node when the OODS entity resolver could not map it to an indexed object (Path B, Sprint 89). Consumers surface this so authors can fill the alias table incrementally.
      */
     unresolvedEntity?: string;
+    /**
+     * Set on a slot-bound Text that stands in as a heading for a record whose object carries no title field, so the generated artifact shows the field's FIRST LINE rather than the whole value (s204-m02). A CMOS Decision is the case this exists for: its only content is decision_text, up to 8,418 characters, and a card header that printed all of it — or printed a stored timestamp instead, which is what it did — says nothing about the record. Scoped to the heading on purpose: the same field must still render IN FULL on a detail, which Sprint 203 m04 certified at 390 in both frameworks.
+     */
+    headingExcerpt?: boolean;
   }
   export interface FieldSchemaEntry {
     /**
