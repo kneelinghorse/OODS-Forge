@@ -1,0 +1,2620 @@
+{
+  "status": "ok",
+  "layout": "workflow",
+  "schema": {
+    "version": "2026.02",
+    "screens": [
+      {
+        "id": "list-screen",
+        "component": "Stack",
+        "route": "/",
+        "bindings": {
+          "onRowClick": "handleRowClick",
+          "onSort": "handleSort",
+          "onFilter": "handleFilter",
+          "onPageChange": "handlePageChange"
+        },
+        "children": [
+          {
+            "id": "list-screen-list-9-loading",
+            "component": "Banner",
+            "state": "loading",
+            "props": {
+              "title": "Loading",
+              "message": "Loading your records."
+            }
+          },
+          {
+            "id": "list-screen-list-9-error",
+            "component": "Banner",
+            "state": "error",
+            "props": {
+              "title": "Unable to load records",
+              "message": "Try again or choose another record."
+            }
+          },
+          {
+            "id": "list-screen-list-9-success",
+            "component": "Stack",
+            "state": "success",
+            "layout": {
+              "type": "stack",
+              "gapToken": "cluster-default"
+            },
+            "children": [
+              {
+                "id": "list-list-toolbar-4",
+                "component": "Stack",
+                "layout": {
+                  "type": "inline",
+                  "align": "space-between"
+                },
+                "style": {
+                  "spacingToken": "inset-default"
+                },
+                "children": [
+                  {
+                    "id": "list-slot-search-1",
+                    "component": "SearchInput",
+                    "meta": {
+                      "intent": "slot:search",
+                      "label": "search"
+                    },
+                    "props": {
+                      "label": "Search",
+                      "placeholder": "Search records",
+                      "clearable": true
+                    },
+                    "collectionControl": "search"
+                  },
+                  {
+                    "id": "list-slot-filters-2",
+                    "component": "Select",
+                    "meta": {
+                      "intent": "slot:filters",
+                      "label": "filters"
+                    },
+                    "props": {
+                      "label": "Status",
+                      "options": [
+                        {
+                          "value": "",
+                          "label": "All states"
+                        },
+                        {
+                          "value": "active",
+                          "label": "Active"
+                        },
+                        {
+                          "value": "completed",
+                          "label": "Completed"
+                        },
+                        {
+                          "value": "abandoned",
+                          "label": "Abandoned"
+                        }
+                      ]
+                    },
+                    "collectionControl": "filter"
+                  },
+                  {
+                    "id": "list-list-toolbar-4-sort",
+                    "component": "Select",
+                    "collectionControl": "sort",
+                    "props": {
+                      "field": "title",
+                      "label": "Sort",
+                      "options": [
+                        {
+                          "value": "asc",
+                          "label": "Name A–Z"
+                        },
+                        {
+                          "value": "desc",
+                          "label": "Name Z–A"
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              {
+                "id": "list-list-items-5",
+                "component": "Stack",
+                "layout": {
+                  "type": "stack",
+                  "gapToken": "cluster-tight"
+                },
+                "children": [
+                  {
+                    "id": "list-list-items-5-row",
+                    "component": "Button",
+                    "collectionControl": "open",
+                    "props": {
+                      "field": "session_id"
+                    },
+                    "layout": {
+                      "type": "inline",
+                      "gapToken": "cluster-default"
+                    },
+                    "children": [
+                      {
+                        "id": "list-list-items-5-title",
+                        "component": "Text",
+                        "props": {
+                          "field": "title"
+                        }
+                      },
+                      {
+                        "id": "list-ve-items-14",
+                        "component": "StatusBadge",
+                        "props": {
+                          "tone": "lifecycle",
+                          "statusField": "status"
+                        }
+                      },
+                      {
+                        "id": "list-ve-items-15",
+                        "component": "RelativeTimestamp",
+                        "props": {
+                          "field": "updated_at",
+                          "fallbackField": "created_at",
+                          "timezoneParameter": "timezone"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "id": "list-list-items-5-empty",
+                    "component": "Banner",
+                    "state": "empty",
+                    "props": {
+                      "message": "No records found."
+                    },
+                    "collectionControl": "empty"
+                  }
+                ],
+                "collection": {
+                  "source": "rows",
+                  "keyField": "session_id",
+                  "labelField": "title"
+                }
+              },
+              {
+                "id": "list-list-pagination-7",
+                "component": "Stack",
+                "layout": {
+                  "type": "inline",
+                  "align": "center"
+                },
+                "style": {
+                  "spacingToken": "inset-default"
+                },
+                "children": [
+                  {
+                    "id": "list-slot-pagination-8",
+                    "component": "PaginationBar",
+                    "meta": {
+                      "intent": "slot:pagination",
+                      "label": "pagination",
+                      "confidence": 0.77,
+                      "confidenceLevel": "low"
+                    },
+                    "collectionControl": "page",
+                    "props": {
+                      "showItemRange": true
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "detail-screen",
+        "component": "Stack",
+        "route": "/:id",
+        "bindings": {
+          "onEdit": "handleEdit",
+          "onViewTimeline": "handleViewTimeline"
+        },
+        "children": [
+          {
+            "id": "detail-loading",
+            "component": "Banner",
+            "state": "loading",
+            "props": {
+              "title": "Loading",
+              "message": "Loading your records."
+            }
+          },
+          {
+            "id": "detail-empty",
+            "component": "Banner",
+            "state": "empty",
+            "props": {
+              "title": "No records found",
+              "message": "Change the filters or add a record."
+            }
+          },
+          {
+            "id": "detail-error",
+            "component": "Banner",
+            "state": "error",
+            "props": {
+              "title": "Unable to load records",
+              "message": "Try again or choose another record."
+            }
+          },
+          {
+            "id": "detail-screen-detail-13",
+            "component": "Stack",
+            "layout": {
+              "type": "stack",
+              "gapToken": "cluster-default"
+            },
+            "children": [
+              {
+                "id": "detail-detail-header-1",
+                "component": "Stack",
+                "layout": {
+                  "type": "stack",
+                  "align": "space-between",
+                  "gapToken": "stack-default"
+                },
+                "style": {
+                  "spacingToken": "inset-default"
+                },
+                "children": [
+                  {
+                    "id": "detail-slot-header-2",
+                    "component": "Stack",
+                    "meta": {
+                      "intent": "slot:header",
+                      "label": "header"
+                    },
+                    "children": [
+                      {
+                        "id": "detail-ve-header-24",
+                        "component": "DetailHeader",
+                        "props": {
+                          "titleField": "title",
+                          "subtitleField": "description",
+                          "headingLevel": 1
+                        }
+                      },
+                      {
+                        "id": "detail-ve-header-25",
+                        "component": "StatusTimeline",
+                        "props": {
+                          "field": "status",
+                          "historyField": "state_history",
+                          "statesParameter": "states",
+                          "showActorId": true,
+                          "showReason": true
+                        }
+                      }
+                    ],
+                    "layout": {
+                      "type": "stack",
+                      "gapToken": "cluster-default"
+                    }
+                  }
+                ]
+              },
+              {
+                "id": "detail-detail-body-10",
+                "component": "Card",
+                "layout": {
+                  "type": "sidebar",
+                  "gapToken": "cluster-default"
+                },
+                "children": [
+                  {
+                    "id": "detail-detail-tabs-9",
+                    "component": "Tabs",
+                    "children": [
+                      {
+                        "id": "detail-detail-tab-panel-3",
+                        "component": "Stack",
+                        "layout": {
+                          "type": "stack",
+                          "gapToken": "cluster-default"
+                        },
+                        "props": {
+                          "label": "Details"
+                        },
+                        "children": [
+                          {
+                            "id": "detail-slot-tab-0-4",
+                            "component": "Stack",
+                            "meta": {
+                              "intent": "slot:tab-0",
+                              "label": "tab-0",
+                              "notes": "pattern-group:status-timeline"
+                            },
+                            "layout": {
+                              "type": "stack",
+                              "gapToken": "cluster-tight"
+                            },
+                            "children": [
+                              {
+                                "id": "detail-pg-status-timeline-31-read-field",
+                                "component": "Stack",
+                                "children": [
+                                  {
+                                    "id": "detail-pg-status-timeline-31-label",
+                                    "component": "Text",
+                                    "props": {
+                                      "as": "strong",
+                                      "content": "Updated at"
+                                    }
+                                  },
+                                  {
+                                    "id": "detail-pg-status-timeline-31-value",
+                                    "meta": {
+                                      "intent": "read-only-field"
+                                    },
+                                    "component": "Text",
+                                    "props": {
+                                      "field": "updated_at"
+                                    }
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "id": "detail-slot-tab-3-15-read-field",
+                            "component": "Stack",
+                            "children": [
+                              {
+                                "id": "detail-slot-tab-3-15-label",
+                                "component": "Text",
+                                "props": {
+                                  "as": "strong",
+                                  "content": "Agent"
+                                }
+                              },
+                              {
+                                "id": "detail-slot-tab-3-15-value",
+                                "meta": {
+                                  "intent": "read-only-field"
+                                },
+                                "component": "Text",
+                                "props": {
+                                  "field": "agent"
+                                }
+                              }
+                            ]
+                          },
+                          {
+                            "id": "detail-detail-tabs-9-created_at-read-field",
+                            "component": "Stack",
+                            "children": [
+                              {
+                                "id": "detail-detail-tabs-9-created_at-label",
+                                "component": "Text",
+                                "props": {
+                                  "as": "strong",
+                                  "content": "Created at"
+                                }
+                              },
+                              {
+                                "id": "detail-detail-tabs-9-created_at-value",
+                                "meta": {
+                                  "intent": "read-only-field"
+                                },
+                                "component": "Text",
+                                "props": {
+                                  "field": "created_at"
+                                }
+                              }
+                            ]
+                          },
+                          {
+                            "id": "detail-detail-tabs-9-last_event-read-field",
+                            "component": "Stack",
+                            "children": [
+                              {
+                                "id": "detail-detail-tabs-9-last_event-label",
+                                "component": "Text",
+                                "props": {
+                                  "as": "strong",
+                                  "content": "Last event"
+                                }
+                              },
+                              {
+                                "id": "detail-detail-tabs-9-last_event-value",
+                                "meta": {
+                                  "intent": "read-only-field"
+                                },
+                                "component": "Text",
+                                "props": {
+                                  "field": "last_event"
+                                }
+                              }
+                            ]
+                          },
+                          {
+                            "id": "detail-detail-tabs-9-last_event_at-read-field",
+                            "component": "Stack",
+                            "children": [
+                              {
+                                "id": "detail-detail-tabs-9-last_event_at-label",
+                                "component": "Text",
+                                "props": {
+                                  "as": "strong",
+                                  "content": "Last event at"
+                                }
+                              },
+                              {
+                                "id": "detail-detail-tabs-9-last_event_at-value",
+                                "meta": {
+                                  "intent": "read-only-field"
+                                },
+                                "component": "Text",
+                                "props": {
+                                  "field": "last_event_at"
+                                }
+                              }
+                            ]
+                          },
+                          {
+                            "id": "detail-detail-tabs-9-session_id-read-field",
+                            "component": "Stack",
+                            "children": [
+                              {
+                                "id": "detail-detail-tabs-9-session_id-label",
+                                "component": "Text",
+                                "props": {
+                                  "as": "strong",
+                                  "content": "Session id"
+                                }
+                              },
+                              {
+                                "id": "detail-detail-tabs-9-session_id-value",
+                                "meta": {
+                                  "intent": "read-only-field"
+                                },
+                                "component": "Text",
+                                "props": {
+                                  "field": "session_id"
+                                }
+                              }
+                            ]
+                          },
+                          {
+                            "id": "detail-detail-tabs-9-session_type-read-field",
+                            "component": "Stack",
+                            "children": [
+                              {
+                                "id": "detail-detail-tabs-9-session_type-label",
+                                "component": "Text",
+                                "props": {
+                                  "as": "strong",
+                                  "content": "Session type"
+                                }
+                              },
+                              {
+                                "id": "detail-detail-tabs-9-session_type-value",
+                                "meta": {
+                                  "intent": "read-only-field"
+                                },
+                                "component": "Text",
+                                "props": {
+                                  "field": "session_type"
+                                }
+                              }
+                            ]
+                          },
+                          {
+                            "id": "detail-detail-tabs-9-summary-read-field",
+                            "component": "Stack",
+                            "children": [
+                              {
+                                "id": "detail-detail-tabs-9-summary-label",
+                                "component": "Text",
+                                "props": {
+                                  "as": "strong",
+                                  "content": "Summary"
+                                }
+                              },
+                              {
+                                "id": "detail-detail-tabs-9-summary-value",
+                                "meta": {
+                                  "intent": "read-only-field"
+                                },
+                                "component": "Text",
+                                "props": {
+                                  "field": "summary"
+                                }
+                              }
+                            ]
+                          },
+                          {
+                            "id": "detail-detail-tabs-9-sprint_id-read-field",
+                            "component": "Stack",
+                            "children": [
+                              {
+                                "id": "detail-detail-tabs-9-sprint_id-label",
+                                "component": "Text",
+                                "props": {
+                                  "as": "strong",
+                                  "content": "Sprint id"
+                                }
+                              },
+                              {
+                                "id": "detail-detail-tabs-9-sprint_id-value",
+                                "meta": {
+                                  "intent": "read-only-field"
+                                },
+                                "component": "Text",
+                                "props": {
+                                  "field": "sprint_id"
+                                }
+                              }
+                            ]
+                          },
+                          {
+                            "id": "detail-detail-tabs-9-started_at-read-field",
+                            "component": "Stack",
+                            "children": [
+                              {
+                                "id": "detail-detail-tabs-9-started_at-label",
+                                "component": "Text",
+                                "props": {
+                                  "as": "strong",
+                                  "content": "Started at"
+                                }
+                              },
+                              {
+                                "id": "detail-detail-tabs-9-started_at-value",
+                                "meta": {
+                                  "intent": "read-only-field"
+                                },
+                                "component": "Text",
+                                "props": {
+                                  "field": "started_at"
+                                }
+                              }
+                            ]
+                          },
+                          {
+                            "id": "detail-detail-tabs-9-completed_at-read-field",
+                            "component": "Stack",
+                            "children": [
+                              {
+                                "id": "detail-detail-tabs-9-completed_at-label",
+                                "component": "Text",
+                                "props": {
+                                  "as": "strong",
+                                  "content": "Completed at"
+                                }
+                              },
+                              {
+                                "id": "detail-detail-tabs-9-completed_at-value",
+                                "meta": {
+                                  "intent": "read-only-field"
+                                },
+                                "component": "Text",
+                                "props": {
+                                  "field": "completed_at"
+                                }
+                              }
+                            ]
+                          },
+                          {
+                            "id": "detail-detail-tabs-9-project_id-read-field",
+                            "component": "Stack",
+                            "children": [
+                              {
+                                "id": "detail-detail-tabs-9-project_id-label",
+                                "component": "Text",
+                                "props": {
+                                  "as": "strong",
+                                  "content": "Project id"
+                                }
+                              },
+                              {
+                                "id": "detail-detail-tabs-9-project_id-value",
+                                "meta": {
+                                  "intent": "read-only-field"
+                                },
+                                "component": "Text",
+                                "props": {
+                                  "field": "project_id"
+                                }
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ],
+                    "props": {
+                      "ariaLabel": "Record details"
+                    }
+                  },
+                  {
+                    "id": "detail-detail-meta-11",
+                    "component": "Stack",
+                    "layout": {
+                      "type": "stack",
+                      "gapToken": "cluster-tight"
+                    },
+                    "style": {
+                      "spacingToken": "inset-default"
+                    },
+                    "children": [
+                      {
+                        "id": "detail-slot-metadata-12",
+                        "component": "Stack",
+                        "meta": {
+                          "intent": "slot:metadata",
+                          "label": "metadata"
+                        },
+                        "children": [
+                          {
+                            "id": "detail-ve-metadata-26",
+                            "component": "ClassificationPanel",
+                            "props": {
+                              "categoriesField": "categories",
+                              "tagsField": "tags",
+                              "metadataField": "classification_metadata",
+                              "modeParameter": "classification_mode"
+                            },
+                            "children": [
+                              {
+                                "id": "detail-ve-metadata-26-primary_category_id-read-field",
+                                "component": "Stack",
+                                "children": [
+                                  {
+                                    "id": "detail-ve-metadata-26-primary_category_id-label",
+                                    "component": "Text",
+                                    "props": {
+                                      "as": "strong",
+                                      "content": "Primary category id"
+                                    }
+                                  },
+                                  {
+                                    "id": "detail-ve-metadata-26-primary_category_id-value",
+                                    "meta": {
+                                      "intent": "read-only-field"
+                                    },
+                                    "component": "Text",
+                                    "props": {
+                                      "field": "primary_category_id"
+                                    }
+                                  }
+                                ]
+                              },
+                              {
+                                "id": "detail-ve-metadata-26-tags-read-field",
+                                "component": "Stack",
+                                "children": [
+                                  {
+                                    "id": "detail-ve-metadata-26-tags-label",
+                                    "component": "Text",
+                                    "props": {
+                                      "as": "strong",
+                                      "content": "Tags"
+                                    }
+                                  },
+                                  {
+                                    "id": "detail-ve-metadata-26-tags-value",
+                                    "meta": {
+                                      "intent": "read-only-field"
+                                    },
+                                    "component": "Text",
+                                    "props": {
+                                      "field": "tags"
+                                    }
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ],
+                        "layout": {
+                          "type": "stack",
+                          "gapToken": "cluster-default"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "meta": {
+              "label": "Session"
+            },
+            "state": "success"
+          }
+        ]
+      },
+      {
+        "id": "form-screen",
+        "component": "Stack",
+        "route": "/:id/edit",
+        "bindings": {
+          "onSubmit": "handleSubmit"
+        },
+        "children": [
+          {
+            "id": "form-loading",
+            "component": "Banner",
+            "state": "loading",
+            "props": {
+              "title": "Loading",
+              "message": "Loading your records."
+            }
+          },
+          {
+            "id": "form-empty",
+            "component": "Banner",
+            "state": "empty",
+            "props": {
+              "title": "No records found",
+              "message": "Change the filters or add a record."
+            }
+          },
+          {
+            "id": "form-error",
+            "component": "Banner",
+            "state": "error",
+            "props": {
+              "title": "Unable to load records",
+              "message": "Try again or choose another record."
+            }
+          },
+          {
+            "id": "form-screen-form-11",
+            "component": "Stack",
+            "layout": {
+              "type": "stack",
+              "gapToken": "cluster-default"
+            },
+            "style": {
+              "spacingToken": "inset-default"
+            },
+            "children": [
+              {
+                "id": "form-form-title-1",
+                "component": "Stack",
+                "props": {
+                  "as": "h1"
+                },
+                "meta": {
+                  "intent": "slot:title",
+                  "label": "title"
+                },
+                "children": [
+                  {
+                    "id": "form-ve-title-27",
+                    "component": "StatusSelector",
+                    "props": {
+                      "field": "status",
+                      "optionsParameter": "states",
+                      "initialParameter": "initialState",
+                      "allowedTransitionsField": "allowed_transitions",
+                      "requireReasonParameter": "requireTransitionReason",
+                      "label": "Status",
+                      "help": "Choose the current status."
+                    },
+                    "bindings": {
+                      "onChange": "handleChange_status"
+                    }
+                  }
+                ],
+                "layout": {
+                  "type": "stack",
+                  "gapToken": "cluster-default"
+                }
+              },
+              {
+                "id": "form-form-fields-8",
+                "component": "Stack",
+                "layout": {
+                  "type": "stack",
+                  "gapToken": "cluster-default"
+                },
+                "children": [
+                  {
+                    "id": "form-form-field-group-2",
+                    "component": "Stack",
+                    "layout": {
+                      "type": "stack",
+                      "gapToken": "cluster-tight"
+                    },
+                    "children": [
+                      {
+                        "id": "form-slot-field-0-3",
+                        "component": "ClassificationEditor",
+                        "meta": {
+                          "intent": "slot:field-0",
+                          "label": "field-0"
+                        },
+                        "props": {
+                          "modeParameter": "classification_mode",
+                          "tagPolicyParameter": "tag_policy",
+                          "maxTagsParameter": "max_tags",
+                          "field": "description",
+                          "label": "Description"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "id": "form-form-field-group-4",
+                    "component": "Stack",
+                    "layout": {
+                      "type": "stack",
+                      "gapToken": "cluster-tight"
+                    },
+                    "children": []
+                  },
+                  {
+                    "id": "form-form-field-group-6",
+                    "component": "Stack",
+                    "layout": {
+                      "type": "stack",
+                      "gapToken": "cluster-tight"
+                    },
+                    "children": [
+                      {
+                        "id": "form-slot-field-2-7",
+                        "component": "Input",
+                        "meta": {
+                          "intent": "slot:field-2",
+                          "label": "field-2",
+                          "confidence": 1,
+                          "confidenceLevel": "low"
+                        },
+                        "props": {
+                          "field": "created_at",
+                          "label": "Created at",
+                          "help": "Timestamp recording when the entity was first created.",
+                          "type": "datetime-local"
+                        },
+                        "bindings": {
+                          "onChange": "handleChange_created_at"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "id": "form-form-field-group-12",
+                    "component": "Stack",
+                    "layout": {
+                      "type": "stack",
+                      "gapToken": "cluster-tight"
+                    },
+                    "children": []
+                  },
+                  {
+                    "id": "form-form-field-group-14",
+                    "component": "Stack",
+                    "layout": {
+                      "type": "stack",
+                      "gapToken": "cluster-tight"
+                    },
+                    "children": [
+                      {
+                        "id": "form-slot-field-4-15",
+                        "component": "Input",
+                        "meta": {
+                          "intent": "slot:field-4",
+                          "label": "field-4",
+                          "confidence": 1,
+                          "confidenceLevel": "low"
+                        },
+                        "props": {
+                          "field": "filterCount",
+                          "label": "Filter Count",
+                          "placeholder": "Enter filterCount",
+                          "type": "number",
+                          "help": "Computed count of currently active filters."
+                        },
+                        "bindings": {
+                          "onChange": "handleChange_filterCount"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "id": "form-form-field-group-16",
+                    "component": "Stack",
+                    "layout": {
+                      "type": "stack",
+                      "gapToken": "cluster-tight"
+                    },
+                    "children": [
+                      {
+                        "id": "form-slot-field-5-17",
+                        "component": "Select",
+                        "meta": {
+                          "intent": "slot:field-5",
+                          "label": "field-5",
+                          "confidence": 1,
+                          "confidenceLevel": "low"
+                        },
+                        "props": {
+                          "field": "session_type",
+                          "label": "Session type",
+                          "placeholder": "Enter session type",
+                          "options": [
+                            {
+                              "value": "review",
+                              "label": "review"
+                            },
+                            {
+                              "value": "planning",
+                              "label": "planning"
+                            },
+                            {
+                              "value": "custom",
+                              "label": "custom"
+                            },
+                            {
+                              "value": "check-in",
+                              "label": "check-in"
+                            },
+                            {
+                              "value": "research",
+                              "label": "research"
+                            }
+                          ],
+                          "help": "What kind of sitting it was. The live store holds review, planning, custom, check-in and research — a classification, not a lifecycle, so it is Classifiable rather than a second state set."
+                        },
+                        "bindings": {
+                          "onChange": "handleChange_session_type"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "id": "form-form-field-group-18",
+                    "component": "Stack",
+                    "layout": {
+                      "type": "stack",
+                      "gapToken": "cluster-tight"
+                    },
+                    "children": [
+                      {
+                        "id": "form-slot-field-6-19",
+                        "component": "Input",
+                        "meta": {
+                          "intent": "slot:field-6",
+                          "label": "field-6",
+                          "confidence": 1,
+                          "confidenceLevel": "low"
+                        },
+                        "props": {
+                          "field": "label",
+                          "label": "Label",
+                          "placeholder": "Enter label",
+                          "help": "Name shown for this record."
+                        },
+                        "bindings": {
+                          "onChange": "handleChange_label"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "id": "form-form-field-group-20",
+                    "component": "Stack",
+                    "layout": {
+                      "type": "stack",
+                      "gapToken": "cluster-tight"
+                    },
+                    "children": []
+                  },
+                  {
+                    "id": "form-form-field-group-22",
+                    "component": "Stack",
+                    "layout": {
+                      "type": "stack",
+                      "gapToken": "cluster-tight"
+                    },
+                    "children": [
+                      {
+                        "id": "form-slot-field-8-23",
+                        "component": "Select",
+                        "meta": {
+                          "intent": "slot:field-8",
+                          "label": "field-8",
+                          "confidence": 1,
+                          "confidenceLevel": "low"
+                        },
+                        "props": {
+                          "field": "last_event",
+                          "label": "Last event",
+                          "help": "Lifecycle event associated with the most recent timestamp mutation."
+                        },
+                        "bindings": {
+                          "onChange": "handleChange_last_event"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "id": "form-form-field-group-24",
+                    "component": "Stack",
+                    "layout": {
+                      "type": "stack",
+                      "gapToken": "cluster-tight"
+                    },
+                    "children": [
+                      {
+                        "id": "form-slot-field-9-25",
+                        "component": "Input",
+                        "meta": {
+                          "intent": "slot:field-9",
+                          "label": "field-9",
+                          "confidence": 1,
+                          "confidenceLevel": "low"
+                        },
+                        "props": {
+                          "field": "primary_category_id",
+                          "label": "Primary category id",
+                          "placeholder": "Enter primary category id",
+                          "help": "Identifier of the canonical taxonomy node."
+                        },
+                        "bindings": {
+                          "onChange": "handleChange_primary_category_id"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "id": "form-form-actions-9",
+                "component": "Stack",
+                "layout": {
+                  "type": "inline",
+                  "align": "end"
+                },
+                "style": {
+                  "spacingToken": "inset-default"
+                },
+                "children": [
+                  {
+                    "id": "form-form-submit-10",
+                    "component": "Button",
+                    "props": {
+                      "label": "Save",
+                      "type": "submit"
+                    }
+                  }
+                ]
+              }
+            ],
+            "meta": {
+              "label": "Session form"
+            },
+            "state": "success"
+          }
+        ]
+      },
+      {
+        "id": "timeline-screen",
+        "component": "Stack",
+        "route": "/:id/timeline",
+        "children": [
+          {
+            "id": "timeline-loading",
+            "component": "Banner",
+            "state": "loading",
+            "props": {
+              "title": "Loading",
+              "message": "Loading your records."
+            }
+          },
+          {
+            "id": "timeline-empty",
+            "component": "Banner",
+            "state": "empty",
+            "props": {
+              "title": "No records found",
+              "message": "Change the filters or add a record."
+            }
+          },
+          {
+            "id": "timeline-error",
+            "component": "Banner",
+            "state": "error",
+            "props": {
+              "title": "Unable to load records",
+              "message": "Try again or choose another record."
+            }
+          },
+          {
+            "id": "timeline-screen-timeline-14",
+            "component": "Stack",
+            "layout": {
+              "type": "stack",
+              "gapToken": "cluster-default"
+            },
+            "children": [
+              {
+                "id": "timeline-timeline-header-1",
+                "component": "Stack",
+                "layout": {
+                  "type": "inline",
+                  "align": "space-between"
+                },
+                "style": {
+                  "spacingToken": "inset-default"
+                },
+                "children": [
+                  {
+                    "id": "timeline-ve-entry-0-15",
+                    "component": "TimelineEntryLabel",
+                    "props": {
+                      "field": "title",
+                      "compact": true
+                    }
+                  }
+                ]
+              },
+              {
+                "id": "timeline-timeline-entries-13",
+                "component": "Stack",
+                "layout": {
+                  "type": "stack",
+                  "gapToken": "cluster-default"
+                },
+                "children": [
+                  {
+                    "id": "timeline-timeline-entries-13-entry",
+                    "component": "Card",
+                    "collectionControl": "event",
+                    "children": []
+                  },
+                  {
+                    "id": "timeline-timeline-entries-13-empty",
+                    "component": "Banner",
+                    "props": {
+                      "message": "No events yet."
+                    },
+                    "collectionControl": "empty"
+                  }
+                ],
+                "collection": {
+                  "source": "events",
+                  "keyField": "id",
+                  "labelField": "title",
+                  "historyField": "state_history"
+                }
+              },
+              {
+                "id": "timeline-timeline-entries-13-trait-events",
+                "component": "Stack",
+                "children": [
+                  {
+                    "id": "timeline-ve-entry-0-16",
+                    "component": "StateTransitionEvent",
+                    "props": {
+                      "historyField": "state_history",
+                      "labelField": "status",
+                      "showActor": true,
+                      "showReason": true
+                    }
+                  }
+                ]
+              }
+            ],
+            "meta": {
+              "label": "Session timeline"
+            },
+            "state": "success"
+          }
+        ]
+      }
+    ],
+    "objectSchema": {
+      "label": {
+        "type": "string",
+        "required": true,
+        "description": "Human-readable display name rendered in primary surfaces.",
+        "semanticType": "text.label"
+      },
+      "description": {
+        "type": "string",
+        "required": false,
+        "description": "Supporting description used in detail and card contexts.",
+        "semanticType": "text.description"
+      },
+      "placeholder": {
+        "type": "string",
+        "required": false,
+        "description": "Hint copy surfaced in form fields when the label is empty.",
+        "semanticType": "text.placeholder"
+      },
+      "status": {
+        "type": "string",
+        "required": true,
+        "description": "Canonical lifecycle state derived from the states parameter. This is the single source\nof truth for the entity's current lifecycle position. Consumed by Colorized to resolve\nvisual tokens, and by view extensions to render StatusBadge and StatusTimeline.\n",
+        "enum": [
+          "active",
+          "completed",
+          "abandoned"
+        ],
+        "semanticType": "status.state"
+      },
+      "state_history": {
+        "type": "StateTransition[]",
+        "required": false,
+        "default": [],
+        "description": "Chronological log of state transitions. Each entry records the before/after states,\ntimestamp, and (when governance is enabled) the actor, reason, and transition metadata.\nRendered by StatusTimeline in the detail and timeline views.\n\nEntry structure:\n  - from: string (previous state)\n  - to: string (new state)\n  - timestamp: ISO 8601 datetime\n  - actor_id: string (user/system who triggered the transition, optional)\n  - reason: string (human-readable justification, required when requireTransitionReason is true)\n  - transition_metadata: Record<string, unknown> (arbitrary context, optional)\n",
+        "semanticType": "timeline.state_transition"
+      },
+      "allowed_transitions": {
+        "type": "string[]",
+        "required": false,
+        "default": [],
+        "description": "Materialized list of valid next states from the current status, computed from the\ntransitionRules parameter. When transitionRules is null (open model), this contains\nall states except the current one. Used by StatusSelector to disable invalid options\nand by StatusBadge to indicate available paths.\n",
+        "semanticType": "status.navigation"
+      },
+      "created_at": {
+        "type": "datetime",
+        "required": true,
+        "description": "Timestamp recording when the entity was first created.",
+        "semanticType": "audit.created_at"
+      },
+      "updated_at": {
+        "type": "datetime",
+        "required": false,
+        "description": "Timestamp for the most recent modification, when available.",
+        "semanticType": "audit.updated_at"
+      },
+      "last_event": {
+        "type": "string",
+        "required": true,
+        "description": "Lifecycle event associated with the most recent timestamp mutation.",
+        "enum": [
+          "started",
+          "completed"
+        ],
+        "semanticType": "audit.event.type"
+      },
+      "last_event_at": {
+        "type": "datetime",
+        "required": false,
+        "description": "Timestamp for the lifecycle event captured in last_event.",
+        "semanticType": "audit.event.timestamp"
+      },
+      "classification_metadata": {
+        "type": "ClassificationMetadata",
+        "required": true,
+        "description": "Operational metadata describing mode, storage model, governance rules, and audit timestamps.\n",
+        "semanticType": "classification.metadata"
+      },
+      "categories": {
+        "type": "CategoryNode[]",
+        "required": false,
+        "default": [],
+        "description": "Ordered taxonomy nodes scoped to the object.",
+        "semanticType": "classification.categories"
+      },
+      "primary_category_id": {
+        "type": "string",
+        "required": false,
+        "description": "Identifier of the canonical taxonomy node.",
+        "semanticType": "classification.primary"
+      },
+      "primary_category_path": {
+        "type": "string",
+        "required": false,
+        "description": "Human-readable breadcrumb path (Electronics > Mobile > Android)."
+      },
+      "tags": {
+        "type": "Tag[]",
+        "required": false,
+        "default": [],
+        "description": "Canonical tag collection after synonym collapse.",
+        "semanticType": "classification.tags"
+      },
+      "tag_count": {
+        "type": "number",
+        "required": false,
+        "default": 0,
+        "description": "Number of canonical tags assigned to the object."
+      },
+      "tag_preview": {
+        "type": "string",
+        "required": false,
+        "description": "Denormalized comma-delimited preview for list renders."
+      },
+      "searchQuery": {
+        "type": "string",
+        "required": false,
+        "default": "",
+        "description": "The current search query string entered by the user.",
+        "semanticType": "input.search.query"
+      },
+      "searchActive": {
+        "type": "boolean",
+        "required": false,
+        "default": false,
+        "description": "Whether the search input is currently focused or has a non-empty query.",
+        "semanticType": "state.search.active"
+      },
+      "filters": {
+        "type": "object[]",
+        "required": false,
+        "default": [],
+        "description": "Array of available filter descriptors. Each entry defines a filterable dimension:\n  - field: string (the schema field to filter on)\n  - label: string (display label)\n  - type: \"select\" | \"multi-select\" | \"range\" | \"boolean\" | \"date-range\"\n  - options: array of { value, label } for select/multi-select types\n",
+        "semanticType": "input.filter.descriptors"
+      },
+      "activeFilters": {
+        "type": "object[]",
+        "required": false,
+        "default": [],
+        "description": "Array of currently applied filter values:\n  - field: string (matches a filter descriptor field)\n  - operator: \"eq\" | \"in\" | \"range\" | \"gt\" | \"lt\" | \"between\"\n  - value: unknown (the selected filter value or values)\n",
+        "semanticType": "state.filter.active"
+      },
+      "filterCount": {
+        "type": "number",
+        "required": true,
+        "default": 0,
+        "description": "Computed count of currently active filters.",
+        "semanticType": "metric.filter.count"
+      },
+      "page": {
+        "type": "number",
+        "required": true,
+        "default": 1,
+        "description": "Current page number (1-based).",
+        "semanticType": "state.pagination.page"
+      },
+      "pageSize": {
+        "type": "number",
+        "required": true,
+        "default": 25,
+        "description": "Number of items displayed per page.",
+        "semanticType": "state.pagination.pageSize"
+      },
+      "totalItems": {
+        "type": "number",
+        "required": false,
+        "default": 0,
+        "description": "Total number of items across all pages. Used to compute total page count.",
+        "semanticType": "metric.pagination.totalItems"
+      },
+      "totalPages": {
+        "type": "number",
+        "required": false,
+        "default": 0,
+        "description": "Computed total number of pages (ceil(totalItems / pageSize)).",
+        "semanticType": "metric.pagination.totalPages"
+      },
+      "session_id": {
+        "type": "string",
+        "required": true,
+        "description": "The session's identifier, such as \"PS-2026-09-16-002\".",
+        "semanticType": "delivery.session.id"
+      },
+      "title": {
+        "type": "string",
+        "required": true,
+        "description": "What the session was called, present on all 499 rows.",
+        "semanticType": "text.label"
+      },
+      "session_type": {
+        "type": "string",
+        "required": true,
+        "description": "What kind of sitting it was. The live store holds review, planning, custom, check-in and research — a classification, not a lifecycle, so it is Classifiable rather than a second state set.",
+        "enum": [
+          "review",
+          "planning",
+          "custom",
+          "check-in",
+          "research"
+        ],
+        "semanticType": "delivery.session.type"
+      },
+      "agent": {
+        "type": "string",
+        "required": true,
+        "description": "Who held the session — an agent rather than a user: assistant, codex, claude-opus-5 and others in the live store. No existing object models the actor as a non-user agent, which is why this is a field of its own rather than Ownerable.",
+        "semanticType": "delivery.session.agent"
+      },
+      "summary": {
+        "type": "string",
+        "required": false,
+        "description": "What the session amounted to, in its own words. Present on all 499 rows and long free text.",
+        "semanticType": "delivery.session.summary"
+      },
+      "sprint_id": {
+        "type": "string",
+        "required": false,
+        "description": "The sprint the session belongs to. 301 of 499 rows resolve against a sprint, none dangling, 198 null.",
+        "semanticType": "delivery.session.sprint_id"
+      },
+      "started_at": {
+        "type": "datetime",
+        "required": true,
+        "description": "When the session opened. Present on all 499 rows.",
+        "semanticType": "delivery.session.started_at"
+      },
+      "completed_at": {
+        "type": "datetime",
+        "required": false,
+        "description": "When it closed. Present on all 499 rows in the live store, but declared optional because an open session has none.",
+        "semanticType": "delivery.session.completed_at"
+      },
+      "captures": {
+        "type": "object[]",
+        "required": false,
+        "description": "What the session recorded as it ran, as {timestamp, category, content} entries.",
+        "semanticType": "delivery.session.captures"
+      },
+      "next_steps": {
+        "type": "object[]",
+        "required": false,
+        "description": "What it left for next time, in the same shape. Null on 45 of 499 rows.",
+        "semanticType": "delivery.session.next_steps"
+      },
+      "project_id": {
+        "type": "string",
+        "required": true,
+        "description": "The project the session belongs to. A slug, never a uuid.",
+        "semanticType": "delivery.session.project_id"
+      }
+    },
+    "workflow": {
+      "object": "Session",
+      "screens": [
+        {
+          "id": "list-screen",
+          "context": "list",
+          "route": "/"
+        },
+        {
+          "id": "detail-screen",
+          "context": "detail",
+          "route": "/:id"
+        },
+        {
+          "id": "form-screen",
+          "context": "form",
+          "route": "/:id/edit"
+        },
+        {
+          "id": "timeline-screen",
+          "context": "timeline",
+          "route": "/:id/timeline"
+        }
+      ],
+      "transitions": [
+        {
+          "action": "handleRowClick",
+          "from": "list",
+          "to": "detail",
+          "effect": "navigate"
+        },
+        {
+          "action": "handleEdit",
+          "from": "detail",
+          "to": "form",
+          "effect": "navigate"
+        },
+        {
+          "action": "handleViewTimeline",
+          "from": "detail",
+          "to": "timeline",
+          "effect": "navigate"
+        },
+        {
+          "action": "handleSubmit",
+          "from": "form",
+          "to": "detail",
+          "effect": "save"
+        }
+      ],
+      "states": [
+        "loading",
+        "empty",
+        "error",
+        "success"
+      ],
+      "data": {
+        "idField": "session_id",
+        "traits": [
+          "content/Labelled",
+          "lifecycle/Stateful",
+          "lifecycle/Timestampable",
+          "core/Classifiable",
+          "behavioral/Searchable",
+          "behavioral/Filterable",
+          "behavioral/Pageable"
+        ],
+        "sampleCount": 10,
+        "recordedEvents": [
+          "started",
+          "completed"
+        ],
+        "cancellationRequiresReason": false,
+        "cancellationReasonCodes": [],
+        "lifecycleStates": [
+          "active",
+          "completed",
+          "abandoned"
+        ],
+        "billingIntervals": [],
+        "currency": "usd",
+        "minorUnits": 100
+      }
+    }
+  },
+  "schemaRef": "compose-4ca1f7f9",
+  "schemaRefCreatedAt": "2026-09-18T08:56:44.654Z",
+  "schemaRefExpiresAt": "2026-09-18T09:26:44.654Z",
+  "selections": [
+    {
+      "slotName": "items",
+      "intent": "data-list",
+      "selectedComponent": "LabelCell",
+      "confidence": 0.95,
+      "confidenceLevel": "high",
+      "explanation": "LabelCell leads slot \"items\" because view_extension placement. The slot also renders StatusBadge, RelativeTimestamp after it, in that order. Confidence is high (0.95).",
+      "candidates": [
+        {
+          "name": "LabelCell",
+          "score": 0.95,
+          "reason": "view_extension placement"
+        }
+      ],
+      "placedComponents": [
+        "LabelCell",
+        "StatusBadge",
+        "RelativeTimestamp"
+      ]
+    },
+    {
+      "slotName": "search",
+      "intent": "search-input",
+      "selectedComponent": "SearchInput",
+      "confidence": 0.95,
+      "confidenceLevel": "high",
+      "explanation": "SearchInput leads slot \"search\" because view_extension placement. Confidence is high (0.95).",
+      "candidates": [
+        {
+          "name": "SearchInput",
+          "score": 0.95,
+          "reason": "view_extension placement"
+        }
+      ],
+      "placedComponents": [
+        "SearchInput"
+      ]
+    },
+    {
+      "slotName": "toolbar-actions",
+      "intent": "action-button",
+      "selectedComponent": "PaginationBar",
+      "confidence": 0.95,
+      "confidenceLevel": "high",
+      "explanation": "PaginationBar leads slot \"toolbar-actions\" because view_extension placement. The slot also renders ClassificationBadge after it, in that order. Confidence is high (0.95).",
+      "candidates": [
+        {
+          "name": "PaginationBar",
+          "score": 0.95,
+          "reason": "view_extension placement"
+        }
+      ],
+      "placedComponents": [
+        "PaginationBar",
+        "ClassificationBadge"
+      ]
+    },
+    {
+      "slotName": "filters",
+      "intent": "filter-control",
+      "selectedComponent": "FilterPanel",
+      "confidence": 0.95,
+      "confidenceLevel": "high",
+      "explanation": "FilterPanel leads slot \"filters\" because view_extension placement. Confidence is high (0.95).",
+      "candidates": [
+        {
+          "name": "FilterPanel",
+          "score": 0.95,
+          "reason": "view_extension placement"
+        }
+      ],
+      "placedComponents": [
+        "FilterPanel"
+      ]
+    },
+    {
+      "slotName": "pagination",
+      "intent": "pagination-control",
+      "selectedComponent": "PaginationBar",
+      "confidence": 0.77,
+      "confidenceLevel": "medium",
+      "explanation": "PaginationBar was selected for slot \"pagination\" because 2 tag match(es); tag match (pagination, navigation); 1 context match(es); 1 trait(s); name contains \"pagination\"; position affinity: PaginationBar fits well in footer. Confidence is medium (0.77).",
+      "candidates": [
+        {
+          "name": "PaginationBar",
+          "reason": "2 tag match(es); tag match (pagination, navigation); 1 context match(es); 1 trait(s); name contains \"pagination\"; position affinity: PaginationBar fits well in footer",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 1,
+          "contextTraitMatches": 0,
+          "score": 1
+        },
+        {
+          "name": "Button",
+          "reason": "preferred for \"pagination-control\" (rank 2); 1 context match(es); 1 region match(es); position affinity: Button fits well in footer",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.75
+        },
+        {
+          "name": "Text",
+          "reason": "preferred for \"pagination-control\" (rank 1); 1 context match(es)",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.65
+        }
+      ]
+    },
+    {
+      "slotName": "header",
+      "intent": "page-header",
+      "selectedComponent": "DetailHeader",
+      "confidence": 0.95,
+      "confidenceLevel": "high",
+      "explanation": "DetailHeader leads slot \"header\" because view_extension placement. The slot also renders StatusTimeline, SearchInput after it, in that order. Confidence is high (0.95).",
+      "candidates": [
+        {
+          "name": "DetailHeader",
+          "score": 0.95,
+          "reason": "view_extension placement"
+        }
+      ],
+      "placedComponents": [
+        "DetailHeader",
+        "StatusTimeline",
+        "SearchInput"
+      ]
+    },
+    {
+      "slotName": "metadata",
+      "intent": "metadata-display",
+      "selectedComponent": "ClassificationPanel",
+      "confidence": 0.95,
+      "confidenceLevel": "high",
+      "explanation": "ClassificationPanel leads slot \"metadata\" because view_extension placement. The slot also renders FilterPanel after it, in that order. Confidence is high (0.95).",
+      "candidates": [
+        {
+          "name": "ClassificationPanel",
+          "score": 0.95,
+          "reason": "view_extension placement"
+        }
+      ],
+      "placedComponents": [
+        "ClassificationPanel",
+        "FilterPanel"
+      ]
+    },
+    {
+      "slotName": "tab-0",
+      "intent": "data-display",
+      "selectedComponent": "Card",
+      "confidence": 0.5,
+      "confidenceLevel": "medium",
+      "explanation": "Card leads slot \"tab-0\" because fallback placement. Confidence is medium (0.50).",
+      "candidates": [
+        {
+          "name": "Card",
+          "score": 0.5,
+          "reason": "fallback placement"
+        }
+      ],
+      "placedComponents": [
+        "Card"
+      ]
+    },
+    {
+      "slotName": "tab-1",
+      "intent": "data-display",
+      "selectedComponent": "Card",
+      "confidence": 0.94,
+      "confidenceLevel": "high",
+      "explanation": "Card was selected for slot \"tab-1\" because preferred for \"data-display\" (rank 1); 2 tag match(es); 2 context match(es); 1 region match(es); position affinity: Card fits well in tab. Confidence is high (0.94).",
+      "candidates": [
+        {
+          "name": "Card",
+          "reason": "preferred for \"data-display\" (rank 1); 2 tag match(es); 2 context match(es); 1 region match(es); position affinity: Card fits well in tab",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 1
+        },
+        {
+          "name": "Table",
+          "reason": "preferred for \"data-display\" (rank 2); 1 tag match(es); tag match (data); 2 context match(es); 1 region match(es); position affinity: Table fits well in tab",
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.98
+        },
+        {
+          "name": "Stack",
+          "reason": "preferred for \"data-display\" (rank 3); 2 context match(es); 1 region match(es); position affinity: Stack fits well in tab",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.66
+        }
+      ]
+    },
+    {
+      "slotName": "tab-2",
+      "intent": "metadata-display",
+      "selectedComponent": "Stack",
+      "confidence": 0.71,
+      "confidenceLevel": "medium",
+      "explanation": "Stack was selected for slot \"tab-2\" because preferred for \"metadata-display\" (rank 1); 1 context match(es); 2 region match(es); position affinity: Stack fits well in tab. Confidence is medium (0.71).",
+      "candidates": [
+        {
+          "name": "Stack",
+          "reason": "preferred for \"metadata-display\" (rank 1); 1 context match(es); 2 region match(es); position affinity: Stack fits well in tab",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 1
+        },
+        {
+          "name": "Text",
+          "reason": "preferred for \"metadata-display\" (rank 2); 1 context match(es); 2 region match(es); position affinity: Text fits well in tab",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.9
+        },
+        {
+          "name": "Card",
+          "reason": "preferred for \"metadata-display\" (rank 3); 1 context match(es); position affinity: Card fits well in tab",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.61
+        }
+      ]
+    },
+    {
+      "slotName": "tab-3",
+      "intent": "metadata-display",
+      "selectedComponent": "Text",
+      "confidence": 0.76,
+      "confidenceLevel": "medium",
+      "explanation": "Text was selected for slot \"tab-3\" because preferred for \"metadata-display\" (rank 2); 1 context match(es); 2 region match(es); field affinity: field type \"datetime\" (rank 3); position affinity: Text fits well in tab. Confidence is medium (0.76).",
+      "candidates": [
+        {
+          "name": "Text",
+          "reason": "preferred for \"metadata-display\" (rank 2); 1 context match(es); 2 region match(es); field affinity: field type \"datetime\" (rank 3); position affinity: Text fits well in tab",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 1
+        },
+        {
+          "name": "Stack",
+          "reason": "preferred for \"metadata-display\" (rank 1); 1 context match(es); 2 region match(es); position affinity: Stack fits well in tab",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.94
+        },
+        {
+          "name": "Card",
+          "reason": "preferred for \"metadata-display\" (rank 3); 1 context match(es); position affinity: Card fits well in tab",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.58
+        }
+      ]
+    },
+    {
+      "slotName": "tab-4",
+      "intent": "metadata-display",
+      "selectedComponent": "Stack",
+      "confidence": 0.71,
+      "confidenceLevel": "medium",
+      "explanation": "Stack was selected for slot \"tab-4\" because preferred for \"metadata-display\" (rank 1); 1 context match(es); 2 region match(es); position affinity: Stack fits well in tab. Confidence is medium (0.71).",
+      "candidates": [
+        {
+          "name": "Stack",
+          "reason": "preferred for \"metadata-display\" (rank 1); 1 context match(es); 2 region match(es); position affinity: Stack fits well in tab",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 1
+        },
+        {
+          "name": "Text",
+          "reason": "preferred for \"metadata-display\" (rank 2); 1 context match(es); 2 region match(es); position affinity: Text fits well in tab",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.9
+        },
+        {
+          "name": "Card",
+          "reason": "preferred for \"metadata-display\" (rank 3); 1 context match(es); position affinity: Card fits well in tab",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.61
+        }
+      ]
+    },
+    {
+      "slotName": "tab-5",
+      "intent": "data-display",
+      "selectedComponent": "Card",
+      "confidence": 0.94,
+      "confidenceLevel": "high",
+      "explanation": "Card was selected for slot \"tab-5\" because preferred for \"data-display\" (rank 1); 2 tag match(es); 2 context match(es); 1 region match(es); position affinity: Card fits well in tab. Confidence is high (0.94).",
+      "candidates": [
+        {
+          "name": "Card",
+          "reason": "preferred for \"data-display\" (rank 1); 2 tag match(es); 2 context match(es); 1 region match(es); position affinity: Card fits well in tab",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 1
+        },
+        {
+          "name": "Table",
+          "reason": "preferred for \"data-display\" (rank 2); 1 tag match(es); tag match (data); 2 context match(es); 1 region match(es); position affinity: Table fits well in tab",
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.98
+        },
+        {
+          "name": "Stack",
+          "reason": "preferred for \"data-display\" (rank 3); 2 context match(es); 1 region match(es); position affinity: Stack fits well in tab",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.66
+        }
+      ]
+    },
+    {
+      "slotName": "tab-6",
+      "intent": "metadata-display",
+      "selectedComponent": "Stack",
+      "confidence": 0.71,
+      "confidenceLevel": "medium",
+      "explanation": "Stack was selected for slot \"tab-6\" because preferred for \"metadata-display\" (rank 1); 1 context match(es); 2 region match(es); position affinity: Stack fits well in tab. Confidence is medium (0.71).",
+      "candidates": [
+        {
+          "name": "Stack",
+          "reason": "preferred for \"metadata-display\" (rank 1); 1 context match(es); 2 region match(es); position affinity: Stack fits well in tab",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 1
+        },
+        {
+          "name": "Text",
+          "reason": "preferred for \"metadata-display\" (rank 2); 1 context match(es); 2 region match(es); position affinity: Text fits well in tab",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.9
+        },
+        {
+          "name": "Card",
+          "reason": "preferred for \"metadata-display\" (rank 3); 1 context match(es); position affinity: Card fits well in tab",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.61
+        }
+      ]
+    },
+    {
+      "slotName": "tab-7",
+      "intent": "data-display",
+      "selectedComponent": "Card",
+      "confidence": 0.94,
+      "confidenceLevel": "high",
+      "explanation": "Card was selected for slot \"tab-7\" because preferred for \"data-display\" (rank 1); 2 tag match(es); 2 context match(es); 1 region match(es); position affinity: Card fits well in tab. Confidence is high (0.94).",
+      "candidates": [
+        {
+          "name": "Card",
+          "reason": "preferred for \"data-display\" (rank 1); 2 tag match(es); 2 context match(es); 1 region match(es); position affinity: Card fits well in tab",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 1
+        },
+        {
+          "name": "Table",
+          "reason": "preferred for \"data-display\" (rank 2); 1 tag match(es); tag match (data); 2 context match(es); 1 region match(es); position affinity: Table fits well in tab",
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.98
+        },
+        {
+          "name": "Stack",
+          "reason": "preferred for \"data-display\" (rank 3); 2 context match(es); 1 region match(es); position affinity: Stack fits well in tab",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.66
+        }
+      ]
+    },
+    {
+      "slotName": "title",
+      "intent": "page-header",
+      "selectedComponent": "FormLabelGroup",
+      "confidence": 0.95,
+      "confidenceLevel": "high",
+      "explanation": "FormLabelGroup leads slot \"title\" because view_extension placement. The slot also renders StatusSelector after it, in that order. Confidence is high (0.95).",
+      "candidates": [
+        {
+          "name": "FormLabelGroup",
+          "score": 0.95,
+          "reason": "view_extension placement"
+        }
+      ],
+      "placedComponents": [
+        "FormLabelGroup",
+        "StatusSelector"
+      ]
+    },
+    {
+      "slotName": "field-0",
+      "intent": "long-text-input",
+      "selectedComponent": "ClassificationEditor",
+      "confidence": 0.95,
+      "confidenceLevel": "high",
+      "explanation": "ClassificationEditor leads slot \"field-0\" because view_extension placement. Confidence is high (0.95).",
+      "candidates": [
+        {
+          "name": "ClassificationEditor",
+          "score": 0.95,
+          "reason": "view_extension placement"
+        }
+      ],
+      "placedComponents": [
+        "ClassificationEditor"
+      ]
+    },
+    {
+      "slotName": "field-1",
+      "intent": "form-input",
+      "selectedComponent": "Input",
+      "confidence": 1,
+      "confidenceLevel": "high",
+      "explanation": "Input was selected for slot \"field-1\" because preferred for \"form-input\" (rank 1); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); name contains \"input\". Confidence is high (1.00).",
+      "candidates": [
+        {
+          "name": "Input",
+          "reason": "preferred for \"form-input\" (rank 1); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); name contains \"input\"",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 1
+        },
+        {
+          "name": "Select",
+          "reason": "preferred for \"form-input\" (rank 2); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); position affinity: Select fits well in main",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 1
+        },
+        {
+          "name": "Checkbox",
+          "reason": "2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); position affinity: Checkbox fits well in main",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.78
+        }
+      ]
+    },
+    {
+      "slotName": "field-2",
+      "intent": "date-input",
+      "selectedComponent": "DatePicker",
+      "confidence": 1,
+      "confidenceLevel": "high",
+      "explanation": "DatePicker was selected for slot \"field-2\" because preferred for \"date-input\" (rank 1); 3 tag match(es); tag match (date, input); 1 context match(es); 1 region match(es); 1 category match(es); name contains \"date\"; position affinity: DatePicker fits well in main. Confidence is high (1.00).",
+      "candidates": [
+        {
+          "name": "DatePicker",
+          "reason": "preferred for \"date-input\" (rank 1); 3 tag match(es); tag match (date, input); 1 context match(es); 1 region match(es); 1 category match(es); name contains \"date\"; position affinity: DatePicker fits well in main",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 1
+        },
+        {
+          "name": "Input",
+          "reason": "preferred for \"date-input\" (rank 2); 2 tag match(es); tag match (input); 1 context match(es); 1 region match(es); 1 category match(es); name contains \"input\"",
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.98
+        },
+        {
+          "name": "Checkbox",
+          "reason": "2 tag match(es); tag match (input); 1 context match(es); 1 region match(es); 1 category match(es); position affinity: Checkbox fits well in main",
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.56
+        }
+      ]
+    },
+    {
+      "slotName": "field-3",
+      "intent": "form-input",
+      "selectedComponent": "Input",
+      "confidence": 1,
+      "confidenceLevel": "high",
+      "explanation": "Input was selected for slot \"field-3\" because preferred for \"form-input\" (rank 1); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); name contains \"input\". Confidence is high (1.00).",
+      "candidates": [
+        {
+          "name": "Input",
+          "reason": "preferred for \"form-input\" (rank 1); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); name contains \"input\"",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 1
+        },
+        {
+          "name": "Select",
+          "reason": "preferred for \"form-input\" (rank 2); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); position affinity: Select fits well in main",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 1
+        },
+        {
+          "name": "Checkbox",
+          "reason": "2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); position affinity: Checkbox fits well in main",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.78
+        }
+      ]
+    },
+    {
+      "slotName": "field-4",
+      "intent": "form-input",
+      "selectedComponent": "Input",
+      "confidence": 1,
+      "confidenceLevel": "high",
+      "explanation": "Input was selected for slot \"field-4\" because preferred for \"form-input\" (rank 1); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); name contains \"input\". Confidence is high (1.00).",
+      "candidates": [
+        {
+          "name": "Input",
+          "reason": "preferred for \"form-input\" (rank 1); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); name contains \"input\"",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 1
+        },
+        {
+          "name": "Select",
+          "reason": "preferred for \"form-input\" (rank 2); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); position affinity: Select fits well in main",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 1
+        },
+        {
+          "name": "Checkbox",
+          "reason": "2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); position affinity: Checkbox fits well in main",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.78
+        }
+      ]
+    },
+    {
+      "slotName": "field-5",
+      "intent": "enum-input",
+      "selectedComponent": "Select",
+      "confidence": 1,
+      "confidenceLevel": "high",
+      "explanation": "Select was selected for slot \"field-5\" because preferred for \"enum-input\" (rank 1); 3 tag match(es); tag match (input); 1 context match(es); 1 region match(es); 1 category match(es); position affinity: Select fits well in main. Confidence is high (1.00).",
+      "candidates": [
+        {
+          "name": "Select",
+          "reason": "preferred for \"enum-input\" (rank 1); 3 tag match(es); tag match (input); 1 context match(es); 1 region match(es); 1 category match(es); position affinity: Select fits well in main",
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 1
+        },
+        {
+          "name": "Input",
+          "reason": "preferred for \"enum-input\" (rank 3); 2 tag match(es); tag match (input); 1 context match(es); 1 region match(es); 1 category match(es); name contains \"input\"",
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.92
+        },
+        {
+          "name": "TagInput",
+          "reason": "preferred for \"enum-input\" (rank 2); 1 context match(es); 1 region match(es); 1 category match(es); 1 trait(s); name contains \"input\"",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.72
+        }
+      ]
+    },
+    {
+      "slotName": "field-6",
+      "intent": "form-input",
+      "selectedComponent": "Input",
+      "confidence": 1,
+      "confidenceLevel": "high",
+      "explanation": "Input was selected for slot \"field-6\" because preferred for \"form-input\" (rank 1); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); name contains \"input\". Confidence is high (1.00).",
+      "candidates": [
+        {
+          "name": "Input",
+          "reason": "preferred for \"form-input\" (rank 1); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); name contains \"input\"",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 1
+        },
+        {
+          "name": "Select",
+          "reason": "preferred for \"form-input\" (rank 2); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); position affinity: Select fits well in main",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 1
+        },
+        {
+          "name": "Checkbox",
+          "reason": "2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); position affinity: Checkbox fits well in main",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.78
+        }
+      ]
+    },
+    {
+      "slotName": "field-7",
+      "intent": "form-input",
+      "selectedComponent": "Input",
+      "confidence": 1,
+      "confidenceLevel": "high",
+      "explanation": "Input was selected for slot \"field-7\" because preferred for \"form-input\" (rank 1); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); name contains \"input\". Confidence is high (1.00).",
+      "candidates": [
+        {
+          "name": "Input",
+          "reason": "preferred for \"form-input\" (rank 1); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); name contains \"input\"",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 1
+        },
+        {
+          "name": "Select",
+          "reason": "preferred for \"form-input\" (rank 2); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); position affinity: Select fits well in main",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 1
+        },
+        {
+          "name": "Checkbox",
+          "reason": "2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); position affinity: Checkbox fits well in main",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.78
+        }
+      ]
+    },
+    {
+      "slotName": "field-8",
+      "intent": "form-input",
+      "selectedComponent": "Input",
+      "confidence": 1,
+      "confidenceLevel": "high",
+      "explanation": "Input was selected for slot \"field-8\" because preferred for \"form-input\" (rank 1); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); name contains \"input\". Confidence is high (1.00).",
+      "candidates": [
+        {
+          "name": "Input",
+          "reason": "preferred for \"form-input\" (rank 1); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); name contains \"input\"",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 1
+        },
+        {
+          "name": "Select",
+          "reason": "preferred for \"form-input\" (rank 2); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); position affinity: Select fits well in main",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 1
+        },
+        {
+          "name": "Checkbox",
+          "reason": "2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); position affinity: Checkbox fits well in main",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.78
+        }
+      ]
+    },
+    {
+      "slotName": "field-9",
+      "intent": "form-input",
+      "selectedComponent": "Input",
+      "confidence": 1,
+      "confidenceLevel": "high",
+      "explanation": "Input was selected for slot \"field-9\" because preferred for \"form-input\" (rank 1); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); name contains \"input\". Confidence is high (1.00).",
+      "candidates": [
+        {
+          "name": "Input",
+          "reason": "preferred for \"form-input\" (rank 1); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); name contains \"input\"",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 1
+        },
+        {
+          "name": "Select",
+          "reason": "preferred for \"form-input\" (rank 2); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); position affinity: Select fits well in main",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 1
+        },
+        {
+          "name": "Checkbox",
+          "reason": "2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); position affinity: Checkbox fits well in main",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.78
+        }
+      ]
+    },
+    {
+      "slotName": "entry-0",
+      "intent": "timeline-entry",
+      "selectedComponent": "TimelineEntryLabel",
+      "confidence": 0.95,
+      "confidenceLevel": "high",
+      "explanation": "TimelineEntryLabel leads slot \"entry-0\" because view_extension placement. The slot also renders StateTransitionEvent after it, in that order. Confidence is high (0.95).",
+      "candidates": [
+        {
+          "name": "TimelineEntryLabel",
+          "score": 0.95,
+          "reason": "view_extension placement"
+        }
+      ],
+      "placedComponents": [
+        "TimelineEntryLabel",
+        "StateTransitionEvent"
+      ]
+    },
+    {
+      "slotName": "header",
+      "intent": "page-header",
+      "selectedComponent": "Text",
+      "confidence": 0.5,
+      "confidenceLevel": "medium",
+      "explanation": "Text leads slot \"header\" because fallback placement. Confidence is medium (0.50).",
+      "candidates": [
+        {
+          "name": "Text",
+          "score": 0.5,
+          "reason": "fallback placement"
+        }
+      ],
+      "placedComponents": [
+        "Text"
+      ]
+    },
+    {
+      "slotName": "entry-1",
+      "intent": "timeline-entry",
+      "selectedComponent": "Stack",
+      "confidence": 0.74,
+      "confidenceLevel": "medium",
+      "explanation": "Stack was selected for slot \"entry-1\" because preferred for \"data-list\" (rank 1); 1 context match(es); context match (timeline); 2 region match(es). Confidence is medium (0.74).",
+      "candidates": [
+        {
+          "name": "Stack",
+          "reason": "preferred for \"data-list\" (rank 1); 1 context match(es); context match (timeline); 2 region match(es)",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 1
+        },
+        {
+          "name": "Table",
+          "reason": "preferred for \"data-list\" (rank 2); 1 tag match(es); 1 context match(es); 2 region match(es)",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.86
+        },
+        {
+          "name": "AuditTimeline",
+          "reason": "context match (timeline); 1 region match(es); 2 trait(s); name contains \"timeline\"",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.5
+        }
+      ]
+    },
+    {
+      "slotName": "entry-2",
+      "intent": "timeline-entry",
+      "selectedComponent": "Stack",
+      "confidence": 0.74,
+      "confidenceLevel": "medium",
+      "explanation": "Stack was selected for slot \"entry-2\" because preferred for \"data-list\" (rank 1); 1 context match(es); context match (timeline); 2 region match(es). Confidence is medium (0.74).",
+      "candidates": [
+        {
+          "name": "Stack",
+          "reason": "preferred for \"data-list\" (rank 1); 1 context match(es); context match (timeline); 2 region match(es)",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 1
+        },
+        {
+          "name": "Table",
+          "reason": "preferred for \"data-list\" (rank 2); 1 tag match(es); 1 context match(es); 2 region match(es)",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.86
+        },
+        {
+          "name": "AuditTimeline",
+          "reason": "context match (timeline); 1 region match(es); 2 trait(s); name contains \"timeline\"",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.5
+        }
+      ]
+    },
+    {
+      "slotName": "entry-3",
+      "intent": "timeline-entry",
+      "selectedComponent": "Stack",
+      "confidence": 0.74,
+      "confidenceLevel": "medium",
+      "explanation": "Stack was selected for slot \"entry-3\" because preferred for \"data-list\" (rank 1); 1 context match(es); context match (timeline); 2 region match(es). Confidence is medium (0.74).",
+      "candidates": [
+        {
+          "name": "Stack",
+          "reason": "preferred for \"data-list\" (rank 1); 1 context match(es); context match (timeline); 2 region match(es)",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 1
+        },
+        {
+          "name": "Table",
+          "reason": "preferred for \"data-list\" (rank 2); 1 tag match(es); 1 context match(es); 2 region match(es)",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.86
+        },
+        {
+          "name": "AuditTimeline",
+          "reason": "context match (timeline); 1 region match(es); 2 trait(s); name contains \"timeline\"",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.5
+        }
+      ]
+    },
+    {
+      "slotName": "entry-4",
+      "intent": "timeline-entry",
+      "selectedComponent": "Stack",
+      "confidence": 0.74,
+      "confidenceLevel": "medium",
+      "explanation": "Stack was selected for slot \"entry-4\" because preferred for \"data-list\" (rank 1); 1 context match(es); context match (timeline); 2 region match(es). Confidence is medium (0.74).",
+      "candidates": [
+        {
+          "name": "Stack",
+          "reason": "preferred for \"data-list\" (rank 1); 1 context match(es); context match (timeline); 2 region match(es)",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 1
+        },
+        {
+          "name": "Table",
+          "reason": "preferred for \"data-list\" (rank 2); 1 tag match(es); 1 context match(es); 2 region match(es)",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.86
+        },
+        {
+          "name": "AuditTimeline",
+          "reason": "context match (timeline); 1 region match(es); 2 trait(s); name contains \"timeline\"",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.5
+        }
+      ]
+    }
+  ],
+  "validation": {
+    "status": "ok",
+    "errors": [],
+    "warnings": []
+  },
+  "warnings": [
+    {
+      "code": "OODS-V121",
+      "message": "Object 'Session' has maturity 'alpha' — composed output may change.",
+      "hint": "Consider using stable objects for production compositions."
+    },
+    {
+      "code": "OODS-V121",
+      "message": "Object 'Session' has maturity 'alpha' — composed output may change.",
+      "hint": "Consider using stable objects for production compositions."
+    },
+    {
+      "code": "OODS-V120",
+      "message": "No matching slot for position \"bottom\" from lifecycle/Timestampable/AuditTimeline."
+    },
+    {
+      "code": "OODS-V121",
+      "message": "Object 'Session' has maturity 'alpha' — composed output may change.",
+      "hint": "Consider using stable objects for production compositions."
+    },
+    {
+      "code": "OODS-V121",
+      "message": "Object 'Session' has maturity 'alpha' — composed output may change.",
+      "hint": "Consider using stable objects for production compositions."
+    },
+    {
+      "code": "OODS-V120",
+      "message": "No matching slot for position \"main\" from lifecycle/Timestampable/AuditEvent."
+    }
+  ],
+  "objectUsed": {
+    "name": "Session",
+    "version": "0.1.0",
+    "traits": [
+      "content/Labelled",
+      "lifecycle/Stateful",
+      "lifecycle/Timestampable",
+      "core/Classifiable",
+      "behavioral/Searchable",
+      "behavioral/Filterable",
+      "behavioral/Pageable"
+    ],
+    "fieldsComposed": 37,
+    "viewExtensionsApplied": {
+      "list": 7,
+      "detail": 6,
+      "form": 3,
+      "card": 2,
+      "timeline": 3,
+      "inline": 1
+    }
+  },
+  "meta": {
+    "intentParsed": "Session list view",
+    "layoutDetected": "workflow",
+    "slotCount": 32,
+    "nodeCount": 113,
+    "intentSynthetic": true,
+    "warnings": [
+      "Object 'Session' has maturity 'alpha' — composed output may change."
+    ],
+    "intelligence": {
+      "fieldsExpanded": false,
+      "positionAffinityUsed": true,
+      "fieldAffinityUsed": true,
+      "compositionConfidence": 0.91
+    }
+  },
+  "compositionId": "cmp-6dbb19cf7cf3",
+  "version": 1,
+  "parentVersion": null,
+  "operation": "compose",
+  "head": null
+}

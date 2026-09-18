@@ -35,6 +35,10 @@ export function reconcileFormDetail(schema: UiSchema, context: string, composed:
       if (node.component === 'DetailHeader' && typeof titleField === 'string' && fields[titleField]) {
         node.component = 'Input';
         node.props = { field: titleField };
+        // s205-m06: the binding pass skipped this node while it was a display header, so the Input it becomes has no
+        // change handler and React renders it as a value that snaps back — uneditable, and it passed required
+        // validation empty. The runtime sweep caught it on the first objects whose title slot no trait fills.
+        node.bindings = { ...node.bindings, onChange: node.bindings?.onChange ?? `handleChange_${titleField}` };
       }
       node.children = node.children?.filter(child => !(controls.has(child.component) && !owners[child.component] && owned.has(String(child.props?.field))));
       // Internal fields (derived counts, version counters, hint copy) are not edited by hand.

@@ -1,0 +1,734 @@
+{
+  "status": "ok",
+  "layout": "list",
+  "schema": {
+    "version": "2026.02",
+    "screens": [
+      {
+        "id": "screen-list-9",
+        "component": "Stack",
+        "layout": {
+          "type": "stack",
+          "gapToken": "cluster-default"
+        },
+        "children": [
+          {
+            "id": "screen-list-9-loading",
+            "component": "Banner",
+            "state": "loading",
+            "props": {
+              "title": "Loading",
+              "message": "Loading your records."
+            }
+          },
+          {
+            "id": "screen-list-9-error",
+            "component": "Banner",
+            "state": "error",
+            "props": {
+              "title": "Unable to load records",
+              "message": "Try again or choose another record."
+            }
+          },
+          {
+            "id": "screen-list-9-success",
+            "component": "Stack",
+            "state": "success",
+            "layout": {
+              "type": "stack",
+              "gapToken": "cluster-default"
+            },
+            "children": [
+              {
+                "id": "list-toolbar-4",
+                "component": "Stack",
+                "layout": {
+                  "type": "inline",
+                  "align": "space-between"
+                },
+                "style": {
+                  "spacingToken": "inset-default"
+                },
+                "children": [
+                  {
+                    "id": "slot-search-1",
+                    "component": "SearchInput",
+                    "meta": {
+                      "intent": "slot:search",
+                      "label": "search"
+                    },
+                    "props": {
+                      "label": "Search",
+                      "placeholder": "Search records",
+                      "clearable": true
+                    },
+                    "collectionControl": "search"
+                  },
+                  {
+                    "id": "list-toolbar-4-sort",
+                    "component": "Select",
+                    "collectionControl": "sort",
+                    "props": {
+                      "field": "target_name",
+                      "label": "Sort",
+                      "options": [
+                        {
+                          "value": "asc",
+                          "label": "Name A–Z"
+                        },
+                        {
+                          "value": "desc",
+                          "label": "Name Z–A"
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              {
+                "id": "list-items-5",
+                "component": "Stack",
+                "layout": {
+                  "type": "stack",
+                  "gapToken": "cluster-tight"
+                },
+                "children": [
+                  {
+                    "id": "list-items-5-row",
+                    "component": "Button",
+                    "collectionControl": "open",
+                    "props": {
+                      "field": "run_id"
+                    },
+                    "layout": {
+                      "type": "inline",
+                      "gapToken": "cluster-default"
+                    },
+                    "children": [
+                      {
+                        "id": "list-items-5-title",
+                        "component": "Text",
+                        "props": {
+                          "field": "target_name"
+                        }
+                      },
+                      {
+                        "id": "ve-toolbar-actions-13",
+                        "component": "RelativeTimestamp",
+                        "props": {
+                          "field": "provenance_at"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "id": "list-items-5-empty",
+                    "component": "Banner",
+                    "state": "empty",
+                    "props": {
+                      "message": "No records found."
+                    },
+                    "collectionControl": "empty"
+                  }
+                ],
+                "collection": {
+                  "source": "rows",
+                  "keyField": "run_id",
+                  "labelField": "target_name"
+                }
+              },
+              {
+                "id": "list-pagination-7",
+                "component": "Stack",
+                "layout": {
+                  "type": "inline",
+                  "align": "center"
+                },
+                "style": {
+                  "spacingToken": "inset-default"
+                },
+                "children": [
+                  {
+                    "id": "slot-pagination-8",
+                    "component": "PaginationBar",
+                    "meta": {
+                      "intent": "slot:pagination",
+                      "label": "pagination",
+                      "confidence": 0.77,
+                      "confidenceLevel": "low"
+                    },
+                    "collectionControl": "page",
+                    "props": {
+                      "showItemRange": true
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "bindings": {
+          "onRowClick": "handleRowClick",
+          "onSort": "handleSort",
+          "onFilter": "handleFilter",
+          "onPageChange": "handlePageChange"
+        },
+        "meta": {
+          "label": "Runs"
+        }
+      }
+    ],
+    "objectSchema": {
+      "searchQuery": {
+        "type": "string",
+        "required": false,
+        "default": "",
+        "description": "The current search query string entered by the user.",
+        "semanticType": "input.search.query"
+      },
+      "searchActive": {
+        "type": "boolean",
+        "required": false,
+        "default": false,
+        "description": "Whether the search input is currently focused or has a non-empty query.",
+        "semanticType": "state.search.active"
+      },
+      "filters": {
+        "type": "object[]",
+        "required": false,
+        "default": [],
+        "description": "Array of available filter descriptors. Each entry defines a filterable dimension:\n  - field: string (the schema field to filter on)\n  - label: string (display label)\n  - type: \"select\" | \"multi-select\" | \"range\" | \"boolean\" | \"date-range\"\n  - options: array of { value, label } for select/multi-select types\n",
+        "semanticType": "input.filter.descriptors"
+      },
+      "activeFilters": {
+        "type": "object[]",
+        "required": false,
+        "default": [],
+        "description": "Array of currently applied filter values:\n  - field: string (matches a filter descriptor field)\n  - operator: \"eq\" | \"in\" | \"range\" | \"gt\" | \"lt\" | \"between\"\n  - value: unknown (the selected filter value or values)\n",
+        "semanticType": "state.filter.active"
+      },
+      "filterCount": {
+        "type": "number",
+        "required": true,
+        "default": 0,
+        "description": "Computed count of currently active filters.",
+        "semanticType": "metric.filter.count"
+      },
+      "page": {
+        "type": "number",
+        "required": true,
+        "default": 1,
+        "description": "Current page number (1-based).",
+        "semanticType": "state.pagination.page"
+      },
+      "pageSize": {
+        "type": "number",
+        "required": true,
+        "default": 25,
+        "description": "Number of items displayed per page.",
+        "semanticType": "state.pagination.pageSize"
+      },
+      "totalItems": {
+        "type": "number",
+        "required": false,
+        "default": 0,
+        "description": "Total number of items across all pages. Used to compute total page count.",
+        "semanticType": "metric.pagination.totalItems"
+      },
+      "totalPages": {
+        "type": "number",
+        "required": false,
+        "default": 0,
+        "description": "Computed total number of pages (ceil(totalItems / pageSize)).",
+        "semanticType": "metric.pagination.totalPages"
+      },
+      "provenance_source": {
+        "type": "string",
+        "required": true,
+        "examples": [
+          "Stage1",
+          "Stage1",
+          "Stage1",
+          "Stage1",
+          "Stage1",
+          "Stage1"
+        ],
+        "description": "The system that produced the record.",
+        "semanticType": "provenance.source"
+      },
+      "provenance_record": {
+        "type": "string",
+        "required": true,
+        "examples": [
+          "stage1-tracelab.aquex.ai-2026-09-18",
+          "stage1-tracelab.aquex.ai-2026-09-17",
+          "stage1-tracelab.aquex.ai-2026-09-17",
+          "stage1-frontend-production-43c3.up.railway.app-2026-09-17",
+          "stage1-designsystem.digital.gov-2026-09-17",
+          "stage1-designsystem.digital.gov-2026-09-16"
+        ],
+        "description": "Which record there.",
+        "semanticType": "provenance.record"
+      },
+      "provenance_locator": {
+        "type": "string",
+        "required": false,
+        "examples": [
+          "manifest.json",
+          "manifest.json",
+          "manifest.json",
+          "manifest.json",
+          "manifest.json",
+          "manifest.json"
+        ],
+        "description": "Where in that record the values were read.",
+        "semanticType": "provenance.locator"
+      },
+      "provenance_method": {
+        "type": "string",
+        "required": true,
+        "examples": [
+          "Stage1 app capture, 28 passes",
+          "Stage1 app capture, 18 passes",
+          "Stage1 app capture, 20 passes",
+          "Stage1 app capture, 16 passes",
+          "Stage1 app capture, 30 passes",
+          "Stage1 app capture, 20 passes"
+        ],
+        "description": "How the values were obtained.",
+        "semanticType": "provenance.method"
+      },
+      "provenance_at": {
+        "type": "datetime",
+        "required": true,
+        "examples": [
+          "2026-09-18T00:34:54.671Z",
+          "2026-09-17T21:55:36.491Z",
+          "2026-09-17T21:53:41.439Z",
+          "2026-09-17T21:52:21.293Z",
+          "2026-09-17T00:44:54.052Z",
+          "2026-09-16T03:40:54.031Z"
+        ],
+        "description": "When they were obtained.",
+        "semanticType": "provenance.at"
+      },
+      "run_id": {
+        "type": "string",
+        "required": true,
+        "examples": [
+          "d0a43821-5730-4bf3-8b40-20f6fcb6b69c",
+          "edb8954d-44a6-4e48-b9d9-aad676f2bf18",
+          "924005a5-e31e-4430-80ca-84c5b974fd86",
+          "2af80ee6-d74f-4922-8c9e-1763b4f7c2d2",
+          "6e435ce7-eaab-46b4-be6b-cea9b80defa6",
+          "b78461bc-2138-49ae-a82a-188d9d01ff78"
+        ],
+        "description": "The capture's own id, a uuid Stage1 assigns; the directory name under out/stage1/<suite>/.",
+        "semanticType": "capture.run.run_id"
+      },
+      "target_name": {
+        "type": "string",
+        "required": true,
+        "examples": [
+          "tracelab-production-infer",
+          "tracelab-production",
+          "tracelab-production",
+          "tracelab-production",
+          "uswds-designsystem",
+          "uswds-designsystem"
+        ],
+        "description": "What was captured, as the run names it (targets[0].name). Every run read carries exactly one target, so the subject is two fields here rather than an object of its own.",
+        "semanticType": "text.label"
+      },
+      "target_url": {
+        "type": "string",
+        "required": true,
+        "examples": [
+          "https://tracelab.aquex.ai/",
+          "https://tracelab.aquex.ai/",
+          "https://tracelab.aquex.ai/",
+          "https://frontend-production-43c3.up.railway.app/",
+          "https://designsystem.digital.gov/",
+          "https://designsystem.digital.gov/"
+        ],
+        "description": "Where the capture started (targets[0].url).",
+        "semanticType": "capture.run.target_url"
+      },
+      "mode": {
+        "type": "string",
+        "required": true,
+        "examples": [
+          "app",
+          "app",
+          "app",
+          "app",
+          "app",
+          "app"
+        ],
+        "description": "The capture mode. Every run a run view reads is app; suite runs aggregate targets and carry no a11y report of their own.",
+        "enum": [
+          "app",
+          "suite"
+        ],
+        "semanticType": "capture.run.mode"
+      },
+      "auth_type": {
+        "type": "string",
+        "required": true,
+        "examples": [
+          "none",
+          "none",
+          "none",
+          "none",
+          "none",
+          "none"
+        ],
+        "description": "The authentication the manifest RECORDS. Shown as recorded, never inferred: Sprint 204 measured \"none\" on a capture that was authenticated, which is Stage1's to correct.",
+        "semanticType": "capture.run.auth_type"
+      },
+      "page_count": {
+        "type": "integer",
+        "required": true,
+        "examples": [
+          25,
+          25,
+          25,
+          10,
+          40,
+          40
+        ],
+        "description": "How many pages the accessibility pass read.",
+        "semanticType": "capture.run.page_count"
+      },
+      "finding_count": {
+        "type": "integer",
+        "required": true,
+        "examples": [
+          0,
+          0,
+          0,
+          0,
+          6,
+          6
+        ],
+        "description": "How many rule failures the run found across its pages (a11y rollup.violation_count).",
+        "semanticType": "capture.run.finding_count"
+      },
+      "critical_count": {
+        "type": "integer",
+        "required": true,
+        "examples": [
+          0,
+          0,
+          0,
+          0,
+          2,
+          2
+        ],
+        "description": "Findings of critical impact.",
+        "semanticType": "capture.run.critical_count"
+      },
+      "serious_count": {
+        "type": "integer",
+        "required": true,
+        "examples": [
+          0,
+          0,
+          0,
+          0,
+          1,
+          1
+        ],
+        "description": "Findings of serious impact.",
+        "semanticType": "capture.run.serious_count"
+      },
+      "moderate_count": {
+        "type": "integer",
+        "required": true,
+        "examples": [
+          0,
+          0,
+          0,
+          0,
+          1,
+          1
+        ],
+        "description": "Findings of moderate impact.",
+        "semanticType": "capture.run.moderate_count"
+      },
+      "minor_count": {
+        "type": "integer",
+        "required": true,
+        "examples": [
+          0,
+          0,
+          0,
+          0,
+          2,
+          2
+        ],
+        "description": "Findings of minor impact.",
+        "semanticType": "capture.run.minor_count"
+      },
+      "unknown_count": {
+        "type": "integer",
+        "required": true,
+        "examples": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "description": "Findings whose impact the engine did not state. Its own bucket: never folded into minor.",
+        "semanticType": "capture.run.unknown_count"
+      },
+      "pass_count": {
+        "type": "integer",
+        "required": true,
+        "examples": [
+          28,
+          18,
+          20,
+          16,
+          30,
+          20
+        ],
+        "description": "How many capture passes ran.",
+        "semanticType": "capture.run.pass_count"
+      },
+      "passes_failed": {
+        "type": "integer",
+        "required": true,
+        "examples": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "description": "How many of those passes did not finish ok.",
+        "semanticType": "capture.run.passes_failed"
+      },
+      "artifact_count": {
+        "type": "integer",
+        "required": true,
+        "examples": [
+          25,
+          18,
+          20,
+          16,
+          27,
+          20
+        ],
+        "description": "How many artifacts the run's index lists.",
+        "semanticType": "capture.run.artifact_count"
+      },
+      "evidence_retained": {
+        "type": "boolean",
+        "required": false,
+        "examples": [
+          true,
+          true,
+          null,
+          null,
+          true,
+          null
+        ],
+        "description": "Whether the run kept its evidence directory (evidence_retention.retained).",
+        "semanticType": "capture.run.evidence_retained"
+      }
+    }
+  },
+  "schemaRef": "compose-3cb16456",
+  "schemaRefCreatedAt": "2026-09-18T09:16:29.183Z",
+  "schemaRefExpiresAt": "2026-09-18T09:46:29.183Z",
+  "compositionId": "cmp-85888d372b1d",
+  "version": 1,
+  "parentVersion": null,
+  "operation": "compose",
+  "head": null,
+  "selections": [
+    {
+      "slotName": "search",
+      "intent": "search-input",
+      "selectedComponent": "SearchInput",
+      "confidence": 0.95,
+      "confidenceLevel": "high",
+      "explanation": "SearchInput leads slot \"search\" because view_extension placement. Confidence is high (0.95).",
+      "candidates": [
+        {
+          "name": "SearchInput",
+          "score": 0.95,
+          "reason": "view_extension placement"
+        }
+      ],
+      "placedComponents": [
+        "SearchInput"
+      ]
+    },
+    {
+      "slotName": "toolbar-actions",
+      "intent": "action-button",
+      "selectedComponent": "PaginationBar",
+      "confidence": 0.95,
+      "confidenceLevel": "high",
+      "explanation": "PaginationBar leads slot \"toolbar-actions\" because view_extension placement. The slot also renders RelativeTimestamp after it, in that order. Confidence is high (0.95).",
+      "candidates": [
+        {
+          "name": "PaginationBar",
+          "score": 0.95,
+          "reason": "view_extension placement"
+        }
+      ],
+      "placedComponents": [
+        "PaginationBar",
+        "RelativeTimestamp"
+      ]
+    },
+    {
+      "slotName": "filters",
+      "intent": "filter-control",
+      "selectedComponent": "FilterPanel",
+      "confidence": 0.95,
+      "confidenceLevel": "high",
+      "explanation": "FilterPanel leads slot \"filters\" because view_extension placement. Confidence is high (0.95).",
+      "candidates": [
+        {
+          "name": "FilterPanel",
+          "score": 0.95,
+          "reason": "view_extension placement"
+        }
+      ],
+      "placedComponents": [
+        "FilterPanel"
+      ]
+    },
+    {
+      "slotName": "items",
+      "intent": "data-list",
+      "selectedComponent": "Table",
+      "confidence": 0.5,
+      "confidenceLevel": "medium",
+      "explanation": "Table leads slot \"items\" because fallback placement. Confidence is medium (0.50).",
+      "candidates": [
+        {
+          "name": "Table",
+          "score": 0.5,
+          "reason": "fallback placement"
+        }
+      ],
+      "placedComponents": [
+        "Table"
+      ]
+    },
+    {
+      "slotName": "pagination",
+      "intent": "pagination-control",
+      "selectedComponent": "PaginationBar",
+      "confidence": 0.77,
+      "confidenceLevel": "medium",
+      "explanation": "PaginationBar was selected for slot \"pagination\" because 2 tag match(es); tag match (pagination, navigation); 1 context match(es); 1 trait(s); name contains \"pagination\"; position affinity: PaginationBar fits well in footer. Confidence is medium (0.77).",
+      "candidates": [
+        {
+          "name": "PaginationBar",
+          "reason": "2 tag match(es); tag match (pagination, navigation); 1 context match(es); 1 trait(s); name contains \"pagination\"; position affinity: PaginationBar fits well in footer",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 1,
+          "contextTraitMatches": 0,
+          "score": 1
+        },
+        {
+          "name": "Button",
+          "reason": "preferred for \"pagination-control\" (rank 2); 1 context match(es); 1 region match(es); position affinity: Button fits well in footer",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.75
+        },
+        {
+          "name": "Text",
+          "reason": "preferred for \"pagination-control\" (rank 1); 1 context match(es)",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.65
+        }
+      ]
+    }
+  ],
+  "validation": {
+    "status": "ok",
+    "errors": [],
+    "warnings": []
+  },
+  "warnings": [
+    {
+      "code": "OODS-V121",
+      "message": "Object 'Run' has maturity 'alpha' — composed output may change.",
+      "hint": "Consider using stable objects for production compositions."
+    },
+    {
+      "code": "OODS-V117",
+      "message": "Field collision: \"provenance_source\" in object schema overrides trait definition"
+    },
+    {
+      "code": "OODS-V117",
+      "message": "Field collision: \"provenance_record\" in object schema overrides trait definition"
+    },
+    {
+      "code": "OODS-V117",
+      "message": "Field collision: \"provenance_locator\" in object schema overrides trait definition"
+    },
+    {
+      "code": "OODS-V117",
+      "message": "Field collision: \"provenance_method\" in object schema overrides trait definition"
+    },
+    {
+      "code": "OODS-V117",
+      "message": "Field collision: \"provenance_at\" in object schema overrides trait definition"
+    }
+  ],
+  "objectUsed": {
+    "name": "Run",
+    "version": "0.1.0",
+    "traits": [
+      "behavioral/Searchable",
+      "behavioral/Filterable",
+      "behavioral/Pageable",
+      "core/Provenanced"
+    ],
+    "fieldsComposed": 30,
+    "viewExtensionsApplied": {
+      "list": 4,
+      "detail": 6,
+      "card": 2
+    }
+  },
+  "meta": {
+    "intentParsed": "Run list view",
+    "layoutDetected": "context-inferred: list (from context=\"list\")",
+    "slotCount": 5,
+    "nodeCount": 14,
+    "intentSynthetic": true,
+    "warnings": [
+      "Object 'Run' has maturity 'alpha' — composed output may change.",
+      "Field collision: \"provenance_source\" in object schema overrides trait definition",
+      "Field collision: \"provenance_record\" in object schema overrides trait definition",
+      "Field collision: \"provenance_locator\" in object schema overrides trait definition",
+      "Field collision: \"provenance_method\" in object schema overrides trait definition",
+      "Field collision: \"provenance_at\" in object schema overrides trait definition"
+    ],
+    "intelligence": {
+      "fieldsExpanded": false,
+      "positionAffinityUsed": true,
+      "fieldAffinityUsed": true,
+      "compositionConfidence": 0.82
+    }
+  }
+}

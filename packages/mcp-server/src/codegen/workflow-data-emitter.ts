@@ -42,7 +42,14 @@ export function workflowSampleData(schema: UiSchema): { records: Array<Record<st
       const type = field.type.replace(/\?$/, '');
       const declaredChart = charts.find(chart => (chart.source === 'record-array' || chart.source === 'edge-array') && chart.dataField === name);
       if (declaredChart?.source === 'record-array' || declaredChart?.source === 'edge-array') return value(declaredChart.sampleRows, 'authored chart rows');
-      if (field.examples?.length) return value(field.examples[index % field.examples.length], 'authored field example');
+      if (field.examples?.length) {
+        const example = field.examples[index % field.examples.length];
+        // s205-m06: a real record that does not carry an optional field is authored as null (Run.evidence_retained is
+        // absent on four of six Stage1 runs). On a type that is not nullable, absent is an omitted key, never null —
+        // null failed the generated app's strict typecheck in the runtime sweep.
+        if (example === null && !field.required && !field.type.endsWith('?')) return value(undefined, 'authored field example: absent on this record');
+        return value(example, 'authored field example');
+      }
       if (name === idField) return value(`${workflow.object.toLowerCase()}-${suffix}`, 'stable object record key');
       if (type === 'AddressableEntry[]') return value([{ role: workflow.data.defaultAddressRole ?? workflow.data.addressRoles?.[0] ?? 'primary', address: { countryCode: 'US', addressLines: [`${100 + index} Main Street`], locality: 'Springfield', administrativeArea: 'IL', postalCode: '62701' }, isDefault: true, updatedAt: seedAt }], 'declared address role and deterministic postal address');
       if (name === 'default_address_role') return value(workflow.data.defaultAddressRole ?? workflow.data.addressRoles?.[0] ?? 'primary', 'declared address role');

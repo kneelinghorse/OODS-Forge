@@ -1,0 +1,51 @@
+- main:
+  - heading "Run form" [level=1]
+  - text: Target name
+  - textbox "Target name":
+    - /placeholder: What was captured, as the run names it (targets[0].name). Every run read carries exactly one target, so the subject is two fields here rather than an object of its own.
+    - text: Consumer target name
+  - paragraph: What was captured, as the run names it (targets[0].name). Every run read carries exactly one target, so the subject is two fields here rather than an object of its own.
+  - text: Search Query
+  - textbox "Search Query":
+    - /placeholder: The current search query string entered by the user.
+    - text: Consumer searchQuery
+  - paragraph: The current search query string entered by the user.
+  - checkbox "Search Active"
+  - text: Search Active
+  - paragraph: Whether the search input is currently focused or has a non-empty query.
+  - text: Filter Count
+  - spinbutton "Filter Count": "0"
+  - paragraph: Computed count of currently active filters.
+  - text: Obtained
+  - textbox "Obtained":
+    - /placeholder: When they were obtained.
+    - text: 2026-09-05T12:00
+  - paragraph: When they were obtained.
+  - text: Mode
+  - combobox "Mode":
+    - option "Enter mode" [disabled]
+    - option "app" [selected]
+    - option "suite"
+  - paragraph: The capture mode. Every run a run view reads is app; suite runs aggregate targets and carry no a11y report of their own.
+  - text: Page
+  - spinbutton "Page": "0"
+  - paragraph: Current page number (1-based).
+  - text: Page Size
+  - spinbutton "Page Size": "0"
+  - paragraph: Number of items displayed per page.
+  - text: Source
+  - textbox "Source":
+    - /placeholder: Enter provenance source
+    - text: Consumer provenance source
+  - paragraph: The system that produced the record.
+  - text: Record
+  - textbox "Record":
+    - /placeholder: Enter provenance record
+    - text: Consumer provenance record
+  - paragraph: Which record there.
+  - text: Read from
+  - textbox "Read from":
+    - /placeholder: Enter provenance locator
+    - text: Consumer provenance locator
+  - paragraph: Where in that record the values were read.
+  - button "Save"

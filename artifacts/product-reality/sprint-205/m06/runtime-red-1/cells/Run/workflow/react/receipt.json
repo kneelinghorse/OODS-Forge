@@ -1,0 +1,159 @@
+{
+  "object": "Run",
+  "context": "workflow",
+  "framework": "react",
+  "head": "f64eda8ecf91db17b2a29112a58455721d91cfc8",
+  "runId": "2626bb3f-72eb-4ae0-aa95-b50de285f89f",
+  "status": "fail",
+  "artifactHash": "sha256:6cca206204f2372e3caf117473d148520592e68d6f26bd22403adc9243991298",
+  "components": [
+    "Banner",
+    "Button",
+    "Card",
+    "Checkbox",
+    "DetailHeader",
+    "Input",
+    "PaginationBar",
+    "RelativeTimestamp",
+    "SearchInput",
+    "Select",
+    "Stack",
+    "Tabs",
+    "Text"
+  ],
+  "gates": [
+    {
+      "name": "generation",
+      "status": "pass",
+      "detail": {
+        "artifactHash": "sha256:6cca206204f2372e3caf117473d148520592e68d6f26bd22403adc9243991298",
+        "response": "workflows/Run/react-generation.json"
+      }
+    },
+    {
+      "name": "fresh-exact-tarball-install",
+      "status": "pass",
+      "detail": {
+        "report": "workflows/Run/react/receipt.json",
+        "observation": {
+          "isolation": {
+            "outsidePnpmWorkspace": true,
+            "freshNodeModules": true,
+            "emptyVerifierOwnedNpmConfiguration": true,
+            "installScripts": false,
+            "localPackagesFromBuiltTarballsOnly": true,
+            "workspaceAliases": false,
+            "workspaceSymlinks": false,
+            "repositorySourceImports": false,
+            "inheritedNodeModules": false,
+            "allResolvedPathsOutsideRepository": true,
+            "installed": [
+              {
+                "name": "@oods/tokens",
+                "version": "0.1.0",
+                "consumerRelative": "node_modules/@oods/tokens"
+              },
+              {
+                "name": "@oods/component-contracts",
+                "version": "0.1.0",
+                "consumerRelative": "node_modules/@oods/component-contracts"
+              },
+              {
+                "name": "@oods/component-styles",
+                "version": "0.1.0",
+                "consumerRelative": "node_modules/@oods/component-styles"
+              },
+              {
+                "name": "@oods/components-react",
+                "version": "0.1.0",
+                "consumerRelative": "node_modules/@oods/components-react"
+              }
+            ]
+          },
+          "resolutions": [
+            {
+              "specifier": "@oods/component-contracts",
+              "consumerRelative": "node_modules/@oods/component-contracts/dist/index.js"
+            },
+            {
+              "specifier": "@oods/component-styles/css",
+              "consumerRelative": "node_modules/@oods/component-styles/dist/components.css"
+            },
+            {
+              "specifier": "@oods/components-react",
+              "consumerRelative": "node_modules/@oods/components-react/dist/index.js"
+            },
+            {
+              "specifier": "react",
+              "consumerRelative": "node_modules/react/index.js"
+            },
+            {
+              "specifier": "react-dom/client",
+              "consumerRelative": "node_modules/react-dom/client.js"
+            },
+            {
+              "specifier": "react-dom/server",
+              "consumerRelative": "node_modules/react-dom/server.node.js"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "strict-typecheck",
+      "status": "fail",
+      "detail": {
+        "report": "workflows/Run/react/receipt.json"
+      },
+      "reason": "react typecheck failed (2)\n\n> run-workflow-react@1.0.0 typecheck\n> tsc --noEmit --pretty false\n\nsrc/sample-data.ts(98,5): error TS2322: Type 'null' is not assignable to type 'boolean | undefined'.\nsrc/sample-data.ts(130,5): error TS2322: Type 'null' is not assignable to type 'boolean | undefined'.\nsrc/sample-data.ts(194,5): error TS2322: Type 'null' is not assignable to type 'boolean | undefined'.\nsrc/sample-data.ts(290,5): error TS2322: Type 'null' is not assignable to type 'boolean | undefined'.\nsrc/sample-data.ts(322,5): error TS2322: Type 'null' is not assignable to type 'boolean | undefined'.\n"
+    },
+    {
+      "name": "production-build",
+      "status": "fail",
+      "detail": {
+        "report": "workflows/Run/react/receipt.json"
+      }
+    },
+    {
+      "name": "server-render",
+      "status": "fail",
+      "detail": {
+        "report": "workflows/Run/react/receipt.json"
+      }
+    },
+    {
+      "name": "mount",
+      "status": "fail",
+      "detail": {
+        "report": "workflows/Run/react/receipt.json"
+      }
+    },
+    {
+      "name": "hydration",
+      "status": "fail",
+      "detail": {
+        "report": "workflows/Run/react/receipt.json"
+      }
+    },
+    {
+      "name": "shared-css-resolution",
+      "status": "fail",
+      "detail": {
+        "report": "workflows/Run/react/receipt.json"
+      }
+    },
+    {
+      "name": "interaction-evidence",
+      "status": "fail",
+      "detail": {
+        "report": "workflows/Run/react/receipt.json"
+      }
+    },
+    {
+      "name": "workflow-proof",
+      "status": "fail",
+      "reason": "AssertionError [ERR_ASSERTION]: Every established workflow gate must pass"
+    }
+  ],
+  "report": "cells/Run/workflow/react/receipt.json"
+}

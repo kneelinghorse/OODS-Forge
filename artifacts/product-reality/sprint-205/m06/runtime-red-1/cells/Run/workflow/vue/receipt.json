@@ -1,0 +1,159 @@
+{
+  "object": "Run",
+  "context": "workflow",
+  "framework": "vue",
+  "head": "f64eda8ecf91db17b2a29112a58455721d91cfc8",
+  "runId": "2626bb3f-72eb-4ae0-aa95-b50de285f89f",
+  "status": "fail",
+  "artifactHash": "sha256:2255c3c484ced34b96fed96f7f16e60684fb0e9899dc1f304b36e5e6d8229bb5",
+  "components": [
+    "Banner",
+    "Button",
+    "Card",
+    "Checkbox",
+    "DetailHeader",
+    "Input",
+    "PaginationBar",
+    "RelativeTimestamp",
+    "SearchInput",
+    "Select",
+    "Stack",
+    "Tabs",
+    "Text"
+  ],
+  "gates": [
+    {
+      "name": "generation",
+      "status": "pass",
+      "detail": {
+        "artifactHash": "sha256:2255c3c484ced34b96fed96f7f16e60684fb0e9899dc1f304b36e5e6d8229bb5",
+        "response": "workflows/Run/vue-generation.json"
+      }
+    },
+    {
+      "name": "fresh-exact-tarball-install",
+      "status": "pass",
+      "detail": {
+        "report": "workflows/Run/vue/receipt.json",
+        "observation": {
+          "isolation": {
+            "outsidePnpmWorkspace": true,
+            "freshNodeModules": true,
+            "emptyVerifierOwnedNpmConfiguration": true,
+            "installScripts": false,
+            "localPackagesFromBuiltTarballsOnly": true,
+            "workspaceAliases": false,
+            "workspaceSymlinks": false,
+            "repositorySourceImports": false,
+            "inheritedNodeModules": false,
+            "allResolvedPathsOutsideRepository": true,
+            "installed": [
+              {
+                "name": "@oods/tokens",
+                "version": "0.1.0",
+                "consumerRelative": "node_modules/@oods/tokens"
+              },
+              {
+                "name": "@oods/component-contracts",
+                "version": "0.1.0",
+                "consumerRelative": "node_modules/@oods/component-contracts"
+              },
+              {
+                "name": "@oods/component-styles",
+                "version": "0.1.0",
+                "consumerRelative": "node_modules/@oods/component-styles"
+              },
+              {
+                "name": "@oods/components-vue",
+                "version": "0.1.0",
+                "consumerRelative": "node_modules/@oods/components-vue"
+              }
+            ]
+          },
+          "resolutions": [
+            {
+              "specifier": "@oods/component-contracts",
+              "consumerRelative": "node_modules/@oods/component-contracts/dist/index.js"
+            },
+            {
+              "specifier": "@oods/component-styles/css",
+              "consumerRelative": "node_modules/@oods/component-styles/dist/components.css"
+            },
+            {
+              "specifier": "@oods/components-vue",
+              "consumerRelative": "node_modules/@oods/components-vue/dist/index.js"
+            },
+            {
+              "specifier": "@vitejs/plugin-vue",
+              "consumerRelative": "node_modules/@vitejs/plugin-vue/dist/index.mjs"
+            },
+            {
+              "specifier": "@vue/server-renderer",
+              "consumerRelative": "node_modules/@vue/server-renderer/index.js"
+            },
+            {
+              "specifier": "vue",
+              "consumerRelative": "node_modules/vue/index.mjs"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "strict-typecheck",
+      "status": "fail",
+      "detail": {
+        "report": "workflows/Run/vue/receipt.json"
+      },
+      "reason": "vue typecheck failed (2)\n\n> run-workflow-vue@1.0.0 typecheck\n> vue-tsc --noEmit --pretty false\n\nsrc/sample-data.ts(98,5): error TS2322: Type 'null' is not assignable to type 'boolean | undefined'.\nsrc/sample-data.ts(130,5): error TS2322: Type 'null' is not assignable to type 'boolean | undefined'.\nsrc/sample-data.ts(194,5): error TS2322: Type 'null' is not assignable to type 'boolean | undefined'.\nsrc/sample-data.ts(290,5): error TS2322: Type 'null' is not assignable to type 'boolean | undefined'.\nsrc/sample-data.ts(322,5): error TS2322: Type 'null' is not assignable to type 'boolean | undefined'.\n"
+    },
+    {
+      "name": "production-build",
+      "status": "fail",
+      "detail": {
+        "report": "workflows/Run/vue/receipt.json"
+      }
+    },
+    {
+      "name": "server-render",
+      "status": "fail",
+      "detail": {
+        "report": "workflows/Run/vue/receipt.json"
+      }
+    },
+    {
+      "name": "mount",
+      "status": "fail",
+      "detail": {
+        "report": "workflows/Run/vue/receipt.json"
+      }
+    },
+    {
+      "name": "hydration",
+      "status": "fail",
+      "detail": {
+        "report": "workflows/Run/vue/receipt.json"
+      }
+    },
+    {
+      "name": "shared-css-resolution",
+      "status": "fail",
+      "detail": {
+        "report": "workflows/Run/vue/receipt.json"
+      }
+    },
+    {
+      "name": "interaction-evidence",
+      "status": "fail",
+      "detail": {
+        "report": "workflows/Run/vue/receipt.json"
+      }
+    },
+    {
+      "name": "workflow-proof",
+      "status": "fail",
+      "reason": "AssertionError [ERR_ASSERTION]: Every established workflow gate must pass"
+    }
+  ],
+  "report": "cells/Run/workflow/vue/receipt.json"
+}

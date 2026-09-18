@@ -1,0 +1,103 @@
+{
+  "status": "ok",
+  "framework": "react",
+  "artifact": {
+    "schemaVersion": "1.0.0",
+    "framework": "react",
+    "files": [
+      {
+        "path": "src/GeneratedUI.tsx",
+        "contents": "import React from 'react';\nimport { Banner, Card, Stack, Text } from '@oods/components-react';\nimport '@oods/component-styles/css';\nimport { chronologicalEvents, formatDateTime, type CollectionEvent } from '@oods/component-contracts';\n\nexport interface PageProps {\n  events?: CollectionEvent[];\n  /** Array of currently applied filter values:\n  - field: string (matches a filter descriptor field)\n  - operator: \"eq\" | \"in\" | \"range\" | \"gt\" | \"lt\" | \"between\"\n  - value: unknown (the selected filter value or values)\n */\n  activeFilters?: Record<string, unknown>[];\n  /** How many artifacts the run's index lists. */\n  artifactCount: number;\n  /** The authentication the manifest RECORDS. Shown as recorded, never inferred: Sprint 204 measured \"none\" on a capture that was authenticated, which is Stage1's to correct. */\n  authType: string;\n  /** Findings of critical impact. */\n  criticalCount: number;\n  /** Whether the run kept its evidence directory (evidence_retention.retained). */\n  evidenceRetained?: boolean;\n  /** Computed count of currently active filters. */\n  filterCount: number;\n  /** Array of available filter descriptors. Each entry defines a filterable dimension:\n  - field: string (the schema field to filter on)\n  - label: string (display label)\n  - type: \"select\" | \"multi-select\" | \"range\" | \"boolean\" | \"date-range\"\n  - options: array of { value, label } for select/multi-select types\n */\n  filters?: Record<string, unknown>[];\n  /** How many rule failures the run found across its pages (a11y rollup.violation_count). */\n  findingCount: number;\n  /** Findings of minor impact. */\n  minorCount: number;\n  /** The capture mode. Every run a run view reads is app; suite runs aggregate targets and carry no a11y report of their own. */\n  mode: 'app' | 'suite';\n  /** Findings of moderate impact. */\n  moderateCount: number;\n  /** Current page number (1-based). */\n  page: number;\n  /** How many pages the accessibility pass read. */\n  pageCount: number;\n  /** Number of items displayed per page. */\n  pageSize: number;\n  /** How many capture passes ran. */\n  passCount: number;\n  /** How many of those passes did not finish ok. */\n  passesFailed: number;\n  /** When they were obtained. */\n  provenanceAt: string;\n  /** Where in that record the values were read. */\n  provenanceLocator?: string;\n  /** How the values were obtained. */\n  provenanceMethod: string;\n  /** Which record there. */\n  provenanceRecord: string;\n  /** The system that produced the record. */\n  provenanceSource: string;\n  /** The capture's own id, a uuid Stage1 assigns; the directory name under out/stage1/<suite>/. */\n  runId: string;\n  /** Whether the search input is currently focused or has a non-empty query. */\n  searchActive?: boolean;\n  /** The current search query string entered by the user. */\n  searchQuery?: string;\n  /** Findings of serious impact. */\n  seriousCount: number;\n  /** What was captured, as the run names it (targets[0].name). Every run read carries exactly one target, so the subject is two fields here rather than an object of its own. */\n  targetName: string;\n  /** Where the capture started (targets[0].url). */\n  targetUrl: string;\n  /** Total number of items across all pages. Used to compute total page count. */\n  totalItems?: number;\n  /** Computed total number of pages (ceil(totalItems / pageSize)). */\n  totalPages?: number;\n  /** Findings whose impact the engine did not state. Its own bucket: never folded into minor. */\n  unknownCount: number;\n}\n\ntype BannerProps = React.ComponentPropsWithoutRef<typeof Banner>;\ntype CardProps = React.ComponentPropsWithoutRef<typeof Card>;\ntype StackProps = React.ComponentPropsWithoutRef<typeof Stack>;\ntype TextProps = React.ComponentPropsWithoutRef<typeof Text>;\n\nexport const GeneratedUI: React.FC<PageProps> = ({ activeFilters, artifactCount, authType, criticalCount, evidenceRetained, filterCount, filters, findingCount, minorCount, mode, moderateCount, page, pageCount, pageSize, passCount, passesFailed, provenanceAt, provenanceLocator, provenanceMethod, provenanceRecord, provenanceSource, runId, searchActive, searchQuery, seriousCount, targetName, targetUrl, totalItems, totalPages, unknownCount, events = [] }) => {\n  return (\n    <main data-oods-shell=\"screen-timeline-14\">\n      <h1 data-oods-shell-heading=\"true\">Run timeline</h1>\n      <Stack id=\"screen-timeline-14\" data-oods-component=\"Stack\" data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-default)' }}>\n            <Stack id=\"timeline-header-1\" data-oods-component=\"Stack\" data-layout=\"inline\" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', padding: 'var(--ref-space-inset-default)' }}>\n                    <Text id=\"timeline-header-1-title\" data-oods-component=\"Text\">{targetName}</Text>\n                  </Stack>\n            <section id=\"timeline-entries-13\" data-oods-collection=\"events\">{events.length === 0 ? (<Banner id=\"timeline-entries-13-empty\" data-oods-component=\"Banner\" data-oods-state=\"empty\" content=\"No events yet.\" />) : (<ol aria-label=\"Lifecycle history\" className=\"oods-collection\">{chronologicalEvents(events).map((collectionEvent, collectionIndex) => <li key={collectionEvent.id}><Card id={'timeline-entries-13-entry-' + collectionIndex}><strong>{collectionEvent.title}</strong><time dateTime={collectionEvent.at}>{formatDateTime(collectionEvent.at)}</time><p>{collectionEvent.description}</p></Card></li>)}</ol>)}</section>\n          </Stack>\n    </main>\n  );\n};\n",
+        "contentHash": "sha256:f20aee2ed0d19f8a6daa8f1c2bfafd579ec45670c94453d956b9fdb98316018d"
+      }
+    ],
+    "dependencies": [
+      {
+        "name": "@oods/component-contracts",
+        "version": "0.1.0",
+        "kind": "dependency"
+      },
+      {
+        "name": "@oods/component-styles",
+        "version": "0.1.0",
+        "kind": "dependency"
+      },
+      {
+        "name": "@oods/components-react",
+        "version": "0.1.0",
+        "kind": "dependency"
+      },
+      {
+        "name": "react",
+        "version": "19.2.0",
+        "kind": "peerDependency"
+      },
+      {
+        "name": "react-dom",
+        "version": "19.2.0",
+        "kind": "peerDependency"
+      }
+    ],
+    "actions": [],
+    "contentHash": "sha256:b2fd87ad188b022ed88ec1e84f4e3ef70a686252099e5aa9228f7f1e5e59a3a2"
+  },
+  "code": "import React from 'react';\nimport { Banner, Card, Stack, Text } from '@oods/components-react';\nimport '@oods/component-styles/css';\nimport { chronologicalEvents, formatDateTime, type CollectionEvent } from '@oods/component-contracts';\n\nexport interface PageProps {\n  events?: CollectionEvent[];\n  /** Array of currently applied filter values:\n  - field: string (matches a filter descriptor field)\n  - operator: \"eq\" | \"in\" | \"range\" | \"gt\" | \"lt\" | \"between\"\n  - value: unknown (the selected filter value or values)\n */\n  activeFilters?: Record<string, unknown>[];\n  /** How many artifacts the run's index lists. */\n  artifactCount: number;\n  /** The authentication the manifest RECORDS. Shown as recorded, never inferred: Sprint 204 measured \"none\" on a capture that was authenticated, which is Stage1's to correct. */\n  authType: string;\n  /** Findings of critical impact. */\n  criticalCount: number;\n  /** Whether the run kept its evidence directory (evidence_retention.retained). */\n  evidenceRetained?: boolean;\n  /** Computed count of currently active filters. */\n  filterCount: number;\n  /** Array of available filter descriptors. Each entry defines a filterable dimension:\n  - field: string (the schema field to filter on)\n  - label: string (display label)\n  - type: \"select\" | \"multi-select\" | \"range\" | \"boolean\" | \"date-range\"\n  - options: array of { value, label } for select/multi-select types\n */\n  filters?: Record<string, unknown>[];\n  /** How many rule failures the run found across its pages (a11y rollup.violation_count). */\n  findingCount: number;\n  /** Findings of minor impact. */\n  minorCount: number;\n  /** The capture mode. Every run a run view reads is app; suite runs aggregate targets and carry no a11y report of their own. */\n  mode: 'app' | 'suite';\n  /** Findings of moderate impact. */\n  moderateCount: number;\n  /** Current page number (1-based). */\n  page: number;\n  /** How many pages the accessibility pass read. */\n  pageCount: number;\n  /** Number of items displayed per page. */\n  pageSize: number;\n  /** How many capture passes ran. */\n  passCount: number;\n  /** How many of those passes did not finish ok. */\n  passesFailed: number;\n  /** When they were obtained. */\n  provenanceAt: string;\n  /** Where in that record the values were read. */\n  provenanceLocator?: string;\n  /** How the values were obtained. */\n  provenanceMethod: string;\n  /** Which record there. */\n  provenanceRecord: string;\n  /** The system that produced the record. */\n  provenanceSource: string;\n  /** The capture's own id, a uuid Stage1 assigns; the directory name under out/stage1/<suite>/. */\n  runId: string;\n  /** Whether the search input is currently focused or has a non-empty query. */\n  searchActive?: boolean;\n  /** The current search query string entered by the user. */\n  searchQuery?: string;\n  /** Findings of serious impact. */\n  seriousCount: number;\n  /** What was captured, as the run names it (targets[0].name). Every run read carries exactly one target, so the subject is two fields here rather than an object of its own. */\n  targetName: string;\n  /** Where the capture started (targets[0].url). */\n  targetUrl: string;\n  /** Total number of items across all pages. Used to compute total page count. */\n  totalItems?: number;\n  /** Computed total number of pages (ceil(totalItems / pageSize)). */\n  totalPages?: number;\n  /** Findings whose impact the engine did not state. Its own bucket: never folded into minor. */\n  unknownCount: number;\n}\n\ntype BannerProps = React.ComponentPropsWithoutRef<typeof Banner>;\ntype CardProps = React.ComponentPropsWithoutRef<typeof Card>;\ntype StackProps = React.ComponentPropsWithoutRef<typeof Stack>;\ntype TextProps = React.ComponentPropsWithoutRef<typeof Text>;\n\nexport const GeneratedUI: React.FC<PageProps> = ({ activeFilters, artifactCount, authType, criticalCount, evidenceRetained, filterCount, filters, findingCount, minorCount, mode, moderateCount, page, pageCount, pageSize, passCount, passesFailed, provenanceAt, provenanceLocator, provenanceMethod, provenanceRecord, provenanceSource, runId, searchActive, searchQuery, seriousCount, targetName, targetUrl, totalItems, totalPages, unknownCount, events = [] }) => {\n  return (\n    <main data-oods-shell=\"screen-timeline-14\">\n      <h1 data-oods-shell-heading=\"true\">Run timeline</h1>\n      <Stack id=\"screen-timeline-14\" data-oods-component=\"Stack\" data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-default)' }}>\n            <Stack id=\"timeline-header-1\" data-oods-component=\"Stack\" data-layout=\"inline\" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', padding: 'var(--ref-space-inset-default)' }}>\n                    <Text id=\"timeline-header-1-title\" data-oods-component=\"Text\">{targetName}</Text>\n                  </Stack>\n            <section id=\"timeline-entries-13\" data-oods-collection=\"events\">{events.length === 0 ? (<Banner id=\"timeline-entries-13-empty\" data-oods-component=\"Banner\" data-oods-state=\"empty\" content=\"No events yet.\" />) : (<ol aria-label=\"Lifecycle history\" className=\"oods-collection\">{chronologicalEvents(events).map((collectionEvent, collectionIndex) => <li key={collectionEvent.id}><Card id={'timeline-entries-13-entry-' + collectionIndex}><strong>{collectionEvent.title}</strong><time dateTime={collectionEvent.at}>{formatDateTime(collectionEvent.at)}</time><p>{collectionEvent.description}</p></Card></li>)}</ol>)}</section>\n          </Stack>\n    </main>\n  );\n};\n",
+  "fileExtension": ".tsx",
+  "imports": [
+    "react",
+    "@oods/components-react",
+    "@oods/component-styles/css",
+    "@oods/component-contracts"
+  ],
+  "warnings": [],
+  "validationReceipt": {
+    "profile": "build",
+    "defaulted": false,
+    "rationale": "Build is the default minimum gate for a runnable artifact: target, bindings, dependencies, and fallbacks must resolve.",
+    "axes": {
+      "scope": "generated-artifact",
+      "enforcement": "blocking",
+      "fallback": "forbidden",
+      "target": {
+        "requested": "react",
+        "resolved": "react",
+        "source": "explicit"
+      }
+    },
+    "checks": [
+      "schema-structure",
+      "component-registry",
+      "state-contract",
+      "target-readiness",
+      "normalization-fidelity",
+      "binding-contract",
+      "props-contract",
+      "slots-contract",
+      "events-contract",
+      "dependency-closure",
+      "fallback-policy"
+    ],
+    "notChecked": [
+      "rendered-evidence",
+      "interaction-evidence",
+      "accessibility-evidence",
+      "theme-evidence",
+      "determinism-evidence",
+      "performance-evidence",
+      "certification-evidence"
+    ],
+    "evidence": {
+      "required": [],
+      "provided": [],
+      "missing": [],
+      "mismatched": [],
+      "accepted": [],
+      "notApplicable": [],
+      "artifactContentHash": "sha256:b2fd87ad188b022ed88ec1e84f4e3ef70a686252099e5aa9228f7f1e5e59a3a2"
+    }
+  },
+  "meta": {
+    "nodeCount": 6,
+    "componentCount": 4
+  }
+}

@@ -1,0 +1,604 @@
+{
+  "status": "ok",
+  "layout": "list",
+  "schema": {
+    "version": "2026.02",
+    "screens": [
+      {
+        "id": "screen-list-9",
+        "component": "Stack",
+        "layout": {
+          "type": "stack",
+          "gapToken": "cluster-default"
+        },
+        "children": [
+          {
+            "id": "screen-list-9-loading",
+            "component": "Banner",
+            "state": "loading",
+            "props": {
+              "title": "Loading",
+              "message": "Loading your records."
+            }
+          },
+          {
+            "id": "screen-list-9-error",
+            "component": "Banner",
+            "state": "error",
+            "props": {
+              "title": "Unable to load records",
+              "message": "Try again or choose another record."
+            }
+          },
+          {
+            "id": "screen-list-9-success",
+            "component": "Stack",
+            "state": "success",
+            "layout": {
+              "type": "stack",
+              "gapToken": "cluster-default"
+            },
+            "children": [
+              {
+                "id": "list-toolbar-4",
+                "component": "Stack",
+                "layout": {
+                  "type": "inline",
+                  "align": "space-between"
+                },
+                "style": {
+                  "spacingToken": "inset-default"
+                },
+                "children": [
+                  {
+                    "id": "slot-search-1",
+                    "component": "SearchInput",
+                    "meta": {
+                      "intent": "slot:search",
+                      "label": "search"
+                    },
+                    "props": {
+                      "label": "Search",
+                      "placeholder": "Search records",
+                      "clearable": true
+                    },
+                    "collectionControl": "search"
+                  },
+                  {
+                    "id": "list-toolbar-4-sort",
+                    "component": "Select",
+                    "collectionControl": "sort",
+                    "props": {
+                      "field": "path",
+                      "label": "Sort",
+                      "options": [
+                        {
+                          "value": "asc",
+                          "label": "Name A–Z"
+                        },
+                        {
+                          "value": "desc",
+                          "label": "Name Z–A"
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              {
+                "id": "list-items-5",
+                "component": "Stack",
+                "layout": {
+                  "type": "stack",
+                  "gapToken": "cluster-tight"
+                },
+                "children": [
+                  {
+                    "id": "list-items-5-row",
+                    "component": "Button",
+                    "collectionControl": "open",
+                    "props": {
+                      "field": "artifact_id"
+                    },
+                    "layout": {
+                      "type": "inline",
+                      "gapToken": "cluster-default"
+                    },
+                    "children": [
+                      {
+                        "id": "list-items-5-title",
+                        "component": "Text",
+                        "props": {
+                          "field": "path"
+                        }
+                      },
+                      {
+                        "id": "ve-toolbar-actions-13",
+                        "component": "RelativeTimestamp",
+                        "props": {
+                          "field": "provenance_at"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "id": "list-items-5-empty",
+                    "component": "Banner",
+                    "state": "empty",
+                    "props": {
+                      "message": "No records found."
+                    },
+                    "collectionControl": "empty"
+                  }
+                ],
+                "collection": {
+                  "source": "rows",
+                  "keyField": "artifact_id",
+                  "labelField": "path"
+                }
+              },
+              {
+                "id": "list-pagination-7",
+                "component": "Stack",
+                "layout": {
+                  "type": "inline",
+                  "align": "center"
+                },
+                "style": {
+                  "spacingToken": "inset-default"
+                },
+                "children": [
+                  {
+                    "id": "slot-pagination-8",
+                    "component": "PaginationBar",
+                    "meta": {
+                      "intent": "slot:pagination",
+                      "label": "pagination",
+                      "confidence": 0.77,
+                      "confidenceLevel": "low"
+                    },
+                    "collectionControl": "page",
+                    "props": {
+                      "showItemRange": true
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "bindings": {
+          "onRowClick": "handleRowClick",
+          "onSort": "handleSort",
+          "onFilter": "handleFilter",
+          "onPageChange": "handlePageChange"
+        },
+        "meta": {
+          "label": "Captured Artifacts"
+        }
+      }
+    ],
+    "objectSchema": {
+      "searchQuery": {
+        "type": "string",
+        "required": false,
+        "default": "",
+        "description": "The current search query string entered by the user.",
+        "semanticType": "input.search.query"
+      },
+      "searchActive": {
+        "type": "boolean",
+        "required": false,
+        "default": false,
+        "description": "Whether the search input is currently focused or has a non-empty query.",
+        "semanticType": "state.search.active"
+      },
+      "filters": {
+        "type": "object[]",
+        "required": false,
+        "default": [],
+        "description": "Array of available filter descriptors. Each entry defines a filterable dimension:\n  - field: string (the schema field to filter on)\n  - label: string (display label)\n  - type: \"select\" | \"multi-select\" | \"range\" | \"boolean\" | \"date-range\"\n  - options: array of { value, label } for select/multi-select types\n",
+        "semanticType": "input.filter.descriptors"
+      },
+      "activeFilters": {
+        "type": "object[]",
+        "required": false,
+        "default": [],
+        "description": "Array of currently applied filter values:\n  - field: string (matches a filter descriptor field)\n  - operator: \"eq\" | \"in\" | \"range\" | \"gt\" | \"lt\" | \"between\"\n  - value: unknown (the selected filter value or values)\n",
+        "semanticType": "state.filter.active"
+      },
+      "filterCount": {
+        "type": "number",
+        "required": true,
+        "default": 0,
+        "description": "Computed count of currently active filters.",
+        "semanticType": "metric.filter.count"
+      },
+      "page": {
+        "type": "number",
+        "required": true,
+        "default": 1,
+        "description": "Current page number (1-based).",
+        "semanticType": "state.pagination.page"
+      },
+      "pageSize": {
+        "type": "number",
+        "required": true,
+        "default": 25,
+        "description": "Number of items displayed per page.",
+        "semanticType": "state.pagination.pageSize"
+      },
+      "totalItems": {
+        "type": "number",
+        "required": false,
+        "default": 0,
+        "description": "Total number of items across all pages. Used to compute total page count.",
+        "semanticType": "metric.pagination.totalItems"
+      },
+      "totalPages": {
+        "type": "number",
+        "required": false,
+        "default": 0,
+        "description": "Computed total number of pages (ceil(totalItems / pageSize)).",
+        "semanticType": "metric.pagination.totalPages"
+      },
+      "provenance_source": {
+        "type": "string",
+        "required": true,
+        "examples": [
+          "Stage1",
+          "Stage1",
+          "Stage1",
+          "Stage1",
+          "Stage1",
+          "Stage1"
+        ],
+        "description": "The system that produced the record.",
+        "semanticType": "provenance.source"
+      },
+      "provenance_record": {
+        "type": "string",
+        "required": true,
+        "examples": [
+          "6e435ce7-eaab-46b4-be6b-cea9b80defa6",
+          "6e435ce7-eaab-46b4-be6b-cea9b80defa6",
+          "6e435ce7-eaab-46b4-be6b-cea9b80defa6",
+          "6e435ce7-eaab-46b4-be6b-cea9b80defa6",
+          "6e435ce7-eaab-46b4-be6b-cea9b80defa6",
+          "6e435ce7-eaab-46b4-be6b-cea9b80defa6"
+        ],
+        "description": "Which record there.",
+        "semanticType": "provenance.record"
+      },
+      "provenance_locator": {
+        "type": "string",
+        "required": false,
+        "examples": [
+          "artifacts/a11y_report.json",
+          "artifacts/capability_rollup.json",
+          "artifacts/drift_report.json",
+          "artifacts/identity_graph.json",
+          "artifacts/object_rollup.json",
+          "artifacts/perf_report.json"
+        ],
+        "description": "Where in that record the values were read.",
+        "semanticType": "provenance.locator"
+      },
+      "provenance_method": {
+        "type": "string",
+        "required": true,
+        "examples": [
+          "sha256 attested by the run manifest",
+          "sha256 attested by the run manifest",
+          "sha256 attested by the run manifest",
+          "sha256 attested by the run manifest",
+          "sha256 attested by the run manifest",
+          "sha256 attested by the run manifest"
+        ],
+        "description": "How the values were obtained.",
+        "semanticType": "provenance.method"
+      },
+      "provenance_at": {
+        "type": "datetime",
+        "required": true,
+        "examples": [
+          "2026-09-17T00:52:23.174Z",
+          "2026-09-17T00:53:54.434Z",
+          "2026-09-17T00:53:54.225Z",
+          "2026-09-17T00:53:53.907Z",
+          "2026-09-17T00:53:54.424Z",
+          "2026-09-17T00:53:47.709Z"
+        ],
+        "description": "When they were obtained.",
+        "semanticType": "provenance.at"
+      },
+      "artifact_id": {
+        "type": "string",
+        "required": true,
+        "examples": [
+          "6e435ce7-eaab-46b4-be6b-cea9b80defa6:a11y_report.json",
+          "6e435ce7-eaab-46b4-be6b-cea9b80defa6:capability_rollup.json",
+          "6e435ce7-eaab-46b4-be6b-cea9b80defa6:drift_report.json",
+          "6e435ce7-eaab-46b4-be6b-cea9b80defa6:identity_graph.json",
+          "6e435ce7-eaab-46b4-be6b-cea9b80defa6:object_rollup.json",
+          "6e435ce7-eaab-46b4-be6b-cea9b80defa6:perf_report.json"
+        ],
+        "description": "The run id and the path, \"<run_id>:<path>\".",
+        "semanticType": "capture.artifact.artifact_id"
+      },
+      "path": {
+        "type": "string",
+        "required": true,
+        "examples": [
+          "a11y_report.json",
+          "capability_rollup.json",
+          "drift_report.json",
+          "identity_graph.json",
+          "object_rollup.json",
+          "perf_report.json"
+        ],
+        "description": "The file under the run's artifacts/ directory, which names the artifact.",
+        "semanticType": "text.label"
+      },
+      "artifact_kind": {
+        "type": "string",
+        "required": true,
+        "examples": [
+          "a11y_report",
+          "capability_rollup",
+          "drift_report",
+          "identity_graph",
+          "object_rollup",
+          "perf_report"
+        ],
+        "description": "What kind of artifact it is, as the run's index types it.",
+        "semanticType": "capture.artifact.artifact_kind"
+      },
+      "description": {
+        "type": "string",
+        "required": true,
+        "examples": [
+          "Accessibility scan findings and compliance details.",
+          "What the site lets a user DO, per capability, rolled up across surfaces with the evidence for each.",
+          "Where the live site and the design system disagree — by value (colours, radii, type), by presence (components), and by naming.",
+          "Which entities on different surfaces are the SAME entity — the resolved cross-surface identity, with the evidence for each join.",
+          "Per-object summary across the run: where each object appears, what it is called on each surface, and what evidence supports it.",
+          "Performance audit results and lighthouse metrics."
+        ],
+        "description": "What the artifact holds, in the index's words.",
+        "semanticType": "capture.artifact.description"
+      },
+      "sha256": {
+        "type": "string",
+        "required": true,
+        "examples": [
+          "c5380edf4946c1c177632a0583303d770feafff05f532c244e63ecc74fc71805",
+          "4ee00ce3eaacf9d604da34b352292eb1371be5028e4c756fae8a8b457a74aedc",
+          "d1042e91a632c89b39bc6db7d961eeee284c2b7afd86b76cbe5ca38d19059216",
+          "5f003ae93c175af26a8733d17d389c4a1a248376c4ec1b822b934af3b64a0d6f",
+          "44ea63e0356713fd9517589592cc4153f11ad339ed039402648dceda1890f291",
+          "dd3c1846b960cca28b0d90b8d2cdc83c62d783e9ab80cb52b1807e33672c8f12"
+        ],
+        "description": "The digest the run manifest attests for this file (manifest.hashes). All 27 on run 6e435ce7 match the bytes on disk.",
+        "semanticType": "capture.artifact.sha256"
+      },
+      "schema_version": {
+        "type": "string",
+        "required": false,
+        "examples": [
+          "2.2.0",
+          "1.2.0",
+          "1.0.0",
+          "1.2.0",
+          "1.2.0",
+          "1.0.0"
+        ],
+        "description": "The artifact's own schema_version. Absent on entity_catalog, style_fingerprint and stylesheet_rules, which Stage1 does not stamp.",
+        "semanticType": "capture.artifact.schema_version"
+      },
+      "bytes": {
+        "type": "integer",
+        "required": false,
+        "examples": [
+          22663,
+          81259,
+          393,
+          778823,
+          652133,
+          40592
+        ],
+        "description": "Its size. The index lists itself without one.",
+        "semanticType": "capture.artifact.bytes"
+      }
+    }
+  },
+  "schemaRef": "compose-a5691eef",
+  "schemaRefCreatedAt": "2026-09-18T09:00:35.148Z",
+  "schemaRefExpiresAt": "2026-09-18T09:30:35.148Z",
+  "compositionId": "cmp-43dc473c4ced",
+  "version": 1,
+  "parentVersion": null,
+  "operation": "compose",
+  "head": null,
+  "selections": [
+    {
+      "slotName": "search",
+      "intent": "search-input",
+      "selectedComponent": "SearchInput",
+      "confidence": 0.95,
+      "confidenceLevel": "high",
+      "explanation": "SearchInput leads slot \"search\" because view_extension placement. Confidence is high (0.95).",
+      "candidates": [
+        {
+          "name": "SearchInput",
+          "score": 0.95,
+          "reason": "view_extension placement"
+        }
+      ],
+      "placedComponents": [
+        "SearchInput"
+      ]
+    },
+    {
+      "slotName": "toolbar-actions",
+      "intent": "action-button",
+      "selectedComponent": "PaginationBar",
+      "confidence": 0.95,
+      "confidenceLevel": "high",
+      "explanation": "PaginationBar leads slot \"toolbar-actions\" because view_extension placement. The slot also renders RelativeTimestamp after it, in that order. Confidence is high (0.95).",
+      "candidates": [
+        {
+          "name": "PaginationBar",
+          "score": 0.95,
+          "reason": "view_extension placement"
+        }
+      ],
+      "placedComponents": [
+        "PaginationBar",
+        "RelativeTimestamp"
+      ]
+    },
+    {
+      "slotName": "filters",
+      "intent": "filter-control",
+      "selectedComponent": "FilterPanel",
+      "confidence": 0.95,
+      "confidenceLevel": "high",
+      "explanation": "FilterPanel leads slot \"filters\" because view_extension placement. Confidence is high (0.95).",
+      "candidates": [
+        {
+          "name": "FilterPanel",
+          "score": 0.95,
+          "reason": "view_extension placement"
+        }
+      ],
+      "placedComponents": [
+        "FilterPanel"
+      ]
+    },
+    {
+      "slotName": "items",
+      "intent": "data-list",
+      "selectedComponent": "Table",
+      "confidence": 0.5,
+      "confidenceLevel": "medium",
+      "explanation": "Table leads slot \"items\" because fallback placement. Confidence is medium (0.50).",
+      "candidates": [
+        {
+          "name": "Table",
+          "score": 0.5,
+          "reason": "fallback placement"
+        }
+      ],
+      "placedComponents": [
+        "Table"
+      ]
+    },
+    {
+      "slotName": "pagination",
+      "intent": "pagination-control",
+      "selectedComponent": "PaginationBar",
+      "confidence": 0.77,
+      "confidenceLevel": "medium",
+      "explanation": "PaginationBar was selected for slot \"pagination\" because 2 tag match(es); tag match (pagination, navigation); 1 context match(es); 1 trait(s); name contains \"pagination\"; position affinity: PaginationBar fits well in footer. Confidence is medium (0.77).",
+      "candidates": [
+        {
+          "name": "PaginationBar",
+          "reason": "2 tag match(es); tag match (pagination, navigation); 1 context match(es); 1 trait(s); name contains \"pagination\"; position affinity: PaginationBar fits well in footer",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 1,
+          "contextTraitMatches": 0,
+          "score": 1
+        },
+        {
+          "name": "Button",
+          "reason": "preferred for \"pagination-control\" (rank 2); 1 context match(es); 1 region match(es); position affinity: Button fits well in footer",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.75
+        },
+        {
+          "name": "Text",
+          "reason": "preferred for \"pagination-control\" (rank 1); 1 context match(es)",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.65
+        }
+      ]
+    }
+  ],
+  "validation": {
+    "status": "ok",
+    "errors": [],
+    "warnings": []
+  },
+  "warnings": [
+    {
+      "code": "OODS-V121",
+      "message": "Object 'CapturedArtifact' has maturity 'alpha' — composed output may change.",
+      "hint": "Consider using stable objects for production compositions."
+    },
+    {
+      "code": "OODS-V117",
+      "message": "Field collision: \"provenance_source\" in object schema overrides trait definition"
+    },
+    {
+      "code": "OODS-V117",
+      "message": "Field collision: \"provenance_record\" in object schema overrides trait definition"
+    },
+    {
+      "code": "OODS-V117",
+      "message": "Field collision: \"provenance_locator\" in object schema overrides trait definition"
+    },
+    {
+      "code": "OODS-V117",
+      "message": "Field collision: \"provenance_method\" in object schema overrides trait definition"
+    },
+    {
+      "code": "OODS-V117",
+      "message": "Field collision: \"provenance_at\" in object schema overrides trait definition"
+    }
+  ],
+  "objectUsed": {
+    "name": "CapturedArtifact",
+    "version": "0.1.0",
+    "traits": [
+      "behavioral/Searchable",
+      "behavioral/Filterable",
+      "behavioral/Pageable",
+      "core/Provenanced"
+    ],
+    "fieldsComposed": 21,
+    "viewExtensionsApplied": {
+      "list": 4,
+      "detail": 6,
+      "card": 2
+    }
+  },
+  "meta": {
+    "intentParsed": "CapturedArtifact list view",
+    "layoutDetected": "context-inferred: list (from context=\"list\")",
+    "slotCount": 5,
+    "nodeCount": 14,
+    "intentSynthetic": true,
+    "warnings": [
+      "Object 'CapturedArtifact' has maturity 'alpha' — composed output may change.",
+      "Field collision: \"provenance_source\" in object schema overrides trait definition",
+      "Field collision: \"provenance_record\" in object schema overrides trait definition",
+      "Field collision: \"provenance_locator\" in object schema overrides trait definition",
+      "Field collision: \"provenance_method\" in object schema overrides trait definition",
+      "Field collision: \"provenance_at\" in object schema overrides trait definition"
+    ],
+    "intelligence": {
+      "fieldsExpanded": false,
+      "positionAffinityUsed": true,
+      "fieldAffinityUsed": true,
+      "compositionConfidence": 0.82
+    }
+  }
+}
