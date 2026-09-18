@@ -9,6 +9,7 @@ export * from './scenarios.js';
 export * from './ported-contracts.js';
 export * from './ported-scenarios.js';
 export * from './foundation-v1.js';
+export * from './result-state.js';
 
 export const componentIntake = intakeJson;
 export const componentReconciliationProposal = reconciliationJson;

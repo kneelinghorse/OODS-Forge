@@ -47,6 +47,7 @@ import { resolveIntentObject, fuzzyMatchObject } from '../compose/intent-object-
 import { populateCollections, populateListStates } from '../compose/collections.js';
 import { reconcileFormDetail } from '../compose/form-detail.js';
 import { populateObjectSchema, populateBindings, fillSlotsWithObject, wireFieldProps, applySelectionsToSchema, dropUnfilledInteractiveSlots, neutralizeUnfilledSurfaceSlots, bindCardHeadingField } from '../compose/object-slot-filler.js';
+import { enforceResultStateFamily } from '../compose/result-state.js';
 import { isTraitRecipe } from '../compose/trait-recipes.js';
 import { collectDashboardViewExtensions, collectViewExtensions } from '../compose/view-extension-collector.js';
 import type { SlotPlan } from '../compose/view-extension-collector.js';
@@ -2135,6 +2136,8 @@ export async function handle(input: DesignComposeInput): Promise<DesignComposeOu
   // Nor an empty bordered box. The anchor stays where overrides and slot swaps expect it; only the
   // paint goes (s203 review #2180).
   neutralizeUnfilledSurfaceSlots(schema);
+  // A result state renders in its own family, never a severity colour (s205-m03, traits/core/Assessable).
+  enforceResultStateFamily(schema);
   // Every screen root is named after its object and context: the generated shell's heading when the screen places none.
   labelScreens(schema, effectiveObject, effectiveContext);
 

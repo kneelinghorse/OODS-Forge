@@ -949,8 +949,9 @@ async function main() {
       // Sprint 204 m02 made health's trait and component counts LIVE rather than a snapshot frozen at
       // Sprint 199: the registry has held 47 traits since Sprint 203 added lifecycle/Supersedable, and
       // 46 was the stale advertised number the Sprint 203 review found. Components stay 110.
-      // Sprint 205 m02 adds three objects born from real Stage1 runs: Run, Finding and CapturedArtifact.
-      { components: 110, traits: 47, objects: 26 },
+      // Sprint 205 m02 adds three objects born from real Stage1 runs: Run, Finding and CapturedArtifact; m03 the
+      // traits core/Assessable (result state) and core/Provenanced.
+      { components: 110, traits: 49, objects: 26 },
     );
     assert.deepEqual(health.warnings ?? [], []);
     const builtScopes = await loadJson(path.join(runtimeRoot, 'packages/tokens/dist/css-variables-by-scope.json'));

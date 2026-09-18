@@ -329,6 +329,8 @@ const registry: ReadonlyMap<string, ErrorDefinition> = new Map<string, ErrorDefi
   ['OODS-V208', { code: 'OODS-V208', category: 'validation', message: 'Observation run path is not one Stage1 run', retryable: false }],
   ['OODS-V209', { code: 'OODS-V209', category: 'validation', message: 'Observation artifact schema_version is outside the accepted contract', retryable: false }],
   ['OODS-V210', { code: 'OODS-V210', category: 'validation', message: 'Observation names an object the registry does not hold', retryable: false }],
+  // The result-state visual rule (s205-m03): a result state never renders in the severity family.
+  ['OODS-V211', { code: 'OODS-V211', category: 'validation', message: 'Result state bound to a component that cannot be held to the result family', retryable: false }],
 
   // ── Not Found ───────────────────────────────────────────────────────────
   ['OODS-N001', { code: 'OODS-N001', category: 'not_found', message: 'Unknown tool', retryable: false }],

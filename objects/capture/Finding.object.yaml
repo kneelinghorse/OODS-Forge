@@ -24,6 +24,13 @@ traits:
         - 10
         - 20
         - 50
+  - name: core/Assessable
+    parameters:
+      recordedStates:
+        - violation
+  - name: core/Provenanced
+    parameters:
+      source: Stage1
 schema:
   finding_id:
     type: string
@@ -258,10 +265,43 @@ schema:
       - https://dequeuniversity.com/rules/axe/4.11/aria-allowed-role?application=playwright
       - https://dequeuniversity.com/rules/axe/4.11/landmark-unique?application=playwright
       - https://dequeuniversity.com/rules/axe/4.11/empty-table-header?application=playwright
-  engine:
+  provenance_source:
     type: string
     required: true
-    description: Which engine, at which version, said so (axe-core 4.11.0 on this run).
+    description: The system that produced the record.
+    examples:
+      - Stage1
+      - Stage1
+      - Stage1
+      - Stage1
+      - Stage1
+      - Stage1
+  provenance_record:
+    type: string
+    required: true
+    description: Which record there.
+    examples:
+      - 6e435ce7-eaab-46b4-be6b-cea9b80defa6
+      - 6e435ce7-eaab-46b4-be6b-cea9b80defa6
+      - 6e435ce7-eaab-46b4-be6b-cea9b80defa6
+      - 6e435ce7-eaab-46b4-be6b-cea9b80defa6
+      - 6e435ce7-eaab-46b4-be6b-cea9b80defa6
+      - 6e435ce7-eaab-46b4-be6b-cea9b80defa6
+  provenance_locator:
+    type: string
+    required: false
+    description: Where in that record the values were read.
+    examples:
+      - evidence/a11y/about_monthly-calls--5f548cfd.json
+      - evidence/a11y/about_monthly-calls--5f548cfd.json
+      - evidence/a11y/about_monthly-calls--5f548cfd.json
+      - evidence/a11y/components--e49bf947.json
+      - evidence/a11y/components_banner--60c71ed2.json
+      - evidence/a11y/components_data-visualizations--df1931f8.json
+  provenance_method:
+    type: string
+    required: true
+    description: How the values were obtained.
     examples:
       - axe-core 4.11.0
       - axe-core 4.11.0
@@ -269,10 +309,10 @@ schema:
       - axe-core 4.11.0
       - axe-core 4.11.0
       - axe-core 4.11.0
-  observed_at:
+  provenance_at:
     type: datetime
     required: true
-    description: When the engine read the page.
+    description: When they were obtained.
     validation:
       format: date-time
     examples:
@@ -282,28 +322,26 @@ schema:
       - '2026-09-17T00:48:19.238Z'
       - '2026-09-17T00:49:30.540Z'
       - '2026-09-17T00:51:01.072Z'
-  evidence_ref:
+  result_state:
     type: string
     required: true
-    description: The evidence file under the run the finding was read from.
+    description: >-
+      What the engine concluded: violation on every finding of this run, because Stage1 writes needs-review,
+      passed and not-applicable only as page counts.
+    validation:
+      enum:
+        - violation
+        - passed
+        - needs_review
+        - not_applicable
+        - not_measured
     examples:
-      - evidence/a11y/about_monthly-calls--5f548cfd.json
-      - evidence/a11y/about_monthly-calls--5f548cfd.json
-      - evidence/a11y/about_monthly-calls--5f548cfd.json
-      - evidence/a11y/components--e49bf947.json
-      - evidence/a11y/components_banner--60c71ed2.json
-      - evidence/a11y/components_data-visualizations--df1931f8.json
-  run_id:
-    type: string
-    required: true
-    description: The run that found it.
-    examples:
-      - 6e435ce7-eaab-46b4-be6b-cea9b80defa6
-      - 6e435ce7-eaab-46b4-be6b-cea9b80defa6
-      - 6e435ce7-eaab-46b4-be6b-cea9b80defa6
-      - 6e435ce7-eaab-46b4-be6b-cea9b80defa6
-      - 6e435ce7-eaab-46b4-be6b-cea9b80defa6
-      - 6e435ce7-eaab-46b4-be6b-cea9b80defa6
+      - violation
+      - violation
+      - violation
+      - violation
+      - violation
+      - violation
 semantics:
   finding_id:
     semantic_type: capture.finding.finding_id
@@ -337,18 +375,6 @@ semantics:
     token_mapping: tokenMap(text.body.*)
   help_url:
     semantic_type: capture.finding.help_url
-    token_mapping: tokenMap(text.body.*)
-  engine:
-    semantic_type: capture.finding.engine
-    token_mapping: tokenMap(text.body.*)
-  observed_at:
-    semantic_type: capture.finding.observed_at
-    token_mapping: tokenMap(text.body.*)
-  evidence_ref:
-    semantic_type: capture.finding.evidence_ref
-    token_mapping: tokenMap(text.body.*)
-  run_id:
-    semantic_type: capture.finding.run_id
     token_mapping: tokenMap(text.body.*)
 metadata:
   maturity: alpha

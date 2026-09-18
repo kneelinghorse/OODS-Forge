@@ -23,6 +23,9 @@ traits:
         - 10
         - 20
         - 50
+  - name: core/Provenanced
+    parameters:
+      source: Stage1
 schema:
   artifact_id:
     type: string
@@ -113,10 +116,54 @@ schema:
       - 778823
       - 652133
       - 40592
-  written_at:
-    type: datetime
+  provenance_source:
+    type: string
+    required: true
+    description: The system that produced the record.
+    examples:
+      - Stage1
+      - Stage1
+      - Stage1
+      - Stage1
+      - Stage1
+      - Stage1
+  provenance_record:
+    type: string
+    required: true
+    description: Which record there.
+    examples:
+      - 6e435ce7-eaab-46b4-be6b-cea9b80defa6
+      - 6e435ce7-eaab-46b4-be6b-cea9b80defa6
+      - 6e435ce7-eaab-46b4-be6b-cea9b80defa6
+      - 6e435ce7-eaab-46b4-be6b-cea9b80defa6
+      - 6e435ce7-eaab-46b4-be6b-cea9b80defa6
+      - 6e435ce7-eaab-46b4-be6b-cea9b80defa6
+  provenance_locator:
+    type: string
     required: false
-    description: When the run wrote it.
+    description: Where in that record the values were read.
+    examples:
+      - artifacts/a11y_report.json
+      - artifacts/capability_rollup.json
+      - artifacts/drift_report.json
+      - artifacts/identity_graph.json
+      - artifacts/object_rollup.json
+      - artifacts/perf_report.json
+  provenance_method:
+    type: string
+    required: true
+    description: How the values were obtained.
+    examples:
+      - sha256 attested by the run manifest
+      - sha256 attested by the run manifest
+      - sha256 attested by the run manifest
+      - sha256 attested by the run manifest
+      - sha256 attested by the run manifest
+      - sha256 attested by the run manifest
+  provenance_at:
+    type: datetime
+    required: true
+    description: When they were obtained.
     validation:
       format: date-time
     examples:
@@ -126,17 +173,6 @@ schema:
       - '2026-09-17T00:53:53.907Z'
       - '2026-09-17T00:53:54.424Z'
       - '2026-09-17T00:53:47.709Z'
-  run_id:
-    type: string
-    required: true
-    description: The run that wrote it.
-    examples:
-      - 6e435ce7-eaab-46b4-be6b-cea9b80defa6
-      - 6e435ce7-eaab-46b4-be6b-cea9b80defa6
-      - 6e435ce7-eaab-46b4-be6b-cea9b80defa6
-      - 6e435ce7-eaab-46b4-be6b-cea9b80defa6
-      - 6e435ce7-eaab-46b4-be6b-cea9b80defa6
-      - 6e435ce7-eaab-46b4-be6b-cea9b80defa6
 semantics:
   artifact_id:
     semantic_type: capture.artifact.artifact_id
@@ -158,12 +194,6 @@ semantics:
     token_mapping: tokenMap(text.body.*)
   bytes:
     semantic_type: capture.artifact.bytes
-    token_mapping: tokenMap(text.body.*)
-  written_at:
-    semantic_type: capture.artifact.written_at
-    token_mapping: tokenMap(text.body.*)
-  run_id:
-    semantic_type: capture.artifact.run_id
     token_mapping: tokenMap(text.body.*)
 metadata:
   maturity: alpha

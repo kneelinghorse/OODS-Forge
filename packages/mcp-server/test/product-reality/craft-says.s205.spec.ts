@@ -30,12 +30,11 @@ import { craftSays, recordFields, type Field } from './craft-says.js';
  */
 
 /**
- * Measured on the Sprint 205 base (c3847effa + m01's producer changes) and re-measured in m02, which added the three
- * Stage1 objects: their lists and details pass; their cards name the record and wait for m03's provenance trait to
- * state a fact beside it. The other 24 are the m01 residue, unchanged.
+ * Measured on the Sprint 205 base (c3847effa + m01's producer changes): 24 screens. m02 added the three Stage1
+ * objects, whose lists and details passed and whose cards stated no fact beside the name; m03's provenance trait
+ * gives those cards how and when the record was obtained, and all 9 pass. The 24 below are the m01 residue.
  */
 const RESIDUE: string[] = [
-  'CapturedArtifact/card: states no fact beside the name',
   'Cluster/card: does not name the record (lead_title)',
   'Cluster/list: rows do not name the record (lead_title); rows bind label, description, updated_at, created_at',
   'Collection/card: does not name the record (name)',
@@ -43,7 +42,6 @@ const RESIDUE: string[] = [
   'Document/card: does not name the record (name)',
   'Evidence/card: does not name the record (claim)',
   'Evidence/list: rows do not name the record (claim); rows bind label, description, updated_at, created_at, owner_id, owner_type',
-  'Finding/card: states no fact beside the name',
   'Invoice/card: states no fact beside the name',
   'Invoice/list: rows do not name the record (invoice_number); rows bind invoice_id, updated_at, created_at',
   'Invoice/detail: does not carry the primary text (invoice_number)',
@@ -52,7 +50,6 @@ const RESIDUE: string[] = [
   'Plan/card: does not name the record (plan_name)',
   'Project/card: does not name the record (name)',
   'Report/card: does not name the record (title)',
-  'Run/card: states no fact beside the name',
   'Session/card: does not name the record (title)',
   'Sprint/card: does not name the record (title)',
   'Subscription/card: does not name the record (plan_name)',

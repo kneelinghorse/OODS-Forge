@@ -22,6 +22,9 @@ traits:
         - 10
         - 20
         - 50
+  - name: core/Provenanced
+    parameters:
+      source: Stage1
 schema:
   run_id:
     type: string
@@ -58,30 +61,6 @@ schema:
       - https://frontend-production-43c3.up.railway.app/
       - https://designsystem.digital.gov/
       - https://designsystem.digital.gov/
-  captured_at:
-    type: datetime
-    required: true
-    description: When the capture ran (environment.timestamp).
-    validation:
-      format: date-time
-    examples:
-      - '2026-09-18T00:34:54.671Z'
-      - '2026-09-17T21:55:36.491Z'
-      - '2026-09-17T21:53:41.439Z'
-      - '2026-09-17T21:52:21.293Z'
-      - '2026-09-17T00:44:54.052Z'
-      - '2026-09-16T03:40:54.031Z'
-  project_id:
-    type: string
-    required: true
-    description: Stage1's project slug for the capture.
-    examples:
-      - stage1-tracelab.aquex.ai-2026-09-18
-      - stage1-tracelab.aquex.ai-2026-09-17
-      - stage1-tracelab.aquex.ai-2026-09-17
-      - stage1-frontend-production-43c3.up.railway.app-2026-09-17
-      - stage1-designsystem.digital.gov-2026-09-17
-      - stage1-designsystem.digital.gov-2026-09-16
   mode:
     type: string
     required: true
@@ -253,6 +232,63 @@ schema:
       - null
       - true
       - null
+  provenance_source:
+    type: string
+    required: true
+    description: The system that produced the record.
+    examples:
+      - Stage1
+      - Stage1
+      - Stage1
+      - Stage1
+      - Stage1
+      - Stage1
+  provenance_record:
+    type: string
+    required: true
+    description: Which record there.
+    examples:
+      - stage1-tracelab.aquex.ai-2026-09-18
+      - stage1-tracelab.aquex.ai-2026-09-17
+      - stage1-tracelab.aquex.ai-2026-09-17
+      - stage1-frontend-production-43c3.up.railway.app-2026-09-17
+      - stage1-designsystem.digital.gov-2026-09-17
+      - stage1-designsystem.digital.gov-2026-09-16
+  provenance_locator:
+    type: string
+    required: false
+    description: Where in that record the values were read.
+    examples:
+      - manifest.json
+      - manifest.json
+      - manifest.json
+      - manifest.json
+      - manifest.json
+      - manifest.json
+  provenance_method:
+    type: string
+    required: true
+    description: How the values were obtained.
+    examples:
+      - Stage1 app capture, 28 passes
+      - Stage1 app capture, 18 passes
+      - Stage1 app capture, 20 passes
+      - Stage1 app capture, 16 passes
+      - Stage1 app capture, 30 passes
+      - Stage1 app capture, 20 passes
+  provenance_at:
+    type: datetime
+    required: true
+    description: When they were obtained.
+    validation:
+      format: date-time
+    examples:
+      - '2026-09-18T00:34:54.671Z'
+      - '2026-09-17T21:55:36.491Z'
+      - '2026-09-17T21:53:41.439Z'
+      - '2026-09-17T21:52:21.293Z'
+      - '2026-09-17T00:44:54.052Z'
+      - '2026-09-16T03:40:54.031Z'
 semantics:
   run_id:
     semantic_type: capture.run.run_id
@@ -262,12 +298,6 @@ semantics:
     token_mapping: tokenMap(text.label.*)
   target_url:
     semantic_type: capture.run.target_url
-    token_mapping: tokenMap(text.body.*)
-  captured_at:
-    semantic_type: capture.run.captured_at
-    token_mapping: tokenMap(text.body.*)
-  project_id:
-    semantic_type: capture.run.project_id
     token_mapping: tokenMap(text.body.*)
   mode:
     semantic_type: capture.run.mode

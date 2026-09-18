@@ -24,19 +24,38 @@ const LIST_TRAITS = placeholder => [
 
 /** A field whose examples are the real records' values, in record order. */
 const field = (records, key, spec) => ({ ...spec, examples: records.map(record => record[key]) });
-const semantics = (domain, fields, label) => Object.fromEntries(Object.keys(fields).map(key => [key,
+// Fields a trait supplies keep the trait's semantics (provenance.*, assessment.result.state).
+const TRAIT_FIELDS = /^(provenance_|result_state$)/;
+const semantics = (domain, fields, label) => Object.fromEntries(Object.keys(fields).filter(key => !TRAIT_FIELDS.test(key)).map(key => [key,
   key === label ? { semantic_type: 'text.label', token_mapping: 'tokenMap(text.label.*)' } : { semantic_type: `${domain}.${key}`, token_mapping: 'tokenMap(text.body.*)' }]));
 const metadata = born => ({ maturity: 'alpha', owners: ['Forge'], references: [READ], changelog: [{ version: '0.1.0', date: '2026-09-18', description: born }] });
 
+/**
+ * s205-m03: the provenance fields (traits/core/Provenanced) and the result state (traits/core/Assessable), derived
+ * from the same real records. Run and CapturedArtifact carry how they were obtained; every Finding on this run is a
+ * violation, because Stage1 writes the other axe answers only as page counts.
+ */
+export const PROVENANCE = {
+  Run: run => ({ provenance_source: 'Stage1', provenance_record: run.project_id, provenance_locator: 'manifest.json', provenance_method: `Stage1 ${run.mode} capture, ${run.pass_count} passes`, provenance_at: run.captured_at }),
+  Finding: finding => ({ provenance_source: 'Stage1', provenance_record: finding.run_id, provenance_locator: finding.evidence_ref, provenance_method: finding.engine, provenance_at: finding.observed_at, result_state: 'violation' }),
+  CapturedArtifact: artifact => ({ provenance_source: 'Stage1', provenance_record: artifact.run_id, provenance_locator: `artifacts/${artifact.path}`, provenance_method: 'sha256 attested by the run manifest', provenance_at: artifact.written_at }),
+};
+const PROVENANCE_TRAIT = { name: 'core/Provenanced', parameters: { source: 'Stage1' } };
+const provenanceFields = records => ({
+  provenance_source: field(records, 'provenance_source', { type: 'string', required: true, description: 'The system that produced the record.' }),
+  provenance_record: field(records, 'provenance_record', { type: 'string', required: true, description: 'Which record there.' }),
+  provenance_locator: field(records, 'provenance_locator', { type: 'string', required: false, description: 'Where in that record the values were read.' }),
+  provenance_method: field(records, 'provenance_method', { type: 'string', required: true, description: 'How the values were obtained.' }),
+  provenance_at: field(records, 'provenance_at', { type: 'datetime', required: true, description: 'When they were obtained.', validation: { format: 'date-time' } }),
+});
+
 /* ------------------------------------------------------------------ Run */
-const runs = fit.records.runs;
+const runs = fit.records.runs.map(run => ({ ...run, ...PROVENANCE.Run(run) }));
 const count = (key, description) => field(runs, key, { type: 'integer', required: true, description, validation: { minimum: 0 } });
 const runSchema = {
   run_id: field(runs, 'run_id', { type: 'string', required: true, description: 'The capture\'s own id, a uuid Stage1 assigns; the directory name under out/stage1/<suite>/.' }),
   target_name: field(runs, 'target_name', { type: 'string', required: true, description: 'What was captured, as the run names it (targets[0].name). Every run read carries exactly one target, so the subject is two fields here rather than an object of its own.' }),
   target_url: field(runs, 'target_url', { type: 'string', required: true, description: 'Where the capture started (targets[0].url).' }),
-  captured_at: field(runs, 'captured_at', { type: 'datetime', required: true, description: 'When the capture ran (environment.timestamp).', validation: { format: 'date-time' } }),
-  project_id: field(runs, 'project_id', { type: 'string', required: true, description: 'Stage1\'s project slug for the capture.' }),
   mode: field(runs, 'mode', { type: 'string', required: true, description: 'The capture mode. Every run a run view reads is app; suite runs aggregate targets and carry no a11y report of their own.', validation: { enum: ['app', 'suite'] } }),
   auth_type: field(runs, 'auth_type', { type: 'string', required: true, description: 'The authentication the manifest RECORDS. Shown as recorded, never inferred: Sprint 204 measured "none" on a capture that was authenticated, which is Stage1\'s to correct.' }),
   page_count: count('page_count', 'How many pages the accessibility pass read.'),
@@ -50,18 +69,20 @@ const runSchema = {
   passes_failed: count('passes_failed', 'How many of those passes did not finish ok.'),
   artifact_count: count('artifact_count', 'How many artifacts the run\'s index lists.'),
   evidence_retained: field(runs, 'evidence_retained', { type: 'boolean', required: false, description: 'Whether the run kept its evidence directory (evidence_retention.retained).' }),
+  // When the capture ran (environment.timestamp) and Stage1's project slug are its provenance: provenance_at and provenance_record.
+  ...provenanceFields(runs),
 };
 const run = {
   object: { name: 'Run', version: '0.1.0', domain: 'capture.run',
     description: 'One Stage1 capture of one product: when it ran, what it read, and what it found. Born from the manifest, a11y report and artifact index of real runs (fit read: 6 app-mode runs on disk with an a11y report at 2.2.0); every field this object does not model is stated in the m02 fit read.',
     tags: ['capture', 'stage1', 'run'] },
-  traits: LIST_TRAITS('Search runs'),
+  traits: [...LIST_TRAITS('Search runs'), PROVENANCE_TRAIT],
   schema: runSchema, semantics: semantics('capture.run', runSchema, 'target_name'),
   metadata: metadata('Born from 6 real Stage1 runs; sample records are those runs.'),
 };
 
 /* ------------------------------------------------------------------ Finding */
-const findings = fit.records.findings;
+const findings = fit.records.findings.map(finding => ({ ...finding, ...PROVENANCE.Finding(finding) }));
 const findingSchema = {
   finding_id: field(findings, 'finding_id', { type: 'string', required: true, description: 'The page route and the rule, "<route>#<rule_id>": one rule failing on one page is one finding.' }),
   title: field(findings, 'title', { type: 'string', required: true, description: 'The rule\'s one-line statement of what must hold (axe `help`), which names the finding.' }),
@@ -74,16 +95,15 @@ const findingSchema = {
   selectors: field(findings, 'selectors', { type: 'string[]', required: true, description: 'The failing elements, as the engine\'s selectors.' }),
   criteria: field(findings, 'criteria', { type: 'string[]', required: false, description: 'The rule\'s tags: WCAG criteria, best-practice and the standards it maps to.' }),
   help_url: field(findings, 'help_url', { type: 'string', required: false, description: 'The engine\'s page for the rule.' }),
-  engine: field(findings, 'engine', { type: 'string', required: true, description: 'Which engine, at which version, said so (axe-core 4.11.0 on this run).' }),
-  observed_at: field(findings, 'observed_at', { type: 'datetime', required: true, description: 'When the engine read the page.', validation: { format: 'date-time' } }),
-  evidence_ref: field(findings, 'evidence_ref', { type: 'string', required: true, description: 'The evidence file under the run the finding was read from.' }),
-  run_id: field(findings, 'run_id', { type: 'string', required: true, description: 'The run that found it.' }),
+  // The engine and version, the evidence file, the run and the time are the finding's provenance (s205-m03).
+  ...provenanceFields(findings),
+  result_state: field(findings, 'result_state', { type: 'string', required: true, description: 'What the engine concluded: violation on every finding of this run, because Stage1 writes needs-review, passed and not-applicable only as page counts.', validation: { enum: ['violation', 'passed', 'needs_review', 'not_applicable', 'not_measured'] } }),
 };
 const finding = {
   object: { name: 'Finding', version: '0.1.0', domain: 'capture.finding',
     description: 'One accessibility rule failing on one captured page, with the engine that said so and the evidence file it came from. Born from the per-page axe evidence of Stage1 run 6e435ce7 (6 findings on 4 of 40 pages). This run emits needs-review, passing and inapplicable results only as page-level counts, so every finding here is a violation; the m02 fit read states it.',
     tags: ['capture', 'stage1', 'finding', 'accessibility'] },
-  traits: LIST_TRAITS('Search findings'),
+  traits: [...LIST_TRAITS('Search findings'), { name: 'core/Assessable', parameters: { recordedStates: ['violation'] } }, PROVENANCE_TRAIT],
   schema: findingSchema, semantics: semantics('capture.finding', findingSchema, 'title'),
   metadata: metadata('Born from the 6 findings of Stage1 run 6e435ce7; sample records are those findings.'),
 };
@@ -91,7 +111,7 @@ const finding = {
 /* ------------------------------------------------------------------ CapturedArtifact */
 // Six artifacts that carry every field (the index lists itself without a size, and three kinds carry no
 // schema_version); the unstamped ones are named in the fit read, not hidden.
-const artifacts = fit.records.artifacts.filter(a => a.bytes !== null && a.schema_version !== null)
+const artifacts = fit.records.artifacts.map(artifact => ({ ...artifact, ...PROVENANCE.CapturedArtifact(artifact) })).filter(a => a.bytes !== null && a.schema_version !== null)
   .filter(a => ['a11y_report', 'report_index', 'object_rollup', 'identity_graph', 'drift_report', 'perf_report', 'surface_snapshot', 'capability_rollup'].includes(a.artifact_kind)).slice(0, 6);
 const artifactSchema = {
   artifact_id: field(artifacts, 'artifact_id', { type: 'string', required: true, description: 'The run id and the path, "<run_id>:<path>".' }),
@@ -101,21 +121,23 @@ const artifactSchema = {
   sha256: field(artifacts, 'sha256', { type: 'string', required: true, description: 'The digest the run manifest attests for this file (manifest.hashes). All 27 on run 6e435ce7 match the bytes on disk.' }),
   schema_version: field(artifacts, 'schema_version', { type: 'string', required: false, description: 'The artifact\'s own schema_version. Absent on entity_catalog, style_fingerprint and stylesheet_rules, which Stage1 does not stamp.' }),
   bytes: field(artifacts, 'bytes', { type: 'integer', required: false, description: 'Its size. The index lists itself without one.', validation: { minimum: 0 } }),
-  written_at: field(artifacts, 'written_at', { type: 'datetime', required: false, description: 'When the run wrote it.', validation: { format: 'date-time' } }),
-  run_id: field(artifacts, 'run_id', { type: 'string', required: true, description: 'The run that wrote it.' }),
+  // The run that wrote it, when, and the manifest's attestation are its provenance (s205-m03).
+  ...provenanceFields(artifacts),
 };
 const capturedArtifact = {
   object: { name: 'CapturedArtifact', version: '0.1.0', domain: 'capture.artifact',
     description: 'A file a Stage1 run wrote, under the run\'s own attestation: its kind, path, size, when it was written and the sha256 the manifest records for it. What Stage1 calls its evidence. Not named Evidence: the registry keys objects by name and Evidence is TraceLab\'s (research.data); see the m02 naming decision.',
     tags: ['capture', 'stage1', 'artifact', 'attestation'] },
-  traits: LIST_TRAITS('Search artifacts'),
+  traits: [...LIST_TRAITS('Search artifacts'), PROVENANCE_TRAIT],
   schema: artifactSchema, semantics: semantics('capture.artifact', artifactSchema, 'path'),
   metadata: metadata('Born from the 27-artifact index of Stage1 run 6e435ce7; sample records are six of them.'),
 };
 
+if (process.argv[1] !== new URL(import.meta.url).pathname) { /* imported for PROVENANCE only */ } else {
 const out = path.join(root, 'objects/capture');
 fs.mkdirSync(out, { recursive: true });
 for (const [name, doc] of [['Run', run], ['Finding', finding], ['CapturedArtifact', capturedArtifact]]) {
   fs.writeFileSync(path.join(out, `${name}.object.yaml`), yaml.dump(doc, { lineWidth: 110, noRefs: true }));
 }
 console.log(JSON.stringify({ Run: runs.length, Finding: findings.length, CapturedArtifact: artifacts.length }));
+}

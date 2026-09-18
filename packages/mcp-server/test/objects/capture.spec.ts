@@ -7,6 +7,8 @@ import { handle as generate } from '../../src/tools/code.generate.js';
 import { handle as object } from '../../src/tools/object.js';
 import { getObjectFilePath, loadObject } from '../../src/objects/object-loader.js';
 import { wire } from '../helpers/wire-boundary.js';
+// @ts-expect-error — a plain .mjs receipt script, imported for its record mapping only.
+import { PROVENANCE } from '../../../../artifacts/product-reality/sprint-205/m02/author-objects.mjs';
 
 /**
  * Sprint 205 m02: Stage1's objects, born from a direct read of real runs.
@@ -41,7 +43,7 @@ describe('Stage1 capture objects', () => {
     expect(loadObject('Evidence').object.domain).toBe('research.data');
     expect(getObjectFilePath('Evidence')).toContain(`objects${path.sep}research${path.sep}`);
     // Stage1's records are files under an attestation, and the object is named for that.
-    expect(Object.keys(loadObject('CapturedArtifact').schema)).toEqual(expect.arrayContaining(['sha256', 'artifact_kind', 'path', 'written_at']));
+    expect(Object.keys(loadObject('CapturedArtifact').schema)).toEqual(expect.arrayContaining(['sha256', 'artifact_kind', 'path', 'provenance_at', 'provenance_method']));
     expect(fit.candidates.find((c: { name: string }) => c.name === 'Evidence')).toMatchObject({ born: true, bornAs: 'CapturedArtifact' });
   });
 
@@ -71,7 +73,11 @@ describe('Stage1 capture objects', () => {
   }, 180_000);
 
   it('carries real records as its sample data, one real record per index', () => {
-    const records = { Run: fit.records.runs, Finding: fit.records.findings } as Record<string, Array<Record<string, unknown>>>;
+    // s205-m03: the provenance fields and the result state are derived from the same records by the author script.
+    const records = {
+      Run: fit.records.runs.map((run: Record<string, unknown>) => ({ ...run, ...PROVENANCE.Run(run) })),
+      Finding: fit.records.findings.map((finding: Record<string, unknown>) => ({ ...finding, ...PROVENANCE.Finding(finding) })),
+    } as Record<string, Array<Record<string, unknown>>>;
     for (const [name, rows] of Object.entries(records)) {
       const schema = loadObject(name).schema as Record<string, { examples?: unknown[] }>;
       for (const [field, entry] of Object.entries(schema)) {
