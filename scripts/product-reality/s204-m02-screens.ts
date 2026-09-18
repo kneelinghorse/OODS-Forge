@@ -207,7 +207,7 @@ type Cell = {
 /** The floor Sprint 203 measured against: no rendered text smaller than 9px. */
 const FONT_FLOOR_PX = 9;
 
-async function measure(page: Page, width: number): Promise<Omit<Cell, 'screen' | 'framework' | 'width' | 'shot' | 'consoleErrors' | 'pageErrors'>> {
+async function measure(page: Page, _width: number): Promise<Omit<Cell, 'screen' | 'framework' | 'width' | 'shot' | 'consoleErrors' | 'pageErrors'>> {
   await page.addScriptTag({ content: axeSource });
   const axeResults = await page.evaluate(async () => {
     const results = await (window as unknown as { axe: { run: (ctx: unknown, opts: unknown) => Promise<{ violations: Array<{ id: string; impact: string | null; nodes: unknown[] }> }> } })
