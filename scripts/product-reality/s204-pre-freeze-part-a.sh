@@ -34,7 +34,10 @@ fi
 # Suites: the object domains, the sprint surfaces and the reference host. (The tripwire already ran
 # every generator --check and the root near.md/prose-carrier readers.)
 run objects-specs pnpm --filter @oods/mcp-server exec vitest run test/objects
-run s204-specs pnpm --filter @oods/mcp-server exec vitest run test/product-reality/ledger-read-cost.s204.spec.ts test/product-reality/gate-roster.s204.spec.ts
+# Every spec this sprint added, by mission: m01 the capture, m02 the screen defects, m03 the Stage1 seam,
+# m04 the comparison, m05 the observation panel on the page and in the reference host.
+run s204-specs pnpm --filter @oods/mcp-server exec vitest run test/product-reality/ledger-read-cost.s204.spec.ts test/product-reality/gate-roster.s204.spec.ts test/product-reality/card-body-anchor.s204.spec.ts test/product-reality/slot-date-lowering.s204.spec.ts test/product-reality/status-timeline-timestamp.s204.spec.ts test/product-reality/health-live-counts.s204.spec.ts test/product-reality/statusable-badge-contract.s204.spec.ts test/e2e/stage1-rollups.e2e.spec.ts test/product-reality/observation.s204.spec.ts test/product-reality/observation-beside-the-design.s204.spec.ts test/product-reality/observation-in-conversation.s204.spec.ts
+run golden-ledger-check pnpm exec tsx scripts/product-reality/s204-golden-ledger.ts check
 run s203-specs pnpm --filter @oods/mcp-server exec vitest run test/product-reality/heading-order.s203.spec.ts test/product-reality/axe-scope.s203.spec.ts test/product-reality/context-beside-the-design.s203.spec.ts test/product-reality/context-in-conversation.s203.spec.ts
 run s201-s202-specs pnpm --filter @oods/mcp-server exec vitest run test/product-reality/reference-host.s202.spec.ts test/product-reality/preview-app.s202.spec.ts test/product-reality/preview-app-acts.s202.spec.ts test/product-reality/adapter-mcp-apps.s202.spec.ts test/product-reality/adapter-preview-host.s201.spec.ts test/product-reality/shell-landmarks.s202.spec.ts
 run bridge-preview-specs pnpm --filter @oods/mcp-bridge run test
