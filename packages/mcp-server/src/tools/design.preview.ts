@@ -5,7 +5,8 @@ import { seedPreviewModel } from '../codegen/preview-model.js';
 import { certifyPlacedCharts } from '../lib/measurements.js';
 import { ToolError } from '../errors/tool-error.js';
 import { ContextRefusal, carryContextForward, objectUrn, validateContext, type StoredContext } from '../lib/preview-context.js';
-import { loadObject } from '../objects/object-loader.js';
+import { carryObservationForward, observeForVersion, type StoredObservation } from '../lib/preview-observation.js';
+import { listObjects, loadObject } from '../objects/object-loader.js';
 import { appendAcceptance, attachToVersion, latestVersion, listVersions, readAccepted, readForgeHead, readVersion, resolveCompositionsDir, versionPath, type CompositionVersion, type PreviewBrand, type PreviewFramework, type PreviewTheme } from '../lib/composition-store.js';
 import { fieldKeyOf } from './design.compose.js';
 import { chartNodes } from '../codegen/chart-declaration.js';
@@ -147,7 +148,16 @@ export async function handle(input: DesignPreviewInputSchema.DesignPreviewInput,
       throw error;
     }
   }
-  if (Object.keys(artifacts).length || !record.model || Object.keys(measurements).length || storedContext) record = await attachToVersion(compositionsDir, record.compositionId, record.version, { artifacts, model, measurements, ...(storedContext ? { context: storedContext } : {}) });
+  // A Stage1 run the caller names by path: compared against this version's own schema and stored beside
+  // the context. Evidence for review, never an instruction — see lib/preview-observation.ts. A refusal
+  // (OODS-V208/V209/V210) is thrown here, before anything above is written.
+  let storedObservation: StoredObservation | undefined;
+  if (input.observationRunPath) {
+    const definition = object && listObjects().includes(object) ? loadObject(object) : undefined;
+    const urn = definition ? objectUrn(definition.object.name, definition.object.version) : objectUrn(object || 'composition', '0.0.0');
+    storedObservation = await observeForVersion(input.observationRunPath, { object, urn, context: viewContext, version: record.version, schema: record.schema });
+  }
+  if (Object.keys(artifacts).length || !record.model || Object.keys(measurements).length || storedContext || storedObservation) record = await attachToVersion(compositionsDir, record.compositionId, record.version, { artifacts, model, measurements, ...(storedContext ? { context: storedContext } : {}), ...(storedObservation ? { observation: storedObservation } : {}) });
   if (chartScoped && scope !== generatedScope) {
     const scoped = record.scopes?.[scope];
     const scopedArtifacts: CompositionVersion['artifacts'] = {};
@@ -267,6 +277,8 @@ async function applyEdit(compositionsDir: string, parent: CompositionVersion, ed
   // it and travels with the lineage. It keeps the fetchedAt it was gathered with, so it is marked stale
   // against the version it now sits beside rather than silently re-dated to look current.
   if (parent.context) await attachToVersion(compositionsDir, composed.compositionId, composed.version, { context: carryContextForward(parent.context, composed.version) });
+  // The observation compared the parent's design; the edit moved it, so every row is marked, not re-dated.
+  if (parent.observation) await attachToVersion(compositionsDir, composed.compositionId, composed.version, { observation: carryObservationForward(parent.observation, composed.version) });
   return readVersion(compositionsDir, composed.compositionId, composed.version);
 }
 

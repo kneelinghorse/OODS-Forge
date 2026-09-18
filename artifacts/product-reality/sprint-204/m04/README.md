@@ -16,16 +16,16 @@ Chunk, Collection, Document, Evidence, Mission, Project and Report.
 | targets | 1 (`https://tracelab.aquex.ai/`) |
 | routes Stage1 observed | 25 |
 | screens those routes make up | 15 |
-| screens Forge composed (7 objects × list, detail, form, timeline) | 28 |
+| screens Forge composed (7 objects × list, detail, form, timeline, less Chunk's 4 refused) | 24 |
 | screens on both sides | 10 |
-| **rows** | **49** |
+| **rows** | **45** |
 | rows withheld because a side could not say where it came from | 0 |
-| wall time of the comparison | 282 ms (1.2 s for the whole command, including module load) |
+| wall time of the comparison | 251–282 ms across runs (about 1.2 s for the whole command, including module load) |
 
 | category | rows | what it means |
 | --- | ---: | --- |
 | observed-only | 5 | `/`, `/graph`, `/admin/observability`, `/admin/spaces`, `/admin/users`: no compared object |
-| composed-only | 18 | all four Chunk screens; every timeline; detail and form for Collection, Document and Evidence; form for Project and Report |
+| composed-only | 14 | every timeline except Chunk's; detail and form for Collection, Document and Evidence; form for Project and Report |
 | agreeing | 15 | 7 entity, 6 input, 2 data-bound |
 | disagreeing | 11 | 3 entity, 4 input, 4 data-bound |
 
@@ -39,6 +39,18 @@ Chunk, Collection, Document, Evidence, Mission, Project and Report.
 
 These rows are evidence, not verdicts. A disagreement can mean Forge composes more than TraceLab
 shows. It can equally mean Stage1 labelled something Forge would call a list. A person decides which.
+
+### Corrected in m05: Chunk was counted as composed when Forge refuses it
+
+m04 first committed **49** rows, 18 of them composed-only, and four of those claimed Forge composes
+Chunk list, detail, form and timeline. It does not. `design.compose` refuses Chunk outside `inline`
+with `OODS-V003`, and it returns a schema *alongside* `status: "error"`. The comparison read the
+schema and never checked the status. m05 found this when it tried to preview Chunk list.
+
+Now a refused screen is never a composed-only row. It is listed under the record's `notComposed`
+with the composer's code, four entries for `Chunk:{list,detail,form,timeline}:OODS-V003`. A
+spec runs a comparison of Chunk alone and requires zero composed-only rows. The numbers above are the
+corrected ones.
 
 ## How it works
 

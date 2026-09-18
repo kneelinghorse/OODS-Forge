@@ -48,6 +48,8 @@ export interface Stage1Provenance {
   artifactKind: ReadKind;
   /** The path structuredData.fetch returned for the artifact it read. */
   readPath: string;
+  /** When Stage1 generated that artifact: the capture time, never re-dated. */
+  capturedAt: string | null;
   /** JSON pointers into that artifact the row's observation was taken from; empty when nothing was found. */
   pointers: string[];
   /** How many observations support the row; zero on a composed-only row, which is the point of recording it. */
@@ -72,6 +74,8 @@ export interface ObservationRow {
   axis: ObservationAxis;
   /** The screen as Stage1's routes name it (`/missions`, `/missions/:id`), or null on a composed-only row. */
   screen: string | null;
+  /** The observed routes this row is about, as Stage1 recorded them; empty on a composed-only row. */
+  routes: string[];
   observed: string;
   composed: string;
   stage1: Stage1Provenance;
@@ -91,12 +95,17 @@ export interface ObservationRecord {
     runId: string;
     target: string;
     runPath: string;
-    reads: Array<{ kind: ReadKind; schemaVersion: string; path: string; etag: string }>;
+    /** When Stage1 generated the object_rollup this comparison read. */
+    capturedAt: string | null;
+    reads: Array<{ kind: ReadKind; schemaVersion: string; path: string; etag: string; generatedAt: string | null }>;
   };
-  forge: { objects: string[]; contexts: ForgeContext[]; transient: true };
+  /** transient: every Forge screen was composed for this comparison; otherwise `supplied` names the screens a caller's own schema stood for. */
+  forge: { objects: string[]; contexts: ForgeContext[]; transient: true; supplied: string[] };
   /** The interpretation Forge applied to Stage1's data, stated so the reader can disagree with it. */
   rules: Record<string, string>;
   notCompared: Array<{ axis: string; reason: string }>;
+  /** Screens the composer refused, with its code: not composed, so never counted as composed-only. */
+  notComposed: NotComposed[];
   scale: {
     targets: number;
     observedRoutes: number;
@@ -115,6 +124,11 @@ export interface ObservationRecord {
 export interface ObservationInput {
   runPath: string;
   objects?: readonly string[];
+  /**
+   * A composed schema to compare instead of composing one, keyed `<Object>:<context>` — how the preview
+   * compares the version it shows rather than a fresh composition of the same object.
+   */
+  schemas?: Readonly<Record<string, unknown>>;
 }
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -196,7 +210,7 @@ async function readKind(kind: ReadKind, runPath: string, runId: string) {
   if (result.runId !== runId) {
     refuseRun(`${kind} belongs to run ${result.runId}, not the manifest's ${runId}; a comparison reads one run.`, { kind, runPath, artifactRunId: result.runId, manifestRunId: runId });
   }
-  return result as { payload: any; schemaVersion: string; path: string; etag: string };
+  return result as { payload: any; schemaVersion: string; path: string; etag: string; generatedAt: string | null };
 }
 
 interface Composed {
@@ -208,10 +222,23 @@ interface Composed {
   dataBound: boolean;
 }
 
-async function composeScreen(object: string, context: ForgeContext): Promise<Composed> {
-  const result: any = await compose({ object, context, options: { transient: true, validate: false } } as any);
+/** A screen Forge will not compose, with the composer's own refusal, so its absence is stated rather than papered over. */
+export interface NotComposed { object: string; context: ForgeContext; code: string; message: string }
+
+async function composeScreen(object: string, context: ForgeContext, supplied?: unknown): Promise<Composed | NotComposed> {
+  let schema: any = supplied;
+  if (schema === undefined) {
+    const result: any = await compose({ object, context, options: { transient: true, validate: false } } as any);
+    // design.compose can return a schema alongside status "error" (Chunk outside inline, OODS-V003).
+    // A refused screen is not a screen Forge composes, so it must not become a composed-only row.
+    if (result.status !== 'ok') {
+      const error = (result.errors ?? [])[0] ?? {};
+      return { object, context, code: String(error.code ?? 'unknown'), message: String(error.message ?? `design.compose returned status ${result.status}`) };
+    }
+    schema = result.schema;
+  }
   const definition = loadObject(object);
-  const root = result.schema?.screens?.[0] ?? result.schema;
+  const root = schema?.screens?.[0] ?? schema;
   const inputs = new Set<string>();
   let dataBound = false;
   const walk = (node: any): void => {
@@ -225,7 +252,7 @@ async function composeScreen(object: string, context: ForgeContext): Promise<Com
     object,
     context,
     urn: objectUrn(definition.object.name, definition.object.version),
-    schemaDigest: createHash('sha256').update(JSON.stringify(result.schema)).digest('hex'),
+    schemaDigest: createHash('sha256').update(JSON.stringify(schema)).digest('hex'),
     inputs: [...inputs].sort(),
     dataBound,
   };
@@ -248,8 +275,8 @@ export async function computeObservation(input: ObservationInput, now: () => num
   const manifest = readManifest(input.runPath);
   const identity = await readKind('identity_graph', input.runPath, manifest.runId);
   const rollup = await readKind('object_rollup', input.runPath, manifest.runId);
-  const rollupRead = { kind: 'object_rollup' as const, path: rollup.path };
-  const identityRead = { kind: 'identity_graph' as const, path: identity.path };
+  const rollupRead = { kind: 'object_rollup' as const, path: rollup.path, capturedAt: rollup.generatedAt ?? null };
+  const identityRead = { kind: 'identity_graph' as const, path: identity.path, capturedAt: identity.generatedAt ?? null };
 
   // ── The observed side ────────────────────────────────────────────────
   const rollupObjects: Array<{ label: string; traits: string[]; pointer: string; routes: string[] }> = [];
@@ -289,16 +316,27 @@ export async function computeObservation(input: ObservationInput, now: () => num
 
   // ── The composed side ────────────────────────────────────────────────
   const composed = new Map<string, Composed>();
-  for (const object of objects) for (const context of COMPOSED_CONTEXTS) composed.set(`${object}:${context}`, await composeScreen(object, context));
+  const notComposed: NotComposed[] = [];
+  for (const object of objects) {
+    for (const context of COMPOSED_CONTEXTS) {
+      const screen = await composeScreen(object, context, input.schemas?.[`${object}:${context}`]);
+      if ('code' in screen) notComposed.push(screen);
+      else composed.set(`${object}:${context}`, screen);
+    }
+  }
 
-  const stage1 = (read: { kind: ReadKind; path: string }, pointers: string[]): Stage1Provenance => ({
-    runId: manifest.runId, target: manifest.target, artifactKind: read.kind, readPath: read.path, pointers, found: pointers.length,
+  const stage1 = (read: { kind: ReadKind; path: string; capturedAt: string | null }, pointers: string[]): Stage1Provenance => ({
+    runId: manifest.runId, target: manifest.target, artifactKind: read.kind, readPath: read.path, capturedAt: read.capturedAt, pointers, found: pointers.length,
   });
   const forge = (screen: Composed, searched: string): ForgeProvenance => ({
     object: screen.object, context: screen.context, urn: screen.urn, schemaDigest: screen.schemaDigest, searched, found: 1,
   });
   const rows: ObservationRow[] = [];
   const paired = new Set<string>();
+  // Say which Forge screen a row compared: the caller's own schema (the version on screen) or a fresh composition.
+  const forgeSource = (object: string, context: ForgeContext): string => input.schemas?.[`${object}:${context}`] !== undefined
+    ? `the supplied ${object} ${context} schema (the version on screen)`
+    : `design.compose ${object} context ${context}, transient`;
   const searchedObjects = `the ${objects.length} compared objects (${objects.join(', ')}) by name and plural against the route's resource segment`;
 
   for (const screen of screens.values()) {
@@ -309,6 +347,7 @@ export async function computeObservation(input: ObservationInput, now: () => num
         category: 'observed-only',
         axis: 'screen',
         screen: screen.key,
+        routes: screen.routes,
         observed: `Stage1 observed ${screen.key} (${screen.routes.length} route${screen.routes.length === 1 ? '' : 's'}).`,
         composed: screen.shape === 'other'
           ? `No compared object composes this screen: ${screen.key} is not a list, detail or form route of a named resource.`
@@ -318,9 +357,25 @@ export async function computeObservation(input: ObservationInput, now: () => num
       });
       continue;
     }
-    const mine = composed.get(`${object}:${screen.shape}`)!;
+    const mine = composed.get(`${object}:${screen.shape}`);
+    if (!mine) {
+      // Stage1 saw the screen and Forge will not compose it: observed-only, with the composer's refusal as Forge's side.
+      const refusal = notComposed.find(entry => entry.object === object && entry.context === screen.shape)!;
+      rows.push({
+        id: `observed-only:screen:${screen.key}`,
+        category: 'observed-only',
+        axis: 'screen',
+        screen: screen.key,
+        routes: screen.routes,
+        observed: `Stage1 observed ${screen.key} (${screen.routes.length} route${screen.routes.length === 1 ? '' : 's'}).`,
+        composed: `Forge does not compose ${object} ${screen.shape}: ${refusal.code} ${refusal.message}`,
+        stage1: stage1(rollupRead, screen.routePointers),
+        forge: { object, context: screen.shape as ScreenShape, urn: null, schemaDigest: null, searched: `design.compose ${object} context ${screen.shape}, transient`, found: 0 },
+      });
+      continue;
+    }
     paired.add(`${object}:${screen.shape}`);
-    const searched = `design.compose ${object} context ${screen.shape}, transient`;
+    const searched = forgeSource(object, screen.shape as ScreenShape);
 
     // entity: did Stage1 name this object as an entity on this screen's routes?
     const entity = entities.get(object);
@@ -330,6 +385,7 @@ export async function computeObservation(input: ObservationInput, now: () => num
       category: named.length ? 'agreeing' : 'disagreeing',
       axis: 'entity',
       screen: screen.key,
+      routes: screen.routes,
       observed: named.length
         ? `Stage1 names ${object} as an entity on ${named.length} of ${screen.routes.length} route(s) of this screen.`
         : `Stage1 saw ${screen.routes.length} route(s) of this screen but names no ${object} entity for them.`,
@@ -347,6 +403,7 @@ export async function computeObservation(input: ObservationInput, now: () => num
       category: inputAgree ? 'agreeing' : 'disagreeing',
       axis: 'input',
       screen: screen.key,
+      routes: screen.routes,
       observed: observedInputs.length
         ? `Stage1 observed ${observedInputs.length} input-bearing component(s) on this screen: ${observedInputs.map(c => c.label).join(', ')}.`
         : 'Stage1 observed no input-bearing component on this screen beyond the app chrome.',
@@ -364,6 +421,7 @@ export async function computeObservation(input: ObservationInput, now: () => num
         category: boundAgree ? 'agreeing' : 'disagreeing',
         axis: 'data-bound',
         screen: screen.key,
+        routes: screen.routes,
         observed: observedBound.length
           ? `Stage1 observed a data-bound component on this list: ${observedBound.map(c => c.label).join(', ')}.`
           : 'Stage1 observed no data-bound component on this list beyond the app chrome.',
@@ -382,12 +440,13 @@ export async function computeObservation(input: ObservationInput, now: () => num
       category: 'composed-only',
       axis: 'screen',
       screen: null,
+      routes: [],
       observed: mine.context === 'timeline'
         ? `Stage1 observed no route of a timeline shape for ${mine.object}; a timeline has no route form Forge can match.`
         : `Stage1 observed no ${mine.context} route for ${mine.object}.`,
       composed: `Forge composes ${mine.object} ${mine.context}.`,
       stage1: { ...stage1(rollupRead, []), found: 0 },
-      forge: { ...forge(mine, `design.compose ${mine.object} context ${mine.context}, transient`), searched: searchedRoutes },
+      forge: { ...forge(mine, forgeSource(mine.object, mine.context)), searched: searchedRoutes },
     });
   }
 
@@ -410,12 +469,13 @@ export async function computeObservation(input: ObservationInput, now: () => num
       runId: manifest.runId,
       target: manifest.target,
       runPath: path.resolve(input.runPath),
+      capturedAt: rollup.generatedAt ?? null,
       reads: [
-        { kind: 'identity_graph', schemaVersion: identity.schemaVersion, path: identity.path, etag: identity.etag },
-        { kind: 'object_rollup', schemaVersion: rollup.schemaVersion, path: rollup.path, etag: rollup.etag },
+        { kind: 'identity_graph', schemaVersion: identity.schemaVersion, path: identity.path, etag: identity.etag, generatedAt: identity.generatedAt ?? null },
+        { kind: 'object_rollup', schemaVersion: rollup.schemaVersion, path: rollup.path, etag: rollup.etag, generatedAt: rollup.generatedAt ?? null },
       ],
     },
-    forge: { objects, contexts: [...COMPOSED_CONTEXTS], transient: true },
+    forge: { objects, contexts: [...COMPOSED_CONTEXTS], transient: true, supplied: Object.keys(input.schemas ?? {}).filter(key => composed.has(key)).sort() },
     rules: {
       screens: 'A route is a screen of its resource: /x is list, /x/new is form, /x/<uuid or number> is detail (all instances are one screen); / and /admin/* and deeper routes are other.',
       objects: 'A screen belongs to a compared object when its resource segment is the object name or its plural, lower-cased.',
@@ -427,6 +487,7 @@ export async function computeObservation(input: ObservationInput, now: () => num
       { axis: 'fields', reason: 'Stage1\'s entities in this run are route-derived and carry no fields, so field-level agreement cannot be computed from it.' },
       { axis: 'capability_rollup, drift_report', reason: 'Readable under the contract but carry no route or screen evidence to set beside a composition; not read.' },
     ],
+    notComposed,
     scale: {
       targets: manifest.targets,
       observedRoutes: allRoutes.size,

@@ -151,6 +151,15 @@ describe('observation against intent (s204-m04)', () => {
     expect(JSON.stringify(record.rows)).not.toContain('"create"');
   });
 
+  it('never reports a screen the composer refused as one Forge composes', async () => {
+    // design.compose returns a schema WITH status "error" for Chunk outside inline (OODS-V003); a
+    // comparison that ignores the status would claim four Chunk screens Forge will not produce.
+    const record = await computeObservation({ runPath: syntheticRun(scratch), objects: ['Chunk'] });
+    expect(record.rows.filter(row => row.forge.object === 'Chunk' && row.category === 'composed-only')).toEqual([]);
+    expect(record.notComposed.map(entry => entry.code)).toEqual(['OODS-V003', 'OODS-V003', 'OODS-V003', 'OODS-V003']);
+    expect(record.scale.composedScreens).toBe(0);
+  });
+
   it('records no composition while composing the Forge side', async () => {
     await computeObservation({ runPath: syntheticRun(scratch), objects: ['Mission', 'Report'] });
     expect(fs.readdirSync(storeRoot)).toEqual([]);
@@ -222,7 +231,9 @@ describe('observation against intent (s204-m04)', () => {
       const record = await computeObservation({ runPath: REAL_RUN! });
       expect(record.rows).toEqual(retained.rows);
       expect({ ...record.scale, wallMs: 0 }).toEqual({ ...retained.scale, wallMs: 0 });
-      expect(record.scale).toMatchObject({ targets: 1, observedRoutes: 25, observedScreens: 15, composedScreens: 28, pairedScreens: 10, rows: 49 });
+      expect(record.scale).toMatchObject({ targets: 1, observedRoutes: 25, observedScreens: 15, composedScreens: 24, pairedScreens: 10, rows: 45 });
+      // Chunk composes only inline; the four refusals are stated, never counted as composed-only rows.
+      expect(record.notComposed.map(entry => `${entry.object}:${entry.context}:${entry.code}`)).toEqual(['Chunk:list:OODS-V003', 'Chunk:detail:OODS-V003', 'Chunk:form:OODS-V003', 'Chunk:timeline:OODS-V003']);
       expect(record.stage1.reads.map(read => `${read.kind}@${read.schemaVersion}`)).toEqual(['identity_graph@1.2.0', 'object_rollup@1.2.0']);
     });
   });

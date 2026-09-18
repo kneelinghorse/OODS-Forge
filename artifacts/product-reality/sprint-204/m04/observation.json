@@ -4,23 +4,26 @@
   "nature": "evidence-for-review",
   "judgement": "Every row is evidence a person judges. Nothing here is proposed, applied or written anywhere, and neither side is assumed to be right.",
   "requiresHumanAdjudication": true,
-  "generatedAt": "2026-09-18T01:34:00.638Z",
+  "generatedAt": "2026-09-18T02:05:27.011Z",
   "stage1": {
     "runId": "d0a43821-5730-4bf3-8b40-20f6fcb6b69c",
     "target": "https://tracelab.aquex.ai/",
     "runPath": "/Users/systemsystems/portfolio/Design-Tools/Stage1/out/stage1/tracelab-production-infer/d0a43821-5730-4bf3-8b40-20f6fcb6b69c",
+    "capturedAt": "2026-09-18T00:52:11.093Z",
     "reads": [
       {
         "kind": "identity_graph",
         "schemaVersion": "1.2.0",
         "path": "/Users/systemsystems/portfolio/Design-Tools/Stage1/out/stage1/tracelab-production-infer/d0a43821-5730-4bf3-8b40-20f6fcb6b69c/artifacts/identity_graph.json",
-        "etag": "dc18f5a46879bec7184d74986bcf5ea768aa597b6cc4e3f771fef7cc4ba2a8f8"
+        "etag": "dc18f5a46879bec7184d74986bcf5ea768aa597b6cc4e3f771fef7cc4ba2a8f8",
+        "generatedAt": "2026-09-18T00:52:11.025Z"
       },
       {
         "kind": "object_rollup",
         "schemaVersion": "1.2.0",
         "path": "/Users/systemsystems/portfolio/Design-Tools/Stage1/out/stage1/tracelab-production-infer/d0a43821-5730-4bf3-8b40-20f6fcb6b69c/artifacts/object_rollup.json",
-        "etag": "1855b7ca7a4b5d2b14c0f6ae3ca9d045df0998c1a0dc26968c1bb6f8c9293242"
+        "etag": "1855b7ca7a4b5d2b14c0f6ae3ca9d045df0998c1a0dc26968c1bb6f8c9293242",
+        "generatedAt": "2026-09-18T00:52:11.093Z"
       }
     ]
   },
@@ -40,7 +43,8 @@
       "form",
       "timeline"
     ],
-    "transient": true
+    "transient": true,
+    "supplied": []
   },
   "rules": {
     "screens": "A route is a screen of its resource: /x is list, /x/new is form, /x/<uuid or number> is detail (all instances are one screen); / and /admin/* and deeper routes are other.",
@@ -59,21 +63,47 @@
       "reason": "Readable under the contract but carry no route or screen evidence to set beside a composition; not read."
     }
   ],
+  "notComposed": [
+    {
+      "object": "Chunk",
+      "context": "list",
+      "code": "OODS-V003",
+      "message": "Object 'Chunk' supports only inline context."
+    },
+    {
+      "object": "Chunk",
+      "context": "detail",
+      "code": "OODS-V003",
+      "message": "Object 'Chunk' supports only inline context."
+    },
+    {
+      "object": "Chunk",
+      "context": "form",
+      "code": "OODS-V003",
+      "message": "Object 'Chunk' supports only inline context."
+    },
+    {
+      "object": "Chunk",
+      "context": "timeline",
+      "code": "OODS-V003",
+      "message": "Object 'Chunk' supports only inline context."
+    }
+  ],
   "scale": {
     "targets": 1,
     "observedRoutes": 25,
     "observedScreens": 15,
-    "composedScreens": 28,
+    "composedScreens": 24,
     "pairedScreens": 10,
-    "rows": 49,
+    "rows": 45,
     "byCategory": {
       "observed-only": 5,
-      "composed-only": 18,
+      "composed-only": 14,
       "agreeing": 15,
       "disagreeing": 11
     },
     "withheldForProvenance": 0,
-    "wallMs": 282
+    "wallMs": 258
   },
   "rows": [
     {
@@ -81,6 +111,9 @@
       "category": "agreeing",
       "axis": "data-bound",
       "screen": "/missions",
+      "routes": [
+        "/missions"
+      ],
       "observed": "Stage1 observed a data-bound component on this list: List.",
       "composed": "Forge composes a repeating, data-bound item list.",
       "stage1": {
@@ -88,6 +121,7 @@
         "target": "https://tracelab.aquex.ai/",
         "artifactKind": "object_rollup",
         "readPath": "/Users/systemsystems/portfolio/Design-Tools/Stage1/out/stage1/tracelab-production-infer/d0a43821-5730-4bf3-8b40-20f6fcb6b69c/artifacts/object_rollup.json",
+        "capturedAt": "2026-09-18T00:52:11.093Z",
         "pointers": [
           "/objects/32"
         ],
@@ -107,6 +141,9 @@
       "category": "agreeing",
       "axis": "data-bound",
       "screen": "/projects",
+      "routes": [
+        "/projects"
+      ],
       "observed": "Stage1 observed a data-bound component on this list: Flex Wrap.",
       "composed": "Forge composes a repeating, data-bound item list.",
       "stage1": {
@@ -114,6 +151,7 @@
         "target": "https://tracelab.aquex.ai/",
         "artifactKind": "object_rollup",
         "readPath": "/Users/systemsystems/portfolio/Design-Tools/Stage1/out/stage1/tracelab-production-infer/d0a43821-5730-4bf3-8b40-20f6fcb6b69c/artifacts/object_rollup.json",
+        "capturedAt": "2026-09-18T00:52:11.093Z",
         "pointers": [
           "/objects/16"
         ],
@@ -133,6 +171,10 @@
       "category": "agreeing",
       "axis": "entity",
       "screen": "/missions/:id",
+      "routes": [
+        "/missions/103c4ad0-ddaa-40a5-a67f-83e3aff8ecbe",
+        "/missions/46ccdc21-6f60-4062-834c-cf1d02e79eb8"
+      ],
       "observed": "Stage1 names Mission as an entity on 2 of 2 route(s) of this screen.",
       "composed": "Forge holds Mission and composes its detail screen.",
       "stage1": {
@@ -140,6 +182,7 @@
         "target": "https://tracelab.aquex.ai/",
         "artifactKind": "identity_graph",
         "readPath": "/Users/systemsystems/portfolio/Design-Tools/Stage1/out/stage1/tracelab-production-infer/d0a43821-5730-4bf3-8b40-20f6fcb6b69c/artifacts/identity_graph.json",
+        "capturedAt": "2026-09-18T00:52:11.025Z",
         "pointers": [
           "/nodes/46"
         ],
@@ -159,6 +202,9 @@
       "category": "agreeing",
       "axis": "entity",
       "screen": "/missions/new",
+      "routes": [
+        "/missions/new"
+      ],
       "observed": "Stage1 names Mission as an entity on 1 of 1 route(s) of this screen.",
       "composed": "Forge holds Mission and composes its form screen.",
       "stage1": {
@@ -166,6 +212,7 @@
         "target": "https://tracelab.aquex.ai/",
         "artifactKind": "identity_graph",
         "readPath": "/Users/systemsystems/portfolio/Design-Tools/Stage1/out/stage1/tracelab-production-infer/d0a43821-5730-4bf3-8b40-20f6fcb6b69c/artifacts/identity_graph.json",
+        "capturedAt": "2026-09-18T00:52:11.025Z",
         "pointers": [
           "/nodes/46"
         ],
@@ -185,6 +232,9 @@
       "category": "agreeing",
       "axis": "entity",
       "screen": "/missions",
+      "routes": [
+        "/missions"
+      ],
       "observed": "Stage1 names Mission as an entity on 1 of 1 route(s) of this screen.",
       "composed": "Forge holds Mission and composes its list screen.",
       "stage1": {
@@ -192,6 +242,7 @@
         "target": "https://tracelab.aquex.ai/",
         "artifactKind": "identity_graph",
         "readPath": "/Users/systemsystems/portfolio/Design-Tools/Stage1/out/stage1/tracelab-production-infer/d0a43821-5730-4bf3-8b40-20f6fcb6b69c/artifacts/identity_graph.json",
+        "capturedAt": "2026-09-18T00:52:11.025Z",
         "pointers": [
           "/nodes/46"
         ],
@@ -211,6 +262,14 @@
       "category": "agreeing",
       "axis": "entity",
       "screen": "/projects/:id",
+      "routes": [
+        "/projects/041489e1-bb62-4bbe-bb57-90a924fce867",
+        "/projects/0f5c295f-6ac0-4bc9-823f-32f2306d6f2d",
+        "/projects/44d12c7c-8059-4004-afa7-06b4d453d82d",
+        "/projects/5229e75e-8ad3-4ac5-94de-093a177562c6",
+        "/projects/8a5e3763-8249-4194-97d0-cda0e5ff0672",
+        "/projects/a39739b2-c4bb-43c6-86e0-95d5c0776130"
+      ],
       "observed": "Stage1 names Project as an entity on 6 of 6 route(s) of this screen.",
       "composed": "Forge holds Project and composes its detail screen.",
       "stage1": {
@@ -218,6 +277,7 @@
         "target": "https://tracelab.aquex.ai/",
         "artifactKind": "identity_graph",
         "readPath": "/Users/systemsystems/portfolio/Design-Tools/Stage1/out/stage1/tracelab-production-infer/d0a43821-5730-4bf3-8b40-20f6fcb6b69c/artifacts/identity_graph.json",
+        "capturedAt": "2026-09-18T00:52:11.025Z",
         "pointers": [
           "/nodes/47"
         ],
@@ -237,6 +297,9 @@
       "category": "agreeing",
       "axis": "entity",
       "screen": "/projects",
+      "routes": [
+        "/projects"
+      ],
       "observed": "Stage1 names Project as an entity on 1 of 1 route(s) of this screen.",
       "composed": "Forge holds Project and composes its list screen.",
       "stage1": {
@@ -244,6 +307,7 @@
         "target": "https://tracelab.aquex.ai/",
         "artifactKind": "identity_graph",
         "readPath": "/Users/systemsystems/portfolio/Design-Tools/Stage1/out/stage1/tracelab-production-infer/d0a43821-5730-4bf3-8b40-20f6fcb6b69c/artifacts/identity_graph.json",
+        "capturedAt": "2026-09-18T00:52:11.025Z",
         "pointers": [
           "/nodes/47"
         ],
@@ -263,6 +327,13 @@
       "category": "agreeing",
       "axis": "entity",
       "screen": "/reports/:id",
+      "routes": [
+        "/reports/0613ab1a-1ae7-4784-bf03-579023d4a20f",
+        "/reports/1ff22d77-fb90-4220-8d74-34fd5526dab7",
+        "/reports/39d5b2dd-8fbe-406b-80e5-bc5e035822f7",
+        "/reports/7064c47e-c198-45d5-b887-b18a1f86d7ce",
+        "/reports/c2b3bc43-b25c-481e-80d7-02a6afc76e27"
+      ],
       "observed": "Stage1 names Report as an entity on 5 of 5 route(s) of this screen.",
       "composed": "Forge holds Report and composes its detail screen.",
       "stage1": {
@@ -270,6 +341,7 @@
         "target": "https://tracelab.aquex.ai/",
         "artifactKind": "identity_graph",
         "readPath": "/Users/systemsystems/portfolio/Design-Tools/Stage1/out/stage1/tracelab-production-infer/d0a43821-5730-4bf3-8b40-20f6fcb6b69c/artifacts/identity_graph.json",
+        "capturedAt": "2026-09-18T00:52:11.025Z",
         "pointers": [
           "/nodes/48"
         ],
@@ -289,6 +361,9 @@
       "category": "agreeing",
       "axis": "entity",
       "screen": "/reports",
+      "routes": [
+        "/reports"
+      ],
       "observed": "Stage1 names Report as an entity on 1 of 1 route(s) of this screen.",
       "composed": "Forge holds Report and composes its list screen.",
       "stage1": {
@@ -296,6 +371,7 @@
         "target": "https://tracelab.aquex.ai/",
         "artifactKind": "identity_graph",
         "readPath": "/Users/systemsystems/portfolio/Design-Tools/Stage1/out/stage1/tracelab-production-infer/d0a43821-5730-4bf3-8b40-20f6fcb6b69c/artifacts/identity_graph.json",
+        "capturedAt": "2026-09-18T00:52:11.025Z",
         "pointers": [
           "/nodes/48"
         ],
@@ -315,6 +391,9 @@
       "category": "agreeing",
       "axis": "input",
       "screen": "/documents",
+      "routes": [
+        "/documents"
+      ],
       "observed": "Stage1 observed 1 input-bearing component(s) on this screen: Rounded Md.",
       "composed": "Forge composes input on this screen: SearchInput, Select.",
       "stage1": {
@@ -322,6 +401,7 @@
         "target": "https://tracelab.aquex.ai/",
         "artifactKind": "object_rollup",
         "readPath": "/Users/systemsystems/portfolio/Design-Tools/Stage1/out/stage1/tracelab-production-infer/d0a43821-5730-4bf3-8b40-20f6fcb6b69c/artifacts/object_rollup.json",
+        "capturedAt": "2026-09-18T00:52:11.093Z",
         "pointers": [
           "/objects/3"
         ],
@@ -341,6 +421,10 @@
       "category": "agreeing",
       "axis": "input",
       "screen": "/missions/:id",
+      "routes": [
+        "/missions/103c4ad0-ddaa-40a5-a67f-83e3aff8ecbe",
+        "/missions/46ccdc21-6f60-4062-834c-cf1d02e79eb8"
+      ],
       "observed": "Stage1 observed no input-bearing component on this screen beyond the app chrome.",
       "composed": "Forge composes no input on this screen.",
       "stage1": {
@@ -348,6 +432,7 @@
         "target": "https://tracelab.aquex.ai/",
         "artifactKind": "object_rollup",
         "readPath": "/Users/systemsystems/portfolio/Design-Tools/Stage1/out/stage1/tracelab-production-infer/d0a43821-5730-4bf3-8b40-20f6fcb6b69c/artifacts/object_rollup.json",
+        "capturedAt": "2026-09-18T00:52:11.093Z",
         "pointers": [],
         "found": 0
       },
@@ -365,6 +450,9 @@
       "category": "agreeing",
       "axis": "input",
       "screen": "/missions/new",
+      "routes": [
+        "/missions/new"
+      ],
       "observed": "Stage1 observed 2 input-bearing component(s) on this screen: Form, Form Input.",
       "composed": "Forge composes input on this screen: CancellationForm, Checkbox, Input, StatusSelector, TagInput.",
       "stage1": {
@@ -372,6 +460,7 @@
         "target": "https://tracelab.aquex.ai/",
         "artifactKind": "object_rollup",
         "readPath": "/Users/systemsystems/portfolio/Design-Tools/Stage1/out/stage1/tracelab-production-infer/d0a43821-5730-4bf3-8b40-20f6fcb6b69c/artifacts/object_rollup.json",
+        "capturedAt": "2026-09-18T00:52:11.093Z",
         "pointers": [
           "/objects/21",
           "/objects/22"
@@ -392,6 +481,14 @@
       "category": "agreeing",
       "axis": "input",
       "screen": "/projects/:id",
+      "routes": [
+        "/projects/041489e1-bb62-4bbe-bb57-90a924fce867",
+        "/projects/0f5c295f-6ac0-4bc9-823f-32f2306d6f2d",
+        "/projects/44d12c7c-8059-4004-afa7-06b4d453d82d",
+        "/projects/5229e75e-8ad3-4ac5-94de-093a177562c6",
+        "/projects/8a5e3763-8249-4194-97d0-cda0e5ff0672",
+        "/projects/a39739b2-c4bb-43c6-86e0-95d5c0776130"
+      ],
       "observed": "Stage1 observed no input-bearing component on this screen beyond the app chrome.",
       "composed": "Forge composes no input on this screen.",
       "stage1": {
@@ -399,6 +496,7 @@
         "target": "https://tracelab.aquex.ai/",
         "artifactKind": "object_rollup",
         "readPath": "/Users/systemsystems/portfolio/Design-Tools/Stage1/out/stage1/tracelab-production-infer/d0a43821-5730-4bf3-8b40-20f6fcb6b69c/artifacts/object_rollup.json",
+        "capturedAt": "2026-09-18T00:52:11.093Z",
         "pointers": [],
         "found": 0
       },
@@ -416,6 +514,13 @@
       "category": "agreeing",
       "axis": "input",
       "screen": "/reports/:id",
+      "routes": [
+        "/reports/0613ab1a-1ae7-4784-bf03-579023d4a20f",
+        "/reports/1ff22d77-fb90-4220-8d74-34fd5526dab7",
+        "/reports/39d5b2dd-8fbe-406b-80e5-bc5e035822f7",
+        "/reports/7064c47e-c198-45d5-b887-b18a1f86d7ce",
+        "/reports/c2b3bc43-b25c-481e-80d7-02a6afc76e27"
+      ],
       "observed": "Stage1 observed no input-bearing component on this screen beyond the app chrome.",
       "composed": "Forge composes no input on this screen.",
       "stage1": {
@@ -423,6 +528,7 @@
         "target": "https://tracelab.aquex.ai/",
         "artifactKind": "object_rollup",
         "readPath": "/Users/systemsystems/portfolio/Design-Tools/Stage1/out/stage1/tracelab-production-infer/d0a43821-5730-4bf3-8b40-20f6fcb6b69c/artifacts/object_rollup.json",
+        "capturedAt": "2026-09-18T00:52:11.093Z",
         "pointers": [],
         "found": 0
       },
@@ -440,6 +546,9 @@
       "category": "agreeing",
       "axis": "input",
       "screen": "/reports",
+      "routes": [
+        "/reports"
+      ],
       "observed": "Stage1 observed 2 input-bearing component(s) on this screen: Rounded Md, Flex 1.",
       "composed": "Forge composes input on this screen: SearchInput, Select.",
       "stage1": {
@@ -447,6 +556,7 @@
         "target": "https://tracelab.aquex.ai/",
         "artifactKind": "object_rollup",
         "readPath": "/Users/systemsystems/portfolio/Design-Tools/Stage1/out/stage1/tracelab-production-infer/d0a43821-5730-4bf3-8b40-20f6fcb6b69c/artifacts/object_rollup.json",
+        "capturedAt": "2026-09-18T00:52:11.093Z",
         "pointers": [
           "/objects/3",
           "/objects/44"
@@ -463,106 +573,11 @@
       }
     },
     {
-      "id": "composed-only:screen:Chunk:detail",
-      "category": "composed-only",
-      "axis": "screen",
-      "screen": null,
-      "observed": "Stage1 observed no detail route for Chunk.",
-      "composed": "Forge composes Chunk detail.",
-      "stage1": {
-        "runId": "d0a43821-5730-4bf3-8b40-20f6fcb6b69c",
-        "target": "https://tracelab.aquex.ai/",
-        "artifactKind": "object_rollup",
-        "readPath": "/Users/systemsystems/portfolio/Design-Tools/Stage1/out/stage1/tracelab-production-infer/d0a43821-5730-4bf3-8b40-20f6fcb6b69c/artifacts/object_rollup.json",
-        "pointers": [],
-        "found": 0
-      },
-      "forge": {
-        "object": "Chunk",
-        "context": "detail",
-        "urn": "urn:oods:object:Chunk@0.1.0",
-        "schemaDigest": "82dfdf975f86ff104f74159b8832634a75bfb4e6193a4621d7da734157736a43",
-        "searched": "every route in object_rollup projection variants and identity_graph entity endpoints (25 routes, 15 screens)",
-        "found": 1
-      }
-    },
-    {
-      "id": "composed-only:screen:Chunk:form",
-      "category": "composed-only",
-      "axis": "screen",
-      "screen": null,
-      "observed": "Stage1 observed no form route for Chunk.",
-      "composed": "Forge composes Chunk form.",
-      "stage1": {
-        "runId": "d0a43821-5730-4bf3-8b40-20f6fcb6b69c",
-        "target": "https://tracelab.aquex.ai/",
-        "artifactKind": "object_rollup",
-        "readPath": "/Users/systemsystems/portfolio/Design-Tools/Stage1/out/stage1/tracelab-production-infer/d0a43821-5730-4bf3-8b40-20f6fcb6b69c/artifacts/object_rollup.json",
-        "pointers": [],
-        "found": 0
-      },
-      "forge": {
-        "object": "Chunk",
-        "context": "form",
-        "urn": "urn:oods:object:Chunk@0.1.0",
-        "schemaDigest": "82dfdf975f86ff104f74159b8832634a75bfb4e6193a4621d7da734157736a43",
-        "searched": "every route in object_rollup projection variants and identity_graph entity endpoints (25 routes, 15 screens)",
-        "found": 1
-      }
-    },
-    {
-      "id": "composed-only:screen:Chunk:list",
-      "category": "composed-only",
-      "axis": "screen",
-      "screen": null,
-      "observed": "Stage1 observed no list route for Chunk.",
-      "composed": "Forge composes Chunk list.",
-      "stage1": {
-        "runId": "d0a43821-5730-4bf3-8b40-20f6fcb6b69c",
-        "target": "https://tracelab.aquex.ai/",
-        "artifactKind": "object_rollup",
-        "readPath": "/Users/systemsystems/portfolio/Design-Tools/Stage1/out/stage1/tracelab-production-infer/d0a43821-5730-4bf3-8b40-20f6fcb6b69c/artifacts/object_rollup.json",
-        "pointers": [],
-        "found": 0
-      },
-      "forge": {
-        "object": "Chunk",
-        "context": "list",
-        "urn": "urn:oods:object:Chunk@0.1.0",
-        "schemaDigest": "82dfdf975f86ff104f74159b8832634a75bfb4e6193a4621d7da734157736a43",
-        "searched": "every route in object_rollup projection variants and identity_graph entity endpoints (25 routes, 15 screens)",
-        "found": 1
-      }
-    },
-    {
-      "id": "composed-only:screen:Chunk:timeline",
-      "category": "composed-only",
-      "axis": "screen",
-      "screen": null,
-      "observed": "Stage1 observed no route of a timeline shape for Chunk; a timeline has no route form Forge can match.",
-      "composed": "Forge composes Chunk timeline.",
-      "stage1": {
-        "runId": "d0a43821-5730-4bf3-8b40-20f6fcb6b69c",
-        "target": "https://tracelab.aquex.ai/",
-        "artifactKind": "object_rollup",
-        "readPath": "/Users/systemsystems/portfolio/Design-Tools/Stage1/out/stage1/tracelab-production-infer/d0a43821-5730-4bf3-8b40-20f6fcb6b69c/artifacts/object_rollup.json",
-        "pointers": [],
-        "found": 0
-      },
-      "forge": {
-        "object": "Chunk",
-        "context": "timeline",
-        "urn": "urn:oods:object:Chunk@0.1.0",
-        "schemaDigest": "82dfdf975f86ff104f74159b8832634a75bfb4e6193a4621d7da734157736a43",
-        "searched": "every route in object_rollup projection variants and identity_graph entity endpoints (25 routes, 15 screens)",
-        "found": 1
-      }
-    },
-    {
       "id": "composed-only:screen:Collection:detail",
       "category": "composed-only",
       "axis": "screen",
       "screen": null,
+      "routes": [],
       "observed": "Stage1 observed no detail route for Collection.",
       "composed": "Forge composes Collection detail.",
       "stage1": {
@@ -570,6 +585,7 @@
         "target": "https://tracelab.aquex.ai/",
         "artifactKind": "object_rollup",
         "readPath": "/Users/systemsystems/portfolio/Design-Tools/Stage1/out/stage1/tracelab-production-infer/d0a43821-5730-4bf3-8b40-20f6fcb6b69c/artifacts/object_rollup.json",
+        "capturedAt": "2026-09-18T00:52:11.093Z",
         "pointers": [],
         "found": 0
       },
@@ -587,6 +603,7 @@
       "category": "composed-only",
       "axis": "screen",
       "screen": null,
+      "routes": [],
       "observed": "Stage1 observed no form route for Collection.",
       "composed": "Forge composes Collection form.",
       "stage1": {
@@ -594,6 +611,7 @@
         "target": "https://tracelab.aquex.ai/",
         "artifactKind": "object_rollup",
         "readPath": "/Users/systemsystems/portfolio/Design-Tools/Stage1/out/stage1/tracelab-production-infer/d0a43821-5730-4bf3-8b40-20f6fcb6b69c/artifacts/object_rollup.json",
+        "capturedAt": "2026-09-18T00:52:11.093Z",
         "pointers": [],
         "found": 0
       },
@@ -611,6 +629,7 @@
       "category": "composed-only",
       "axis": "screen",
       "screen": null,
+      "routes": [],
       "observed": "Stage1 observed no route of a timeline shape for Collection; a timeline has no route form Forge can match.",
       "composed": "Forge composes Collection timeline.",
       "stage1": {
@@ -618,6 +637,7 @@
         "target": "https://tracelab.aquex.ai/",
         "artifactKind": "object_rollup",
         "readPath": "/Users/systemsystems/portfolio/Design-Tools/Stage1/out/stage1/tracelab-production-infer/d0a43821-5730-4bf3-8b40-20f6fcb6b69c/artifacts/object_rollup.json",
+        "capturedAt": "2026-09-18T00:52:11.093Z",
         "pointers": [],
         "found": 0
       },
@@ -635,6 +655,7 @@
       "category": "composed-only",
       "axis": "screen",
       "screen": null,
+      "routes": [],
       "observed": "Stage1 observed no detail route for Document.",
       "composed": "Forge composes Document detail.",
       "stage1": {
@@ -642,6 +663,7 @@
         "target": "https://tracelab.aquex.ai/",
         "artifactKind": "object_rollup",
         "readPath": "/Users/systemsystems/portfolio/Design-Tools/Stage1/out/stage1/tracelab-production-infer/d0a43821-5730-4bf3-8b40-20f6fcb6b69c/artifacts/object_rollup.json",
+        "capturedAt": "2026-09-18T00:52:11.093Z",
         "pointers": [],
         "found": 0
       },
@@ -659,6 +681,7 @@
       "category": "composed-only",
       "axis": "screen",
       "screen": null,
+      "routes": [],
       "observed": "Stage1 observed no form route for Document.",
       "composed": "Forge composes Document form.",
       "stage1": {
@@ -666,6 +689,7 @@
         "target": "https://tracelab.aquex.ai/",
         "artifactKind": "object_rollup",
         "readPath": "/Users/systemsystems/portfolio/Design-Tools/Stage1/out/stage1/tracelab-production-infer/d0a43821-5730-4bf3-8b40-20f6fcb6b69c/artifacts/object_rollup.json",
+        "capturedAt": "2026-09-18T00:52:11.093Z",
         "pointers": [],
         "found": 0
       },
@@ -683,6 +707,7 @@
       "category": "composed-only",
       "axis": "screen",
       "screen": null,
+      "routes": [],
       "observed": "Stage1 observed no route of a timeline shape for Document; a timeline has no route form Forge can match.",
       "composed": "Forge composes Document timeline.",
       "stage1": {
@@ -690,6 +715,7 @@
         "target": "https://tracelab.aquex.ai/",
         "artifactKind": "object_rollup",
         "readPath": "/Users/systemsystems/portfolio/Design-Tools/Stage1/out/stage1/tracelab-production-infer/d0a43821-5730-4bf3-8b40-20f6fcb6b69c/artifacts/object_rollup.json",
+        "capturedAt": "2026-09-18T00:52:11.093Z",
         "pointers": [],
         "found": 0
       },
@@ -707,6 +733,7 @@
       "category": "composed-only",
       "axis": "screen",
       "screen": null,
+      "routes": [],
       "observed": "Stage1 observed no detail route for Evidence.",
       "composed": "Forge composes Evidence detail.",
       "stage1": {
@@ -714,6 +741,7 @@
         "target": "https://tracelab.aquex.ai/",
         "artifactKind": "object_rollup",
         "readPath": "/Users/systemsystems/portfolio/Design-Tools/Stage1/out/stage1/tracelab-production-infer/d0a43821-5730-4bf3-8b40-20f6fcb6b69c/artifacts/object_rollup.json",
+        "capturedAt": "2026-09-18T00:52:11.093Z",
         "pointers": [],
         "found": 0
       },
@@ -731,6 +759,7 @@
       "category": "composed-only",
       "axis": "screen",
       "screen": null,
+      "routes": [],
       "observed": "Stage1 observed no form route for Evidence.",
       "composed": "Forge composes Evidence form.",
       "stage1": {
@@ -738,6 +767,7 @@
         "target": "https://tracelab.aquex.ai/",
         "artifactKind": "object_rollup",
         "readPath": "/Users/systemsystems/portfolio/Design-Tools/Stage1/out/stage1/tracelab-production-infer/d0a43821-5730-4bf3-8b40-20f6fcb6b69c/artifacts/object_rollup.json",
+        "capturedAt": "2026-09-18T00:52:11.093Z",
         "pointers": [],
         "found": 0
       },
@@ -755,6 +785,7 @@
       "category": "composed-only",
       "axis": "screen",
       "screen": null,
+      "routes": [],
       "observed": "Stage1 observed no route of a timeline shape for Evidence; a timeline has no route form Forge can match.",
       "composed": "Forge composes Evidence timeline.",
       "stage1": {
@@ -762,6 +793,7 @@
         "target": "https://tracelab.aquex.ai/",
         "artifactKind": "object_rollup",
         "readPath": "/Users/systemsystems/portfolio/Design-Tools/Stage1/out/stage1/tracelab-production-infer/d0a43821-5730-4bf3-8b40-20f6fcb6b69c/artifacts/object_rollup.json",
+        "capturedAt": "2026-09-18T00:52:11.093Z",
         "pointers": [],
         "found": 0
       },
@@ -779,6 +811,7 @@
       "category": "composed-only",
       "axis": "screen",
       "screen": null,
+      "routes": [],
       "observed": "Stage1 observed no route of a timeline shape for Mission; a timeline has no route form Forge can match.",
       "composed": "Forge composes Mission timeline.",
       "stage1": {
@@ -786,6 +819,7 @@
         "target": "https://tracelab.aquex.ai/",
         "artifactKind": "object_rollup",
         "readPath": "/Users/systemsystems/portfolio/Design-Tools/Stage1/out/stage1/tracelab-production-infer/d0a43821-5730-4bf3-8b40-20f6fcb6b69c/artifacts/object_rollup.json",
+        "capturedAt": "2026-09-18T00:52:11.093Z",
         "pointers": [],
         "found": 0
       },
@@ -803,6 +837,7 @@
       "category": "composed-only",
       "axis": "screen",
       "screen": null,
+      "routes": [],
       "observed": "Stage1 observed no form route for Project.",
       "composed": "Forge composes Project form.",
       "stage1": {
@@ -810,6 +845,7 @@
         "target": "https://tracelab.aquex.ai/",
         "artifactKind": "object_rollup",
         "readPath": "/Users/systemsystems/portfolio/Design-Tools/Stage1/out/stage1/tracelab-production-infer/d0a43821-5730-4bf3-8b40-20f6fcb6b69c/artifacts/object_rollup.json",
+        "capturedAt": "2026-09-18T00:52:11.093Z",
         "pointers": [],
         "found": 0
       },
@@ -827,6 +863,7 @@
       "category": "composed-only",
       "axis": "screen",
       "screen": null,
+      "routes": [],
       "observed": "Stage1 observed no route of a timeline shape for Project; a timeline has no route form Forge can match.",
       "composed": "Forge composes Project timeline.",
       "stage1": {
@@ -834,6 +871,7 @@
         "target": "https://tracelab.aquex.ai/",
         "artifactKind": "object_rollup",
         "readPath": "/Users/systemsystems/portfolio/Design-Tools/Stage1/out/stage1/tracelab-production-infer/d0a43821-5730-4bf3-8b40-20f6fcb6b69c/artifacts/object_rollup.json",
+        "capturedAt": "2026-09-18T00:52:11.093Z",
         "pointers": [],
         "found": 0
       },
@@ -851,6 +889,7 @@
       "category": "composed-only",
       "axis": "screen",
       "screen": null,
+      "routes": [],
       "observed": "Stage1 observed no form route for Report.",
       "composed": "Forge composes Report form.",
       "stage1": {
@@ -858,6 +897,7 @@
         "target": "https://tracelab.aquex.ai/",
         "artifactKind": "object_rollup",
         "readPath": "/Users/systemsystems/portfolio/Design-Tools/Stage1/out/stage1/tracelab-production-infer/d0a43821-5730-4bf3-8b40-20f6fcb6b69c/artifacts/object_rollup.json",
+        "capturedAt": "2026-09-18T00:52:11.093Z",
         "pointers": [],
         "found": 0
       },
@@ -875,6 +915,7 @@
       "category": "composed-only",
       "axis": "screen",
       "screen": null,
+      "routes": [],
       "observed": "Stage1 observed no route of a timeline shape for Report; a timeline has no route form Forge can match.",
       "composed": "Forge composes Report timeline.",
       "stage1": {
@@ -882,6 +923,7 @@
         "target": "https://tracelab.aquex.ai/",
         "artifactKind": "object_rollup",
         "readPath": "/Users/systemsystems/portfolio/Design-Tools/Stage1/out/stage1/tracelab-production-infer/d0a43821-5730-4bf3-8b40-20f6fcb6b69c/artifacts/object_rollup.json",
+        "capturedAt": "2026-09-18T00:52:11.093Z",
         "pointers": [],
         "found": 0
       },
@@ -899,6 +941,9 @@
       "category": "disagreeing",
       "axis": "data-bound",
       "screen": "/collections",
+      "routes": [
+        "/collections"
+      ],
       "observed": "Stage1 observed no data-bound component on this list beyond the app chrome.",
       "composed": "Forge composes a repeating, data-bound item list.",
       "stage1": {
@@ -906,6 +951,7 @@
         "target": "https://tracelab.aquex.ai/",
         "artifactKind": "object_rollup",
         "readPath": "/Users/systemsystems/portfolio/Design-Tools/Stage1/out/stage1/tracelab-production-infer/d0a43821-5730-4bf3-8b40-20f6fcb6b69c/artifacts/object_rollup.json",
+        "capturedAt": "2026-09-18T00:52:11.093Z",
         "pointers": [],
         "found": 0
       },
@@ -923,6 +969,9 @@
       "category": "disagreeing",
       "axis": "data-bound",
       "screen": "/documents",
+      "routes": [
+        "/documents"
+      ],
       "observed": "Stage1 observed no data-bound component on this list beyond the app chrome.",
       "composed": "Forge composes a repeating, data-bound item list.",
       "stage1": {
@@ -930,6 +979,7 @@
         "target": "https://tracelab.aquex.ai/",
         "artifactKind": "object_rollup",
         "readPath": "/Users/systemsystems/portfolio/Design-Tools/Stage1/out/stage1/tracelab-production-infer/d0a43821-5730-4bf3-8b40-20f6fcb6b69c/artifacts/object_rollup.json",
+        "capturedAt": "2026-09-18T00:52:11.093Z",
         "pointers": [],
         "found": 0
       },
@@ -947,6 +997,9 @@
       "category": "disagreeing",
       "axis": "data-bound",
       "screen": "/evidence",
+      "routes": [
+        "/evidence"
+      ],
       "observed": "Stage1 observed no data-bound component on this list beyond the app chrome.",
       "composed": "Forge composes a repeating, data-bound item list.",
       "stage1": {
@@ -954,6 +1007,7 @@
         "target": "https://tracelab.aquex.ai/",
         "artifactKind": "object_rollup",
         "readPath": "/Users/systemsystems/portfolio/Design-Tools/Stage1/out/stage1/tracelab-production-infer/d0a43821-5730-4bf3-8b40-20f6fcb6b69c/artifacts/object_rollup.json",
+        "capturedAt": "2026-09-18T00:52:11.093Z",
         "pointers": [],
         "found": 0
       },
@@ -971,6 +1025,9 @@
       "category": "disagreeing",
       "axis": "data-bound",
       "screen": "/reports",
+      "routes": [
+        "/reports"
+      ],
       "observed": "Stage1 observed no data-bound component on this list beyond the app chrome.",
       "composed": "Forge composes a repeating, data-bound item list.",
       "stage1": {
@@ -978,6 +1035,7 @@
         "target": "https://tracelab.aquex.ai/",
         "artifactKind": "object_rollup",
         "readPath": "/Users/systemsystems/portfolio/Design-Tools/Stage1/out/stage1/tracelab-production-infer/d0a43821-5730-4bf3-8b40-20f6fcb6b69c/artifacts/object_rollup.json",
+        "capturedAt": "2026-09-18T00:52:11.093Z",
         "pointers": [],
         "found": 0
       },
@@ -995,6 +1053,9 @@
       "category": "disagreeing",
       "axis": "entity",
       "screen": "/collections",
+      "routes": [
+        "/collections"
+      ],
       "observed": "Stage1 saw 1 route(s) of this screen but names no Collection entity for them.",
       "composed": "Forge holds Collection and composes its list screen.",
       "stage1": {
@@ -1002,6 +1063,7 @@
         "target": "https://tracelab.aquex.ai/",
         "artifactKind": "identity_graph",
         "readPath": "/Users/systemsystems/portfolio/Design-Tools/Stage1/out/stage1/tracelab-production-infer/d0a43821-5730-4bf3-8b40-20f6fcb6b69c/artifacts/identity_graph.json",
+        "capturedAt": "2026-09-18T00:52:11.025Z",
         "pointers": [],
         "found": 0
       },
@@ -1019,6 +1081,9 @@
       "category": "disagreeing",
       "axis": "entity",
       "screen": "/documents",
+      "routes": [
+        "/documents"
+      ],
       "observed": "Stage1 saw 1 route(s) of this screen but names no Document entity for them.",
       "composed": "Forge holds Document and composes its list screen.",
       "stage1": {
@@ -1026,6 +1091,7 @@
         "target": "https://tracelab.aquex.ai/",
         "artifactKind": "identity_graph",
         "readPath": "/Users/systemsystems/portfolio/Design-Tools/Stage1/out/stage1/tracelab-production-infer/d0a43821-5730-4bf3-8b40-20f6fcb6b69c/artifacts/identity_graph.json",
+        "capturedAt": "2026-09-18T00:52:11.025Z",
         "pointers": [],
         "found": 0
       },
@@ -1043,6 +1109,9 @@
       "category": "disagreeing",
       "axis": "entity",
       "screen": "/evidence",
+      "routes": [
+        "/evidence"
+      ],
       "observed": "Stage1 saw 1 route(s) of this screen but names no Evidence entity for them.",
       "composed": "Forge holds Evidence and composes its list screen.",
       "stage1": {
@@ -1050,6 +1119,7 @@
         "target": "https://tracelab.aquex.ai/",
         "artifactKind": "identity_graph",
         "readPath": "/Users/systemsystems/portfolio/Design-Tools/Stage1/out/stage1/tracelab-production-infer/d0a43821-5730-4bf3-8b40-20f6fcb6b69c/artifacts/identity_graph.json",
+        "capturedAt": "2026-09-18T00:52:11.025Z",
         "pointers": [],
         "found": 0
       },
@@ -1067,6 +1137,9 @@
       "category": "disagreeing",
       "axis": "input",
       "screen": "/collections",
+      "routes": [
+        "/collections"
+      ],
       "observed": "Stage1 observed no input-bearing component on this screen beyond the app chrome.",
       "composed": "Forge composes input on this screen: SearchInput, Select.",
       "stage1": {
@@ -1074,6 +1147,7 @@
         "target": "https://tracelab.aquex.ai/",
         "artifactKind": "object_rollup",
         "readPath": "/Users/systemsystems/portfolio/Design-Tools/Stage1/out/stage1/tracelab-production-infer/d0a43821-5730-4bf3-8b40-20f6fcb6b69c/artifacts/object_rollup.json",
+        "capturedAt": "2026-09-18T00:52:11.093Z",
         "pointers": [],
         "found": 0
       },
@@ -1091,6 +1165,9 @@
       "category": "disagreeing",
       "axis": "input",
       "screen": "/evidence",
+      "routes": [
+        "/evidence"
+      ],
       "observed": "Stage1 observed no input-bearing component on this screen beyond the app chrome.",
       "composed": "Forge composes input on this screen: SearchInput, Select.",
       "stage1": {
@@ -1098,6 +1175,7 @@
         "target": "https://tracelab.aquex.ai/",
         "artifactKind": "object_rollup",
         "readPath": "/Users/systemsystems/portfolio/Design-Tools/Stage1/out/stage1/tracelab-production-infer/d0a43821-5730-4bf3-8b40-20f6fcb6b69c/artifacts/object_rollup.json",
+        "capturedAt": "2026-09-18T00:52:11.093Z",
         "pointers": [],
         "found": 0
       },
@@ -1115,6 +1193,9 @@
       "category": "disagreeing",
       "axis": "input",
       "screen": "/missions",
+      "routes": [
+        "/missions"
+      ],
       "observed": "Stage1 observed no input-bearing component on this screen beyond the app chrome.",
       "composed": "Forge composes input on this screen: SearchInput, Select.",
       "stage1": {
@@ -1122,6 +1203,7 @@
         "target": "https://tracelab.aquex.ai/",
         "artifactKind": "object_rollup",
         "readPath": "/Users/systemsystems/portfolio/Design-Tools/Stage1/out/stage1/tracelab-production-infer/d0a43821-5730-4bf3-8b40-20f6fcb6b69c/artifacts/object_rollup.json",
+        "capturedAt": "2026-09-18T00:52:11.093Z",
         "pointers": [],
         "found": 0
       },
@@ -1139,6 +1221,9 @@
       "category": "disagreeing",
       "axis": "input",
       "screen": "/projects",
+      "routes": [
+        "/projects"
+      ],
       "observed": "Stage1 observed no input-bearing component on this screen beyond the app chrome.",
       "composed": "Forge composes input on this screen: SearchInput, Select.",
       "stage1": {
@@ -1146,6 +1231,7 @@
         "target": "https://tracelab.aquex.ai/",
         "artifactKind": "object_rollup",
         "readPath": "/Users/systemsystems/portfolio/Design-Tools/Stage1/out/stage1/tracelab-production-infer/d0a43821-5730-4bf3-8b40-20f6fcb6b69c/artifacts/object_rollup.json",
+        "capturedAt": "2026-09-18T00:52:11.093Z",
         "pointers": [],
         "found": 0
       },
@@ -1163,6 +1249,9 @@
       "category": "observed-only",
       "axis": "screen",
       "screen": "/",
+      "routes": [
+        "/"
+      ],
       "observed": "Stage1 observed / (1 route).",
       "composed": "No compared object composes this screen: / is not a list, detail or form route of a named resource.",
       "stage1": {
@@ -1170,6 +1259,7 @@
         "target": "https://tracelab.aquex.ai/",
         "artifactKind": "object_rollup",
         "readPath": "/Users/systemsystems/portfolio/Design-Tools/Stage1/out/stage1/tracelab-production-infer/d0a43821-5730-4bf3-8b40-20f6fcb6b69c/artifacts/object_rollup.json",
+        "capturedAt": "2026-09-18T00:52:11.093Z",
         "pointers": [
           "/objects/0",
           "/objects/4",
@@ -1209,6 +1299,9 @@
       "category": "observed-only",
       "axis": "screen",
       "screen": "/admin/observability",
+      "routes": [
+        "/admin/observability"
+      ],
       "observed": "Stage1 observed /admin/observability (1 route).",
       "composed": "No compared object composes this screen: /admin/observability is not a list, detail or form route of a named resource.",
       "stage1": {
@@ -1216,6 +1309,7 @@
         "target": "https://tracelab.aquex.ai/",
         "artifactKind": "object_rollup",
         "readPath": "/Users/systemsystems/portfolio/Design-Tools/Stage1/out/stage1/tracelab-production-infer/d0a43821-5730-4bf3-8b40-20f6fcb6b69c/artifacts/object_rollup.json",
+        "capturedAt": "2026-09-18T00:52:11.093Z",
         "pointers": [
           "/objects/0",
           "/objects/1",
@@ -1254,6 +1348,9 @@
       "category": "observed-only",
       "axis": "screen",
       "screen": "/admin/spaces",
+      "routes": [
+        "/admin/spaces"
+      ],
       "observed": "Stage1 observed /admin/spaces (1 route).",
       "composed": "No compared object composes this screen: /admin/spaces is not a list, detail or form route of a named resource.",
       "stage1": {
@@ -1261,6 +1358,7 @@
         "target": "https://tracelab.aquex.ai/",
         "artifactKind": "object_rollup",
         "readPath": "/Users/systemsystems/portfolio/Design-Tools/Stage1/out/stage1/tracelab-production-infer/d0a43821-5730-4bf3-8b40-20f6fcb6b69c/artifacts/object_rollup.json",
+        "capturedAt": "2026-09-18T00:52:11.093Z",
         "pointers": [
           "/objects/0",
           "/objects/3",
@@ -1297,6 +1395,9 @@
       "category": "observed-only",
       "axis": "screen",
       "screen": "/admin/users",
+      "routes": [
+        "/admin/users"
+      ],
       "observed": "Stage1 observed /admin/users (1 route).",
       "composed": "No compared object composes this screen: /admin/users is not a list, detail or form route of a named resource.",
       "stage1": {
@@ -1304,6 +1405,7 @@
         "target": "https://tracelab.aquex.ai/",
         "artifactKind": "object_rollup",
         "readPath": "/Users/systemsystems/portfolio/Design-Tools/Stage1/out/stage1/tracelab-production-infer/d0a43821-5730-4bf3-8b40-20f6fcb6b69c/artifacts/object_rollup.json",
+        "capturedAt": "2026-09-18T00:52:11.093Z",
         "pointers": [
           "/objects/0",
           "/objects/2",
@@ -1344,6 +1446,9 @@
       "category": "observed-only",
       "axis": "screen",
       "screen": "/graph",
+      "routes": [
+        "/graph"
+      ],
       "observed": "Stage1 observed /graph (1 route).",
       "composed": "No compared object is named \"graph\".",
       "stage1": {
@@ -1351,6 +1456,7 @@
         "target": "https://tracelab.aquex.ai/",
         "artifactKind": "object_rollup",
         "readPath": "/Users/systemsystems/portfolio/Design-Tools/Stage1/out/stage1/tracelab-production-infer/d0a43821-5730-4bf3-8b40-20f6fcb6b69c/artifacts/object_rollup.json",
+        "capturedAt": "2026-09-18T00:52:11.093Z",
         "pointers": [
           "/objects/0",
           "/objects/4",
