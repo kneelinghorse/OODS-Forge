@@ -15,15 +15,15 @@ const directories: string[] = [];
 afterEach(() => directories.splice(0).forEach(directory => rmSync(directory, { recursive: true, force: true })));
 
 describe('s199 local chart gate and receipt boundaries', () => {
-  it.each([195, 196, 197, 198, 199, 200, 201, 202])('rejects new chart-gate receipts in sealed Sprint %s before executing commands', sprint => {
-    expect(() => verify(`artifacts/product-reality/sprint-${sprint}/gate`)).toThrow('under unsealed sprint-203');
+  it.each([195, 196, 197, 198, 199, 200, 201, 202, 203])('rejects new chart-gate receipts in sealed Sprint %s before executing commands', sprint => {
+    expect(() => verify(`artifacts/product-reality/sprint-${sprint}/gate`)).toThrow('under unsealed sprint-204');
   });
 
   // Both cases must be built from the UNSEALED sprint, or neither tests what it names: the first proves the guard
   // resolves before it compares (the allowed prefix is present as a raw string and escapes only on resolution), and
   // the second is the only input that reaches the trailing-separator clause — a sibling directory sharing the prefix.
-  it.each(['artifacts/product-reality/sprint-203/../sprint-202/gate', 'artifacts/product-reality/sprint-203-other/gate'])('rejects a path escaping the current receipt boundary: %s', output => {
-    expect(() => verify(output)).toThrow('under unsealed sprint-203');
+  it.each(['artifacts/product-reality/sprint-204/../sprint-203/gate', 'artifacts/product-reality/sprint-204-other/gate'])('rejects a path escaping the current receipt boundary: %s', output => {
+    expect(() => verify(output)).toThrow('under unsealed sprint-204');
   });
 
   it('loads the named golden command from the workflow and keeps the gate narrow', () => {
