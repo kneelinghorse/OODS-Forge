@@ -1,0 +1,1053 @@
+{
+  "status": "ok",
+  "layout": "detail",
+  "schema": {
+    "version": "2026.02",
+    "screens": [
+      {
+        "id": "screen-detail-13",
+        "component": "Stack",
+        "layout": {
+          "type": "stack",
+          "gapToken": "cluster-default"
+        },
+        "children": [
+          {
+            "id": "screen-detail-13-record-title",
+            "component": "DetailHeader",
+            "props": {
+              "titleField": "decision_id",
+              "headingLevel": 1
+            }
+          },
+          {
+            "id": "detail-body-10",
+            "component": "Card",
+            "layout": {
+              "type": "sidebar",
+              "gapToken": "cluster-default"
+            },
+            "children": [
+              {
+                "id": "detail-tabs-9",
+                "component": "Tabs",
+                "children": [
+                  {
+                    "id": "detail-tab-panel-3",
+                    "component": "Stack",
+                    "layout": {
+                      "type": "stack",
+                      "gapToken": "cluster-default"
+                    },
+                    "props": {
+                      "label": "Status & History"
+                    },
+                    "children": [
+                      {
+                        "id": "slot-tab-0-4",
+                        "component": "Stack",
+                        "meta": {
+                          "intent": "slot:tab-0",
+                          "label": "tab-0",
+                          "notes": "pattern-group:status-timeline"
+                        },
+                        "layout": {
+                          "type": "stack",
+                          "gapToken": "cluster-tight"
+                        },
+                        "children": [
+                          {
+                            "id": "pg-status-timeline-31-read-field",
+                            "component": "Stack",
+                            "children": [
+                              {
+                                "id": "pg-status-timeline-31-label",
+                                "component": "Text",
+                                "props": {
+                                  "as": "strong",
+                                  "content": "Supersession status"
+                                }
+                              },
+                              {
+                                "id": "pg-status-timeline-31-value",
+                                "meta": {
+                                  "intent": "read-only-field"
+                                },
+                                "component": "Text",
+                                "props": {
+                                  "field": "supersession_status"
+                                }
+                              }
+                            ]
+                          },
+                          {
+                            "id": "pg-status-timeline-32-read-field",
+                            "component": "Stack",
+                            "children": [
+                              {
+                                "id": "pg-status-timeline-32-label",
+                                "component": "Text",
+                                "props": {
+                                  "as": "strong",
+                                  "content": "Updated at"
+                                }
+                              },
+                              {
+                                "id": "pg-status-timeline-32-value",
+                                "meta": {
+                                  "intent": "read-only-field"
+                                },
+                                "component": "Text",
+                                "props": {
+                                  "field": "updated_at"
+                                }
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "id": "slot-tab-1-6-read-field",
+                        "component": "Stack",
+                        "children": [
+                          {
+                            "id": "slot-tab-1-6-label",
+                            "component": "Text",
+                            "props": {
+                              "as": "strong",
+                              "content": "Superseded by"
+                            }
+                          },
+                          {
+                            "id": "slot-tab-1-6-value",
+                            "meta": {
+                              "intent": "read-only-field"
+                            },
+                            "component": "Text",
+                            "props": {
+                              "field": "superseded_by"
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "id": "slot-tab-2-8-read-field",
+                        "component": "Stack",
+                        "children": [
+                          {
+                            "id": "slot-tab-2-8-label",
+                            "component": "Text",
+                            "props": {
+                              "as": "strong",
+                              "content": "Supersedes"
+                            }
+                          },
+                          {
+                            "id": "slot-tab-2-8-value",
+                            "meta": {
+                              "intent": "read-only-field"
+                            },
+                            "component": "Text",
+                            "props": {
+                              "field": "supersedes"
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "id": "slot-tab-3-15-read-field",
+                        "component": "Stack",
+                        "children": [
+                          {
+                            "id": "slot-tab-3-15-label",
+                            "component": "Text",
+                            "props": {
+                              "as": "strong",
+                              "content": "Supersession reason"
+                            }
+                          },
+                          {
+                            "id": "slot-tab-3-15-value",
+                            "meta": {
+                              "intent": "read-only-field"
+                            },
+                            "component": "Text",
+                            "props": {
+                              "field": "supersession_reason"
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "id": "detail-tabs-9-created_at-read-field",
+                        "component": "Stack",
+                        "children": [
+                          {
+                            "id": "detail-tabs-9-created_at-label",
+                            "component": "Text",
+                            "props": {
+                              "as": "strong",
+                              "content": "Created at"
+                            }
+                          },
+                          {
+                            "id": "detail-tabs-9-created_at-value",
+                            "meta": {
+                              "intent": "read-only-field"
+                            },
+                            "component": "Text",
+                            "props": {
+                              "field": "created_at"
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "id": "detail-tabs-9-last_event-read-field",
+                        "component": "Stack",
+                        "children": [
+                          {
+                            "id": "detail-tabs-9-last_event-label",
+                            "component": "Text",
+                            "props": {
+                              "as": "strong",
+                              "content": "Last event"
+                            }
+                          },
+                          {
+                            "id": "detail-tabs-9-last_event-value",
+                            "meta": {
+                              "intent": "read-only-field"
+                            },
+                            "component": "Text",
+                            "props": {
+                              "field": "last_event"
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "id": "detail-tabs-9-last_event_at-read-field",
+                        "component": "Stack",
+                        "children": [
+                          {
+                            "id": "detail-tabs-9-last_event_at-label",
+                            "component": "Text",
+                            "props": {
+                              "as": "strong",
+                              "content": "Last event at"
+                            }
+                          },
+                          {
+                            "id": "detail-tabs-9-last_event_at-value",
+                            "meta": {
+                              "intent": "read-only-field"
+                            },
+                            "component": "Text",
+                            "props": {
+                              "field": "last_event_at"
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "id": "detail-tabs-9-decision_text-read-field",
+                        "component": "Stack",
+                        "children": [
+                          {
+                            "id": "detail-tabs-9-decision_text-label",
+                            "component": "Text",
+                            "props": {
+                              "as": "strong",
+                              "content": "Decision text"
+                            }
+                          },
+                          {
+                            "id": "detail-tabs-9-decision_text-value",
+                            "meta": {
+                              "intent": "read-only-field"
+                            },
+                            "component": "Text",
+                            "props": {
+                              "field": "decision_text"
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "id": "detail-tabs-9-sprint_id-read-field",
+                        "component": "Stack",
+                        "children": [
+                          {
+                            "id": "detail-tabs-9-sprint_id-label",
+                            "component": "Text",
+                            "props": {
+                              "as": "strong",
+                              "content": "Sprint id"
+                            }
+                          },
+                          {
+                            "id": "detail-tabs-9-sprint_id-value",
+                            "meta": {
+                              "intent": "read-only-field"
+                            },
+                            "component": "Text",
+                            "props": {
+                              "field": "sprint_id"
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "id": "detail-tabs-9-mission_id-read-field",
+                        "component": "Stack",
+                        "children": [
+                          {
+                            "id": "detail-tabs-9-mission_id-label",
+                            "component": "Text",
+                            "props": {
+                              "as": "strong",
+                              "content": "Mission id"
+                            }
+                          },
+                          {
+                            "id": "detail-tabs-9-mission_id-value",
+                            "meta": {
+                              "intent": "read-only-field"
+                            },
+                            "component": "Text",
+                            "props": {
+                              "field": "mission_id"
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "id": "detail-tabs-9-session_id-read-field",
+                        "component": "Stack",
+                        "children": [
+                          {
+                            "id": "detail-tabs-9-session_id-label",
+                            "component": "Text",
+                            "props": {
+                              "as": "strong",
+                              "content": "Session id"
+                            }
+                          },
+                          {
+                            "id": "detail-tabs-9-session_id-value",
+                            "meta": {
+                              "intent": "read-only-field"
+                            },
+                            "component": "Text",
+                            "props": {
+                              "field": "session_id"
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "id": "detail-tabs-9-project_id-read-field",
+                        "component": "Stack",
+                        "children": [
+                          {
+                            "id": "detail-tabs-9-project_id-label",
+                            "component": "Text",
+                            "props": {
+                              "as": "strong",
+                              "content": "Project id"
+                            }
+                          },
+                          {
+                            "id": "detail-tabs-9-project_id-value",
+                            "meta": {
+                              "intent": "read-only-field"
+                            },
+                            "component": "Text",
+                            "props": {
+                              "field": "project_id"
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "id": "detail-tabs-9-project_domain-read-field",
+                        "component": "Stack",
+                        "children": [
+                          {
+                            "id": "detail-tabs-9-project_domain-label",
+                            "component": "Text",
+                            "props": {
+                              "as": "strong",
+                              "content": "Project domain"
+                            }
+                          },
+                          {
+                            "id": "detail-tabs-9-project_domain-value",
+                            "meta": {
+                              "intent": "read-only-field"
+                            },
+                            "component": "Text",
+                            "props": {
+                              "field": "project_domain"
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ],
+                "props": {
+                  "ariaLabel": "Record details"
+                }
+              },
+              {
+                "id": "detail-meta-11",
+                "component": "Stack",
+                "layout": {
+                  "type": "stack",
+                  "gapToken": "cluster-tight"
+                },
+                "style": {
+                  "spacingToken": "inset-default"
+                },
+                "children": [
+                  {
+                    "id": "slot-metadata-12",
+                    "component": "Stack",
+                    "meta": {
+                      "intent": "slot:metadata",
+                      "label": "metadata"
+                    },
+                    "children": [
+                      {
+                        "id": "ve-metadata-28",
+                        "component": "ClassificationPanel",
+                        "props": {
+                          "categoriesField": "categories",
+                          "tagsField": "tags",
+                          "metadataField": "classification_metadata",
+                          "modeParameter": "classification_mode"
+                        },
+                        "children": [
+                          {
+                            "id": "ve-metadata-28-primary_category_id-read-field",
+                            "component": "Stack",
+                            "children": [
+                              {
+                                "id": "ve-metadata-28-primary_category_id-label",
+                                "component": "Text",
+                                "props": {
+                                  "as": "strong",
+                                  "content": "Primary category id"
+                                }
+                              },
+                              {
+                                "id": "ve-metadata-28-primary_category_id-value",
+                                "meta": {
+                                  "intent": "read-only-field"
+                                },
+                                "component": "Text",
+                                "props": {
+                                  "field": "primary_category_id"
+                                }
+                              }
+                            ]
+                          },
+                          {
+                            "id": "ve-metadata-28-tags-read-field",
+                            "component": "Stack",
+                            "children": [
+                              {
+                                "id": "ve-metadata-28-tags-label",
+                                "component": "Text",
+                                "props": {
+                                  "as": "strong",
+                                  "content": "Tags"
+                                }
+                              },
+                              {
+                                "id": "ve-metadata-28-tags-value",
+                                "meta": {
+                                  "intent": "read-only-field"
+                                },
+                                "component": "Text",
+                                "props": {
+                                  "field": "tags"
+                                }
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ],
+                    "layout": {
+                      "type": "stack",
+                      "gapToken": "cluster-default"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "bindings": {
+          "onEdit": "handleEdit",
+          "onDelete": "handleDelete",
+          "onViewTimeline": "handleViewTimeline"
+        },
+        "meta": {
+          "label": "Decision"
+        }
+      }
+    ],
+    "objectSchema": {
+      "supersession_status": {
+        "type": "string",
+        "required": true,
+        "default": "active",
+        "description": "Whether this record still stands. Named apart from Stateful's `status` so an object can carry\nboth a lifecycle and a supersession lineage.\n",
+        "semanticType": "lifecycle.supersession.state"
+      },
+      "superseded_by": {
+        "type": "string",
+        "required": false,
+        "description": "Identifier of the record that replaced this one. Present when the store records the forward\npointer. Absent means not replaced, or not known — the two are distinguished by\nsupersession_status, never by the pointer alone.\n",
+        "semanticType": "lifecycle.supersession.replacement"
+      },
+      "supersedes": {
+        "type": "string",
+        "required": false,
+        "description": "Identifier of the record this one replaced. Present when the store records the backward\npointer. Never inferred from ordering.\n",
+        "semanticType": "lifecycle.supersession.replaced"
+      },
+      "superseded_at": {
+        "type": "datetime?",
+        "required": false,
+        "description": "When the replacement happened, when the store records it. CMOS does not, so a Decision leaves\nit absent rather than borrowing the replacement's creation time.\n",
+        "semanticType": "lifecycle.supersession.timestamp"
+      },
+      "supersession_reason": {
+        "type": "string",
+        "required": false,
+        "description": "Why the record was replaced, when the store carries a reason.",
+        "semanticType": "lifecycle.supersession.reason"
+      },
+      "created_at": {
+        "type": "datetime",
+        "required": true,
+        "description": "Timestamp recording when the entity was first created.",
+        "semanticType": "audit.created_at"
+      },
+      "updated_at": {
+        "type": "datetime",
+        "required": false,
+        "description": "Timestamp for the most recent modification, when available.",
+        "semanticType": "audit.updated_at"
+      },
+      "last_event": {
+        "type": "string",
+        "required": true,
+        "description": "Lifecycle event associated with the most recent timestamp mutation.",
+        "enum": [
+          "captured"
+        ],
+        "semanticType": "audit.event.type"
+      },
+      "last_event_at": {
+        "type": "datetime",
+        "required": false,
+        "description": "Timestamp for the lifecycle event captured in last_event.",
+        "semanticType": "audit.event.timestamp"
+      },
+      "classification_metadata": {
+        "type": "ClassificationMetadata",
+        "required": true,
+        "description": "Operational metadata describing mode, storage model, governance rules, and audit timestamps.\n",
+        "semanticType": "classification.metadata"
+      },
+      "categories": {
+        "type": "CategoryNode[]",
+        "required": false,
+        "default": [],
+        "description": "Ordered taxonomy nodes scoped to the object.",
+        "semanticType": "classification.categories"
+      },
+      "primary_category_id": {
+        "type": "string",
+        "required": false,
+        "description": "Identifier of the canonical taxonomy node.",
+        "semanticType": "classification.primary"
+      },
+      "primary_category_path": {
+        "type": "string",
+        "required": false,
+        "description": "Human-readable breadcrumb path (Electronics > Mobile > Android)."
+      },
+      "tags": {
+        "type": "Tag[]",
+        "required": false,
+        "default": [],
+        "description": "Canonical tag collection after synonym collapse.",
+        "semanticType": "classification.tags"
+      },
+      "tag_count": {
+        "type": "number",
+        "required": false,
+        "default": 0,
+        "description": "Number of canonical tags assigned to the object."
+      },
+      "tag_preview": {
+        "type": "string",
+        "required": false,
+        "description": "Denormalized comma-delimited preview for list renders."
+      },
+      "searchQuery": {
+        "type": "string",
+        "required": false,
+        "default": "",
+        "description": "The current search query string entered by the user.",
+        "semanticType": "input.search.query"
+      },
+      "searchActive": {
+        "type": "boolean",
+        "required": false,
+        "default": false,
+        "description": "Whether the search input is currently focused or has a non-empty query.",
+        "semanticType": "state.search.active"
+      },
+      "filters": {
+        "type": "object[]",
+        "required": false,
+        "default": [],
+        "description": "Array of available filter descriptors. Each entry defines a filterable dimension:\n  - field: string (the schema field to filter on)\n  - label: string (display label)\n  - type: \"select\" | \"multi-select\" | \"range\" | \"boolean\" | \"date-range\"\n  - options: array of { value, label } for select/multi-select types\n",
+        "semanticType": "input.filter.descriptors"
+      },
+      "activeFilters": {
+        "type": "object[]",
+        "required": false,
+        "default": [],
+        "description": "Array of currently applied filter values:\n  - field: string (matches a filter descriptor field)\n  - operator: \"eq\" | \"in\" | \"range\" | \"gt\" | \"lt\" | \"between\"\n  - value: unknown (the selected filter value or values)\n",
+        "semanticType": "state.filter.active"
+      },
+      "filterCount": {
+        "type": "number",
+        "required": true,
+        "default": 0,
+        "description": "Computed count of currently active filters.",
+        "semanticType": "metric.filter.count"
+      },
+      "page": {
+        "type": "number",
+        "required": true,
+        "default": 1,
+        "description": "Current page number (1-based).",
+        "semanticType": "state.pagination.page"
+      },
+      "pageSize": {
+        "type": "number",
+        "required": true,
+        "default": 25,
+        "description": "Number of items displayed per page.",
+        "semanticType": "state.pagination.pageSize"
+      },
+      "totalItems": {
+        "type": "number",
+        "required": false,
+        "default": 0,
+        "description": "Total number of items across all pages. Used to compute total page count.",
+        "semanticType": "metric.pagination.totalItems"
+      },
+      "totalPages": {
+        "type": "number",
+        "required": false,
+        "default": 0,
+        "description": "Computed total number of pages (ceil(totalItems / pageSize)).",
+        "semanticType": "metric.pagination.totalPages"
+      },
+      "decision_id": {
+        "type": "string",
+        "required": true,
+        "description": "The record's own identifier. CMOS assigns an integer; the object declares a string so the same shape carries another store's identifiers without coercion.",
+        "semanticType": "delivery.decision.id"
+      },
+      "decision_text": {
+        "type": "string",
+        "required": true,
+        "description": "The decision as it was written. The longest free text this registry carries: 61 to 8,418 characters in the live store, with 197 of 1,933 rows over 2,000, so every context that shows it must stay readable at 390 without hiding meaning.",
+        "semanticType": "delivery.decision.text"
+      },
+      "sprint_id": {
+        "type": "string",
+        "required": false,
+        "description": "The sprint the decision was taken in. Every non-null value in the live store resolves against a sprint, none dangling.",
+        "semanticType": "delivery.decision.sprint_id"
+      },
+      "mission_id": {
+        "type": "string",
+        "required": false,
+        "description": "The mission that captured it, as CMOS stores it. Recorded loosely — often a bare \"m02\" rather than a fully qualified \"s203-m02\" — so it is shown as a label and never as a resolved link.",
+        "semanticType": "delivery.decision.mission_id"
+      },
+      "session_id": {
+        "type": "string",
+        "required": false,
+        "description": "The session that recorded the decision. Null on 838 of 1,933 rows.",
+        "semanticType": "delivery.decision.session_id"
+      },
+      "project_id": {
+        "type": "string",
+        "required": true,
+        "description": "The project the decision belongs to. A slug such as \"forge\", never a uuid.",
+        "semanticType": "delivery.decision.project_id"
+      },
+      "project_domain": {
+        "type": "string",
+        "required": false,
+        "description": "Optional area within the project. Sparse — null on 1,850 of 1,933 rows.",
+        "semanticType": "delivery.decision.project_domain"
+      },
+      "evidence": {
+        "type": "object[]",
+        "required": false,
+        "description": "What the decision cites, as {type, id} references. Sparse (null on 1,923 rows) but real, and the rows a preview shows beside a design.",
+        "semanticType": "delivery.decision.evidence"
+      }
+    }
+  },
+  "schemaRef": "compose-e82f8c5c",
+  "schemaRefCreatedAt": "2026-09-18T09:48:49.396Z",
+  "schemaRefExpiresAt": "2026-09-18T10:18:49.396Z",
+  "compositionId": "cmp-02f0117fa655",
+  "version": 1,
+  "parentVersion": null,
+  "operation": "compose",
+  "head": null,
+  "selections": [
+    {
+      "slotName": "tab-0",
+      "intent": "metadata-display",
+      "selectedComponent": "StatusBadge",
+      "confidence": 0.95,
+      "confidenceLevel": "high",
+      "explanation": "StatusBadge leads slot \"tab-0\" because view_extension placement. Confidence is high (0.95).",
+      "candidates": [
+        {
+          "name": "StatusBadge",
+          "score": 0.95,
+          "reason": "view_extension placement"
+        }
+      ],
+      "placedComponents": [
+        "StatusBadge"
+      ]
+    },
+    {
+      "slotName": "tab-1",
+      "intent": "metadata-display",
+      "selectedComponent": "Text",
+      "confidence": 0.95,
+      "confidenceLevel": "high",
+      "explanation": "Text leads slot \"tab-1\" because view_extension placement. Confidence is high (0.95).",
+      "candidates": [
+        {
+          "name": "Text",
+          "score": 0.95,
+          "reason": "view_extension placement"
+        }
+      ],
+      "placedComponents": [
+        "Text"
+      ]
+    },
+    {
+      "slotName": "tab-2",
+      "intent": "data-display",
+      "selectedComponent": "Text",
+      "confidence": 0.95,
+      "confidenceLevel": "high",
+      "explanation": "Text leads slot \"tab-2\" because view_extension placement. Confidence is high (0.95).",
+      "candidates": [
+        {
+          "name": "Text",
+          "score": 0.95,
+          "reason": "view_extension placement"
+        }
+      ],
+      "placedComponents": [
+        "Text"
+      ]
+    },
+    {
+      "slotName": "tab-3",
+      "intent": "data-display",
+      "selectedComponent": "Text",
+      "confidence": 0.95,
+      "confidenceLevel": "high",
+      "explanation": "Text leads slot \"tab-3\" because view_extension placement. Confidence is high (0.95).",
+      "candidates": [
+        {
+          "name": "Text",
+          "score": 0.95,
+          "reason": "view_extension placement"
+        }
+      ],
+      "placedComponents": [
+        "Text"
+      ]
+    },
+    {
+      "slotName": "metadata",
+      "intent": "metadata-display",
+      "selectedComponent": "ClassificationPanel",
+      "confidence": 0.95,
+      "confidenceLevel": "high",
+      "explanation": "ClassificationPanel leads slot \"metadata\" because view_extension placement. The slot also renders FilterPanel after it, in that order. Confidence is high (0.95).",
+      "candidates": [
+        {
+          "name": "ClassificationPanel",
+          "score": 0.95,
+          "reason": "view_extension placement"
+        }
+      ],
+      "placedComponents": [
+        "ClassificationPanel",
+        "FilterPanel"
+      ]
+    },
+    {
+      "slotName": "header",
+      "intent": "page-header",
+      "selectedComponent": "SearchInput",
+      "confidence": 0.95,
+      "confidenceLevel": "high",
+      "explanation": "SearchInput leads slot \"header\" because view_extension placement. Confidence is high (0.95).",
+      "candidates": [
+        {
+          "name": "SearchInput",
+          "score": 0.95,
+          "reason": "view_extension placement"
+        }
+      ],
+      "placedComponents": [
+        "SearchInput"
+      ]
+    },
+    {
+      "slotName": "tab-4",
+      "intent": "data-display",
+      "selectedComponent": "Card",
+      "confidence": 0.94,
+      "confidenceLevel": "high",
+      "explanation": "Card was selected for slot \"tab-4\" because preferred for \"data-display\" (rank 1); 2 tag match(es); 2 context match(es); 1 region match(es); position affinity: Card fits well in tab. Confidence is high (0.94).",
+      "candidates": [
+        {
+          "name": "Card",
+          "reason": "preferred for \"data-display\" (rank 1); 2 tag match(es); 2 context match(es); 1 region match(es); position affinity: Card fits well in tab",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 1
+        },
+        {
+          "name": "Table",
+          "reason": "preferred for \"data-display\" (rank 2); 1 tag match(es); tag match (data); 2 context match(es); 1 region match(es); position affinity: Table fits well in tab",
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.98
+        },
+        {
+          "name": "Stack",
+          "reason": "preferred for \"data-display\" (rank 3); 2 context match(es); 1 region match(es); position affinity: Stack fits well in tab",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.66
+        }
+      ]
+    },
+    {
+      "slotName": "tab-5",
+      "intent": "metadata-display",
+      "selectedComponent": "Stack",
+      "confidence": 0.71,
+      "confidenceLevel": "medium",
+      "explanation": "Stack was selected for slot \"tab-5\" because preferred for \"metadata-display\" (rank 1); 1 context match(es); 2 region match(es); position affinity: Stack fits well in tab. Confidence is medium (0.71).",
+      "candidates": [
+        {
+          "name": "Stack",
+          "reason": "preferred for \"metadata-display\" (rank 1); 1 context match(es); 2 region match(es); position affinity: Stack fits well in tab",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 1
+        },
+        {
+          "name": "Text",
+          "reason": "preferred for \"metadata-display\" (rank 2); 1 context match(es); 2 region match(es); position affinity: Text fits well in tab",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.9
+        },
+        {
+          "name": "Card",
+          "reason": "preferred for \"metadata-display\" (rank 3); 1 context match(es); position affinity: Card fits well in tab",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.61
+        }
+      ]
+    },
+    {
+      "slotName": "tab-6",
+      "intent": "data-display",
+      "selectedComponent": "Card",
+      "confidence": 0.94,
+      "confidenceLevel": "high",
+      "explanation": "Card was selected for slot \"tab-6\" because preferred for \"data-display\" (rank 1); 2 tag match(es); 2 context match(es); 1 region match(es); position affinity: Card fits well in tab. Confidence is high (0.94).",
+      "candidates": [
+        {
+          "name": "Card",
+          "reason": "preferred for \"data-display\" (rank 1); 2 tag match(es); 2 context match(es); 1 region match(es); position affinity: Card fits well in tab",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 1
+        },
+        {
+          "name": "Table",
+          "reason": "preferred for \"data-display\" (rank 2); 1 tag match(es); tag match (data); 2 context match(es); 1 region match(es); position affinity: Table fits well in tab",
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.98
+        },
+        {
+          "name": "Stack",
+          "reason": "preferred for \"data-display\" (rank 3); 2 context match(es); 1 region match(es); position affinity: Stack fits well in tab",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.66
+        }
+      ]
+    },
+    {
+      "slotName": "tab-7",
+      "intent": "data-display",
+      "selectedComponent": "Card",
+      "confidence": 0.94,
+      "confidenceLevel": "high",
+      "explanation": "Card was selected for slot \"tab-7\" because preferred for \"data-display\" (rank 1); 2 tag match(es); 2 context match(es); 1 region match(es); position affinity: Card fits well in tab. Confidence is high (0.94).",
+      "candidates": [
+        {
+          "name": "Card",
+          "reason": "preferred for \"data-display\" (rank 1); 2 tag match(es); 2 context match(es); 1 region match(es); position affinity: Card fits well in tab",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 1
+        },
+        {
+          "name": "Table",
+          "reason": "preferred for \"data-display\" (rank 2); 1 tag match(es); tag match (data); 2 context match(es); 1 region match(es); position affinity: Table fits well in tab",
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.98
+        },
+        {
+          "name": "Stack",
+          "reason": "preferred for \"data-display\" (rank 3); 2 context match(es); 1 region match(es); position affinity: Stack fits well in tab",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.66
+        }
+      ]
+    }
+  ],
+  "validation": {
+    "status": "ok",
+    "errors": [],
+    "warnings": []
+  },
+  "warnings": [
+    {
+      "code": "OODS-V121",
+      "message": "Object 'Decision' has maturity 'alpha' — composed output may change.",
+      "hint": "Consider using stable objects for production compositions."
+    },
+    {
+      "code": "OODS-V120",
+      "message": "No matching slot for position \"bottom\" from lifecycle/Timestampable/AuditTimeline."
+    }
+  ],
+  "objectUsed": {
+    "name": "Decision",
+    "version": "0.1.0",
+    "traits": [
+      "lifecycle/Supersedable",
+      "lifecycle/Timestampable",
+      "core/Classifiable",
+      "behavioral/Searchable",
+      "behavioral/Filterable",
+      "behavioral/Pageable"
+    ],
+    "fieldsComposed": 33,
+    "viewExtensionsApplied": {
+      "list": 6,
+      "card": 1,
+      "detail": 8,
+      "timeline": 1,
+      "form": 1
+    }
+  },
+  "meta": {
+    "intentParsed": "Decision detail view",
+    "layoutDetected": "context-inferred: detail (from context=\"detail\")",
+    "slotCount": 10,
+    "nodeCount": 57,
+    "intentSynthetic": true,
+    "warnings": [
+      "Object 'Decision' has maturity 'alpha' — composed output may change.",
+      "No matching slot for position \"bottom\" from lifecycle/Timestampable/AuditTimeline."
+    ],
+    "intelligence": {
+      "fieldsExpanded": true,
+      "slotsExpanded": 5,
+      "expansionReason": "Expanded from 3 to 8 tabs for 33 fields",
+      "patternsApplied": 1,
+      "patternGroups": [
+        {
+          "slotName": "tab-0",
+          "patternId": "status-timeline",
+          "compositeComponent": "StatusTimeline",
+          "matchedFields": [
+            "supersession_status",
+            "updated_at"
+          ],
+          "confidence": 1
+        }
+      ],
+      "positionAffinityUsed": true,
+      "fieldAffinityUsed": true,
+      "compositionConfidence": 0.92
+    }
+  }
+}

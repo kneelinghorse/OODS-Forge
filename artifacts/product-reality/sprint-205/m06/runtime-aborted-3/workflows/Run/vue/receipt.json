@@ -1,0 +1,185 @@
+{
+  "framework": "vue",
+  "artifactHash": "sha256:039ac340a7638f1d0dded7e108462ad8c1ec7c8fa70c7c6bd602577a3b118455",
+  "gates": [
+    {
+      "name": "fresh-exact-tarball-install",
+      "status": "passed",
+      "detail": {
+        "isolation": {
+          "outsidePnpmWorkspace": true,
+          "freshNodeModules": true,
+          "emptyVerifierOwnedNpmConfiguration": true,
+          "installScripts": false,
+          "localPackagesFromBuiltTarballsOnly": true,
+          "workspaceAliases": false,
+          "workspaceSymlinks": false,
+          "repositorySourceImports": false,
+          "inheritedNodeModules": false,
+          "allResolvedPathsOutsideRepository": true,
+          "installed": [
+            {
+              "name": "@oods/tokens",
+              "version": "0.1.0",
+              "consumerRelative": "node_modules/@oods/tokens"
+            },
+            {
+              "name": "@oods/component-contracts",
+              "version": "0.1.0",
+              "consumerRelative": "node_modules/@oods/component-contracts"
+            },
+            {
+              "name": "@oods/component-styles",
+              "version": "0.1.0",
+              "consumerRelative": "node_modules/@oods/component-styles"
+            },
+            {
+              "name": "@oods/components-vue",
+              "version": "0.1.0",
+              "consumerRelative": "node_modules/@oods/components-vue"
+            }
+          ]
+        },
+        "resolutions": [
+          {
+            "specifier": "@oods/component-contracts",
+            "consumerRelative": "node_modules/@oods/component-contracts/dist/index.js"
+          },
+          {
+            "specifier": "@oods/component-styles/css",
+            "consumerRelative": "node_modules/@oods/component-styles/dist/components.css"
+          },
+          {
+            "specifier": "@oods/components-vue",
+            "consumerRelative": "node_modules/@oods/components-vue/dist/index.js"
+          },
+          {
+            "specifier": "@vitejs/plugin-vue",
+            "consumerRelative": "node_modules/@vitejs/plugin-vue/dist/index.mjs"
+          },
+          {
+            "specifier": "@vue/server-renderer",
+            "consumerRelative": "node_modules/@vue/server-renderer/index.js"
+          },
+          {
+            "specifier": "vue",
+            "consumerRelative": "node_modules/vue/index.mjs"
+          }
+        ]
+      }
+    },
+    {
+      "name": "strict-typecheck",
+      "status": "passed",
+      "detail": {
+        "exitCode": 0,
+        "log": "vue/logs/typecheck.log"
+      }
+    },
+    {
+      "name": "production-build",
+      "status": "passed",
+      "detail": {
+        "exitCode": 0,
+        "log": "vue/logs/build.log"
+      }
+    },
+    {
+      "name": "server-render",
+      "status": "passed",
+      "detail": {
+        "htmlHash": "sha256:26647d074e22db060e6d0a739ea7dd87084935774985e2428f394c8dac342e4b",
+        "generatedEntry": "src/ssr.ts"
+      }
+    },
+    {
+      "name": "mount",
+      "status": "passed",
+      "detail": {
+        "screenCount": 1,
+        "errors": []
+      }
+    },
+    {
+      "name": "hydration",
+      "status": "passed",
+      "detail": {
+        "preservesSsrRoot": true,
+        "errors": []
+      }
+    },
+    {
+      "name": "shared-css-resolution",
+      "status": "passed",
+      "detail": {
+        "files": [
+          "index-DK4GU4a-.css"
+        ],
+        "bytes": 168140,
+        "sha256": "sha256:a4a0f84d0e96ed2b1a6b4c6490e6f68ff96a5d4b14b0e5bb3546552bd224499a",
+        "core": true,
+        "ported": true,
+        "requiresPorted": true,
+        "tokens": true
+      }
+    },
+    {
+      "name": "interaction-evidence",
+      "status": "failed",
+      "error": "Every declared flow obligation must execute in order\n+ actual - expected\n\n  [\n    'ten-sample-records',\n    'detail-navigation',\n    'edit-seeded-values',\n    'save-record-field',\n-   'timeline-navigation-and-history'\n  ]\n"
+    }
+  ],
+  "consumerAuthoredComponents": 0,
+  "consumerAuthoredActions": 0,
+  "generation": "current-in-run-public-output",
+  "consumerRoot": "/var/folders/gd/rty3217130vdbr9_q713nvg80000gn/T/oods-s188-app-vue-DROM4N",
+  "browserErrors": [],
+  "accessibilityTree": "vue/accessibility-tree.txt",
+  "flow": [
+    {
+      "name": "ten-sample-records",
+      "status": "passed",
+      "detail": {
+        "active": [
+          "run-002",
+          "run-003",
+          "run-004",
+          "run-008",
+          "run-009",
+          "run-010",
+          "run-001",
+          "run-007",
+          "run-005",
+          "run-006"
+        ],
+        "archived": [],
+        "total": 10,
+        "disposition": "ten active records; object has no Archivable trait"
+      }
+    },
+    {
+      "name": "detail-navigation",
+      "status": "passed",
+      "detail": {
+        "id": "run-003",
+        "heading": "tracelab-production",
+        "mounts": []
+      }
+    },
+    {
+      "name": "edit-seeded-values",
+      "status": "passed",
+      "detail": {
+        "id": "run-003",
+        "field": "target_name",
+        "plan": "tracelab-production"
+      }
+    },
+    {
+      "name": "save-record-field",
+      "status": "failed",
+      "error": "Expected values to be strictly equal:\n+ actual - expected\n\n+ 'Team annual'\n- 'run-003'\n"
+    }
+  ],
+  "error": "AssertionError [ERR_ASSERTION]: Every declared flow obligation must execute in order\n+ actual - expected\n\n  [\n    'ten-sample-records',\n    'detail-navigation',\n    'edit-seeded-values',\n    'save-record-field',\n-   'timeline-navigation-and-history'\n  ]\n\n    at assertWorkflowFlow (/Users/systemsystems/portfolio/Design-Tools/OODS-Forge/.worktrees/s205/scripts/product-reality/s188-m03-app-consumers.ts:112:10)\n    at <anonymous> (/Users/systemsystems/portfolio/Design-Tools/OODS-Forge/.worktrees/s205/scripts/product-reality/s188-m03-app-consumers.ts:617:11)\n    at async withStaticServer (/Users/systemsystems/portfolio/Design-Tools/OODS-Forge/.worktrees/s205/scripts/product-reality/s184-m06-live-consumers.ts:1106:12)\n    at async runAppConsumers (/Users/systemsystems/portfolio/Design-Tools/OODS-Forge/.worktrees/s205/scripts/product-reality/s188-m03-app-consumers.ts:582:9)\n    at async runWorkflowCells (/Users/systemsystems/portfolio/Design-Tools/OODS-Forge/.worktrees/s205/scripts/product-reality/s193-workflow-cells.ts:20:14)\n    at async <anonymous> (/Users/systemsystems/portfolio/Design-Tools/OODS-Forge/.worktrees/s205/scripts/product-reality/s193-runtime-cells.ts:437:5)"
+}

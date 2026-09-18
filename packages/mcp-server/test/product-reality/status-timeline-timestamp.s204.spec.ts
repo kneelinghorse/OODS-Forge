@@ -35,13 +35,18 @@ const bare = (type: string) => type.replace(/\?$/, '');
 describe('s204-m02 (c) — a status timeline pairs a status with a real moment in time', () => {
   it('never labels a row "Allowed transitions" on any detail in the registry', async () => {
     const offenders: string[] = [];
-    for (const object of listObjects().map(entry => entry.name).sort()) {
+    let composedCount = 0;
+    for (const object of listObjects()) {
       for (const context of ['detail', 'workflow'] as const) {
         let schema: UiSchema | undefined;
         try { schema = (await compose({ object, context })).schema; } catch { continue; }
+        if (schema) composedCount += 1;
         if (nodes(schema).some(isAllowedTransitionsRow)) offenders.push(`${object}/${context}`);
       }
     }
+    // s205-m01: this loop iterated `listObjects().map(entry => entry.name)` — undefined for every entry, because
+    // listObjects returns names — so it composed nothing and passed vacuously. The count keeps it honest.
+    expect(composedCount).toBeGreaterThanOrEqual(listObjects().length);
     expect(offenders).toEqual([]);
   });
 
@@ -50,10 +55,13 @@ describe('s204-m02 (c) — a status timeline pairs a status with a real moment i
     // a `transition_note: string` tomorrow must not be able to reintroduce the defect under a name
     // this test does not know about.
     const offenders: string[] = [];
-    for (const object of listObjects().map(entry => entry.name).sort()) {
+    let composedCount = 0;
+    for (const object of listObjects()) {
       for (const context of ['detail', 'workflow', 'dashboard'] as const) {
         let composed: Awaited<ReturnType<typeof compose>>;
-        try { composed = await compose({ object, context }); } catch { continue; }
+        // `dashboard` is a layout, not a context (s205-m01): passed as a context it never composed a dashboard.
+        try { composed = await compose(context === 'dashboard' ? { object, layout: 'dashboard' } : { object, context }); } catch { continue; }
+        if (composed.schema) composedCount += 1;
         const objectSchema = composed.schema?.objectSchema ?? {};
         for (const node of nodes(composed.schema)) {
           if (!node.id?.includes('status-timeline')) continue;
@@ -70,6 +78,7 @@ describe('s204-m02 (c) — a status timeline pairs a status with a real moment i
         }
       }
     }
+    expect(composedCount).toBeGreaterThanOrEqual(2 * listObjects().length);
     expect(offenders).toEqual([]);
   });
 

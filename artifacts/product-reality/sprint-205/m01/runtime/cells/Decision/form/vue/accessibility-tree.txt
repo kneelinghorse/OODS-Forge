@@ -1,0 +1,51 @@
+- main:
+  - heading "Decision form" [level=1]
+  - heading "Details" [level=2]
+  - heading "Supersession reason" [level=2]
+  - text: Consumer supersession reason Category
+  - textbox "Category"
+  - text: Tags
+  - textbox "Tags":
+    - /placeholder: tag-1, tag-2
+  - text: Mode
+  - combobox "Mode":
+    - option "strict" [selected]
+    - option "flexible"
+  - text: Created at
+  - textbox "Created at":
+    - /placeholder: Timestamp recording when the entity was first created.
+    - text: 2026-09-05T12:00
+  - paragraph: Timestamp recording when the entity was first created.
+  - text: Filter Count
+  - spinbutton "Filter Count": "0"
+  - paragraph: Computed count of currently active filters.
+  - text: Supersession status
+  - textbox "Supersession status":
+    - /placeholder: Enter supersession status
+    - text: Consumer supersession status
+  - paragraph: "Whether this record still stands. Named apart from Stateful's `status` so an object can carry both a lifecycle and a supersession lineage."
+  - text: Superseded by
+  - textbox "Superseded by":
+    - /placeholder: Enter superseded by
+    - text: Consumer superseded by
+  - paragraph: Identifier of the record that replaced this one. Present when the store records the forward pointer. Absent means not replaced, or not known — the two are distinguished by supersession_status, never by the pointer alone.
+  - text: Supersedes
+  - textbox "Supersedes":
+    - /placeholder: Enter supersedes
+    - text: Consumer supersedes
+  - paragraph: Identifier of the record this one replaced. Present when the store records the backward pointer. Never inferred from ordering.
+  - text: Last event
+  - combobox "Last event":
+    - option "Captured" [selected]
+  - paragraph: Lifecycle event associated with the most recent timestamp mutation.
+  - text: Primary category id
+  - textbox "Primary category id":
+    - /placeholder: Enter primary category id
+    - text: consumer-primary-category-id
+  - paragraph: Identifier of the canonical taxonomy node.
+  - text: Primary category path
+  - textbox "Primary category path":
+    - /placeholder: Enter primary category path
+    - text: Consumer primary category path
+  - paragraph: Human-readable breadcrumb path (Electronics > Mobile > Android).
+  - button "Save"

@@ -285,6 +285,11 @@
         }
       }
     },
+    "runPath": {
+      "type": "string",
+      "minLength": 1,
+      "description": "A Stage1 run directory on this machine (out/stage1/<suite>/<run-uuid>) whose REAL records this version shows: the run itself for Run, its findings for Finding, its attested artifacts for CapturedArtifact. Forge reads the run only through structuredData.fetch's admitted run-view kinds (run_manifest, a11y_report 2.2.0, report_index 1.0.0, a11y_evidence 1.1.0), every file under the run manifest's sha256 attestation, and never calls Stage1 or writes into the run. A path that is not one Stage1 run is refused with OODS-V212, an artifact outside the admitted contract with OODS-V213, and a composition that is not Run, Finding or CapturedArtifact, or a version already showing a run of a different target, with OODS-V214; each refusal writes nothing. Nothing is proposed, applied or queued: a person reads the run view."
+    },
     "observationRunPath": {
       "type": "string",
       "minLength": 1,

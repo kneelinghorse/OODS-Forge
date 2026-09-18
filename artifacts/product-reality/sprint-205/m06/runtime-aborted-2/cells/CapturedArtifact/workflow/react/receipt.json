@@ -1,0 +1,190 @@
+{
+  "object": "CapturedArtifact",
+  "context": "workflow",
+  "framework": "react",
+  "head": "3949155e71e1ec157e5adef43e8264f386100394",
+  "runId": "98827678-34ce-4c45-a874-649b3cb1fa6e",
+  "status": "fail",
+  "artifactHash": "sha256:5209a3fa98601af607a493c78adc5ee028bbc5adf590c801c22c7aa6e30a7d8f",
+  "components": [
+    "Banner",
+    "Button",
+    "Card",
+    "Checkbox",
+    "DetailHeader",
+    "Input",
+    "PaginationBar",
+    "RelativeTimestamp",
+    "SearchInput",
+    "Select",
+    "Stack",
+    "Tabs",
+    "Text"
+  ],
+  "gates": [
+    {
+      "name": "generation",
+      "status": "pass",
+      "detail": {
+        "artifactHash": "sha256:5209a3fa98601af607a493c78adc5ee028bbc5adf590c801c22c7aa6e30a7d8f",
+        "response": "workflows/CapturedArtifact/react-generation.json"
+      }
+    },
+    {
+      "name": "fresh-exact-tarball-install",
+      "status": "pass",
+      "detail": {
+        "report": "workflows/CapturedArtifact/react/receipt.json",
+        "observation": {
+          "isolation": {
+            "outsidePnpmWorkspace": true,
+            "freshNodeModules": true,
+            "emptyVerifierOwnedNpmConfiguration": true,
+            "installScripts": false,
+            "localPackagesFromBuiltTarballsOnly": true,
+            "workspaceAliases": false,
+            "workspaceSymlinks": false,
+            "repositorySourceImports": false,
+            "inheritedNodeModules": false,
+            "allResolvedPathsOutsideRepository": true,
+            "installed": [
+              {
+                "name": "@oods/tokens",
+                "version": "0.1.0",
+                "consumerRelative": "node_modules/@oods/tokens"
+              },
+              {
+                "name": "@oods/component-contracts",
+                "version": "0.1.0",
+                "consumerRelative": "node_modules/@oods/component-contracts"
+              },
+              {
+                "name": "@oods/component-styles",
+                "version": "0.1.0",
+                "consumerRelative": "node_modules/@oods/component-styles"
+              },
+              {
+                "name": "@oods/components-react",
+                "version": "0.1.0",
+                "consumerRelative": "node_modules/@oods/components-react"
+              }
+            ]
+          },
+          "resolutions": [
+            {
+              "specifier": "@oods/component-contracts",
+              "consumerRelative": "node_modules/@oods/component-contracts/dist/index.js"
+            },
+            {
+              "specifier": "@oods/component-styles/css",
+              "consumerRelative": "node_modules/@oods/component-styles/dist/components.css"
+            },
+            {
+              "specifier": "@oods/components-react",
+              "consumerRelative": "node_modules/@oods/components-react/dist/index.js"
+            },
+            {
+              "specifier": "react",
+              "consumerRelative": "node_modules/react/index.js"
+            },
+            {
+              "specifier": "react-dom/client",
+              "consumerRelative": "node_modules/react-dom/client.js"
+            },
+            {
+              "specifier": "react-dom/server",
+              "consumerRelative": "node_modules/react-dom/server.node.js"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "strict-typecheck",
+      "status": "pass",
+      "detail": {
+        "report": "workflows/CapturedArtifact/react/receipt.json",
+        "observation": {
+          "exitCode": 0,
+          "log": "react/logs/typecheck.log"
+        }
+      }
+    },
+    {
+      "name": "production-build",
+      "status": "pass",
+      "detail": {
+        "report": "workflows/CapturedArtifact/react/receipt.json",
+        "observation": {
+          "exitCode": 0,
+          "log": "react/logs/build.log"
+        }
+      }
+    },
+    {
+      "name": "server-render",
+      "status": "pass",
+      "detail": {
+        "report": "workflows/CapturedArtifact/react/receipt.json",
+        "observation": {
+          "htmlHash": "sha256:8da10c37870ec0f43430cd2cdd4a42ba2d97c9a5e6f554b931599b82d8d09c25",
+          "generatedEntry": "src/ssr.tsx"
+        }
+      }
+    },
+    {
+      "name": "mount",
+      "status": "pass",
+      "detail": {
+        "report": "workflows/CapturedArtifact/react/receipt.json",
+        "observation": {
+          "screenCount": 1,
+          "errors": []
+        }
+      }
+    },
+    {
+      "name": "hydration",
+      "status": "pass",
+      "detail": {
+        "report": "workflows/CapturedArtifact/react/receipt.json",
+        "observation": {
+          "preservesSsrRoot": true,
+          "errors": []
+        }
+      }
+    },
+    {
+      "name": "shared-css-resolution",
+      "status": "pass",
+      "detail": {
+        "report": "workflows/CapturedArtifact/react/receipt.json",
+        "observation": {
+          "files": [
+            "index-DK4GU4a-.css"
+          ],
+          "bytes": 168140,
+          "sha256": "sha256:a4a0f84d0e96ed2b1a6b4c6490e6f68ff96a5d4b14b0e5bb3546552bd224499a",
+          "core": true,
+          "ported": true,
+          "requiresPorted": true,
+          "tokens": true
+        }
+      }
+    },
+    {
+      "name": "interaction-evidence",
+      "status": "fail",
+      "detail": {
+        "report": "workflows/CapturedArtifact/react/receipt.json"
+      },
+      "reason": "Every declared flow obligation must execute in order\n+ actual - expected\n\n  [\n    'ten-sample-records',\n    'detail-navigation',\n-   'edit-seeded-values',\n-   'save-record-field',\n-   'timeline-navigation-and-history'\n  ]\n"
+    },
+    {
+      "name": "workflow-proof",
+      "status": "fail",
+      "reason": "AssertionError [ERR_ASSERTION]: Every established workflow gate must pass"
+    }
+  ],
+  "report": "cells/CapturedArtifact/workflow/react/receipt.json"
+}

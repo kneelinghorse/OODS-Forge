@@ -1,0 +1,47 @@
+{
+  "schemaVersion": "1.0.0",
+  "kind": "on-demand-gate-run",
+  "startedAt": "2026-09-18T10:39:20.709Z",
+  "endedAt": "2026-09-18T10:42:07.762Z",
+  "durationMs": 167051,
+  "rosterPath": "scripts/product-reality/on-demand-gates.json",
+  "rosterGateIds": [
+    "runtime-gate-bites",
+    "scale-determinism"
+  ],
+  "selectedGateIds": [
+    "runtime-gate-bites",
+    "scale-determinism"
+  ],
+  "host": {
+    "hostname": "Mac",
+    "cpuCount": 8,
+    "loadAverage": [
+      3.490234375,
+      4.89697265625,
+      7.93701171875
+    ]
+  },
+  "gates": [
+    {
+      "id": "runtime-gate-bites",
+      "executedCommand": "pnpm --filter @oods/mcp-server run test:gates",
+      "specFile": "packages/mcp-server/test/product-reality/m06-gate-bites.s184.spec.ts",
+      "exitCode": 0,
+      "durationMs": 162633,
+      "stdout": "\n> @oods/mcp-server@0.1.0 test:gates /Users/systemsystems/portfolio/Design-Tools/OODS-Forge/.worktrees/s205/packages/mcp-server\n> vitest run --config vitest.gates.config.ts\n\n\n RUN  v3.2.4 /Users/systemsystems/portfolio/Design-Tools/OODS-Forge/.worktrees/s205/packages/mcp-server\n\n ✓ test/product-reality/m06-gate-bites.s184.spec.ts (1 test) 160279ms\n   ✓ Sprint 184 m06 real consumer gate bites > executes one unique red mutation for every gate on both framework targets  160260ms\n\n Test Files  1 passed (1)\n      Tests  1 passed (1)\n   Start at  05:39:21\n   Duration  162.05s (transform 734ms, setup 12ms, collect 1.61s, tests 160.28s, environment 0ms, prepare 49ms)\n\n",
+      "stderr": ""
+    },
+    {
+      "id": "scale-determinism",
+      "executedCommand": "pnpm --filter @oods/mcp-server run test:scale",
+      "specFile": "packages/mcp-server/test/scale",
+      "exitCode": 0,
+      "durationMs": 4417,
+      "stdout": "\n> @oods/mcp-server@0.1.0 test:scale /Users/systemsystems/portfolio/Design-Tools/OODS-Forge/.worktrees/s205/packages/mcp-server\n> vitest run --config vitest.scale.config.ts\n\n\n RUN  v3.2.4 /Users/systemsystems/portfolio/Design-Tools/OODS-Forge/.worktrees/s205/packages/mcp-server\n\n ✓ test/scale/determinism.spec.ts (9 tests) 20ms\n ✓ test/scale/viz-determinism.spec.ts (42 tests) 141ms\n ✓ test/scale/dashboard-determinism.spec.ts (6 tests) 138ms\n ✓ test/scale/map.apply.scale.spec.ts (5 tests) 3048ms\n   ✓ map.apply at scale (dry-run) > tier=500: dry-run handler returns, diff totals match, registry unchanged  799ms\n   ✓ map.apply at scale (dry-run) > tier=1000: dry-run handler returns, diff totals match, registry unchanged  1678ms\n\n Test Files  4 passed (4)\n      Tests  62 passed (62)\n   Start at  05:42:03\n   Duration  3.85s (transform 553ms, setup 56ms, collect 1.73s, tests 3.35s, environment 0ms, prepare 410ms)\n\n",
+      "stderr": ""
+    }
+  ],
+  "status": "passed",
+  "failedGateIds": []
+}

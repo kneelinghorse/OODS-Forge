@@ -51,10 +51,12 @@ describe('s204-m02 (a) — an unfilled slot placeholder paints nothing, and stay
   // suite holds the invariant where it can actually regress.
   it('leaves no unfilled placeholder that paints a box, on any object, on cards or details', async () => {
     const offenders: string[] = [];
-    for (const object of listObjects().map(entry => entry.name).sort()) {
+    let composedCount = 0;
+    for (const object of listObjects()) {
       for (const context of ['card', 'detail'] as const) {
         let composed: Awaited<ReturnType<typeof compose>>;
         try { composed = await compose({ object, context }); } catch { continue; }
+        if (composed.schema) composedCount += 1;
         for (const node of nodes(composed.schema)) {
           if (isSlot(node) && isBare(node) && node.component === 'Card') {
             offenders.push(`${object}/${context} ${node.meta?.intent}`);
@@ -62,6 +64,9 @@ describe('s204-m02 (a) — an unfilled slot placeholder paints nothing, and stay
         }
       }
     }
+    // s205-m01: this loop iterated `listObjects().map(entry => entry.name)` — undefined for every entry, because
+    // listObjects returns names — so it composed nothing and passed vacuously. The count keeps it honest.
+    expect(composedCount).toBeGreaterThanOrEqual(listObjects().length);
     expect(offenders).toEqual([]);
   }, 45_000);
 

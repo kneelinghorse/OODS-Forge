@@ -25,6 +25,7 @@ export interface ScopedGeneration {
 
 import type { StoredContext } from './preview-context.js';
 import type { StoredObservation } from './preview-observation.js';
+import type { StoredRunView } from './run-view.js';
 
 export interface CompositionVersion {
   recordVersion: typeof COMPOSITION_RECORD_VERSION;
@@ -63,6 +64,8 @@ export interface CompositionVersion {
    * review; see lib/preview-observation.ts.
    */
   observation?: StoredObservation;
+  /** s205-m04: the Stage1 run whose real records this version shows (lib/run-view.ts); its target never changes underneath it. */
+  runView?: StoredRunView;
   /** Attached when a brand or theme switch needs the placed charts rendered for that scope, keyed brand/theme. */
   scopes?: Partial<Record<PreviewScope, ScopedGeneration>>;
 }
@@ -141,7 +144,7 @@ export async function nextVersion(directory: string, compositionId: string, pare
  * Attach derived, deterministic data (artifacts, model, measurements) to an existing version. The
  * schema is asserted unchanged; the file is replaced atomically.
  */
-export async function attachToVersion(directory: string, compositionId: string, version: number, patch: Partial<Pick<CompositionVersion, 'artifacts' | 'model' | 'measurements' | 'scopes' | 'context' | 'observation'>>): Promise<CompositionVersion> {
+export async function attachToVersion(directory: string, compositionId: string, version: number, patch: Partial<Pick<CompositionVersion, 'artifacts' | 'model' | 'measurements' | 'scopes' | 'context' | 'observation' | 'runView'>>): Promise<CompositionVersion> {
   const record = await readVersion(directory, compositionId, version);
   const scopes = { ...(record.scopes ?? {}) } as NonNullable<CompositionVersion['scopes']>;
   for (const [key, generation] of Object.entries(patch.scopes ?? {}) as Array<[PreviewScope, ScopedGeneration]>) {
@@ -150,7 +153,7 @@ export async function attachToVersion(directory: string, compositionId: string, 
   }
   // Context replaces rather than merges: a panel is what one call attached, so a later call supplying
   // fewer items must not leave the earlier ones standing beside a design they were not fetched for.
-  const updated: CompositionVersion = { ...record, ...(patch.model ? { model: patch.model } : {}), artifacts: { ...record.artifacts, ...(patch.artifacts ?? {}) }, measurements: { ...record.measurements, ...(patch.measurements ?? {}) }, ...(Object.keys(scopes).length ? { scopes } : {}), ...(patch.context ? { context: patch.context } : {}), ...(patch.observation ? { observation: patch.observation } : {}) };
+  const updated: CompositionVersion = { ...record, ...(patch.model ? { model: patch.model } : {}), artifacts: { ...record.artifacts, ...(patch.artifacts ?? {}) }, measurements: { ...record.measurements, ...(patch.measurements ?? {}) }, ...(Object.keys(scopes).length ? { scopes } : {}), ...(patch.context ? { context: patch.context } : {}), ...(patch.observation ? { observation: patch.observation } : {}), ...(patch.runView ? { runView: patch.runView } : {}) };
   const file = versionPath(directory, compositionId, version);
   const temporary = `${file}.${process.pid}.tmp`;
   await fsp.writeFile(temporary, JSON.stringify(updated, null, 2) + '\n');

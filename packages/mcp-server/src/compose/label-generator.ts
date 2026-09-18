@@ -12,7 +12,17 @@ import type { ViewExtension } from '../objects/types.js';
 import type { UiElement, UiSchema } from '../schemas/generated.js';
 
 /** Names identify controls; descriptions belong in their separate help text. */
+/**
+ * traits/core/Provenanced (s205-m03): the wording a person reads beside each provenance value. "Provenance method"
+ * says what the field is called; "Obtained by" says what the value means.
+ */
+const PROVENANCE_LABELS: Record<string, string> = {
+  provenance_source: 'Source', provenance_record: 'Record', provenance_locator: 'Read from',
+  provenance_method: 'Obtained by', provenance_at: 'Obtained',
+};
+
 export function fieldLabel(name: string, _description?: string): string {
+  if (PROVENANCE_LABELS[name]) return PROVENANCE_LABELS[name]!;
   const words = name.replace(/([a-z0-9])([A-Z])/g, '$1 $2').replace(/[_-]+/g, ' ');
   return words.charAt(0).toUpperCase() + words.slice(1);
 }

@@ -41,12 +41,44 @@ import { ToolError } from '../errors/tool-error.js';
  * The fast-fail intent above is unchanged: this list still rejects anything outside it, and a future
  * Stage1 bump still lands as a refusal rather than a silent parse.
  */
-const ROLLUP_ALLOWED_SCHEMA_VERSIONS: Record<Stage1RollupKind, string[]> = {
+type RollupKind = 'identity_graph' | 'capability_rollup' | 'object_rollup' | 'drift_report';
+const ROLLUP_ALLOWED_SCHEMA_VERSIONS: Record<RollupKind, string[]> = {
   identity_graph: ['1.1.0', '1.2.0'],
   capability_rollup: ['1.1.0', '1.2.0'],
   object_rollup: ['1.0.0', '1.1.0', '1.2.0'],
   drift_report: ['1.0.0'],
 };
+
+/**
+ * s205-m04 — the run-view kinds, admitted DELIBERATELY (decided at the Sprint 205 lock, #2205, recorded as one
+ * decision in m04). A run view needs four things the rollup contract above does not carry, each measured on run
+ * 6e435ce7 and pinned at exactly the version Stage1 writes today:
+ *
+ *   a11y_report    artifacts/a11y_report.json         schema_version 2.2.0
+ *   report_index   artifacts/report-index.json        schema_version 1.0.0  (payload kind "report_index")
+ *   a11y_evidence  evidence/a11y/a11y_manifest.json    version 1.1.0 — the evidence manifest carries `version`,
+ *                  not schema_version; every per-page axe file it lists is read ONLY after its sha256 equals the
+ *                  run manifest's attestation for that path (41 of 41 on 6e435ce7)
+ *   run_manifest   manifest.json                       UNVERSIONED — Stage1 stamps no schema_version on the run
+ *                  manifest, so it is pinned by the shape the run view reads (run_id, mode, targets[{name,url}],
+ *                  passes[{id,version,status}], environment.timestamp, hashes). A manifest that grows a
+ *                  schema_version is refused until a decision admits that version: fast-fail, never a silent parse.
+ *
+ * Not admitted: entity_catalog, style_fingerprint and stylesheet_rules carry no schema_version at all and no run
+ * view needs them; Stage1 would have to stamp them first. The rollup kinds above are unchanged.
+ */
+const RUN_VIEW_KINDS = {
+  a11y_report: { file: 'artifacts/a11y_report.json', payloadKind: 'a11y_report', versionField: 'schema_version', accepted: ['2.2.0'] },
+  report_index: { file: 'artifacts/report-index.json', payloadKind: 'report_index', versionField: 'schema_version', accepted: ['1.0.0'] },
+  a11y_evidence: { file: 'evidence/a11y/a11y_manifest.json', payloadKind: 'a11y_evidence_manifest', versionField: 'version', accepted: ['1.1.0'] },
+  run_manifest: { file: 'manifest.json', payloadKind: null, versionField: 'schema_version', accepted: [] as string[] },
+} as const;
+export type RunViewKind = keyof typeof RUN_VIEW_KINDS;
+export const RUN_VIEW_ADMITTED: Readonly<Record<RunViewKind, readonly string[]>> = {
+  a11y_report: RUN_VIEW_KINDS.a11y_report.accepted, report_index: RUN_VIEW_KINDS.report_index.accepted,
+  a11y_evidence: RUN_VIEW_KINDS.a11y_evidence.accepted, run_manifest: ['unversioned (shape-pinned)'],
+};
+const isRunViewKind = (kind: string): kind is RunViewKind => Object.hasOwn(RUN_VIEW_KINDS, kind);
 
 type ManifestArtifact = {
   name?: string;
@@ -331,7 +363,7 @@ function validateRollupPayload(
     );
   }
 
-  const allowed = ROLLUP_ALLOWED_SCHEMA_VERSIONS[kind];
+  const allowed = ROLLUP_ALLOWED_SCHEMA_VERSIONS[kind as RollupKind];
   if (!allowed.includes(schemaVersion)) {
     throw new ToolError(
       'OODS-N007',
@@ -404,7 +436,104 @@ async function handleRollupFetch(
   };
 }
 
+/** The run directory a run-view kind is read from: the directory holding manifest.json, or runPath/artifacts' parent. */
+function resolveRunDirectory(runPath: string): string {
+  const absolute = path.isAbsolute(runPath) ? runPath : path.resolve(REPO_ROOT, runPath);
+  const candidates = [absolute, path.dirname(absolute)];
+  const found = candidates.find(candidate => fs.existsSync(path.join(candidate, 'manifest.json')));
+  if (!found) {
+    throw new ToolError('OODS-N007', `No Stage1 run manifest (manifest.json) at or above runPath.`, { runPath: absolute, looked: candidates.map(candidate => path.join(candidate, 'manifest.json')) });
+  }
+  return found;
+}
+
+const sha256File = (file: string) => crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex');
+
+/** The run manifest's shape — what the run view reads — since it carries no schema_version to pin. */
+function validateRunManifest(manifest: Record<string, any>): void {
+  if (manifest.schema_version !== undefined) {
+    throw new ToolError('OODS-N007', `Unsupported schema_version "${String(manifest.schema_version)}" for kind "run_manifest": Stage1 run manifests are admitted unversioned and shape-pinned; a stamped manifest needs its version admitted by decision first.`, { kind: 'run_manifest', schemaVersion: manifest.schema_version, accepted: RUN_VIEW_ADMITTED.run_manifest });
+  }
+  const missing = [
+    typeof manifest.run_id !== 'string' && 'run_id',
+    typeof manifest.mode !== 'string' && 'mode',
+    !(Array.isArray(manifest.targets) && manifest.targets.length > 0 && manifest.targets.every((t: any) => typeof t?.name === 'string' && typeof t?.url === 'string')) && 'targets[{name,url}]',
+    !(Array.isArray(manifest.passes) && manifest.passes.every((p: any) => typeof p?.id === 'string' && typeof p?.version === 'string' && typeof p?.status === 'string')) && 'passes[{id,version,status}]',
+    typeof manifest.environment?.timestamp !== 'string' && 'environment.timestamp',
+    !(manifest.hashes && typeof manifest.hashes === 'object' && !Array.isArray(manifest.hashes)) && 'hashes',
+  ].filter(Boolean);
+  if (missing.length) {
+    throw new ToolError('OODS-N007', `Stage1 run manifest does not have the shape a run view reads; missing ${missing.join(', ')}.`, { kind: 'run_manifest', missing });
+  }
+}
+
+async function handleRunViewFetch(input: StructuredDataFetchInput & { kind: RunViewKind }): Promise<StructuredDataFetchOutput> {
+  const kind = input.kind;
+  if (!input.runPath) throw new ToolError('OODS-V202', `structuredData.fetch requires runPath when kind is set.`, { kind });
+  if (input.listVersions || input.version) throw new ToolError('OODS-V202', `structuredData.fetch: version and listVersions are not supported in kind mode.`, { kind });
+  const spec = RUN_VIEW_KINDS[kind];
+  const runDir = resolveRunDirectory(input.runPath);
+  const manifest = readJson(path.join(runDir, 'manifest.json')) as Record<string, any>;
+  validateRunManifest(manifest);
+
+  const dataPath = path.join(runDir, spec.file);
+  if (!fs.existsSync(dataPath)) throw new ToolError('OODS-N007', `Stage1 artifact not found for kind "${kind}": ${spec.file}.`, { kind, runPath: runDir, looked: [dataPath] });
+  let payload = readJson(dataPath) as Record<string, any>;
+  let schemaVersion = 'unversioned (shape-pinned)';
+  let meta: Record<string, unknown>;
+  if (kind !== 'run_manifest') {
+    if (payload.kind !== spec.payloadKind) {
+      throw new ToolError('OODS-N007', `Artifact kind mismatch: requested "${kind}" but payload reports "${payload.kind ?? 'none'}".`, { requestedKind: kind, payloadKind: payload.kind ?? null });
+    }
+    const version = payload[spec.versionField];
+    if (typeof version !== 'string') throw new ToolError('OODS-N007', `Stage1 artifact "${kind}" is missing ${spec.versionField}.`, { kind });
+    if (!(spec.accepted as readonly string[]).includes(version)) {
+      throw new ToolError('OODS-N007', `Unsupported ${spec.versionField} "${version}" for kind "${kind}". Accepted: ${spec.accepted.join(', ')}.`, { kind, schemaVersion: version, accepted: spec.accepted });
+    }
+    schemaVersion = version;
+    // Every artifact the run view reads is under the run's own attestation, and is refused if the bytes differ.
+    const attested = manifest.hashes[spec.file];
+    if (typeof attested !== 'string' || attested !== sha256File(dataPath)) {
+      throw new ToolError('OODS-N007', `${spec.file} is not under the run manifest's attestation (${typeof attested === 'string' ? 'sha256 differs' : 'not attested'}).`, { kind, file: spec.file });
+    }
+  }
+  if (kind === 'a11y_evidence') {
+    // The per-page axe files, each read only once its sha256 matches the manifest's attestation for that path.
+    const pages = (Array.isArray(payload.pages) ? payload.pages : []).map((page: Record<string, any>) => {
+      const file = String(page.axe_results_path ?? '');
+      const absolute = path.join(runDir, file);
+      const attested = manifest.hashes[file];
+      if (!file.startsWith('evidence/a11y/') || !fs.existsSync(absolute) || typeof attested !== 'string' || attested !== sha256File(absolute)) {
+        throw new ToolError('OODS-N007', `Evidence file ${file || '(none)'} is not under the run manifest's attestation.`, { kind, file, attested: typeof attested === 'string' });
+      }
+      return { route: page.route, url: page.url, evidencePath: file, sha256: attested, evidence: readJson(absolute) };
+    });
+    payload = { ...payload, pages };
+    meta = { pageCount: pages.length, attestedFiles: pages.length + 1, violationCount: pages.reduce((n: number, page: any) => n + (Array.isArray(page.evidence?.violations) ? page.evidence.violations.length : 0), 0) };
+  } else if (kind === 'a11y_report') {
+    meta = { pageCount: Array.isArray(payload.pages) ? payload.pages.length : 0, violationCount: payload.rollup?.violation_count ?? null };
+  } else if (kind === 'report_index') {
+    meta = { artifactCount: Array.isArray(payload.artifacts) ? payload.artifacts.length : 0 };
+  } else {
+    meta = { passCount: manifest.passes.length, targetCount: manifest.targets.length, attestedCount: Object.keys(manifest.hashes).length };
+  }
+
+  const includePayload = input.includePayload !== false;
+  const etag = computeStructuredDataEtag(payload);
+  const matched = Boolean(input.ifNoneMatch && input.ifNoneMatch === etag);
+  const payloadIncluded = includePayload && !matched;
+  return {
+    kind, schemaVersion, runId: manifest.run_id,
+    generatedAt: typeof payload.generated_at === 'string' ? payload.generated_at : typeof payload.captured_at === 'string' ? payload.captured_at : manifest.environment.timestamp,
+    etag, matched, payloadIncluded, path: relativeToRepo(dataPath), sizeBytes: fs.statSync(dataPath).size, schemaValidated: true, meta,
+    payload: payloadIncluded ? payload : undefined,
+  };
+}
+
 export async function handle(input: StructuredDataFetchInput): Promise<StructuredDataFetchOutput> {
+  if (input.kind && isRunViewKind(input.kind)) {
+    return handleRunViewFetch(input as StructuredDataFetchInput & { kind: RunViewKind });
+  }
   if (input.kind) {
     return handleRollupFetch(input);
   }

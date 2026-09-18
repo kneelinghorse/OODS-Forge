@@ -1,0 +1,45 @@
+- main:
+  - heading "Person form" [level=1]
+  - text: Status
+  - combobox "Status":
+    - option "Active" [selected]
+    - option "Tracked Unfeeded"
+    - option "Dormant"
+  - paragraph: Choose the current status.
+  - heading "Description" [level=2]
+  - text: Consumer description Category
+  - textbox "Category"
+  - text: Tags
+  - textbox "Tags":
+    - /placeholder: tag-1, tag-2
+  - text: Mode
+  - combobox "Mode":
+    - option "strict" [selected]
+    - option "flexible"
+  - checkbox "Search Active"
+  - text: Search Active
+  - paragraph: Whether the search input is currently focused or has a non-empty query.
+  - text: Filter Count
+  - spinbutton "Filter Count": "0"
+  - paragraph: Computed count of currently active filters.
+  - text: Role
+  - textbox "Role":
+    - /placeholder: "What they do, in free text as the cohort records it (\"Datasette; daily LLM posts\"). Deliberately unconstrained: it is a description, not a membership role, which is why core/User cannot carry a cohort member — User's role is an enum of account roles (end_user, admin, owner, billing)."
+    - text: Consumer role
+  - paragraph: "What they do, in free text as the cohort records it (\"Datasette; daily LLM posts\"). Deliberately unconstrained: it is a description, not a membership role, which is why core/User cannot carry a cohort member — User's role is an enum of account roles (end_user, admin, owner, billing)."
+  - text: Label
+  - textbox "Label":
+    - /placeholder: Enter label
+    - text: Consumer label
+  - paragraph: Name shown for this record.
+  - text: Primary category id
+  - textbox "Primary category id":
+    - /placeholder: Enter primary category id
+    - text: consumer-primary-category-id
+  - paragraph: Identifier of the canonical taxonomy node.
+  - text: Primary category path
+  - textbox "Primary category path":
+    - /placeholder: Enter primary category path
+    - text: Consumer primary category path
+  - paragraph: Human-readable breadcrumb path (Electronics > Mobile > Android).
+  - button "Save"

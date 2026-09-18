@@ -1,0 +1,57 @@
+- main:
+  - heading "Document form" [level=1]
+  - text: Status
+  - combobox "Status":
+    - option "Pending" [selected]
+    - option "Processed"
+    - option "Chunked"
+    - option "Embedded"
+    - option "Failed"
+  - paragraph: Choose the current status.
+  - heading "Description" [level=2]
+  - text: Consumer description Category
+  - textbox "Category"
+  - text: Tags
+  - textbox "Tags":
+    - /placeholder: tag-1, tag-2
+  - text: Mode
+  - combobox "Mode":
+    - option "strict" [selected]
+    - option "flexible"
+  - text: Validation status
+  - textbox "Validation status":
+    - /placeholder: Enter validation status
+    - text: Consumer validation status
+  - paragraph: Validation status.
+  - text: Created at
+  - textbox "Created at":
+    - /placeholder: uploaded_at when present; unavailable otherwise.
+    - text: 2026-09-05T12:00
+  - paragraph: uploaded_at when present; unavailable otherwise.
+  - text: Ownership role
+  - textbox "Ownership role":
+    - /placeholder: Enter ownership role
+    - text: Consumer ownership role
+  - paragraph: Optional role name describing how the owner governs the entity.
+  - checkbox "Search Active"
+  - text: Search Active
+  - paragraph: Whether the search input is currently focused or has a non-empty query.
+  - text: Filter Count
+  - spinbutton "Filter Count": "0"
+  - paragraph: Computed count of currently active filters.
+  - text: Label
+  - textbox "Label":
+    - /placeholder: Enter label
+    - text: Consumer label
+  - paragraph: Name shown for this record.
+  - text: Last event
+  - textbox "Last event":
+    - /placeholder: Enter last event
+    - text: Consumer last event
+  - paragraph: Only from an explicit event or timestamp projection; absence is unknown, not a fabricated audit event.
+  - text: Owner id
+  - textbox "Owner id":
+    - /placeholder: Enter owner id
+    - text: consumer-owner-id
+  - paragraph: Identifier of the owner.
+  - button "Save"

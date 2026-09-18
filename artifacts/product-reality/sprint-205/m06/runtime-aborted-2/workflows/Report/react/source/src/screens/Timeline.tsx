@@ -1,0 +1,136 @@
+import React from 'react';
+import { Banner, Card, Stack, StateTransitionEvent, TimelineEntryLabel } from '@oods/components-react';
+import '@oods/component-styles/css';
+import { chronologicalEvents, formatDateTime, type CollectionEvent } from '@oods/component-contracts';
+
+export type GeneratedUIState = 'loading' | 'empty' | 'error' | 'success';
+
+export interface PageProps {
+  events?: CollectionEvent[];
+  uiState: GeneratedUIState;
+  /** Array of currently applied filter values:
+  - field: string (matches a filter descriptor field)
+  - operator: "eq" | "in" | "range" | "gt" | "lt" | "between"
+  - value: unknown (the selected filter value or values)
+ */
+  activeFilters?: Record<string, unknown>[];
+  /** Materialized list of valid next states from the current status, computed from the
+transitionRules parameter. When transitionRules is null (open model), this contains
+all states except the current one. Used by StatusSelector to disable invalid options
+and by StatusBadge to indicate available paths.
+ */
+  allowedTransitions?: string[];
+  /** Chunk count. */
+  chunkCount?: number;
+  /** Citations. */
+  citations?: unknown[];
+  /** Content. */
+  content: string;
+  /** Created at. */
+  createdAt: string;
+  /** Supporting description used in detail and card contexts. */
+  description?: string;
+  /** Computed count of currently active filters. */
+  filterCount: number;
+  /** Array of available filter descriptors. Each entry defines a filterable dimension:
+  - field: string (the schema field to filter on)
+  - label: string (display label)
+  - type: "select" | "multi-select" | "range" | "boolean" | "date-range"
+  - options: array of { value, label } for select/multi-select types
+ */
+  filters?: Record<string, unknown>[];
+  /** Id. */
+  id: string;
+  /** Display projection of title; retain the complete source field. */
+  label: string;
+  /** Only from an explicit event or timestamp projection; absence is unknown, not a fabricated audit event. */
+  lastEvent?: string;
+  /** Timestamp for the lifecycle event captured in last_event. */
+  lastEventAt?: string;
+  /** Authoritative nullable server owner_id. Not exposed by the current response; unavailable until the API exposes it. Never derive from created_by, user_id, or project owner. */
+  ownerId?: string;
+  /** user only when an authoritative owner_id is present. */
+  ownerType?: 'user';
+  /** Optional role name describing how the owner governs the entity. */
+  ownershipRole?: string;
+  /** Timestamp recording when ownership was last transferred. */
+  ownershipTransferredAt?: string;
+  /** Current page number (1-based). */
+  page: number;
+  /** Number of items displayed per page. */
+  pageSize: number;
+  /** Hint copy surfaced in form fields when the label is empty. */
+  placeholder?: string;
+  /** Project id. */
+  projectId?: string;
+  /** Prompt. */
+  prompt?: string;
+  /** Report type. */
+  reportType?: string;
+  /** Whether the search input is currently focused or has a non-empty query. */
+  searchActive?: boolean;
+  /** The current search query string entered by the user. */
+  searchQuery?: string;
+  /** Sources. */
+  sources?: unknown[];
+  /** Chronological log of state transitions. Each entry records the before/after states,
+timestamp, and (when governance is enabled) the actor, reason, and transition metadata.
+Rendered by StatusTimeline in the detail and timeline views.
+
+Entry structure:
+  - from: string (previous state)
+  - to: string (new state)
+  - timestamp: ISO 8601 datetime
+  - actor_id: string (user/system who triggered the transition, optional)
+  - reason: string (human-readable justification, required when requireTransitionReason is true)
+  - transition_metadata: Record<string, unknown> (arbitrary context, optional)
+ */
+  stateHistory?: unknown[];
+  /** Canonical research lifecycle. The API remains authoritative; do not coerce an unknown server value. */
+  status: 'draft' | 'final';
+  /** Title. */
+  title: string;
+  /** Tokens used. */
+  tokensUsed?: number;
+  /** Total number of items across all pages. Used to compute total page count. */
+  totalItems?: number;
+  /** Computed total number of pages (ceil(totalItems / pageSize)). */
+  totalPages?: number;
+  /** Updated at. */
+  updatedAt: string;
+}
+
+type BannerProps = React.ComponentPropsWithoutRef<typeof Banner>;
+type CardProps = React.ComponentPropsWithoutRef<typeof Card>;
+type StackProps = React.ComponentPropsWithoutRef<typeof Stack>;
+type StateTransitionEventProps = React.ComponentPropsWithoutRef<typeof StateTransitionEvent>;
+type TimelineEntryLabelProps = React.ComponentPropsWithoutRef<typeof TimelineEntryLabel>;
+
+export const GeneratedUI: React.FC<PageProps> = ({ uiState, activeFilters, allowedTransitions, chunkCount, citations, content, createdAt, description, filterCount, filters, id, label, lastEvent, lastEventAt, ownerId, ownerType, ownershipRole, ownershipTransferredAt, page, pageSize, placeholder, projectId, prompt, reportType, searchActive, searchQuery, sources, stateHistory, status, title, tokensUsed, totalItems, totalPages, updatedAt, events = [] }) => {
+  return (
+    <>
+      <Stack id="timeline-screen" data-oods-component="Stack">
+            {uiState === 'loading' && (
+              <Banner id="timeline-loading" data-oods-component="Banner" data-oods-state="loading" content="Loading your records." title="Loading" />
+            )}
+            {uiState === 'empty' && (
+              <Banner id="timeline-empty" data-oods-component="Banner" data-oods-state="empty" content="Change the filters or add a record." title="No records found" />
+            )}
+            {uiState === 'error' && (
+              <Banner id="timeline-error" data-oods-component="Banner" data-oods-state="error" content="Try again or choose another record." title="Unable to load records" />
+            )}
+            {uiState === 'success' && (
+              <Stack id="timeline-screen-timeline-14" data-oods-component="Stack" data-oods-state="success" data-layout="stack" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-default)' }}>
+                      <Stack id="timeline-timeline-header-1" data-oods-component="Stack" data-layout="inline" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', padding: 'var(--ref-space-inset-default)' }}>
+                                <TimelineEntryLabel id="timeline-ve-entry-0-15" data-oods-component="TimelineEntryLabel" compact label={title} />
+                              </Stack>
+                      <section id="timeline-timeline-entries-13" data-oods-collection="events">{events.length === 0 ? (<Banner id="timeline-timeline-entries-13-empty" data-oods-component="Banner" data-oods-state="empty" content="No events yet." />) : (<ol aria-label="Lifecycle history" className="oods-collection">{chronologicalEvents(events).map((collectionEvent, collectionIndex) => <li key={collectionEvent.id}><Card id={'timeline-timeline-entries-13-entry-' + collectionIndex}><strong>{collectionEvent.title}</strong><time dateTime={collectionEvent.at}>{formatDateTime(collectionEvent.at)}</time><p>{collectionEvent.description}</p></Card></li>)}</ol>)}</section>
+                      <Stack id="timeline-timeline-entries-13-trait-events" data-oods-component="Stack">
+                                <StateTransitionEvent id="timeline-ve-entry-0-16" data-oods-component="StateTransitionEvent" showActor showReason history={stateHistory} status={status} />
+                              </Stack>
+                    </Stack>
+            )}
+          </Stack>
+    </>
+  );
+};

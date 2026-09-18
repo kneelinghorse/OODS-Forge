@@ -7,6 +7,7 @@ import { fileURLToPath } from 'node:url';
 import type { Page } from 'playwright';
 import { handle as compose } from '../../packages/mcp-server/src/tools/design.compose.js';
 import { fieldLabel } from '../../packages/mcp-server/src/compose/label-generator.js';
+import { authoredLabelField } from '../../packages/mcp-server/src/compose/record-label.js';
 import { schemaNodes } from './s185-m04-consumer-contract.js';
 import type { UiSchema } from '../../packages/mcp-server/src/schemas/generated.js';
 import { isTraitRecipe } from '../../packages/mcp-server/src/compose/trait-recipes.js';
@@ -73,7 +74,9 @@ async function mountedRecipes(page: Page) {
 /** Expected obligations come from declarations, never from whichever DOM survived. */
 export function workflowEditProbe(schema: UiSchema) {
   const fields = schema.objectSchema!;
-  const titleField = ['plan_name', 'name', 'title', 'display_name', 'label'].find(name => fields[name]) ?? schema.workflow!.data.idField;
+  // The record's title field as the workflow emitter names it (s205-m06: the harness had copied the emitter's list and
+  // missed its text.label fallback, so Run's and CapturedArtifact's saved headings were expected to be ids).
+  const titleField = ['plan_name', 'name', 'title', 'display_name', 'label'].find(name => fields[name]) ?? authoredLabelField(fields) ?? schema.workflow!.data.idField;
   const editable = schemaNodes(schema).filter(node => ['Input', 'Textarea'].includes(node.component) && node.bindings?.onChange)
     .map(node => String(node.props?.field)).filter(field => fields[field]?.type === 'string' && !fields[field]?.enum?.length);
   // The application also emits required string fields omitted by its form screen.
@@ -343,13 +346,13 @@ async function observeStates(page: Page, url: string, framework: Framework) {
 }
 
 /** Independently order the declared record titles; realistic names need not follow IDs. */
-export function expectedCollectionOrder(schema: UiSchema, status?: string): string[] {
+export function expectedCollectionOrder(schema: UiSchema, status?: string, descending = false): string[] {
   const fields = schema.objectSchema!;
-  const title = ['plan_name', 'name', 'title', 'display_name', 'label'].find(field => fields[field]) ?? schema.workflow!.data.idField;
+  const title = ['plan_name', 'name', 'title', 'display_name', 'label'].find(field => fields[field]) ?? authoredLabelField(fields) ?? schema.workflow!.data.idField;
   const filter = schemaNodes(schema).find(node => node.collectionControl === 'filter');
   const statusField = String(filter?.props?.field ?? 'status');
   return workflowSampleRecords(schema).filter(record => !record.is_archived && (!status || record[statusField] === status))
-    .sort((a, b) => String(a[title]).localeCompare(String(b[title])))
+    .sort((a, b) => (descending ? -1 : 1) * String(a[title]).localeCompare(String(b[title])))
     .map(record => String(record[schema.workflow!.data.idField]));
 }
 
@@ -432,7 +435,10 @@ export async function observeCollectionControls(page: Page, url: string, object 
   await observe(rows, 'sort-composed-rows', async () => {
     await page.getByRole('combobox', { name: 'Sort', exact: true }).selectOption('desc');
     const actualDescending = await records.evaluateAll(nodes => nodes.map(node => node.getAttribute('data-record-id')));
-    if (expectedOrder) assert.deepEqual(actualDescending, [...expectedOrder].reverse(), 'Every row must follow the declared display-field sort');
+    // s205-m06: the app negates its comparator, so records with EQUAL display values keep their record order in both
+    // directions — the list is not simply reversed. Real Stage1 findings share titles (one rule failing on two pages);
+    // seeded names never repeated, so the reversal assumption held until records were real.
+    if (expectedOrder) assert.deepEqual(actualDescending, schema ? expectedCollectionOrder(schema, undefined, true) : [...expectedOrder].reverse(), 'Every row must follow the declared display-field sort');
     else assert.equal(actualDescending[0], `${object.toLowerCase()}-${String(total).padStart(3, '0')}`);
     await checkpoint?.('sorted-descending');
     await page.getByRole('combobox', { name: 'Sort', exact: true }).selectOption('asc');
@@ -497,7 +503,7 @@ export async function runAppConsumers(output: string, mission = 's188-m03', obje
   assert.equal(composition.status, 'ok');
   await json(path.join(output, 'composition.json'), composition);
   const fields = composition.schema.objectSchema!;
-  const titleField = ['plan_name', 'name', 'title', 'display_name', 'label'].find(name => fields[name]) ?? composition.schema.workflow!.data.idField;
+  const titleField = ['plan_name', 'name', 'title', 'display_name', 'label'].find(name => fields[name]) ?? authoredLabelField(fields) ?? composition.schema.workflow!.data.idField;
   const requireBillingViews = JSON.stringify(composition.schema).includes('CycleProgressCard');
   const requireAddressViews = JSON.stringify(composition.schema).includes('AddressEditor');
   const requiredFlow = expectedWorkflowFlow(composition.schema);

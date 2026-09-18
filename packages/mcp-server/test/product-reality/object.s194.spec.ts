@@ -6,8 +6,9 @@ it('object discovers the real registry and exposes composed traits and context-f
   const call = async (input: any): Promise<any> => { wire('object', 'input', input); const result = await object(input); wire('object', 'output', result); return result; };
   const listed = await call({ action: 'list' });
   // 18 through Sprint 202; Sprint 203 m02 adds three delivery objects born from CMOS's own record and
-  // m03 two intelligence objects born from Hive's cohort.
-  expect(listed.totalCount).toBe(23);
+  // m03 two intelligence objects born from Hive's cohort; Sprint 205 m02 three capture objects born from real
+  // Stage1 runs (Run, Finding, CapturedArtifact).
+  expect(listed.totalCount).toBe(26);
   const details = [];
   for (const entry of listed.objects) {
     const full = await call({ action: 'show', name: entry.name });

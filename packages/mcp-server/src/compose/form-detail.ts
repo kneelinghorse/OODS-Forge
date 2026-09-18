@@ -2,6 +2,7 @@ import type { UiElement, UiSchema } from '../schemas/generated.js';
 import type { ComposedObject } from '../objects/trait-composer.js';
 import { fieldLabel, fieldHelp } from './label-generator.js';
 import { isInternalField } from './internal-fields.js';
+import { authoredLabelField } from './record-label.js';
 import { VIZ_CONTROL_IDS } from '@oods/component-contracts';
 
 const controls = new Set(['Input', 'Select', 'Textarea', 'DatePicker', 'Checkbox', 'Switch', 'Toggle', 'StatusSelector', 'CancellationForm', 'BillingAmountInput', 'BillingIntervalSelector']);
@@ -34,6 +35,10 @@ export function reconcileFormDetail(schema: UiSchema, context: string, composed:
       if (node.component === 'DetailHeader' && typeof titleField === 'string' && fields[titleField]) {
         node.component = 'Input';
         node.props = { field: titleField };
+        // s205-m06: the binding pass skipped this node while it was a display header, so the Input it becomes has no
+        // change handler and React renders it as a value that snaps back — uneditable, and it passed required
+        // validation empty. The runtime sweep caught it on the first objects whose title slot no trait fills.
+        node.bindings = { ...node.bindings, onChange: node.bindings?.onChange ?? `handleChange_${titleField}` };
       }
       node.children = node.children?.filter(child => !(controls.has(child.component) && !owners[child.component] && owned.has(String(child.props?.field))));
       // Internal fields (derived counts, version counters, hint copy) are not edited by hand.
@@ -89,7 +94,7 @@ export function reconcileFormDetail(schema: UiSchema, context: string, composed:
   const traitFields = new Set(composed.traits.flatMap(trait => Object.keys(trait.definition.schema ?? {})));
   const summaryField = (name: string) => !traitFields.has(name) || ['created_at', 'updated_at', 'last_event', 'last_event_at'].includes(name) || /(?:_minor|_id|_code)$/.test(name);
   const isScalar = (name: string) => /^(?:string|uuid|email|url|integer|number|boolean|date|datetime)\??$/.test(fields[name]?.type ?? '');
-  const labelField = ['plan_name', 'name', 'title', 'display_name', 'label', `${composed.object?.name?.toLowerCase()}_id`, 'id'].find(name => fields[name]);
+  const labelField = ['plan_name', 'name', 'title', 'display_name', 'label'].find(name => fields[name]) ?? authoredLabelField(fields) ?? [`${composed.object?.name?.toLowerCase()}_id`, 'id'].find(name => fields[name]);
   const fieldRow = (name: string, id: string): UiElement => {
     const money = Boolean(fields.currency && (name === 'amount' || name.endsWith('_minor')) && /^(?:integer|number)$/.test(fields[name]?.type ?? ''));
     return { id: `${id}-read-field`, component: 'Stack', children: [

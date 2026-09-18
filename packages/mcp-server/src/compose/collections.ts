@@ -1,5 +1,6 @@
 import type { FieldSchemaEntry, UiElement, UiSchema } from '../schemas/generated.js';
 import { enumOptionLabel } from './internal-fields.js';
+import { authoredLabelField } from './record-label.js';
 
 const walk = (nodes: UiElement[]): UiElement[] => nodes.flatMap(node => [node, ...walk(node.children ?? [])]);
 const shortName = (name: string) => name.replaceAll('_', ' ').replace(/^./, letter => letter.toUpperCase());
@@ -28,6 +29,9 @@ const valueBearingField = (entry: FieldSchemaEntry | undefined): boolean => {
  */
 export function rowShowsRecordValue(node: UiElement, fields: Record<string, FieldSchemaEntry>): boolean {
   if (ROW_VALUE_COMPONENTS.has(node.component)) return true;
+  // s205-m02: an items slot no trait fills is placed as a bare Table, which renders "No rows available." inside every
+  // row (the Stage1 objects carry no view extension for it). A table with no columns and no rows shows nothing.
+  if (node.component === 'Table' && !node.children?.length && !Object.keys(node.props ?? {}).length) return false;
   const textProps = ROW_TEXT_PROPS[node.component];
   if (!textProps) return true;
   const props = node.props ?? {};
@@ -65,7 +69,7 @@ export function populateCollections(schema: UiSchema, context: string, objectNam
     ?? Object.keys(fields).find(name => name === `${objectName.toLowerCase()}_id`)
     ?? Object.keys(fields).find(name => name.endsWith('_id'))
     ?? Object.keys(fields)[0]!;
-  const labelField = ['plan_name', 'name', 'title', 'display_name', 'label'].find(name => fields[name]) ?? keyField;
+  const labelField = ['plan_name', 'name', 'title', 'display_name', 'label'].find(name => fields[name]) ?? authoredLabelField(fields) ?? keyField;
   for (const screen of schema.screens) {
     const nodes = walk([screen]);
     if (context === 'list') {

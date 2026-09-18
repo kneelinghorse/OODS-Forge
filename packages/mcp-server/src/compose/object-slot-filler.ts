@@ -26,6 +26,8 @@ import { inferSlotPosition, type SlotPosition } from './position-affinity.js';
 import type { FieldHint } from './field-affinity.js';
 import { isTraitRecipe } from './trait-recipes.js';
 import { isChartPreview } from '../codegen/chart-declaration.js';
+import { fieldLabel } from './label-generator.js';
+import { authoredLabelField } from './record-label.js';
 
 /* ------------------------------------------------------------------ */
 /*  Types                                                              */
@@ -1217,15 +1219,30 @@ export function bindCardHeadingField(schema: UiSchema, context: string | undefin
     candidates.find(([, entry]) => /\.(text|body|content|summary|description)$/.test(entry.semanticType ?? ''))
     ?? candidates[0]
   )?.[0];
-  if (!replacement) return 0;
+  if (!replacement && !authoredLabelField(objectSchema)) return 0;
 
+  // s205-m02: where the author marked the one field that names a record (text.label), the header names the record
+  // with it. Measured before this: only the three Stage1 objects have such a field AND a Text header binding
+  // something else (Run -> artifact_count, Finding -> description, CapturedArtifact -> artifact_id); every other
+  // card heads through CardHeader or has no marked field, so no earlier-certified card moves.
+  const named = authoredLabelField(objectSchema);
   let rebound = 0;
   const walk = (el: UiElement): void => {
     if (
+      named
+      && el.meta?.intent === 'slot:header'
+      && el.component === 'Text'
+      && typeof el.props?.field === 'string'
+      && el.props.field !== named
+    ) {
+      el.props = { ...el.props, field: named, label: fieldLabel(named) };
+      rebound += 1;
+    } else if (
       el.meta?.intent === 'slot:header'
       && el.component === 'Text'
       && typeof el.props?.field === 'string'
       && isTimestamp(objectSchema[el.props.field])
+      && replacement
     ) {
       el.props = { ...el.props, field: replacement };
       el.meta = { ...el.meta, headingExcerpt: true };

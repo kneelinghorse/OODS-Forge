@@ -1,0 +1,579 @@
+{
+  "status": "ok",
+  "layout": "list",
+  "schema": {
+    "version": "2026.02",
+    "screens": [
+      {
+        "id": "screen-list-9",
+        "component": "Stack",
+        "layout": {
+          "type": "stack",
+          "gapToken": "cluster-default"
+        },
+        "children": [
+          {
+            "id": "screen-list-9-loading",
+            "component": "Banner",
+            "state": "loading",
+            "props": {
+              "title": "Loading",
+              "message": "Loading your records."
+            }
+          },
+          {
+            "id": "screen-list-9-error",
+            "component": "Banner",
+            "state": "error",
+            "props": {
+              "title": "Unable to load records",
+              "message": "Try again or choose another record."
+            }
+          },
+          {
+            "id": "screen-list-9-success",
+            "component": "Stack",
+            "state": "success",
+            "layout": {
+              "type": "stack",
+              "gapToken": "cluster-default"
+            },
+            "children": [
+              {
+                "id": "list-toolbar-4",
+                "component": "Stack",
+                "layout": {
+                  "type": "inline",
+                  "align": "space-between"
+                },
+                "style": {
+                  "spacingToken": "inset-default"
+                },
+                "children": [
+                  {
+                    "id": "slot-search-1",
+                    "component": "SearchInput",
+                    "meta": {
+                      "intent": "slot:search",
+                      "label": "search"
+                    },
+                    "props": {
+                      "label": "Search",
+                      "placeholder": "Search records",
+                      "clearable": true
+                    },
+                    "collectionControl": "search"
+                  },
+                  {
+                    "id": "list-toolbar-4-sort",
+                    "component": "Select",
+                    "collectionControl": "sort",
+                    "props": {
+                      "field": "decision_id",
+                      "label": "Sort",
+                      "options": [
+                        {
+                          "value": "asc",
+                          "label": "Name A–Z"
+                        },
+                        {
+                          "value": "desc",
+                          "label": "Name Z–A"
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              {
+                "id": "list-items-5",
+                "component": "Stack",
+                "layout": {
+                  "type": "stack",
+                  "gapToken": "cluster-tight"
+                },
+                "children": [
+                  {
+                    "id": "list-items-5-row",
+                    "component": "Button",
+                    "collectionControl": "open",
+                    "props": {
+                      "field": "decision_id"
+                    },
+                    "layout": {
+                      "type": "inline",
+                      "gapToken": "cluster-default"
+                    },
+                    "children": [
+                      {
+                        "id": "list-items-5-title",
+                        "component": "Text",
+                        "props": {
+                          "field": "decision_id"
+                        }
+                      },
+                      {
+                        "id": "slot-items-6",
+                        "component": "RelativeTimestamp",
+                        "meta": {
+                          "intent": "slot:items",
+                          "label": "items"
+                        },
+                        "props": {
+                          "field": "updated_at",
+                          "fallbackField": "created_at",
+                          "timezoneParameter": "timezone"
+                        }
+                      },
+                      {
+                        "id": "ve-toolbar-actions-13",
+                        "component": "StatusBadge",
+                        "props": {
+                          "statusField": "supersession_status",
+                          "emphasis": "subtle",
+                          "showIcon": false
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "id": "list-items-5-empty",
+                    "component": "Banner",
+                    "state": "empty",
+                    "props": {
+                      "message": "No records found."
+                    },
+                    "collectionControl": "empty"
+                  }
+                ],
+                "collection": {
+                  "source": "rows",
+                  "keyField": "decision_id",
+                  "labelField": "decision_id"
+                }
+              },
+              {
+                "id": "list-pagination-7",
+                "component": "Stack",
+                "layout": {
+                  "type": "inline",
+                  "align": "center"
+                },
+                "style": {
+                  "spacingToken": "inset-default"
+                },
+                "children": [
+                  {
+                    "id": "slot-pagination-8",
+                    "component": "PaginationBar",
+                    "meta": {
+                      "intent": "slot:pagination",
+                      "label": "pagination",
+                      "confidence": 0.77,
+                      "confidenceLevel": "low"
+                    },
+                    "collectionControl": "page",
+                    "props": {
+                      "showItemRange": true
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "bindings": {
+          "onRowClick": "handleRowClick",
+          "onSort": "handleSort",
+          "onFilter": "handleFilter",
+          "onPageChange": "handlePageChange"
+        },
+        "meta": {
+          "label": "Decisions"
+        }
+      }
+    ],
+    "objectSchema": {
+      "supersession_status": {
+        "type": "string",
+        "required": true,
+        "default": "active",
+        "description": "Whether this record still stands. Named apart from Stateful's `status` so an object can carry\nboth a lifecycle and a supersession lineage.\n",
+        "semanticType": "lifecycle.supersession.state"
+      },
+      "superseded_by": {
+        "type": "string",
+        "required": false,
+        "description": "Identifier of the record that replaced this one. Present when the store records the forward\npointer. Absent means not replaced, or not known — the two are distinguished by\nsupersession_status, never by the pointer alone.\n",
+        "semanticType": "lifecycle.supersession.replacement"
+      },
+      "supersedes": {
+        "type": "string",
+        "required": false,
+        "description": "Identifier of the record this one replaced. Present when the store records the backward\npointer. Never inferred from ordering.\n",
+        "semanticType": "lifecycle.supersession.replaced"
+      },
+      "superseded_at": {
+        "type": "datetime?",
+        "required": false,
+        "description": "When the replacement happened, when the store records it. CMOS does not, so a Decision leaves\nit absent rather than borrowing the replacement's creation time.\n",
+        "semanticType": "lifecycle.supersession.timestamp"
+      },
+      "supersession_reason": {
+        "type": "string",
+        "required": false,
+        "description": "Why the record was replaced, when the store carries a reason.",
+        "semanticType": "lifecycle.supersession.reason"
+      },
+      "created_at": {
+        "type": "datetime",
+        "required": true,
+        "description": "Timestamp recording when the entity was first created.",
+        "semanticType": "audit.created_at"
+      },
+      "updated_at": {
+        "type": "datetime",
+        "required": false,
+        "description": "Timestamp for the most recent modification, when available.",
+        "semanticType": "audit.updated_at"
+      },
+      "last_event": {
+        "type": "string",
+        "required": true,
+        "description": "Lifecycle event associated with the most recent timestamp mutation.",
+        "enum": [
+          "captured"
+        ],
+        "semanticType": "audit.event.type"
+      },
+      "last_event_at": {
+        "type": "datetime",
+        "required": false,
+        "description": "Timestamp for the lifecycle event captured in last_event.",
+        "semanticType": "audit.event.timestamp"
+      },
+      "classification_metadata": {
+        "type": "ClassificationMetadata",
+        "required": true,
+        "description": "Operational metadata describing mode, storage model, governance rules, and audit timestamps.\n",
+        "semanticType": "classification.metadata"
+      },
+      "categories": {
+        "type": "CategoryNode[]",
+        "required": false,
+        "default": [],
+        "description": "Ordered taxonomy nodes scoped to the object.",
+        "semanticType": "classification.categories"
+      },
+      "primary_category_id": {
+        "type": "string",
+        "required": false,
+        "description": "Identifier of the canonical taxonomy node.",
+        "semanticType": "classification.primary"
+      },
+      "primary_category_path": {
+        "type": "string",
+        "required": false,
+        "description": "Human-readable breadcrumb path (Electronics > Mobile > Android)."
+      },
+      "tags": {
+        "type": "Tag[]",
+        "required": false,
+        "default": [],
+        "description": "Canonical tag collection after synonym collapse.",
+        "semanticType": "classification.tags"
+      },
+      "tag_count": {
+        "type": "number",
+        "required": false,
+        "default": 0,
+        "description": "Number of canonical tags assigned to the object."
+      },
+      "tag_preview": {
+        "type": "string",
+        "required": false,
+        "description": "Denormalized comma-delimited preview for list renders."
+      },
+      "searchQuery": {
+        "type": "string",
+        "required": false,
+        "default": "",
+        "description": "The current search query string entered by the user.",
+        "semanticType": "input.search.query"
+      },
+      "searchActive": {
+        "type": "boolean",
+        "required": false,
+        "default": false,
+        "description": "Whether the search input is currently focused or has a non-empty query.",
+        "semanticType": "state.search.active"
+      },
+      "filters": {
+        "type": "object[]",
+        "required": false,
+        "default": [],
+        "description": "Array of available filter descriptors. Each entry defines a filterable dimension:\n  - field: string (the schema field to filter on)\n  - label: string (display label)\n  - type: \"select\" | \"multi-select\" | \"range\" | \"boolean\" | \"date-range\"\n  - options: array of { value, label } for select/multi-select types\n",
+        "semanticType": "input.filter.descriptors"
+      },
+      "activeFilters": {
+        "type": "object[]",
+        "required": false,
+        "default": [],
+        "description": "Array of currently applied filter values:\n  - field: string (matches a filter descriptor field)\n  - operator: \"eq\" | \"in\" | \"range\" | \"gt\" | \"lt\" | \"between\"\n  - value: unknown (the selected filter value or values)\n",
+        "semanticType": "state.filter.active"
+      },
+      "filterCount": {
+        "type": "number",
+        "required": true,
+        "default": 0,
+        "description": "Computed count of currently active filters.",
+        "semanticType": "metric.filter.count"
+      },
+      "page": {
+        "type": "number",
+        "required": true,
+        "default": 1,
+        "description": "Current page number (1-based).",
+        "semanticType": "state.pagination.page"
+      },
+      "pageSize": {
+        "type": "number",
+        "required": true,
+        "default": 25,
+        "description": "Number of items displayed per page.",
+        "semanticType": "state.pagination.pageSize"
+      },
+      "totalItems": {
+        "type": "number",
+        "required": false,
+        "default": 0,
+        "description": "Total number of items across all pages. Used to compute total page count.",
+        "semanticType": "metric.pagination.totalItems"
+      },
+      "totalPages": {
+        "type": "number",
+        "required": false,
+        "default": 0,
+        "description": "Computed total number of pages (ceil(totalItems / pageSize)).",
+        "semanticType": "metric.pagination.totalPages"
+      },
+      "decision_id": {
+        "type": "string",
+        "required": true,
+        "description": "The record's own identifier. CMOS assigns an integer; the object declares a string so the same shape carries another store's identifiers without coercion.",
+        "semanticType": "delivery.decision.id"
+      },
+      "decision_text": {
+        "type": "string",
+        "required": true,
+        "description": "The decision as it was written. The longest free text this registry carries: 61 to 8,418 characters in the live store, with 197 of 1,933 rows over 2,000, so every context that shows it must stay readable at 390 without hiding meaning.",
+        "semanticType": "delivery.decision.text"
+      },
+      "sprint_id": {
+        "type": "string",
+        "required": false,
+        "description": "The sprint the decision was taken in. Every non-null value in the live store resolves against a sprint, none dangling.",
+        "semanticType": "delivery.decision.sprint_id"
+      },
+      "mission_id": {
+        "type": "string",
+        "required": false,
+        "description": "The mission that captured it, as CMOS stores it. Recorded loosely — often a bare \"m02\" rather than a fully qualified \"s203-m02\" — so it is shown as a label and never as a resolved link.",
+        "semanticType": "delivery.decision.mission_id"
+      },
+      "session_id": {
+        "type": "string",
+        "required": false,
+        "description": "The session that recorded the decision. Null on 838 of 1,933 rows.",
+        "semanticType": "delivery.decision.session_id"
+      },
+      "project_id": {
+        "type": "string",
+        "required": true,
+        "description": "The project the decision belongs to. A slug such as \"forge\", never a uuid.",
+        "semanticType": "delivery.decision.project_id"
+      },
+      "project_domain": {
+        "type": "string",
+        "required": false,
+        "description": "Optional area within the project. Sparse — null on 1,850 of 1,933 rows.",
+        "semanticType": "delivery.decision.project_domain"
+      },
+      "evidence": {
+        "type": "object[]",
+        "required": false,
+        "description": "What the decision cites, as {type, id} references. Sparse (null on 1,923 rows) but real, and the rows a preview shows beside a design.",
+        "semanticType": "delivery.decision.evidence"
+      }
+    }
+  },
+  "schemaRef": "compose-e0f28c4c",
+  "schemaRefCreatedAt": "2026-09-18T09:49:24.799Z",
+  "schemaRefExpiresAt": "2026-09-18T10:19:24.799Z",
+  "compositionId": "cmp-ee7065de861e",
+  "version": 1,
+  "parentVersion": null,
+  "operation": "compose",
+  "head": null,
+  "selections": [
+    {
+      "slotName": "search",
+      "intent": "search-input",
+      "selectedComponent": "SearchInput",
+      "confidence": 0.95,
+      "confidenceLevel": "high",
+      "explanation": "SearchInput leads slot \"search\" because view_extension placement. Confidence is high (0.95).",
+      "candidates": [
+        {
+          "name": "SearchInput",
+          "score": 0.95,
+          "reason": "view_extension placement"
+        }
+      ],
+      "placedComponents": [
+        "SearchInput"
+      ]
+    },
+    {
+      "slotName": "toolbar-actions",
+      "intent": "action-button",
+      "selectedComponent": "PaginationBar",
+      "confidence": 0.95,
+      "confidenceLevel": "high",
+      "explanation": "PaginationBar leads slot \"toolbar-actions\" because view_extension placement. The slot also renders StatusBadge, ClassificationBadge after it, in that order. Confidence is high (0.95).",
+      "candidates": [
+        {
+          "name": "PaginationBar",
+          "score": 0.95,
+          "reason": "view_extension placement"
+        }
+      ],
+      "placedComponents": [
+        "PaginationBar",
+        "StatusBadge",
+        "ClassificationBadge"
+      ]
+    },
+    {
+      "slotName": "filters",
+      "intent": "filter-control",
+      "selectedComponent": "FilterPanel",
+      "confidence": 0.95,
+      "confidenceLevel": "high",
+      "explanation": "FilterPanel leads slot \"filters\" because view_extension placement. Confidence is high (0.95).",
+      "candidates": [
+        {
+          "name": "FilterPanel",
+          "score": 0.95,
+          "reason": "view_extension placement"
+        }
+      ],
+      "placedComponents": [
+        "FilterPanel"
+      ]
+    },
+    {
+      "slotName": "items",
+      "intent": "data-list",
+      "selectedComponent": "RelativeTimestamp",
+      "confidence": 0.95,
+      "confidenceLevel": "high",
+      "explanation": "RelativeTimestamp leads slot \"items\" because view_extension placement. Confidence is high (0.95).",
+      "candidates": [
+        {
+          "name": "RelativeTimestamp",
+          "score": 0.95,
+          "reason": "view_extension placement"
+        }
+      ],
+      "placedComponents": [
+        "RelativeTimestamp"
+      ]
+    },
+    {
+      "slotName": "pagination",
+      "intent": "pagination-control",
+      "selectedComponent": "PaginationBar",
+      "confidence": 0.77,
+      "confidenceLevel": "medium",
+      "explanation": "PaginationBar was selected for slot \"pagination\" because 2 tag match(es); tag match (pagination, navigation); 1 context match(es); 1 trait(s); name contains \"pagination\"; position affinity: PaginationBar fits well in footer. Confidence is medium (0.77).",
+      "candidates": [
+        {
+          "name": "PaginationBar",
+          "reason": "2 tag match(es); tag match (pagination, navigation); 1 context match(es); 1 trait(s); name contains \"pagination\"; position affinity: PaginationBar fits well in footer",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 1,
+          "contextTraitMatches": 0,
+          "score": 1
+        },
+        {
+          "name": "Button",
+          "reason": "preferred for \"pagination-control\" (rank 2); 1 context match(es); 1 region match(es); position affinity: Button fits well in footer",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.75
+        },
+        {
+          "name": "Text",
+          "reason": "preferred for \"pagination-control\" (rank 1); 1 context match(es)",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.65
+        }
+      ]
+    }
+  ],
+  "validation": {
+    "status": "ok",
+    "errors": [],
+    "warnings": []
+  },
+  "warnings": [
+    {
+      "code": "OODS-V121",
+      "message": "Object 'Decision' has maturity 'alpha' — composed output may change.",
+      "hint": "Consider using stable objects for production compositions."
+    }
+  ],
+  "objectUsed": {
+    "name": "Decision",
+    "version": "0.1.0",
+    "traits": [
+      "lifecycle/Supersedable",
+      "lifecycle/Timestampable",
+      "core/Classifiable",
+      "behavioral/Searchable",
+      "behavioral/Filterable",
+      "behavioral/Pageable"
+    ],
+    "fieldsComposed": 33,
+    "viewExtensionsApplied": {
+      "list": 6,
+      "card": 1,
+      "detail": 8,
+      "timeline": 1,
+      "form": 1
+    }
+  },
+  "meta": {
+    "intentParsed": "Decision list view",
+    "layoutDetected": "context-inferred: list (from context=\"list\")",
+    "slotCount": 5,
+    "nodeCount": 15,
+    "intentSynthetic": true,
+    "warnings": [
+      "Object 'Decision' has maturity 'alpha' — composed output may change."
+    ],
+    "intelligence": {
+      "fieldsExpanded": false,
+      "positionAffinityUsed": true,
+      "fieldAffinityUsed": true,
+      "compositionConfidence": 0.91
+    }
+  }
+}

@@ -1,0 +1,91 @@
+{
+  "status": "ok",
+  "framework": "vue",
+  "artifact": {
+    "schemaVersion": "1.0.0",
+    "framework": "vue",
+    "files": [
+      {
+        "path": "src/GeneratedUI.vue",
+        "contents": "<template>\n  <main data-oods-shell=\"screen-card-7\">\n    <h1 data-oods-shell-heading=\"true\">Relationship</h1>\n    <Card id=\"screen-card-7\" data-oods-component=\"Card\" data-layout=\"stack\" style=\"display: flex; flex-direction: column; gap: var(--ref-space-cluster-default)\">\n        <Stack id=\"card-header-1\" data-oods-component=\"Stack\" data-layout=\"inline\" style=\"display: flex; flex-direction: row; justify-content: space-between; padding: var(--ref-space-inset-squish)\">\n              <Stack id=\"slot-header-2\" data-oods-component=\"Stack\" data-layout=\"stack\" style=\"display: flex; flex-direction: column; gap: var(--ref-space-cluster-default)\">\n                      <CardHeader id=\"ve-header-8\" data-oods-component=\"CardHeader\" :title=\"label\" :supporting=\"description\" />\n                      <StatusBadge id=\"ve-header-9\" data-oods-component=\"StatusBadge\" label=\"Status\" variant=\"subtle\" :status=\"status\" />\n                    </Stack>\n            </Stack>\n        <Stack id=\"card-body-3\" data-oods-component=\"Stack\" data-layout=\"stack\" style=\"display: flex; flex-direction: column; gap: var(--ref-space-cluster-tight); padding: var(--ref-space-inset-default)\">\n              <Stack id=\"slot-body-4\" data-oods-component=\"Stack\" />\n            </Stack>\n        <Stack id=\"card-footer-5\" data-oods-component=\"Stack\" data-layout=\"inline\" style=\"display: flex; flex-direction: row; justify-content: flex-end; padding: var(--ref-space-inset-squish)\">\n              <Stack id=\"slot-footer-6\" data-oods-component=\"Stack\" data-layout=\"stack\" style=\"display: flex; flex-direction: column; gap: var(--ref-space-cluster-default)\">\n                      <OwnershipMeta id=\"ve-footer-10\" data-oods-component=\"OwnershipMeta\" :ownerType=\"ownerType\" :role=\"ownershipRole\" />\n                      <TagSummary id=\"ve-footer-11\" data-oods-component=\"TagSummary\" label=\"Tags\" :tagCount=\"tagCount\" :tags=\"tags\" />\n                    </Stack>\n            </Stack>\n      </Card>\n  </main>\n</template>\n\n<script setup lang=\"ts\">\nimport { Card, CardHeader, OwnershipMeta, Stack, StatusBadge, TagSummary } from '@oods/components-vue';\nimport '@oods/component-styles/css';\n\ninterface Props {\n  /** Materialized list of valid next states from the current status, computed from the\ntransitionRules parameter. When transitionRules is null (open model), this contains\nall states except the current one. Used by StatusSelector to disable invalid options\nand by StatusBadge to indicate available paths.\n */\n  allowedTransitions?: string[];\n  /** Timestamp recording when the entity was first created. */\n  createdAt: string;\n  /** Supporting description used in detail and card contexts. */\n  description?: string;\n  /** Directionality applied when traversing the relationship. */\n  direction: 'unidirectional' | 'bidirectional';\n  /** Flag indicating whether the relationship is symmetric. */\n  isBidirectional: boolean;\n  /** Human-readable display name rendered in primary surfaces. */\n  label: string;\n  /** Lifecycle event associated with the most recent timestamp mutation. */\n  lastEvent: 'created' | 'activated' | 'paused' | 'terminated' | 'reactivated';\n  /** Timestamp for the lifecycle event captured in last_event. */\n  lastEventAt?: string;\n  /** Edge records sharing an endpoint with this relationship, each containing source_id and target_id strings and an is_bidirectional boolean. Generated sample rows are explicitly synthetic. */\n  neighborhood?: unknown[];\n  /** System that originated or inferred the relationship. */\n  originSource?: 'manual' | 'ingestion' | 'analytics' | 'integration';\n  /** Identifier of the owning principal scoped by owner_type. */\n  ownerId: string;\n  /** Categorical owner type sourced from the ownerTypes parameter. */\n  ownerType: 'organization' | 'team' | 'platform';\n  /** Optional role name describing how the owner governs the entity. */\n  ownershipRole?: string;\n  /** Timestamp recording when ownership was last transferred. */\n  ownershipTransferredAt?: string;\n  /** Hint copy surfaced in form fields when the label is empty. */\n  placeholder?: string;\n  /** Primary identifier for the relationship edge. */\n  relationshipId: string;\n  /** Semantic type describing the edge between the source and target. */\n  relationshipType: 'membership' | 'ownership' | 'follows' | 'depends_on' | 'references';\n  /** Identifier of the source node in the relationship. */\n  sourceId: string;\n  /** Chronological log of state transitions. Each entry records the before/after states,\ntimestamp, and (when governance is enabled) the actor, reason, and transition metadata.\nRendered by StatusTimeline in the detail and timeline views.\n\nEntry structure:\n  - from: string (previous state)\n  - to: string (new state)\n  - timestamp: ISO 8601 datetime\n  - actor_id: string (user/system who triggered the transition, optional)\n  - reason: string (human-readable justification, required when requireTransitionReason is true)\n  - transition_metadata: Record<string, unknown> (arbitrary context, optional)\n */\n  stateHistory?: unknown[];\n  /** Canonical lifecycle state derived from the states parameter. This is the single source\nof truth for the entity's current lifecycle position. Consumed by Colorized to resolve\nvisual tokens, and by view extensions to render StatusBadge and StatusTimeline.\n */\n  status: 'proposed' | 'active' | 'paused' | 'completed' | 'terminated';\n  /** Signal representing how strongly the entities are connected. */\n  strength?: 'low' | 'medium' | 'high';\n  /** Computed number of tags assigned to the entity. */\n  tagCount: number;\n  /** Per-tag governance metadata. Each entry corresponds to a tag in the tags array and\ntracks provenance and usage for taxonomy health monitoring.\n\nEntry structure:\n  - tag: string (the tag value, matches entry in tags array)\n  - created_at: ISO 8601 datetime\n  - created_by: string (user ID or \"system\" for allow-list tags)\n  - usage_count: number (how many entities use this tag, computed)\n  - moderation_status: \"approved\" | \"pending\" | \"rejected\" (when allowTagModeration is true)\n  - canonical_form: string (resolved synonym target, when synonymResolution is enabled)\n */\n  tagMetadata?: Record<string, unknown>[];\n  /** Ordered list of tags assigned to the entity. */\n  tags?: string[];\n  /** Identifier of the target node in the relationship. */\n  targetId: string;\n  /** Timestamp for the most recent modification, when available. */\n  updatedAt?: string;\n}\n\nconst { allowedTransitions, createdAt, description, direction, isBidirectional, label, lastEvent, lastEventAt, neighborhood, originSource, ownerId, ownerType, ownershipRole, ownershipTransferredAt, placeholder, relationshipId, relationshipType, sourceId, stateHistory, status, strength, tagCount, tagMetadata, tags, targetId, updatedAt } = defineProps<Props>();\n</script>\n\n<style scoped>\n/* Token CSS variables are consumed via inline styles. */\n/* Add component-scoped overrides here as needed. */\n</style>\n",
+        "contentHash": "sha256:fc0e642eca4f3751d669fb76e221ac34cc34cb5b0852481314540d3a38043c32"
+      }
+    ],
+    "dependencies": [
+      {
+        "name": "@oods/component-styles",
+        "version": "0.1.0",
+        "kind": "dependency"
+      },
+      {
+        "name": "@oods/components-vue",
+        "version": "0.1.0",
+        "kind": "dependency"
+      },
+      {
+        "name": "vue",
+        "version": "3.5.42",
+        "kind": "peerDependency"
+      }
+    ],
+    "actions": [],
+    "contentHash": "sha256:e8aa0bfead95da136147f6acd88e9fe230ec15678ced0c00ba9fcbc7789ad46e"
+  },
+  "code": "<template>\n  <main data-oods-shell=\"screen-card-7\">\n    <h1 data-oods-shell-heading=\"true\">Relationship</h1>\n    <Card id=\"screen-card-7\" data-oods-component=\"Card\" data-layout=\"stack\" style=\"display: flex; flex-direction: column; gap: var(--ref-space-cluster-default)\">\n        <Stack id=\"card-header-1\" data-oods-component=\"Stack\" data-layout=\"inline\" style=\"display: flex; flex-direction: row; justify-content: space-between; padding: var(--ref-space-inset-squish)\">\n              <Stack id=\"slot-header-2\" data-oods-component=\"Stack\" data-layout=\"stack\" style=\"display: flex; flex-direction: column; gap: var(--ref-space-cluster-default)\">\n                      <CardHeader id=\"ve-header-8\" data-oods-component=\"CardHeader\" :title=\"label\" :supporting=\"description\" />\n                      <StatusBadge id=\"ve-header-9\" data-oods-component=\"StatusBadge\" label=\"Status\" variant=\"subtle\" :status=\"status\" />\n                    </Stack>\n            </Stack>\n        <Stack id=\"card-body-3\" data-oods-component=\"Stack\" data-layout=\"stack\" style=\"display: flex; flex-direction: column; gap: var(--ref-space-cluster-tight); padding: var(--ref-space-inset-default)\">\n              <Stack id=\"slot-body-4\" data-oods-component=\"Stack\" />\n            </Stack>\n        <Stack id=\"card-footer-5\" data-oods-component=\"Stack\" data-layout=\"inline\" style=\"display: flex; flex-direction: row; justify-content: flex-end; padding: var(--ref-space-inset-squish)\">\n              <Stack id=\"slot-footer-6\" data-oods-component=\"Stack\" data-layout=\"stack\" style=\"display: flex; flex-direction: column; gap: var(--ref-space-cluster-default)\">\n                      <OwnershipMeta id=\"ve-footer-10\" data-oods-component=\"OwnershipMeta\" :ownerType=\"ownerType\" :role=\"ownershipRole\" />\n                      <TagSummary id=\"ve-footer-11\" data-oods-component=\"TagSummary\" label=\"Tags\" :tagCount=\"tagCount\" :tags=\"tags\" />\n                    </Stack>\n            </Stack>\n      </Card>\n  </main>\n</template>\n\n<script setup lang=\"ts\">\nimport { Card, CardHeader, OwnershipMeta, Stack, StatusBadge, TagSummary } from '@oods/components-vue';\nimport '@oods/component-styles/css';\n\ninterface Props {\n  /** Materialized list of valid next states from the current status, computed from the\ntransitionRules parameter. When transitionRules is null (open model), this contains\nall states except the current one. Used by StatusSelector to disable invalid options\nand by StatusBadge to indicate available paths.\n */\n  allowedTransitions?: string[];\n  /** Timestamp recording when the entity was first created. */\n  createdAt: string;\n  /** Supporting description used in detail and card contexts. */\n  description?: string;\n  /** Directionality applied when traversing the relationship. */\n  direction: 'unidirectional' | 'bidirectional';\n  /** Flag indicating whether the relationship is symmetric. */\n  isBidirectional: boolean;\n  /** Human-readable display name rendered in primary surfaces. */\n  label: string;\n  /** Lifecycle event associated with the most recent timestamp mutation. */\n  lastEvent: 'created' | 'activated' | 'paused' | 'terminated' | 'reactivated';\n  /** Timestamp for the lifecycle event captured in last_event. */\n  lastEventAt?: string;\n  /** Edge records sharing an endpoint with this relationship, each containing source_id and target_id strings and an is_bidirectional boolean. Generated sample rows are explicitly synthetic. */\n  neighborhood?: unknown[];\n  /** System that originated or inferred the relationship. */\n  originSource?: 'manual' | 'ingestion' | 'analytics' | 'integration';\n  /** Identifier of the owning principal scoped by owner_type. */\n  ownerId: string;\n  /** Categorical owner type sourced from the ownerTypes parameter. */\n  ownerType: 'organization' | 'team' | 'platform';\n  /** Optional role name describing how the owner governs the entity. */\n  ownershipRole?: string;\n  /** Timestamp recording when ownership was last transferred. */\n  ownershipTransferredAt?: string;\n  /** Hint copy surfaced in form fields when the label is empty. */\n  placeholder?: string;\n  /** Primary identifier for the relationship edge. */\n  relationshipId: string;\n  /** Semantic type describing the edge between the source and target. */\n  relationshipType: 'membership' | 'ownership' | 'follows' | 'depends_on' | 'references';\n  /** Identifier of the source node in the relationship. */\n  sourceId: string;\n  /** Chronological log of state transitions. Each entry records the before/after states,\ntimestamp, and (when governance is enabled) the actor, reason, and transition metadata.\nRendered by StatusTimeline in the detail and timeline views.\n\nEntry structure:\n  - from: string (previous state)\n  - to: string (new state)\n  - timestamp: ISO 8601 datetime\n  - actor_id: string (user/system who triggered the transition, optional)\n  - reason: string (human-readable justification, required when requireTransitionReason is true)\n  - transition_metadata: Record<string, unknown> (arbitrary context, optional)\n */\n  stateHistory?: unknown[];\n  /** Canonical lifecycle state derived from the states parameter. This is the single source\nof truth for the entity's current lifecycle position. Consumed by Colorized to resolve\nvisual tokens, and by view extensions to render StatusBadge and StatusTimeline.\n */\n  status: 'proposed' | 'active' | 'paused' | 'completed' | 'terminated';\n  /** Signal representing how strongly the entities are connected. */\n  strength?: 'low' | 'medium' | 'high';\n  /** Computed number of tags assigned to the entity. */\n  tagCount: number;\n  /** Per-tag governance metadata. Each entry corresponds to a tag in the tags array and\ntracks provenance and usage for taxonomy health monitoring.\n\nEntry structure:\n  - tag: string (the tag value, matches entry in tags array)\n  - created_at: ISO 8601 datetime\n  - created_by: string (user ID or \"system\" for allow-list tags)\n  - usage_count: number (how many entities use this tag, computed)\n  - moderation_status: \"approved\" | \"pending\" | \"rejected\" (when allowTagModeration is true)\n  - canonical_form: string (resolved synonym target, when synonymResolution is enabled)\n */\n  tagMetadata?: Record<string, unknown>[];\n  /** Ordered list of tags assigned to the entity. */\n  tags?: string[];\n  /** Identifier of the target node in the relationship. */\n  targetId: string;\n  /** Timestamp for the most recent modification, when available. */\n  updatedAt?: string;\n}\n\nconst { allowedTransitions, createdAt, description, direction, isBidirectional, label, lastEvent, lastEventAt, neighborhood, originSource, ownerId, ownerType, ownershipRole, ownershipTransferredAt, placeholder, relationshipId, relationshipType, sourceId, stateHistory, status, strength, tagCount, tagMetadata, tags, targetId, updatedAt } = defineProps<Props>();\n</script>\n\n<style scoped>\n/* Token CSS variables are consumed via inline styles. */\n/* Add component-scoped overrides here as needed. */\n</style>\n",
+  "fileExtension": ".vue",
+  "imports": [
+    "@oods/components-vue",
+    "@oods/component-styles/css"
+  ],
+  "warnings": [],
+  "validationReceipt": {
+    "profile": "build",
+    "defaulted": false,
+    "rationale": "Build is the default minimum gate for a runnable artifact: target, bindings, dependencies, and fallbacks must resolve.",
+    "axes": {
+      "scope": "generated-artifact",
+      "enforcement": "blocking",
+      "fallback": "forbidden",
+      "target": {
+        "requested": "vue",
+        "resolved": "vue",
+        "source": "explicit"
+      }
+    },
+    "checks": [
+      "schema-structure",
+      "component-registry",
+      "state-contract",
+      "target-readiness",
+      "normalization-fidelity",
+      "binding-contract",
+      "props-contract",
+      "slots-contract",
+      "events-contract",
+      "dependency-closure",
+      "fallback-policy"
+    ],
+    "notChecked": [
+      "rendered-evidence",
+      "interaction-evidence",
+      "accessibility-evidence",
+      "theme-evidence",
+      "determinism-evidence",
+      "performance-evidence",
+      "certification-evidence"
+    ],
+    "evidence": {
+      "required": [],
+      "provided": [],
+      "missing": [],
+      "mismatched": [],
+      "accepted": [],
+      "notApplicable": [],
+      "artifactContentHash": "sha256:e8aa0bfead95da136147f6acd88e9fe230ec15678ced0c00ba9fcbc7789ad46e"
+    }
+  },
+  "meta": {
+    "nodeCount": 11,
+    "componentCount": 6
+  }
+}

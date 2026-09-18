@@ -321,10 +321,20 @@ const registry: ReadonlyMap<string, ErrorDefinition> = new Map<string, ErrorDefi
   ['OODS-V205', { code: 'OODS-V205', category: 'validation', message: 'Composition version cannot be accepted', retryable: false }],
   ['OODS-V203', { code: 'OODS-V203', category: 'validation', message: 'Composition id or version is not well-formed', retryable: false }],
   ['OODS-V202', { code: 'OODS-V202', category: 'validation', message: 'structuredData.fetch input invalid', retryable: true }],
+  // Context beside the design (s203-m05), registered in s205-m01: unregistered, createError degraded both to
+  // server_error with an incident id, so a caller's malformed or mis-keyed item read as a server fault.
+  ['OODS-V206', { code: 'OODS-V206', category: 'validation', message: 'Context item is malformed or cannot state its provenance', retryable: false }],
+  ['OODS-V207', { code: 'OODS-V207', category: 'validation', message: 'Context item names a different object from the one on screen', retryable: false }],
   // Observation against intent (s204-m04): each refusal writes nothing at all.
   ['OODS-V208', { code: 'OODS-V208', category: 'validation', message: 'Observation run path is not one Stage1 run', retryable: false }],
   ['OODS-V209', { code: 'OODS-V209', category: 'validation', message: 'Observation artifact schema_version is outside the accepted contract', retryable: false }],
   ['OODS-V210', { code: 'OODS-V210', category: 'validation', message: 'Observation names an object the registry does not hold', retryable: false }],
+  // The result-state visual rule (s205-m03): a result state never renders in the severity family.
+  ['OODS-V211', { code: 'OODS-V211', category: 'validation', message: 'Result state bound to a component that cannot be held to the result family', retryable: false }],
+  // The run view (s205-m04): each refusal writes nothing at all.
+  ['OODS-V212', { code: 'OODS-V212', category: 'validation', message: 'Run view path is not one Stage1 run', retryable: false }],
+  ['OODS-V213', { code: 'OODS-V213', category: 'validation', message: 'Run view artifact is outside the admitted contract', retryable: false }],
+  ['OODS-V214', { code: 'OODS-V214', category: 'validation', message: 'Run does not match the composition it is shown in', retryable: false }],
 
   // ── Not Found ───────────────────────────────────────────────────────────
   ['OODS-N001', { code: 'OODS-N001', category: 'not_found', message: 'Unknown tool', retryable: false }],

@@ -4,6 +4,7 @@ import { generatedActionContractDigest, generatedActionSourceDigest, generatedAc
 import { fieldLabel, fieldHelp } from '../compose/label-generator.js';
 import { enumOptionLabel, isInternalField } from '../compose/internal-fields.js';
 import { workflowDataFiles } from './workflow-data-emitter.js';
+import { authoredLabelField } from '../compose/record-label.js';
 
 const CONTEXTS = ['list', 'detail', 'form', 'timeline'] as const;
 const nameOf = (context: string) => context[0]!.toUpperCase() + context.slice(1);
@@ -114,7 +115,7 @@ export function emitWorkflow(schema: UiSchema, options: CodegenOptions, framewor
     `  ${generatedActionTypeSignature(action)};`,
   ].join('\n')).join('\n')}\n}\n` });
   files.push(...workflowDataFiles(schema));
-  const titleField = ['plan_name', 'name', 'title', 'display_name', 'label'].find((name) => schema.objectSchema![name]) ?? schema.workflow.data.idField;
+  const titleField = ['plan_name', 'name', 'title', 'display_name', 'label'].find((name) => schema.objectSchema![name]) ?? authoredLabelField(schema.objectSchema!) ?? schema.workflow.data.idField;
   const supplemental = Object.entries(schema.objectSchema).filter(([name, field]) => name !== schema.workflow!.data.idField && !formFields.has(name) && !isInternalField(name, schema.objectSchema!) && field.required && field.type === 'string' && !field.enum);
   files.push({ path: 'src/application.ts', contents: `import { parseBillingAmount } from '@oods/component-contracts';
 import { ${Object.values(schema.objectSchema).some(field => field.type === 'AddressableEntry[]') ? 'collectionAddressIndex, ' : ''}createStore, idField, titleField, fieldTypes, screenProps, history, collectionEvents, type DomainRecord, type ListQuery, type StoreOptions } from './store';

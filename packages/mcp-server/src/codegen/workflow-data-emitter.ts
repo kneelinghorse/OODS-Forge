@@ -2,6 +2,7 @@ import { chartNodes } from './chart-declaration.js';
 import type { UiSchema, UiElement, FieldSchemaEntry } from '../schemas/generated.js';
 import { mapFieldType, snakeToCamel } from './binding-utils.js';
 import { fieldLabel } from '../compose/label-generator.js';
+import { authoredLabelField } from '../compose/record-label.js';
 
 /** One deterministic preview policy. Authored examples/defaults and enums own domain values. */
 /** A stable rotation for a seed string: the same seed always rotates the sample lists the same way; no seed leaves them as authored. */
@@ -21,7 +22,7 @@ export function workflowSampleData(schema: UiSchema): { records: Array<Record<st
   const { idField, lifecycleStates, billingIntervals, currency, sampleCount } = workflow.data;
   const seedAt = '2026-09-08T12:00:00.000Z';
   const charts = chartNodes(schema.screens).map(node => node.chart!);
-  const titleField = ['plan_name', 'name', 'title', 'display_name', 'label'].find(name => fields[name]) ?? idField;
+  const titleField = ['plan_name', 'name', 'title', 'display_name', 'label'].find(name => fields[name]) ?? authoredLabelField(fields) ?? idField;
   const humanize = (value: string) => value.split(/[_-]/).filter(Boolean).map(part => part.charAt(0).toUpperCase() + part.slice(1)).join(' ');
   // The schema's seed rotates the deterministic lists, so a seed change alters the sample data and nothing else.
   const rotation = sampleSeedRotation(schema.seed);
@@ -41,7 +42,18 @@ export function workflowSampleData(schema: UiSchema): { records: Array<Record<st
       const type = field.type.replace(/\?$/, '');
       const declaredChart = charts.find(chart => (chart.source === 'record-array' || chart.source === 'edge-array') && chart.dataField === name);
       if (declaredChart?.source === 'record-array' || declaredChart?.source === 'edge-array') return value(declaredChart.sampleRows, 'authored chart rows');
-      if (field.examples?.length) return value(field.examples[index % field.examples.length], 'authored field example');
+      // s205-m06: the id keys every record in the generated app, so it takes the authored examples only when there are
+      // enough for each sample record to stay unique. Cycling 6 real Stage1 ids across 10 records repeated them, and
+      // the runtime sweep's workflow could not tell record 3 from record 9. Other fields still cycle real values.
+      if (name === idField && field.examples?.length && field.examples.length < sampleCount) return value(`${workflow.object.toLowerCase()}-${suffix}`, 'stable object record key (fewer authored ids than sample records)');
+      if (field.examples?.length) {
+        const example = field.examples[index % field.examples.length];
+        // s205-m06: a real record that does not carry an optional field is authored as null (Run.evidence_retained is
+        // absent on four of six Stage1 runs). On a type that is not nullable, absent is an omitted key, never null —
+        // null failed the generated app's strict typecheck in the runtime sweep.
+        if (example === null && !field.required && !field.type.endsWith('?')) return value(undefined, 'authored field example: absent on this record');
+        return value(example, 'authored field example');
+      }
       if (name === idField) return value(`${workflow.object.toLowerCase()}-${suffix}`, 'stable object record key');
       if (type === 'AddressableEntry[]') return value([{ role: workflow.data.defaultAddressRole ?? workflow.data.addressRoles?.[0] ?? 'primary', address: { countryCode: 'US', addressLines: [`${100 + index} Main Street`], locality: 'Springfield', administrativeArea: 'IL', postalCode: '62701' }, isDefault: true, updatedAt: seedAt }], 'declared address role and deterministic postal address');
       if (name === 'default_address_role') return value(workflow.data.defaultAddressRole ?? workflow.data.addressRoles?.[0] ?? 'primary', 'declared address role');
@@ -161,7 +173,7 @@ export function workflowDataFiles(schema: UiSchema): Array<{ path: string; conte
   const workflow = schema.workflow!;
   const fields = schema.objectSchema!;
   const { idField } = workflow.data;
-  const titleField = ['plan_name', 'name', 'title', 'display_name', 'label'].find((name) => fields[name]) ?? idField;
+  const titleField = ['plan_name', 'name', 'title', 'display_name', 'label'].find((name) => fields[name]) ?? authoredLabelField(fields) ?? idField;
   const records = workflowSampleRecords(schema);
   const nodes = (elements: UiElement[]): UiElement[] => elements.flatMap(node => [node, ...nodes(node.children ?? [])]);
   const declaredFilter = nodes(schema.screens).find(node => node.collectionControl === 'filter')?.props?.field;

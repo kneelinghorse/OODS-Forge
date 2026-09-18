@@ -115,10 +115,39 @@ describe('a version\'s own order overrides never abort recording it (s202-m04)',
      * is now the swap count, which keeps the loop honest — if the composition stopped offering
      * alternatives at all, this fails.
      *
-     * Carried to the s204 review: whether the OODS-V204 arm should be re-anchored on another object,
-     * or retired because the fix removed the condition that produced it, is the review's call.
+     * Carried to the s204 review, decided in s205-m01: the arm is re-anchored on Transaction/detail in the
+     * next test, where the same group still moves between regions on a header swap.
      */
     expect(swapsTried, 'the loop actually exercised candidate swaps').toBeGreaterThan(5);
     expect(refusedByOrder, 'no candidate is refused by this order since the s204-m02 (c) fix').toEqual([]);
+  }, 180_000);
+
+  /**
+   * RE-ANCHORED in s205-m01 (#2193, the s204 review's carry). The OODS-V204 arm above stopped reproducing on
+   * Subscription/detail's single-region order, so the invariant's refusing half went unexercised. A probe over all
+   * 23 objects and four contexts (artifacts/product-reality/sprint-205/m01/v204-probe.json) found it on 34 screens.
+   * Transaction/detail is the one taken here because it is the same group moving the other way: the version as
+   * composed carries `updated_at` in `detail-body-10`, and swapping the header slot to StatusTimeline pulls the
+   * status group — `updated_at` with it — up into the header. So the version's own order names a field that
+   * candidate would take out of the region, recording must still succeed, and that candidate must not be offered.
+   */
+  it('re-anchored on Transaction/detail: the refused candidate is really refused, and still never offered', async () => {
+    const preferences = { fieldOrder: { 'detail-body-10': ['updated_at'] } };
+    const composed = await compose({ object: 'Transaction', context: 'detail', preferences });
+    expect(composed.status).toBe('ok');
+    const record = await readVersion(resolveCompositionsDir(), composed.compositionId!, composed.version!);
+    const refusedByOrder: string[] = [];
+    for (const selection of composed.selections) {
+      const offered = record.slots.find(slot => slot.slotName === selection.slotName)?.candidates ?? [];
+      const ranked = [...new Set([...selection.candidates.map(candidate => candidate.name), ...(selection.alternativeCandidates ?? []).map(candidate => candidate.name)])];
+      for (const name of ranked) {
+        if (name === selection.selectedComponent) continue;
+        const outcome = await compose({ object: 'Transaction', context: 'detail', preferences: { ...preferences, componentOverrides: { [selection.slotName]: name } }, options: { transient: true, validate: false } })
+          .then(() => 'composed', (error: { opiCode?: string }) => error.opiCode ?? 'error');
+        if (outcome === 'OODS-V204') { refusedByOrder.push(`${selection.slotName} → ${name}`); expect(offered, `${selection.slotName} → ${name}`).not.toContain(name); }
+        else if (offered.includes(name)) expect(outcome, `${selection.slotName} → ${name}`).toBe('composed');
+      }
+    }
+    expect(refusedByOrder, 'the arm reproduces: the version\'s own order refuses the header swap that moves updated_at').toContain('header → StatusTimeline');
   }, 180_000);
 });
