@@ -40,7 +40,7 @@ export function commands(directory = root) {
  * in Sprint 203 wrote into a sealed directory. The guard was doing its job — keeping receipts out of
  * arbitrary paths — while naming a sprint that had since closed.
  */
-const UNSEALED_SPRINT = 'sprint-204';
+const UNSEALED_SPRINT = 'sprint-205';
 
 export function verify(output = `artifacts/product-reality/${UNSEALED_SPRINT}/gate`) {
   const directory = path.resolve(root, output);
