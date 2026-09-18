@@ -42,6 +42,10 @@ export function workflowSampleData(schema: UiSchema): { records: Array<Record<st
       const type = field.type.replace(/\?$/, '');
       const declaredChart = charts.find(chart => (chart.source === 'record-array' || chart.source === 'edge-array') && chart.dataField === name);
       if (declaredChart?.source === 'record-array' || declaredChart?.source === 'edge-array') return value(declaredChart.sampleRows, 'authored chart rows');
+      // s205-m06: the id keys every record in the generated app, so it takes the authored examples only when there are
+      // enough for each sample record to stay unique. Cycling 6 real Stage1 ids across 10 records repeated them, and
+      // the runtime sweep's workflow could not tell record 3 from record 9. Other fields still cycle real values.
+      if (name === idField && field.examples?.length && field.examples.length < sampleCount) return value(`${workflow.object.toLowerCase()}-${suffix}`, 'stable object record key (fewer authored ids than sample records)');
       if (field.examples?.length) {
         const example = field.examples[index % field.examples.length];
         // s205-m06: a real record that does not carry an optional field is authored as null (Run.evidence_retained is

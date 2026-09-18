@@ -1,0 +1,91 @@
+{
+  "status": "ok",
+  "framework": "vue",
+  "artifact": {
+    "schemaVersion": "1.0.0",
+    "framework": "vue",
+    "files": [
+      {
+        "path": "src/GeneratedUI.vue",
+        "contents": "<template>\n  <main data-oods-shell=\"screen-card-7\">\n    <h1 data-oods-shell-heading=\"true\">Captured Artifact</h1>\n    <Card id=\"screen-card-7\" data-oods-component=\"Card\" data-layout=\"stack\" style=\"display: flex; flex-direction: column; gap: var(--ref-space-cluster-default)\">\n        <Stack id=\"card-header-1\" data-oods-component=\"Stack\" data-layout=\"inline\" style=\"display: flex; flex-direction: row; justify-content: space-between; padding: var(--ref-space-inset-squish)\">\n              <Text id=\"slot-header-2\" data-oods-component=\"Text\" label=\"Path\">{{ path }}</Text>\n            </Stack>\n        <Stack id=\"card-body-3\" data-oods-component=\"Stack\" data-layout=\"stack\" style=\"display: flex; flex-direction: column; gap: var(--ref-space-cluster-tight); padding: var(--ref-space-inset-default)\">\n              <Stack id=\"slot-body-4\" data-oods-component=\"Stack\" />\n            </Stack>\n        <Stack id=\"card-footer-5\" data-oods-component=\"Stack\" data-layout=\"inline\" style=\"display: flex; flex-direction: row; justify-content: flex-end; padding: var(--ref-space-inset-squish)\">\n              <Stack id=\"slot-footer-6\" data-oods-component=\"Stack\" data-layout=\"stack\" style=\"display: flex; flex-direction: column; gap: var(--ref-space-cluster-default)\">\n                      <Text id=\"ve-footer-8\" data-oods-component=\"Text\" label=\"Obtained by\">{{ provenanceMethod }}</Text>\n                      <RelativeTimestamp id=\"ve-footer-9\" data-oods-component=\"RelativeTimestamp\" label=\"Obtained\" :datetime=\"provenanceAt\" />\n                    </Stack>\n            </Stack>\n      </Card>\n  </main>\n</template>\n\n<script setup lang=\"ts\">\nimport { Card, RelativeTimestamp, Stack, Text } from '@oods/components-vue';\nimport '@oods/component-styles/css';\n\ninterface Props {\n  /** Array of currently applied filter values:\n  - field: string (matches a filter descriptor field)\n  - operator: \"eq\" | \"in\" | \"range\" | \"gt\" | \"lt\" | \"between\"\n  - value: unknown (the selected filter value or values)\n */\n  activeFilters?: Record<string, unknown>[];\n  /** The run id and the path, \"<run_id>:<path>\". */\n  artifactId: string;\n  /** What kind of artifact it is, as the run's index types it. */\n  artifactKind: string;\n  /** Its size. The index lists itself without one. */\n  bytes?: number;\n  /** What the artifact holds, in the index's words. */\n  description: string;\n  /** Computed count of currently active filters. */\n  filterCount: number;\n  /** Array of available filter descriptors. Each entry defines a filterable dimension:\n  - field: string (the schema field to filter on)\n  - label: string (display label)\n  - type: \"select\" | \"multi-select\" | \"range\" | \"boolean\" | \"date-range\"\n  - options: array of { value, label } for select/multi-select types\n */\n  filters?: Record<string, unknown>[];\n  /** Current page number (1-based). */\n  page: number;\n  /** Number of items displayed per page. */\n  pageSize: number;\n  /** The file under the run's artifacts/ directory, which names the artifact. */\n  path: string;\n  /** When they were obtained. */\n  provenanceAt: string;\n  /** Where in that record the values were read. */\n  provenanceLocator?: string;\n  /** How the values were obtained. */\n  provenanceMethod: string;\n  /** Which record there. */\n  provenanceRecord: string;\n  /** The system that produced the record. */\n  provenanceSource: string;\n  /** The artifact's own schema_version. Absent on entity_catalog, style_fingerprint and stylesheet_rules, which Stage1 does not stamp. */\n  schemaVersion?: string;\n  /** Whether the search input is currently focused or has a non-empty query. */\n  searchActive?: boolean;\n  /** The current search query string entered by the user. */\n  searchQuery?: string;\n  /** The digest the run manifest attests for this file (manifest.hashes). All 27 on run 6e435ce7 match the bytes on disk. */\n  sha256: string;\n  /** Total number of items across all pages. Used to compute total page count. */\n  totalItems?: number;\n  /** Computed total number of pages (ceil(totalItems / pageSize)). */\n  totalPages?: number;\n}\n\nconst { activeFilters, artifactId, artifactKind, bytes, description, filterCount, filters, page, pageSize, path, provenanceAt, provenanceLocator, provenanceMethod, provenanceRecord, provenanceSource, schemaVersion, searchActive, searchQuery, sha256, totalItems, totalPages } = defineProps<Props>();\n</script>\n\n<style scoped>\n/* Token CSS variables are consumed via inline styles. */\n/* Add component-scoped overrides here as needed. */\n</style>\n",
+        "contentHash": "sha256:5c7aaffbbb888b8849fc57fc4164f17879355fc5792cf0c341f8562656c4fd1e"
+      }
+    ],
+    "dependencies": [
+      {
+        "name": "@oods/component-styles",
+        "version": "0.1.0",
+        "kind": "dependency"
+      },
+      {
+        "name": "@oods/components-vue",
+        "version": "0.1.0",
+        "kind": "dependency"
+      },
+      {
+        "name": "vue",
+        "version": "3.5.42",
+        "kind": "peerDependency"
+      }
+    ],
+    "actions": [],
+    "contentHash": "sha256:246d47d310d92830ff4710f73381ee940876557fa655922631d3af17522dc49b"
+  },
+  "code": "<template>\n  <main data-oods-shell=\"screen-card-7\">\n    <h1 data-oods-shell-heading=\"true\">Captured Artifact</h1>\n    <Card id=\"screen-card-7\" data-oods-component=\"Card\" data-layout=\"stack\" style=\"display: flex; flex-direction: column; gap: var(--ref-space-cluster-default)\">\n        <Stack id=\"card-header-1\" data-oods-component=\"Stack\" data-layout=\"inline\" style=\"display: flex; flex-direction: row; justify-content: space-between; padding: var(--ref-space-inset-squish)\">\n              <Text id=\"slot-header-2\" data-oods-component=\"Text\" label=\"Path\">{{ path }}</Text>\n            </Stack>\n        <Stack id=\"card-body-3\" data-oods-component=\"Stack\" data-layout=\"stack\" style=\"display: flex; flex-direction: column; gap: var(--ref-space-cluster-tight); padding: var(--ref-space-inset-default)\">\n              <Stack id=\"slot-body-4\" data-oods-component=\"Stack\" />\n            </Stack>\n        <Stack id=\"card-footer-5\" data-oods-component=\"Stack\" data-layout=\"inline\" style=\"display: flex; flex-direction: row; justify-content: flex-end; padding: var(--ref-space-inset-squish)\">\n              <Stack id=\"slot-footer-6\" data-oods-component=\"Stack\" data-layout=\"stack\" style=\"display: flex; flex-direction: column; gap: var(--ref-space-cluster-default)\">\n                      <Text id=\"ve-footer-8\" data-oods-component=\"Text\" label=\"Obtained by\">{{ provenanceMethod }}</Text>\n                      <RelativeTimestamp id=\"ve-footer-9\" data-oods-component=\"RelativeTimestamp\" label=\"Obtained\" :datetime=\"provenanceAt\" />\n                    </Stack>\n            </Stack>\n      </Card>\n  </main>\n</template>\n\n<script setup lang=\"ts\">\nimport { Card, RelativeTimestamp, Stack, Text } from '@oods/components-vue';\nimport '@oods/component-styles/css';\n\ninterface Props {\n  /** Array of currently applied filter values:\n  - field: string (matches a filter descriptor field)\n  - operator: \"eq\" | \"in\" | \"range\" | \"gt\" | \"lt\" | \"between\"\n  - value: unknown (the selected filter value or values)\n */\n  activeFilters?: Record<string, unknown>[];\n  /** The run id and the path, \"<run_id>:<path>\". */\n  artifactId: string;\n  /** What kind of artifact it is, as the run's index types it. */\n  artifactKind: string;\n  /** Its size. The index lists itself without one. */\n  bytes?: number;\n  /** What the artifact holds, in the index's words. */\n  description: string;\n  /** Computed count of currently active filters. */\n  filterCount: number;\n  /** Array of available filter descriptors. Each entry defines a filterable dimension:\n  - field: string (the schema field to filter on)\n  - label: string (display label)\n  - type: \"select\" | \"multi-select\" | \"range\" | \"boolean\" | \"date-range\"\n  - options: array of { value, label } for select/multi-select types\n */\n  filters?: Record<string, unknown>[];\n  /** Current page number (1-based). */\n  page: number;\n  /** Number of items displayed per page. */\n  pageSize: number;\n  /** The file under the run's artifacts/ directory, which names the artifact. */\n  path: string;\n  /** When they were obtained. */\n  provenanceAt: string;\n  /** Where in that record the values were read. */\n  provenanceLocator?: string;\n  /** How the values were obtained. */\n  provenanceMethod: string;\n  /** Which record there. */\n  provenanceRecord: string;\n  /** The system that produced the record. */\n  provenanceSource: string;\n  /** The artifact's own schema_version. Absent on entity_catalog, style_fingerprint and stylesheet_rules, which Stage1 does not stamp. */\n  schemaVersion?: string;\n  /** Whether the search input is currently focused or has a non-empty query. */\n  searchActive?: boolean;\n  /** The current search query string entered by the user. */\n  searchQuery?: string;\n  /** The digest the run manifest attests for this file (manifest.hashes). All 27 on run 6e435ce7 match the bytes on disk. */\n  sha256: string;\n  /** Total number of items across all pages. Used to compute total page count. */\n  totalItems?: number;\n  /** Computed total number of pages (ceil(totalItems / pageSize)). */\n  totalPages?: number;\n}\n\nconst { activeFilters, artifactId, artifactKind, bytes, description, filterCount, filters, page, pageSize, path, provenanceAt, provenanceLocator, provenanceMethod, provenanceRecord, provenanceSource, schemaVersion, searchActive, searchQuery, sha256, totalItems, totalPages } = defineProps<Props>();\n</script>\n\n<style scoped>\n/* Token CSS variables are consumed via inline styles. */\n/* Add component-scoped overrides here as needed. */\n</style>\n",
+  "fileExtension": ".vue",
+  "imports": [
+    "@oods/components-vue",
+    "@oods/component-styles/css"
+  ],
+  "warnings": [],
+  "validationReceipt": {
+    "profile": "build",
+    "defaulted": false,
+    "rationale": "Build is the default minimum gate for a runnable artifact: target, bindings, dependencies, and fallbacks must resolve.",
+    "axes": {
+      "scope": "generated-artifact",
+      "enforcement": "blocking",
+      "fallback": "forbidden",
+      "target": {
+        "requested": "vue",
+        "resolved": "vue",
+        "source": "explicit"
+      }
+    },
+    "checks": [
+      "schema-structure",
+      "component-registry",
+      "state-contract",
+      "target-readiness",
+      "normalization-fidelity",
+      "binding-contract",
+      "props-contract",
+      "slots-contract",
+      "events-contract",
+      "dependency-closure",
+      "fallback-policy"
+    ],
+    "notChecked": [
+      "rendered-evidence",
+      "interaction-evidence",
+      "accessibility-evidence",
+      "theme-evidence",
+      "determinism-evidence",
+      "performance-evidence",
+      "certification-evidence"
+    ],
+    "evidence": {
+      "required": [],
+      "provided": [],
+      "missing": [],
+      "mismatched": [],
+      "accepted": [],
+      "notApplicable": [],
+      "artifactContentHash": "sha256:246d47d310d92830ff4710f73381ee940876557fa655922631d3af17522dc49b"
+    }
+  },
+  "meta": {
+    "nodeCount": 9,
+    "componentCount": 4
+  }
+}
