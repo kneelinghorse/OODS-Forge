@@ -23,8 +23,8 @@
  * regression coverage of the full matching path.
  */
 import { describe, it, expect } from 'vitest';
-import { readFileSync, existsSync } from 'node:fs';
-import { resolve } from 'node:path';
+import { readFileSync, existsSync, readdirSync } from 'node:fs';
+import { join, relative, resolve } from 'node:path';
 import { handle as pipelineHandle } from '../../src/tools/pipeline.js';
 import { handle as composeHandle } from '../../src/tools/design.compose.js';
 import type { ActionMapping, ActionInstance } from '../../src/tools/design.compose.js';
@@ -50,6 +50,39 @@ const STAGE1_STRIPE_BRIDGE = resolve(
   __dirname,
   '../../../../../Stage1/out/oods-s89-ready/stage1/stripe-com/09145d03-4290-487d-b8ee-8a54963c3403/artifacts/bridge_summary.json',
 );
+
+/**
+ * Sprint 205 m01 (#2204): the eight bridge-dependent tests below are RETIRED IN PLACE, not skipped.
+ *
+ * bridge_summary.json is emitted by nothing in Stage1 any more: zero runs under Stage1/out carry it and zero
+ * Stage1 source files name it (measured 2026-09-18; the only mention is a Sprint 41 report). The runs these
+ * tests were pinned to are gone, so nine of them skipped — 9 in each of the two suites that run this
+ * directory, 18 in the capture, reported as "skipped" and read by nobody. One of the nine never read the
+ * bridge file at all (meta.unresolvedEntity) and now simply runs.
+ *
+ * The file itself stays: the frozen Sprint 184 disposition
+ * (artifacts/product-reality/sprint-184/m07/b2-repoint-disposition.json) binds six selectors here by title and
+ * body, three of them inside this bridge-dependent group. So each test keeps its title and its body, and while
+ * the artifact is gone it asserts THAT — the retirement is a typed, passing fact that FAILS the day Stage1
+ * emits bridge_summary.json again, which is the day these tests should be re-pointed at a real run.
+ */
+const STAGE1_ROOT = resolve(__dirname, '../../../../../Stage1');
+function findFiles(directory: string, match: (name: string) => boolean, skip: Set<string>): string[] {
+  let entries;
+  try { entries = readdirSync(directory, { withFileTypes: true }); } catch { return []; }
+  return entries.flatMap(entry => entry.isDirectory()
+    ? (skip.has(entry.name) ? [] : findFiles(join(directory, entry.name), match, skip))
+    : match(entry.name) ? [join(directory, entry.name)] : []);
+}
+const bridgeEmitters = (() => {
+  const runs = findFiles(join(STAGE1_ROOT, 'out'), name => name === 'bridge_summary.json', new Set(['evidence']));
+  const sources = findFiles(join(STAGE1_ROOT, 'packages'), name => /\.(?:[cm]?[jt]s|py)$/.test(name), new Set(['node_modules', 'dist', '.turbo']))
+    .filter(file => readFileSync(file, 'utf8').includes('bridge_summary'));
+  return [...runs, ...sources].map(file => relative(STAGE1_ROOT, file));
+})();
+function retired(): void {
+  expect(bridgeEmitters, 'Stage1 emits bridge_summary.json again — re-point the action-mappings e2e tests at a real run and lift this retirement').toEqual([]);
+}
 
 function loadBridgeSummary(path: string): {
   action_mappings: ActionMapping[];
@@ -163,7 +196,8 @@ describe('E2E — Stage1 BridgeSummary → pipeline → design.compose', () => {
 describe('E2E — real Stage1 linear.app BridgeSummary (post-S40 run 5e3a5dbf)', () => {
   const bridge = loadStage1BridgeSummary();
 
-  it.runIf(bridge !== null)('bridge_summary.json is on disk and has expected top-level shape', () => {
+  it('bridge_summary.json is on disk and has expected top-level shape', () => {
+    if (bridge === null) return retired();
     expect(bridge).not.toBeNull();
     expect(Array.isArray(bridge!.action_mappings)).toBe(true);
     expect(Array.isArray(bridge!.actions)).toBe(true);
@@ -182,7 +216,8 @@ describe('E2E — real Stage1 linear.app BridgeSummary (post-S40 run 5e3a5dbf)',
     }
   });
 
-  it.runIf(bridge !== null)('accepts Stage1 alias fields (orcaVerb, suggestedAction) without crashing', async () => {
+  it('accepts Stage1 alias fields (orcaVerb, suggestedAction) without crashing', async () => {
+    if (bridge === null) return retired();
     const result = await pipelineHandle({
       object: 'Subscription',
       context: 'card',
@@ -203,7 +238,8 @@ describe('E2E — real Stage1 linear.app BridgeSummary (post-S40 run 5e3a5dbf)',
     expect(resolved.find(r => r.trait === 'interactive')).toBeUndefined();
   });
 
-  it.runIf(bridge !== null)('resolves at least one real Stage1 targetEntity to an OODS object and retains at least one as unresolved', () => {
+  it('resolves at least one real Stage1 targetEntity to an OODS object and retains at least one as unresolved', () => {
+    if (bridge === null) return retired();
     // Path B (Sprint 89): resolver maps raw Stage1 `entity-<slug>` ids onto
     // OODS object names via canonical_name hint → alias table → slug
     // fallback → unresolved retention. Run the real targetEntity values from
@@ -235,7 +271,9 @@ describe('E2E — real Stage1 linear.app BridgeSummary (post-S40 run 5e3a5dbf)',
     void unresolved;
   });
 
-  it.runIf(bridge !== null)('meta.unresolvedEntity is stamped on composed nodes matching an unresolved sourceComponent', async () => {
+  // Never read the bridge: its vocabulary and instances are synthetic. It was gated on the file only because it
+  // sat in this describe, so it runs unconditionally now (s205-m01) rather than being retired with the other eight.
+  it('meta.unresolvedEntity is stamped on composed nodes matching an unresolved sourceComponent', async () => {
     // Exercise the design.compose wiring: an actionInstance whose verb is in
     // the vocabulary AND whose targetEntity does NOT resolve should flow
     // through to annotation, with the raw id retained on the matching node.
@@ -277,7 +315,8 @@ describe('E2E — real Stage1 linear.app BridgeSummary (post-S40 run 5e3a5dbf)',
     expect((marked!.meta as Record<string, unknown>).unresolvedEntity).toBe('entity-unknowable');
   });
 
-  it.runIf(bridge !== null)('merging real actionInstances with a synthetic vocabulary that includes Subscription traits produces per-slot actions', async () => {
+  it('merging real actionInstances with a synthetic vocabulary that includes Subscription traits produces per-slot actions', async () => {
+    if (bridge === null) return retired();
     // Post-S40 linear.app run emits "submit" on all instances. Compose a
     // vocabulary that attributes submit to a trait Subscription carries
     // (Stateful) to prove the merge path wires instances → resolvedActions.
@@ -300,7 +339,8 @@ describe('E2E — real Stage1 linear.app BridgeSummary (post-S40 run 5e3a5dbf)',
     expect(stateful!.verbs).toEqual(expect.arrayContaining(['submit']));
   });
 
-  it.runIf(bridge !== null)('post-S40 reconciliation_report exposes the new ORCA role vocabulary (page, svg-primitive, media) covered by orca-role-mapper', () => {
+  it('post-S40 reconciliation_report exposes the new ORCA role vocabulary (page, svg-primitive, media) covered by orca-role-mapper', () => {
+    if (bridge === null) return retired();
     const reconciliation = loadReconciliationReport(STAGE1_LINEAR_RECONCILIATION);
     expect(reconciliation).not.toBeNull();
     const inferredRoles = new Set(
@@ -330,7 +370,8 @@ describe('E2E — real Stage1 linear.app BridgeSummary (post-S40 run 5e3a5dbf)',
 describe('E2E — real Stage1 stripe.com BridgeSummary (post-S40 run 09145d03)', () => {
   const bridge = loadBridgeSummary(STAGE1_STRIPE_BRIDGE);
 
-  it.runIf(bridge !== null)('cross-target bridge_summary.json reads cleanly and targetEntity descriptors normalize', () => {
+  it('cross-target bridge_summary.json reads cleanly and targetEntity descriptors normalize', () => {
+    if (bridge === null) return retired();
     expect(bridge).not.toBeNull();
     expect(Array.isArray(bridge!.action_mappings)).toBe(true);
     expect(bridge!.action_mappings.length).toBeGreaterThan(0);
@@ -345,7 +386,8 @@ describe('E2E — real Stage1 stripe.com BridgeSummary (post-S40 run 09145d03)',
     }
   });
 
-  it.runIf(bridge !== null)('stripe targetEntity ids that are neither aliased nor slug-resolvable are retained as unresolved (Path B)', () => {
+  it('stripe targetEntity ids that are neither aliased nor slug-resolvable are retained as unresolved (Path B)', () => {
+    if (bridge === null) return retired();
     // stripe.com 09145d03 emits entity-billing, entity-blog, entity-capital —
     // none are in the shipped alias table and none match an indexed object via
     // slugification (no Billing/Blog/Capital.object.yaml). All three must
@@ -367,7 +409,8 @@ describe('E2E — real Stage1 stripe.com BridgeSummary (post-S40 run 09145d03)',
     }
   });
 
-  it.runIf(bridge !== null)('stripe cross-target action vocabulary (submit/navigate/open) passes through without crashing and respects trait filtering', async () => {
+  it('stripe cross-target action vocabulary (submit/navigate/open) passes through without crashing and respects trait filtering', async () => {
+    if (bridge === null) return retired();
     // stripe.com emits verbs: submit, navigate, open. Map all three to a trait
     // Subscription DOES carry (Stateful) and a trait it does NOT (Archivable
     // is fine, Stateful proves attachment). Filter should drop the absent-trait

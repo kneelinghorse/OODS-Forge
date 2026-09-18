@@ -119,8 +119,10 @@ function touchedScreens(): Screen[] {
  * `screen-detail-13-record-tabs-*`) on a screen Sprint 203 certified. Decision is here because its
  * card is the screen Sprint 203 could not certify and (d) is meant to make it certifiable.
  */
-const CERTIFY_OBJECTS = ['Subscription', 'Person', 'Decision'];
-const CONTEXTS = ['card', 'detail', 'form', 'inline', 'list', 'timeline', 'workflow', 'dashboard'];
+// s205-m01: `--objects A,B` and `--contexts x,y` narrow the certify scope (default: the Sprint 204 set), so a
+// receipt can cover one context across every object without re-running the rest.
+const CERTIFY_OBJECTS = arg('objects')?.split(',') ?? ['Subscription', 'Person', 'Decision'];
+const CONTEXTS = arg('contexts')?.split(',') ?? ['card', 'detail', 'form', 'inline', 'list', 'timeline', 'workflow', 'dashboard'];
 
 /* ------------------------------------------------------------------ */
 /*  The bridge                                                         */
@@ -162,7 +164,29 @@ type RenderResult = { compositionId: string; version: number; schemaHash: string
 const PREVIEW_INTERVAL_MS = 6_200;
 let lastPreviewAt = 0;
 
+/**
+ * s205-m01: `dashboard` is a design.compose LAYOUT, not a context, so design.preview's context enum refuses it
+ * and Sprint 204 left its 22 screens without a browser receipt. design.preview already opens any recorded
+ * version by compositionId, so a dashboard is composed with `layout: 'dashboard'` and previewed by its id —
+ * measured at ~0.3 s beyond the composition, rendering with 0 console errors.
+ */
+async function previewInput(object: string, context: string): Promise<Record<string, unknown>> {
+  if (context !== 'dashboard') return { object, context };
+  const response = await fetch(`${base}/run`, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json', 'x-bridge-token': TOKEN },
+    body: JSON.stringify({ tool: 'design_compose', input: { object, layout: 'dashboard' } }),
+  });
+  const body = await response.text();
+  if (!response.ok || !body.includes('"ok":true')) throw new Error(`design_compose ${object}/dashboard: ${body.slice(0, 400)}`);
+  const result = (JSON.parse(body) as { result: { status: string; compositionId?: string; version?: number; errors?: Array<{ code: string }> } }).result;
+  // design.compose answers a refused composition with ok:true and status "error" (Chunk composes only inline, OODS-V003).
+  if (result.status !== 'ok' || !result.compositionId) throw new Error(`design_compose ${object}/dashboard refused: ${result.errors?.map(error => error.code).join(', ') ?? result.status}`);
+  return { compositionId: result.compositionId, version: result.version! };
+}
+
 async function preview(object: string, context: string): Promise<RenderResult> {
+  const input = await previewInput(object, context);
   for (let attempt = 0; attempt < 6; attempt += 1) {
     const wait = Math.max(0, lastPreviewAt + PREVIEW_INTERVAL_MS - Date.now());
     if (wait > 0) await new Promise(resolve => setTimeout(resolve, wait));
@@ -170,7 +194,7 @@ async function preview(object: string, context: string): Promise<RenderResult> {
     const response = await fetch(`${base}/run`, {
       method: 'POST',
       headers: { 'content-type': 'application/json', 'x-bridge-token': TOKEN },
-      body: JSON.stringify({ tool: 'design_preview', input: { object, context } }),
+      body: JSON.stringify({ tool: 'design_preview', input }),
     });
     const body = await response.text();
     if (response.ok && body.includes('"ok":true')) return (JSON.parse(body) as { result: RenderResult }).result;
@@ -450,11 +474,11 @@ if (scope === 'touched' || scope === 'certify') {
   /**
    * A refusal is one of two very different things and they must not be added together.
    *
-   * `design.preview` accepts seven contexts and `dashboard` is not among them, so a dashboard screen
-   * cannot be opened in a browser through this tool at all. That is a CONTRACT LIMIT: it is stated,
-   * the screens are named, and the schema-level readout is what covers them. Anything else is a real
-   * failure, and the run ends non-zero rather than writing a receipt whose green numbers describe
-   * only the part that happened to run.
+   * `design.preview` accepts seven contexts and `dashboard` is not among them. Until s205-m01 that left
+   * dashboard screens as a CONTRACT LIMIT; they are now previewed by compositionId (see previewInput), so
+   * `screensNotPreviewable` should read 0 and any context the enum refuses is still counted apart here.
+   * Anything else is a real failure, and the run ends non-zero rather than writing a receipt whose green
+   * numbers describe only the part that happened to run.
    */
   const notPreviewable = failures.filter(entry => /must be one of/.test(entry));
   const unexpected = failures.filter(entry => !/must be one of/.test(entry));

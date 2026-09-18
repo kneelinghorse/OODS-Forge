@@ -1508,8 +1508,13 @@ export async function swappableCandidates(input: DesignComposeInput, schema: UiS
 async function recordComposition(input: DesignComposeInput, schema: UiSchema, selections: SlotSelectionEntry[]): Promise<Pick<DesignComposeOutput, 'compositionId' | 'version' | 'parentVersion' | 'operation' | 'head'>> {
   const directory = resolveCompositionsDir();
   const { compositionId: _id, parentVersion: _parent, ...compose } = input;
-  const candidatesBySlot = new Map<string, string[]>();
-  for (const selection of selections) candidatesBySlot.set(selection.slotName, await swappableCandidates(input, schema, selection));
+  // Positional, not keyed by slot name: a workflow's four screens repeat slot names.
+  const candidatesBySlot: string[][] = [];
+  // A workflow offers no swaps: a componentOverride applies to every one of its four screens, so a candidate
+  // measured safe on one screen is not a candidate for the workflow. Each slot records only what it carries.
+  for (const selection of selections) candidatesBySlot.push(input.context === 'workflow'
+    ? (selection.selectedComponent ? [selection.selectedComponent] : [])
+    : await swappableCandidates(input, schema, selection));
   const target = input.compositionId
     ? { compositionId: input.compositionId, operation: (input.options?.operation ?? 'recompose') as CompositionOperation, ...(await nextVersion(directory, input.compositionId, input.parentVersion)) }
     : { compositionId: newCompositionId(), version: 1, parentVersion: null, operation: 'compose' as const };
@@ -1520,9 +1525,9 @@ async function recordComposition(input: DesignComposeInput, schema: UiSchema, se
     createdAt: new Date().toISOString(), head: readForgeHead(),
     compose: compose as unknown as Record<string, unknown>, schema, schemaHash: `sha256:${createHash('sha256').update(JSON.stringify(schema)).digest('hex')}`,
     brand, theme,
-    slots: selections.map(selection => ({ slotName: selection.slotName, ...(selection.selectedComponent ? { selectedComponent: selection.selectedComponent } : {}), ...(selection.placedComponents ? { placedComponents: selection.placedComponents } : {}),
+    slots: selections.map((selection, index) => ({ slotName: selection.slotName, ...(selection.selectedComponent ? { selectedComponent: selection.selectedComponent } : {}), ...(selection.placedComponents ? { placedComponents: selection.placedComponents } : {}),
       // The composer's own candidates for the slot that generate: what a swap may choose from.
-      candidates: candidatesBySlot.get(selection.slotName) ?? [] })),
+      candidates: candidatesBySlot[index] ?? [] })),
     artifacts: {}, measurements: {},
   };
   await writeVersion(directory, record);
@@ -1548,7 +1553,14 @@ export async function handle(input: DesignComposeInput): Promise<DesignComposeOu
     input = { ...input, layout: rc.layout };
   }
 
-  if (input.context === 'workflow') return assembleWorkflow(input, handle);
+  if (input.context === 'workflow') {
+    // s205-m01 (a Sprint 204 carry): the four screens compose TRANSIENTLY and the assembled workflow is recorded
+    // once. Before this each screen recorded its own composition and the workflow returned the list's, so the
+    // stored version held the list screen alone with context "list", and a workflow preview showed a list.
+    const assembled = await assembleWorkflow({ ...input, options: { ...(input.options ?? {}), transient: true } }, handle);
+    if (assembled.status !== 'ok' || input.options?.transient) return assembled;
+    return { ...assembled, ...(await recordComposition(input, assembled.schema, assembled.selections)) };
+  }
 
   // Reject empty or whitespace-only intent when no object is provided
   if (input.intent !== undefined && !input.intent.trim() && !input.object) {
