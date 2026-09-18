@@ -1,0 +1,75 @@
+- main:
+  - heading "Organization form" [level=1]
+  - text: Status
+  - combobox "Status":
+    - option "Prospect" [selected]
+    - option "Onboarding"
+    - option "Active"
+    - option "Churned"
+  - paragraph: Choose the current status.
+  - group "Tags":
+    - text: Tags Tag
+    - textbox "Tag":
+      - /placeholder: Enter tags
+  - heading "Addresses" [level=2]
+  - text: Street
+  - textbox "Street"
+  - text: City
+  - textbox "City"
+  - text: Region
+  - textbox "Region"
+  - text: Postal Code
+  - textbox "Postal Code"
+  - heading "Preference Editor" [level=2]
+  - text: Namespace
+  - combobox "Namespace":
+    - option "Select..." [selected]
+  - text: Preference Document
+  - textbox "Preference Document": "\"Consumer preference document\""
+  - heading "Role Assignment" [level=2]
+  - text: Role
+  - combobox "Role":
+    - option "Select..." [selected]
+  - text: Assignee
+  - textbox "Assignee"
+  - group "Template Picker":
+    - text: Template Picker Template
+    - combobox "Template":
+      - option "Select..." [selected]
+    - text: Channel
+    - combobox "Channel":
+      - option "Select..." [selected]
+  - text: Plan tier
+  - combobox "Plan tier":
+    - option "Enter plan tier" [disabled]
+    - option "free" [selected]
+    - option "growth"
+    - option "enterprise"
+  - paragraph: Billing plan currently assigned to the organization.
+  - text: Ownership transferred at
+  - textbox "Ownership transferred at":
+    - /placeholder: Timestamp recording when ownership was last transferred.
+    - text: 2026-09-05T12:00
+  - paragraph: Timestamp recording when ownership was last transferred.
+  - text: Billing contact email
+  - textbox "Billing contact email":
+    - /placeholder: Enter billing contact email
+    - text: consumer@example.test
+  - paragraph: Primary contact email for invoicing and finance escalations.
+  - text: Name
+  - textbox "Name":
+    - /placeholder: Enter label
+    - text: Consumer label
+  - paragraph: Name shown for this record.
+  - text: Owner id
+  - textbox "Owner id":
+    - /placeholder: Enter owner id
+    - text: consumer-owner-id
+  - paragraph: Identifier of the owner.
+  - text: Owner type
+  - combobox "Owner type":
+    - option "Parent Organization" [selected]
+    - option "Reseller"
+    - option "Platform"
+  - paragraph: Choose the kind of owner.
+  - button "Save"

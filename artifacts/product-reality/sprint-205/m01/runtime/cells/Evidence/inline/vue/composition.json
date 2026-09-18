@@ -1,0 +1,664 @@
+{
+  "status": "ok",
+  "layout": "list",
+  "schema": {
+    "version": "2026.02",
+    "screens": [
+      {
+        "id": "screen-list-9",
+        "component": "Stack",
+        "layout": {
+          "type": "stack",
+          "gapToken": "cluster-default"
+        },
+        "children": [
+          {
+            "id": "list-toolbar-4",
+            "component": "Stack",
+            "layout": {
+              "type": "inline",
+              "align": "space-between"
+            },
+            "style": {
+              "spacingToken": "inset-default"
+            },
+            "children": [
+              {
+                "id": "slot-search-1",
+                "component": "SearchInput",
+                "meta": {
+                  "intent": "slot:search",
+                  "label": "search",
+                  "confidence": 1,
+                  "confidenceLevel": "low"
+                },
+                "bindings": {
+                  "onUpdate": "handleUpdate_session_key"
+                },
+                "props": {
+                  "field": "session_key",
+                  "label": "Session key",
+                  "placeholder": "Enter session key"
+                }
+              },
+              {
+                "id": "slot-filters-2",
+                "component": "Select",
+                "meta": {
+                  "intent": "slot:filters",
+                  "label": "filters",
+                  "confidence": 0.67,
+                  "confidenceLevel": "low"
+                },
+                "props": {
+                  "field": "claim",
+                  "label": "Claim",
+                  "placeholder": "Enter claim"
+                }
+              }
+            ]
+          },
+          {
+            "id": "list-items-5",
+            "component": "Stack",
+            "layout": {
+              "type": "stack",
+              "gapToken": "cluster-tight"
+            },
+            "children": [
+              {
+                "id": "slot-items-6",
+                "component": "InlineLabel",
+                "meta": {
+                  "intent": "slot:items",
+                  "label": "items"
+                },
+                "props": {
+                  "field": "label",
+                  "maxLength": 40,
+                  "label": "Label"
+                }
+              }
+            ]
+          },
+          {
+            "id": "list-pagination-7",
+            "component": "Stack",
+            "layout": {
+              "type": "inline",
+              "align": "center"
+            },
+            "style": {
+              "spacingToken": "inset-default"
+            },
+            "children": [
+              {
+                "id": "slot-pagination-8",
+                "component": "PaginationBar",
+                "meta": {
+                  "intent": "slot:pagination",
+                  "label": "pagination",
+                  "confidence": 0.77,
+                  "confidenceLevel": "low"
+                }
+              }
+            ]
+          }
+        ],
+        "meta": {
+          "label": "Evidence"
+        }
+      }
+    ],
+    "objectSchema": {
+      "label": {
+        "type": "string",
+        "required": true,
+        "description": "Display projection of claim; retain the complete source field.",
+        "semanticType": "text.label"
+      },
+      "description": {
+        "type": "string",
+        "required": false,
+        "description": "Display projection of summary; never truncates persisted content.",
+        "semanticType": "text.description"
+      },
+      "placeholder": {
+        "type": "string",
+        "required": false,
+        "description": "Hint copy surfaced in form fields when the label is empty.",
+        "semanticType": "text.placeholder"
+      },
+      "created_at": {
+        "type": "datetime",
+        "required": true,
+        "description": "Created at.",
+        "semanticType": "audit.created_at"
+      },
+      "updated_at": {
+        "type": "datetime",
+        "required": true,
+        "description": "Updated at.",
+        "semanticType": "audit.updated_at"
+      },
+      "last_event": {
+        "type": "string",
+        "required": false,
+        "description": "Only from an explicit event or timestamp projection; absence is unknown, not a fabricated audit event.",
+        "semanticType": "audit.event.type"
+      },
+      "last_event_at": {
+        "type": "datetime",
+        "required": false,
+        "description": "Timestamp for the lifecycle event captured in last_event.",
+        "semanticType": "audit.event.timestamp"
+      },
+      "owner_id": {
+        "type": "uuid",
+        "required": false,
+        "description": "Authoritative nullable server owner_id. Present in this response.",
+        "semanticType": "ownership.owner.id"
+      },
+      "owner_type": {
+        "type": "string",
+        "required": false,
+        "description": "user only when an authoritative owner_id is present.",
+        "enum": [
+          "user"
+        ],
+        "semanticType": "ownership.owner.type"
+      },
+      "ownership_role": {
+        "type": "string",
+        "required": false,
+        "description": "Optional role name describing how the owner governs the entity.",
+        "semanticType": "ownership.owner.role"
+      },
+      "ownership_transferred_at": {
+        "type": "datetime",
+        "required": false,
+        "description": "Timestamp recording when ownership was last transferred.",
+        "semanticType": "ownership.owner.transferred_at"
+      },
+      "classification_metadata": {
+        "type": "ClassificationMetadata",
+        "required": true,
+        "description": "Operational metadata describing mode, storage model, governance rules, and audit timestamps.\n",
+        "semanticType": "classification.metadata"
+      },
+      "categories": {
+        "type": "CategoryNode[]",
+        "required": true,
+        "description": "One fixed category with id and label derived from disposition; no inferred taxonomy.",
+        "semanticType": "classification.categories"
+      },
+      "primary_category_id": {
+        "type": "string",
+        "required": true,
+        "description": "Exact disposition; classification dimension, never a lifecycle state.",
+        "enum": [
+          "supporting",
+          "contradicting",
+          "rejected",
+          "background"
+        ],
+        "semanticType": "classification.primary"
+      },
+      "primary_category_path": {
+        "type": "string",
+        "required": false,
+        "description": "Human-readable breadcrumb path (Electronics > Mobile > Android)."
+      },
+      "tags": {
+        "type": "string[]",
+        "required": true,
+        "description": "Tags.",
+        "semanticType": "classification.tags"
+      },
+      "tag_count": {
+        "type": "number",
+        "required": false,
+        "default": 0,
+        "description": "Number of canonical tags assigned to the object."
+      },
+      "tag_preview": {
+        "type": "string",
+        "required": false,
+        "description": "Denormalized comma-delimited preview for list renders."
+      },
+      "searchQuery": {
+        "type": "string",
+        "required": false,
+        "default": "",
+        "description": "The current search query string entered by the user.",
+        "semanticType": "input.search.query"
+      },
+      "searchActive": {
+        "type": "boolean",
+        "required": false,
+        "default": false,
+        "description": "Whether the search input is currently focused or has a non-empty query.",
+        "semanticType": "state.search.active"
+      },
+      "filters": {
+        "type": "object[]",
+        "required": false,
+        "default": [],
+        "description": "Array of available filter descriptors. Each entry defines a filterable dimension:\n  - field: string (the schema field to filter on)\n  - label: string (display label)\n  - type: \"select\" | \"multi-select\" | \"range\" | \"boolean\" | \"date-range\"\n  - options: array of { value, label } for select/multi-select types\n",
+        "semanticType": "input.filter.descriptors"
+      },
+      "activeFilters": {
+        "type": "object[]",
+        "required": false,
+        "default": [],
+        "description": "Array of currently applied filter values:\n  - field: string (matches a filter descriptor field)\n  - operator: \"eq\" | \"in\" | \"range\" | \"gt\" | \"lt\" | \"between\"\n  - value: unknown (the selected filter value or values)\n",
+        "semanticType": "state.filter.active"
+      },
+      "filterCount": {
+        "type": "number",
+        "required": true,
+        "default": 0,
+        "description": "Computed count of currently active filters.",
+        "semanticType": "metric.filter.count"
+      },
+      "page": {
+        "type": "number",
+        "required": true,
+        "default": 1,
+        "description": "Current page number (1-based).",
+        "semanticType": "state.pagination.page"
+      },
+      "pageSize": {
+        "type": "number",
+        "required": true,
+        "default": 25,
+        "description": "Number of items displayed per page.",
+        "semanticType": "state.pagination.pageSize"
+      },
+      "totalItems": {
+        "type": "number",
+        "required": false,
+        "default": 0,
+        "description": "Total number of items across all pages. Used to compute total page count.",
+        "semanticType": "metric.pagination.totalItems"
+      },
+      "totalPages": {
+        "type": "number",
+        "required": false,
+        "default": 0,
+        "description": "Computed total number of pages (ceil(totalItems / pageSize)).",
+        "semanticType": "metric.pagination.totalPages"
+      },
+      "id": {
+        "type": "uuid",
+        "required": true,
+        "description": "Id.",
+        "semanticType": "research.evidence.id"
+      },
+      "project_id": {
+        "type": "uuid",
+        "required": true,
+        "description": "Project id.",
+        "semanticType": "research.evidence.project_id"
+      },
+      "mission_id": {
+        "type": "uuid",
+        "required": false,
+        "description": "Mission id.",
+        "semanticType": "research.evidence.mission_id"
+      },
+      "session_key": {
+        "type": "string",
+        "required": true,
+        "description": "Session key.",
+        "semanticType": "research.evidence.session_key"
+      },
+      "origin": {
+        "type": "string",
+        "required": true,
+        "description": "Origin.",
+        "enum": [
+          "mcp-agent",
+          "deepsearch-worker"
+        ],
+        "semanticType": "research.evidence.origin"
+      },
+      "claim": {
+        "type": "string",
+        "required": true,
+        "description": "Claim.",
+        "semanticType": "text.label"
+      },
+      "summary": {
+        "type": "string",
+        "required": false,
+        "description": "Summary.",
+        "semanticType": "research.evidence.summary"
+      },
+      "source_url": {
+        "type": "string",
+        "required": true,
+        "description": "Source url.",
+        "semanticType": "research.evidence.source_url"
+      },
+      "source_id": {
+        "type": "uuid",
+        "required": true,
+        "description": "Source id.",
+        "semanticType": "research.evidence.source_id"
+      },
+      "source_sighting_count": {
+        "type": "number",
+        "required": true,
+        "description": "Source sighting count.",
+        "semanticType": "research.evidence.source_sighting_count"
+      },
+      "snippet": {
+        "type": "string",
+        "required": false,
+        "description": "Snippet.",
+        "semanticType": "research.evidence.snippet"
+      },
+      "query": {
+        "type": "string",
+        "required": false,
+        "description": "Query.",
+        "semanticType": "research.evidence.query"
+      },
+      "disposition": {
+        "type": "string",
+        "required": true,
+        "description": "Disposition.",
+        "enum": [
+          "supporting",
+          "contradicting",
+          "rejected",
+          "background"
+        ],
+        "semanticType": "research.evidence.disposition"
+      },
+      "workspace_id": {
+        "type": "uuid",
+        "required": false,
+        "description": "Workspace id.",
+        "semanticType": "research.evidence.workspace_id"
+      }
+    }
+  },
+  "schemaRef": "compose-4d7ed934",
+  "schemaRefCreatedAt": "2026-09-18T05:52:59.016Z",
+  "schemaRefExpiresAt": "2026-09-18T06:22:59.016Z",
+  "compositionId": "cmp-f0fbcf35075b",
+  "version": 1,
+  "parentVersion": null,
+  "operation": "compose",
+  "head": null,
+  "selections": [
+    {
+      "slotName": "items",
+      "intent": "data-list",
+      "selectedComponent": "InlineLabel",
+      "confidence": 0.95,
+      "confidenceLevel": "high",
+      "explanation": "InlineLabel leads slot \"items\" because view_extension placement. Confidence is high (0.95).",
+      "candidates": [
+        {
+          "name": "InlineLabel",
+          "score": 0.95,
+          "reason": "view_extension placement"
+        }
+      ],
+      "placedComponents": [
+        "InlineLabel"
+      ]
+    },
+    {
+      "slotName": "search",
+      "intent": "search-input",
+      "selectedComponent": "SearchInput",
+      "confidence": 1,
+      "confidenceLevel": "high",
+      "explanation": "SearchInput was selected for slot \"search\" because preferred for \"search-input\" (rank 1); 2 tag match(es); tag match (search); 1 context match(es); 1 category match(es); 1 trait(s); name contains \"search\"; position affinity: SearchInput fits well in header; search intent bias. Confidence is high (1.00).",
+      "candidates": [
+        {
+          "name": "SearchInput",
+          "reason": "preferred for \"search-input\" (rank 1); 2 tag match(es); tag match (search); 1 context match(es); 1 category match(es); 1 trait(s); name contains \"search\"; position affinity: SearchInput fits well in header; search intent bias",
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 1,
+          "contextTraitMatches": 0,
+          "score": 1
+        },
+        {
+          "name": "Input",
+          "reason": "preferred for \"search-input\" (rank 2); 1 tag match(es); tag match (input); 1 context match(es); 1 region match(es); 1 category match(es); name contains \"input\"; position affinity: Input fits well in header",
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 1,
+          "contextTraitMatches": 0,
+          "score": 1
+        },
+        {
+          "name": "DatePicker",
+          "reason": "1 tag match(es); tag match (input); 1 context match(es); 1 region match(es); 1 category match(es); position affinity: DatePicker fits well in header",
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 1,
+          "contextTraitMatches": 0,
+          "score": 0.47
+        }
+      ]
+    },
+    {
+      "slotName": "filters",
+      "intent": "filter-control",
+      "selectedComponent": "Select",
+      "confidence": 0.67,
+      "confidenceLevel": "medium",
+      "explanation": "Select was selected for slot \"filters\" because preferred for \"filter-control\" (rank 1); 1 tag match(es); 1 context match(es); position affinity: Select fits well in sidebar. Confidence is medium (0.67).",
+      "candidates": [
+        {
+          "name": "Select",
+          "reason": "preferred for \"filter-control\" (rank 1); 1 tag match(es); 1 context match(es); position affinity: Select fits well in sidebar",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 1
+        },
+        {
+          "name": "Input",
+          "reason": "preferred for \"filter-control\" (rank 2); 1 tag match(es); 1 context match(es); position affinity: Input fits well in sidebar",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.9
+        },
+        {
+          "name": "StatusBadge",
+          "reason": "2 context match(es); 1 region match(es); 2 trait(s); position affinity: StatusBadge fits well in sidebar",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.52
+        }
+      ]
+    },
+    {
+      "slotName": "toolbar-actions",
+      "intent": "action-button",
+      "selectedComponent": "Button",
+      "confidence": 1,
+      "confidenceLevel": "high",
+      "explanation": "Button was selected for slot \"toolbar-actions\" because preferred for \"action-button\" (rank 1); 2 tag match(es); tag match (action); 1 region match(es); 1 category match(es); name contains \"button\"; position affinity: Button fits well in header. Confidence is high (1.00).",
+      "candidates": [
+        {
+          "name": "Button",
+          "reason": "preferred for \"action-button\" (rank 1); 2 tag match(es); tag match (action); 1 region match(es); 1 category match(es); name contains \"button\"; position affinity: Button fits well in header",
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 1,
+          "contextTraitMatches": 0,
+          "score": 1
+        },
+        {
+          "name": "InlineLabel",
+          "reason": "context match (inline); 1 trait(s); name contains \"inline\"",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.29
+        },
+        {
+          "name": "DatePicker",
+          "reason": "1 tag match(es); 1 category match(es); position affinity: DatePicker fits well in header",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.15
+        }
+      ]
+    },
+    {
+      "slotName": "pagination",
+      "intent": "pagination-control",
+      "selectedComponent": "PaginationBar",
+      "confidence": 0.77,
+      "confidenceLevel": "medium",
+      "explanation": "PaginationBar was selected for slot \"pagination\" because 2 tag match(es); tag match (pagination, navigation); 1 context match(es); 1 trait(s); name contains \"pagination\"; position affinity: PaginationBar fits well in footer. Confidence is medium (0.77).",
+      "candidates": [
+        {
+          "name": "PaginationBar",
+          "reason": "2 tag match(es); tag match (pagination, navigation); 1 context match(es); 1 trait(s); name contains \"pagination\"; position affinity: PaginationBar fits well in footer",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 1,
+          "contextTraitMatches": 0,
+          "score": 1
+        },
+        {
+          "name": "Button",
+          "reason": "preferred for \"pagination-control\" (rank 2); 1 context match(es); 1 region match(es); position affinity: Button fits well in footer",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.75
+        },
+        {
+          "name": "Text",
+          "reason": "preferred for \"pagination-control\" (rank 1); 1 context match(es)",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.65
+        }
+      ]
+    }
+  ],
+  "validation": {
+    "status": "ok",
+    "errors": [],
+    "warnings": []
+  },
+  "warnings": [
+    {
+      "code": "OODS-V121",
+      "message": "Object 'Evidence' has maturity 'alpha' — composed output may change.",
+      "hint": "Consider using stable objects for production compositions."
+    },
+    {
+      "code": "OODS-V117",
+      "message": "Field collision: \"tags\" in object schema overrides trait definition"
+    },
+    {
+      "code": "OODS-V117",
+      "message": "Field collision: \"owner_id\" in object schema overrides trait definition"
+    },
+    {
+      "code": "OODS-V117",
+      "message": "Field collision: \"created_at\" in object schema overrides trait definition"
+    },
+    {
+      "code": "OODS-V117",
+      "message": "Field collision: \"updated_at\" in object schema overrides trait definition"
+    },
+    {
+      "code": "OODS-V117",
+      "message": "Field collision: \"label\" in object schema overrides trait definition"
+    },
+    {
+      "code": "OODS-V117",
+      "message": "Field collision: \"description\" in object schema overrides trait definition"
+    },
+    {
+      "code": "OODS-V117",
+      "message": "Field collision: \"owner_type\" in object schema overrides trait definition"
+    },
+    {
+      "code": "OODS-V117",
+      "message": "Field collision: \"last_event\" in object schema overrides trait definition"
+    },
+    {
+      "code": "OODS-V117",
+      "message": "Field collision: \"primary_category_id\" in object schema overrides trait definition"
+    },
+    {
+      "code": "OODS-V117",
+      "message": "Field collision: \"categories\" in object schema overrides trait definition"
+    }
+  ],
+  "objectUsed": {
+    "name": "Evidence",
+    "version": "0.1.0",
+    "traits": [
+      "content/Labelled",
+      "lifecycle/Timestampable",
+      "structural/Ownerable",
+      "core/Classifiable",
+      "behavioral/Searchable",
+      "behavioral/Filterable",
+      "behavioral/Pageable"
+    ],
+    "fieldsComposed": 41,
+    "viewExtensionsApplied": {
+      "list": 7,
+      "detail": 6,
+      "form": 2,
+      "card": 2,
+      "timeline": 2,
+      "inline": 1
+    }
+  },
+  "meta": {
+    "intentParsed": "Evidence inline view",
+    "layoutDetected": "context-inferred: list (from context=\"inline\")",
+    "slotCount": 5,
+    "nodeCount": 8,
+    "intentSynthetic": true,
+    "warnings": [
+      "Object 'Evidence' has maturity 'alpha' — composed output may change.",
+      "Field collision: \"tags\" in object schema overrides trait definition",
+      "Field collision: \"owner_id\" in object schema overrides trait definition",
+      "Field collision: \"created_at\" in object schema overrides trait definition",
+      "Field collision: \"updated_at\" in object schema overrides trait definition",
+      "Field collision: \"label\" in object schema overrides trait definition",
+      "Field collision: \"description\" in object schema overrides trait definition",
+      "Field collision: \"owner_type\" in object schema overrides trait definition",
+      "Field collision: \"last_event\" in object schema overrides trait definition",
+      "Field collision: \"primary_category_id\" in object schema overrides trait definition",
+      "Field collision: \"categories\" in object schema overrides trait definition"
+    ],
+    "intelligence": {
+      "fieldsExpanded": false,
+      "positionAffinityUsed": true,
+      "fieldAffinityUsed": true,
+      "compositionConfidence": 0.88
+    }
+  }
+}

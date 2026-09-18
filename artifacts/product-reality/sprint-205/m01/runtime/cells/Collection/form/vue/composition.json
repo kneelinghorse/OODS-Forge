@@ -1,0 +1,996 @@
+{
+  "status": "ok",
+  "layout": "form",
+  "schema": {
+    "version": "2026.02",
+    "screens": [
+      {
+        "id": "screen-form-11",
+        "component": "Stack",
+        "layout": {
+          "type": "stack",
+          "gapToken": "cluster-default"
+        },
+        "style": {
+          "spacingToken": "inset-default"
+        },
+        "children": [
+          {
+            "id": "form-title-1",
+            "component": "Stack",
+            "props": {
+              "as": "h1"
+            },
+            "meta": {
+              "intent": "slot:title",
+              "label": "title"
+            },
+            "children": [
+              {
+                "id": "ve-title-27",
+                "component": "TagInput",
+                "props": {
+                  "field": "tags",
+                  "maxTagsParameter": "maxTags",
+                  "allowCustomParameter": "allowCustomTags",
+                  "allowListParameter": "allowedTags",
+                  "minLengthParameter": "tagMinLength",
+                  "maxLengthParameter": "tagMaxLength",
+                  "synonymParameter": "synonymResolution",
+                  "label": "Tags",
+                  "placeholder": "Enter tags"
+                },
+                "bindings": {
+                  "onChange": "handleChange_tags"
+                }
+              }
+            ],
+            "layout": {
+              "type": "stack",
+              "gapToken": "cluster-default"
+            }
+          },
+          {
+            "id": "form-fields-8",
+            "component": "Stack",
+            "layout": {
+              "type": "stack",
+              "gapToken": "cluster-default"
+            },
+            "children": [
+              {
+                "id": "form-field-group-2",
+                "component": "Stack",
+                "layout": {
+                  "type": "stack",
+                  "gapToken": "cluster-tight"
+                },
+                "children": [
+                  {
+                    "id": "slot-field-0-3",
+                    "component": "Input",
+                    "meta": {
+                      "intent": "slot:field-0",
+                      "label": "field-0"
+                    },
+                    "props": {
+                      "field": "label",
+                      "label": "Label",
+                      "help": "Name shown for this record."
+                    },
+                    "bindings": {
+                      "onChange": "handleChange_label"
+                    }
+                  }
+                ]
+              },
+              {
+                "id": "form-field-group-4",
+                "component": "Stack",
+                "layout": {
+                  "type": "stack",
+                  "gapToken": "cluster-tight"
+                },
+                "children": [
+                  {
+                    "id": "slot-field-1-5",
+                    "component": "Input",
+                    "meta": {
+                      "intent": "slot:field-1",
+                      "label": "field-1",
+                      "confidence": 1,
+                      "confidenceLevel": "low"
+                    },
+                    "props": {
+                      "field": "created_at",
+                      "label": "Created at",
+                      "help": "Created at.",
+                      "type": "datetime-local"
+                    },
+                    "bindings": {
+                      "onChange": "handleChange_created_at"
+                    }
+                  }
+                ]
+              },
+              {
+                "id": "form-field-group-6",
+                "component": "Stack",
+                "layout": {
+                  "type": "stack",
+                  "gapToken": "cluster-tight"
+                },
+                "children": [
+                  {
+                    "id": "slot-field-2-7",
+                    "component": "Select",
+                    "meta": {
+                      "intent": "slot:field-2",
+                      "label": "field-2",
+                      "confidence": 1,
+                      "confidenceLevel": "low"
+                    },
+                    "props": {
+                      "field": "owner_type",
+                      "label": "Owner type",
+                      "placeholder": "Enter owner type",
+                      "options": [
+                        {
+                          "value": "user",
+                          "label": "user"
+                        }
+                      ],
+                      "help": "Choose the kind of owner."
+                    },
+                    "bindings": {
+                      "onChange": "handleChange_owner_type"
+                    }
+                  }
+                ]
+              },
+              {
+                "id": "form-field-group-12",
+                "component": "Stack",
+                "layout": {
+                  "type": "stack",
+                  "gapToken": "cluster-tight"
+                },
+                "children": []
+              },
+              {
+                "id": "form-field-group-14",
+                "component": "Stack",
+                "layout": {
+                  "type": "stack",
+                  "gapToken": "cluster-tight"
+                },
+                "children": [
+                  {
+                    "id": "slot-field-4-15",
+                    "component": "Checkbox",
+                    "meta": {
+                      "intent": "slot:field-4",
+                      "label": "field-4",
+                      "confidence": 1,
+                      "confidenceLevel": "low"
+                    },
+                    "props": {
+                      "field": "searchActive",
+                      "label": "Search Active",
+                      "help": "Whether the search input is currently focused or has a non-empty query."
+                    },
+                    "bindings": {
+                      "onChange": "handleChange_searchActive"
+                    }
+                  }
+                ]
+              },
+              {
+                "id": "form-field-group-16",
+                "component": "Stack",
+                "layout": {
+                  "type": "stack",
+                  "gapToken": "cluster-tight"
+                },
+                "children": []
+              },
+              {
+                "id": "form-field-group-18",
+                "component": "Stack",
+                "layout": {
+                  "type": "stack",
+                  "gapToken": "cluster-tight"
+                },
+                "children": [
+                  {
+                    "id": "slot-field-6-19",
+                    "component": "Input",
+                    "meta": {
+                      "intent": "slot:field-6",
+                      "label": "field-6",
+                      "confidence": 1,
+                      "confidenceLevel": "low"
+                    },
+                    "props": {
+                      "field": "last_event",
+                      "label": "Last event",
+                      "placeholder": "Enter last event",
+                      "help": "Only from an explicit event or timestamp projection; absence is unknown, not a fabricated audit event."
+                    },
+                    "bindings": {
+                      "onChange": "handleChange_last_event"
+                    }
+                  }
+                ]
+              },
+              {
+                "id": "form-field-group-20",
+                "component": "Stack",
+                "layout": {
+                  "type": "stack",
+                  "gapToken": "cluster-tight"
+                },
+                "children": [
+                  {
+                    "id": "slot-field-7-21",
+                    "component": "Input",
+                    "meta": {
+                      "intent": "slot:field-7",
+                      "label": "field-7",
+                      "confidence": 1,
+                      "confidenceLevel": "low"
+                    },
+                    "props": {
+                      "field": "owner_id",
+                      "label": "Owner id",
+                      "placeholder": "Enter owner id",
+                      "help": "Identifier of the owner."
+                    },
+                    "bindings": {
+                      "onChange": "handleChange_owner_id"
+                    }
+                  }
+                ]
+              },
+              {
+                "id": "form-field-group-22",
+                "component": "Stack",
+                "layout": {
+                  "type": "stack",
+                  "gapToken": "cluster-tight"
+                },
+                "children": [
+                  {
+                    "id": "slot-field-8-23",
+                    "component": "Input",
+                    "meta": {
+                      "intent": "slot:field-8",
+                      "label": "field-8",
+                      "confidence": 1,
+                      "confidenceLevel": "low"
+                    },
+                    "props": {
+                      "field": "page",
+                      "label": "Page",
+                      "placeholder": "Enter page",
+                      "type": "number",
+                      "help": "Current page number (1-based)."
+                    },
+                    "bindings": {
+                      "onChange": "handleChange_page"
+                    }
+                  }
+                ]
+              },
+              {
+                "id": "form-field-group-24",
+                "component": "Stack",
+                "layout": {
+                  "type": "stack",
+                  "gapToken": "cluster-tight"
+                },
+                "children": [
+                  {
+                    "id": "slot-field-9-25",
+                    "component": "Input",
+                    "meta": {
+                      "intent": "slot:field-9",
+                      "label": "field-9",
+                      "confidence": 1,
+                      "confidenceLevel": "low"
+                    },
+                    "props": {
+                      "field": "pageSize",
+                      "label": "Page Size",
+                      "placeholder": "Enter pageSize",
+                      "type": "number",
+                      "help": "Number of items displayed per page."
+                    },
+                    "bindings": {
+                      "onChange": "handleChange_pageSize"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "form-actions-9",
+            "component": "Stack",
+            "layout": {
+              "type": "inline",
+              "align": "end"
+            },
+            "style": {
+              "spacingToken": "inset-default"
+            },
+            "children": [
+              {
+                "id": "form-submit-10",
+                "component": "Button",
+                "props": {
+                  "label": "Save",
+                  "type": "submit"
+                }
+              }
+            ]
+          }
+        ],
+        "bindings": {
+          "onSubmit": "handleSubmit"
+        },
+        "meta": {
+          "label": "Collection form"
+        }
+      }
+    ],
+    "objectSchema": {
+      "label": {
+        "type": "string",
+        "required": true,
+        "description": "Display projection of name; retain the complete source field.",
+        "semanticType": "text.label"
+      },
+      "description": {
+        "type": "string",
+        "required": false,
+        "description": "Display projection of description; never truncates persisted content.",
+        "semanticType": "text.description"
+      },
+      "placeholder": {
+        "type": "string",
+        "required": false,
+        "description": "Hint copy surfaced in form fields when the label is empty.",
+        "semanticType": "text.placeholder"
+      },
+      "created_at": {
+        "type": "datetime",
+        "required": true,
+        "description": "Created at.",
+        "semanticType": "audit.created_at"
+      },
+      "updated_at": {
+        "type": "datetime",
+        "required": true,
+        "description": "Updated at.",
+        "semanticType": "audit.updated_at"
+      },
+      "last_event": {
+        "type": "string",
+        "required": false,
+        "description": "Only from an explicit event or timestamp projection; absence is unknown, not a fabricated audit event.",
+        "semanticType": "audit.event.type"
+      },
+      "last_event_at": {
+        "type": "datetime",
+        "required": false,
+        "description": "Timestamp for the lifecycle event captured in last_event.",
+        "semanticType": "audit.event.timestamp"
+      },
+      "owner_id": {
+        "type": "uuid",
+        "required": false,
+        "description": "Authoritative nullable server owner_id. Not exposed by the current response; unavailable until the API exposes it. Never derive from created_by, user_id, or project owner.",
+        "semanticType": "ownership.owner.id"
+      },
+      "owner_type": {
+        "type": "string",
+        "required": false,
+        "description": "user only when an authoritative owner_id is present.",
+        "enum": [
+          "user"
+        ],
+        "semanticType": "ownership.owner.type"
+      },
+      "ownership_role": {
+        "type": "string",
+        "required": false,
+        "description": "Optional role name describing how the owner governs the entity.",
+        "semanticType": "ownership.owner.role"
+      },
+      "ownership_transferred_at": {
+        "type": "datetime",
+        "required": false,
+        "description": "Timestamp recording when ownership was last transferred.",
+        "semanticType": "ownership.owner.transferred_at"
+      },
+      "tags": {
+        "type": "string[]",
+        "required": false,
+        "default": [],
+        "description": "Ordered list of tags assigned to the entity.",
+        "semanticType": "taxonomy.tag.collection"
+      },
+      "tag_count": {
+        "type": "number",
+        "required": true,
+        "default": 0,
+        "description": "Computed number of tags assigned to the entity.",
+        "semanticType": "metric.collection.count"
+      },
+      "tag_metadata": {
+        "type": "object[]",
+        "required": false,
+        "default": [],
+        "description": "Per-tag governance metadata. Each entry corresponds to a tag in the tags array and\ntracks provenance and usage for taxonomy health monitoring.\n\nEntry structure:\n  - tag: string (the tag value, matches entry in tags array)\n  - created_at: ISO 8601 datetime\n  - created_by: string (user ID or \"system\" for allow-list tags)\n  - usage_count: number (how many entities use this tag, computed)\n  - moderation_status: \"approved\" | \"pending\" | \"rejected\" (when allowTagModeration is true)\n  - canonical_form: string (resolved synonym target, when synonymResolution is enabled)\n",
+        "semanticType": "taxonomy.tag.governance"
+      },
+      "searchQuery": {
+        "type": "string",
+        "required": false,
+        "default": "",
+        "description": "The current search query string entered by the user.",
+        "semanticType": "input.search.query"
+      },
+      "searchActive": {
+        "type": "boolean",
+        "required": false,
+        "default": false,
+        "description": "Whether the search input is currently focused or has a non-empty query.",
+        "semanticType": "state.search.active"
+      },
+      "filters": {
+        "type": "object[]",
+        "required": false,
+        "default": [],
+        "description": "Array of available filter descriptors. Each entry defines a filterable dimension:\n  - field: string (the schema field to filter on)\n  - label: string (display label)\n  - type: \"select\" | \"multi-select\" | \"range\" | \"boolean\" | \"date-range\"\n  - options: array of { value, label } for select/multi-select types\n",
+        "semanticType": "input.filter.descriptors"
+      },
+      "activeFilters": {
+        "type": "object[]",
+        "required": false,
+        "default": [],
+        "description": "Array of currently applied filter values:\n  - field: string (matches a filter descriptor field)\n  - operator: \"eq\" | \"in\" | \"range\" | \"gt\" | \"lt\" | \"between\"\n  - value: unknown (the selected filter value or values)\n",
+        "semanticType": "state.filter.active"
+      },
+      "filterCount": {
+        "type": "number",
+        "required": true,
+        "default": 0,
+        "description": "Computed count of currently active filters.",
+        "semanticType": "metric.filter.count"
+      },
+      "page": {
+        "type": "number",
+        "required": true,
+        "default": 1,
+        "description": "Current page number (1-based).",
+        "semanticType": "state.pagination.page"
+      },
+      "pageSize": {
+        "type": "number",
+        "required": true,
+        "default": 25,
+        "description": "Number of items displayed per page.",
+        "semanticType": "state.pagination.pageSize"
+      },
+      "totalItems": {
+        "type": "number",
+        "required": false,
+        "default": 0,
+        "description": "Total number of items across all pages. Used to compute total page count.",
+        "semanticType": "metric.pagination.totalItems"
+      },
+      "totalPages": {
+        "type": "number",
+        "required": false,
+        "default": 0,
+        "description": "Computed total number of pages (ceil(totalItems / pageSize)).",
+        "semanticType": "metric.pagination.totalPages"
+      },
+      "name": {
+        "type": "string",
+        "required": true,
+        "description": "Name.",
+        "semanticType": "text.label"
+      },
+      "id": {
+        "type": "uuid",
+        "required": true,
+        "description": "Id.",
+        "semanticType": "research.collection.id"
+      },
+      "item_count": {
+        "type": "number",
+        "required": false,
+        "default": 0,
+        "description": "Number of chunks in collection",
+        "semanticType": "research.collection.item_count"
+      },
+      "items": {
+        "type": "CollectionItemResponse[]",
+        "required": false,
+        "description": "Items.",
+        "semanticType": "research.collection.items"
+      }
+    }
+  },
+  "schemaRef": "compose-9f5668df",
+  "schemaRefCreatedAt": "2026-09-18T05:46:57.968Z",
+  "schemaRefExpiresAt": "2026-09-18T06:16:57.968Z",
+  "compositionId": "cmp-bdf7fb1a2631",
+  "version": 1,
+  "parentVersion": null,
+  "operation": "compose",
+  "head": null,
+  "selections": [
+    {
+      "slotName": "title",
+      "intent": "page-header",
+      "selectedComponent": "FormLabelGroup",
+      "confidence": 0.95,
+      "confidenceLevel": "high",
+      "explanation": "FormLabelGroup leads slot \"title\" because view_extension placement. The slot also renders TagInput after it, in that order. Confidence is high (0.95).",
+      "candidates": [
+        {
+          "name": "FormLabelGroup",
+          "score": 0.95,
+          "reason": "view_extension placement"
+        }
+      ],
+      "placedComponents": [
+        "FormLabelGroup",
+        "TagInput"
+      ]
+    },
+    {
+      "slotName": "field-0",
+      "intent": "long-text-input",
+      "selectedComponent": "Textarea",
+      "confidence": 0.5,
+      "confidenceLevel": "medium",
+      "explanation": "Textarea leads slot \"field-0\" because fallback placement. Confidence is medium (0.50).",
+      "candidates": [
+        {
+          "name": "Textarea",
+          "score": 0.5,
+          "reason": "fallback placement"
+        }
+      ],
+      "placedComponents": [
+        "Textarea"
+      ]
+    },
+    {
+      "slotName": "field-1",
+      "intent": "date-input",
+      "selectedComponent": "DatePicker",
+      "confidence": 1,
+      "confidenceLevel": "high",
+      "explanation": "DatePicker was selected for slot \"field-1\" because preferred for \"date-input\" (rank 1); 3 tag match(es); tag match (date, input); 1 context match(es); 1 region match(es); 1 category match(es); name contains \"date\"; position affinity: DatePicker fits well in main. Confidence is high (1.00).",
+      "candidates": [
+        {
+          "name": "DatePicker",
+          "reason": "preferred for \"date-input\" (rank 1); 3 tag match(es); tag match (date, input); 1 context match(es); 1 region match(es); 1 category match(es); name contains \"date\"; position affinity: DatePicker fits well in main",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 1
+        },
+        {
+          "name": "Input",
+          "reason": "preferred for \"date-input\" (rank 2); 2 tag match(es); tag match (input); 1 context match(es); 1 region match(es); 1 category match(es); name contains \"input\"",
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.98
+        },
+        {
+          "name": "Checkbox",
+          "reason": "2 tag match(es); tag match (input); 1 context match(es); 1 region match(es); 1 category match(es); position affinity: Checkbox fits well in main",
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.56
+        }
+      ]
+    },
+    {
+      "slotName": "field-2",
+      "intent": "enum-input",
+      "selectedComponent": "Select",
+      "confidence": 1,
+      "confidenceLevel": "high",
+      "explanation": "Select was selected for slot \"field-2\" because preferred for \"enum-input\" (rank 1); 3 tag match(es); tag match (input); 1 context match(es); 1 region match(es); 1 category match(es); position affinity: Select fits well in main. Confidence is high (1.00).",
+      "candidates": [
+        {
+          "name": "Select",
+          "reason": "preferred for \"enum-input\" (rank 1); 3 tag match(es); tag match (input); 1 context match(es); 1 region match(es); 1 category match(es); position affinity: Select fits well in main",
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 1
+        },
+        {
+          "name": "Input",
+          "reason": "preferred for \"enum-input\" (rank 3); 2 tag match(es); tag match (input); 1 context match(es); 1 region match(es); 1 category match(es); name contains \"input\"",
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.92
+        },
+        {
+          "name": "TagInput",
+          "reason": "preferred for \"enum-input\" (rank 2); 1 context match(es); 1 region match(es); 1 category match(es); 1 trait(s); name contains \"input\"",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.72
+        }
+      ]
+    },
+    {
+      "slotName": "field-3",
+      "intent": "form-input",
+      "selectedComponent": "Input",
+      "confidence": 1,
+      "confidenceLevel": "high",
+      "explanation": "Input was selected for slot \"field-3\" because preferred for \"form-input\" (rank 1); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); name contains \"input\". Confidence is high (1.00).",
+      "candidates": [
+        {
+          "name": "Input",
+          "reason": "preferred for \"form-input\" (rank 1); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); name contains \"input\"",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 1
+        },
+        {
+          "name": "Select",
+          "reason": "preferred for \"form-input\" (rank 2); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); position affinity: Select fits well in main",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 1
+        },
+        {
+          "name": "Checkbox",
+          "reason": "2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); position affinity: Checkbox fits well in main",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.78
+        }
+      ]
+    },
+    {
+      "slotName": "field-4",
+      "intent": "boolean-input",
+      "selectedComponent": "Checkbox",
+      "confidence": 1,
+      "confidenceLevel": "high",
+      "explanation": "Checkbox was selected for slot \"field-4\" because preferred for \"boolean-input\" (rank 2); 2 tag match(es); tag match (boolean, input); 1 context match(es); 1 region match(es); 1 category match(es); position affinity: Checkbox fits well in main. Confidence is high (1.00).",
+      "candidates": [
+        {
+          "name": "Checkbox",
+          "reason": "preferred for \"boolean-input\" (rank 2); 2 tag match(es); tag match (boolean, input); 1 context match(es); 1 region match(es); 1 category match(es); position affinity: Checkbox fits well in main",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 1
+        },
+        {
+          "name": "Input",
+          "reason": "2 tag match(es); tag match (input); 1 context match(es); 1 region match(es); 1 category match(es); name contains \"input\"",
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.64
+        },
+        {
+          "name": "DatePicker",
+          "reason": "2 tag match(es); tag match (input); 1 context match(es); 1 region match(es); 1 category match(es); position affinity: DatePicker fits well in main",
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.56
+        }
+      ]
+    },
+    {
+      "slotName": "field-5",
+      "intent": "form-input",
+      "selectedComponent": "Input",
+      "confidence": 1,
+      "confidenceLevel": "high",
+      "explanation": "Input was selected for slot \"field-5\" because preferred for \"form-input\" (rank 1); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); name contains \"input\". Confidence is high (1.00).",
+      "candidates": [
+        {
+          "name": "Input",
+          "reason": "preferred for \"form-input\" (rank 1); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); name contains \"input\"",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 1
+        },
+        {
+          "name": "Select",
+          "reason": "preferred for \"form-input\" (rank 2); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); position affinity: Select fits well in main",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 1
+        },
+        {
+          "name": "Checkbox",
+          "reason": "2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); position affinity: Checkbox fits well in main",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.78
+        }
+      ]
+    },
+    {
+      "slotName": "field-6",
+      "intent": "form-input",
+      "selectedComponent": "Input",
+      "confidence": 1,
+      "confidenceLevel": "high",
+      "explanation": "Input was selected for slot \"field-6\" because preferred for \"form-input\" (rank 1); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); name contains \"input\". Confidence is high (1.00).",
+      "candidates": [
+        {
+          "name": "Input",
+          "reason": "preferred for \"form-input\" (rank 1); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); name contains \"input\"",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 1
+        },
+        {
+          "name": "Select",
+          "reason": "preferred for \"form-input\" (rank 2); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); position affinity: Select fits well in main",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 1
+        },
+        {
+          "name": "Checkbox",
+          "reason": "2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); position affinity: Checkbox fits well in main",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.78
+        }
+      ]
+    },
+    {
+      "slotName": "field-7",
+      "intent": "form-input",
+      "selectedComponent": "Input",
+      "confidence": 1,
+      "confidenceLevel": "high",
+      "explanation": "Input was selected for slot \"field-7\" because preferred for \"form-input\" (rank 1); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); name contains \"input\". Confidence is high (1.00).",
+      "candidates": [
+        {
+          "name": "Input",
+          "reason": "preferred for \"form-input\" (rank 1); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); name contains \"input\"",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 1
+        },
+        {
+          "name": "Select",
+          "reason": "preferred for \"form-input\" (rank 2); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); position affinity: Select fits well in main",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 1
+        },
+        {
+          "name": "Checkbox",
+          "reason": "2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); position affinity: Checkbox fits well in main",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.78
+        }
+      ]
+    },
+    {
+      "slotName": "field-8",
+      "intent": "form-input",
+      "selectedComponent": "Input",
+      "confidence": 1,
+      "confidenceLevel": "high",
+      "explanation": "Input was selected for slot \"field-8\" because preferred for \"form-input\" (rank 1); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); name contains \"input\". Confidence is high (1.00).",
+      "candidates": [
+        {
+          "name": "Input",
+          "reason": "preferred for \"form-input\" (rank 1); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); name contains \"input\"",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 1
+        },
+        {
+          "name": "Select",
+          "reason": "preferred for \"form-input\" (rank 2); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); position affinity: Select fits well in main",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 1
+        },
+        {
+          "name": "Checkbox",
+          "reason": "2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); position affinity: Checkbox fits well in main",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.78
+        }
+      ]
+    },
+    {
+      "slotName": "field-9",
+      "intent": "form-input",
+      "selectedComponent": "Input",
+      "confidence": 1,
+      "confidenceLevel": "high",
+      "explanation": "Input was selected for slot \"field-9\" because preferred for \"form-input\" (rank 1); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); name contains \"input\". Confidence is high (1.00).",
+      "candidates": [
+        {
+          "name": "Input",
+          "reason": "preferred for \"form-input\" (rank 1); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); name contains \"input\"",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 1
+        },
+        {
+          "name": "Select",
+          "reason": "preferred for \"form-input\" (rank 2); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); position affinity: Select fits well in main",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 1
+        },
+        {
+          "name": "Checkbox",
+          "reason": "2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); position affinity: Checkbox fits well in main",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.78
+        }
+      ]
+    }
+  ],
+  "validation": {
+    "status": "ok",
+    "errors": [],
+    "warnings": []
+  },
+  "warnings": [
+    {
+      "code": "OODS-V121",
+      "message": "Object 'Collection' has maturity 'alpha' — composed output may change.",
+      "hint": "Consider using stable objects for production compositions."
+    },
+    {
+      "code": "OODS-V117",
+      "message": "Field collision: \"description\" in object schema overrides trait definition"
+    },
+    {
+      "code": "OODS-V117",
+      "message": "Field collision: \"created_at\" in object schema overrides trait definition"
+    },
+    {
+      "code": "OODS-V117",
+      "message": "Field collision: \"updated_at\" in object schema overrides trait definition"
+    },
+    {
+      "code": "OODS-V117",
+      "message": "Field collision: \"label\" in object schema overrides trait definition"
+    },
+    {
+      "code": "OODS-V117",
+      "message": "Field collision: \"owner_id\" in object schema overrides trait definition"
+    },
+    {
+      "code": "OODS-V117",
+      "message": "Field collision: \"owner_type\" in object schema overrides trait definition"
+    },
+    {
+      "code": "OODS-V117",
+      "message": "Field collision: \"last_event\" in object schema overrides trait definition"
+    }
+  ],
+  "objectUsed": {
+    "name": "Collection",
+    "version": "0.1.0",
+    "traits": [
+      "content/Labelled",
+      "lifecycle/Timestampable",
+      "structural/Ownerable",
+      "behavioral/Taggable",
+      "behavioral/Searchable",
+      "behavioral/Filterable",
+      "behavioral/Pageable"
+    ],
+    "fieldsComposed": 27,
+    "viewExtensionsApplied": {
+      "list": 7,
+      "detail": 6,
+      "form": 2,
+      "card": 3,
+      "timeline": 2,
+      "inline": 1
+    }
+  },
+  "meta": {
+    "intentParsed": "Collection form view",
+    "layoutDetected": "context-inferred: form (from context=\"form\")",
+    "slotCount": 11,
+    "nodeCount": 24,
+    "intentSynthetic": true,
+    "warnings": [
+      "Object 'Collection' has maturity 'alpha' — composed output may change.",
+      "Field collision: \"description\" in object schema overrides trait definition",
+      "Field collision: \"created_at\" in object schema overrides trait definition",
+      "Field collision: \"updated_at\" in object schema overrides trait definition",
+      "Field collision: \"label\" in object schema overrides trait definition",
+      "Field collision: \"owner_id\" in object schema overrides trait definition",
+      "Field collision: \"owner_type\" in object schema overrides trait definition",
+      "Field collision: \"last_event\" in object schema overrides trait definition"
+    ],
+    "intelligence": {
+      "fieldsExpanded": true,
+      "slotsExpanded": 7,
+      "expansionReason": "Expanded from 3 to 10 field groups for 22 fields",
+      "patternsApplied": 26,
+      "positionAffinityUsed": true,
+      "fieldAffinityUsed": true,
+      "compositionConfidence": 0.95
+    }
+  }
+}

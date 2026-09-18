@@ -1,0 +1,484 @@
+import type { DomainRecord } from './store';
+
+export const sampleData: DomainRecord[] = [
+  {
+    "label": "Northstar Workspace",
+    "description": "Northstar Workspace",
+    "placeholder": "",
+    "status": "proposed",
+    "state_history": [
+      {
+        "from": null,
+        "to": "proposed",
+        "at": "2026-09-01T12:00:00.000Z",
+        "event": "created",
+        "title": "Created",
+        "reason": "Record created"
+      }
+    ],
+    "allowed_transitions": [],
+    "created_at": "2026-09-01T12:00:00.000Z",
+    "updated_at": "2026-09-01T12:00:00.000Z",
+    "last_event": "created",
+    "last_event_at": "2026-09-01T12:00:00.000Z",
+    "owner_id": "owner-001",
+    "owner_type": "organization",
+    "ownership_role": "",
+    "ownership_transferred_at": "2026-09-01T12:00:00.000Z",
+    "tags": [],
+    "tag_count": 0,
+    "tag_metadata": [],
+    "neighborhood": [
+      {
+        "source_id": "example-team",
+        "target_id": "example-project",
+        "is_bidirectional": false
+      },
+      {
+        "source_id": "example-project",
+        "target_id": "example-document",
+        "is_bidirectional": true
+      }
+    ],
+    "relationship_id": "relationship-001",
+    "source_id": "00000000-0000-4000-8000-000000000001",
+    "target_id": "00000000-0000-4000-8000-000000000001",
+    "relationship_type": "membership",
+    "direction": "unidirectional",
+    "strength": "low",
+    "origin_source": "manual",
+    "is_bidirectional": true
+  },
+  {
+    "label": "Harbor Workspace",
+    "description": "Harbor Workspace",
+    "placeholder": "",
+    "status": "active",
+    "state_history": [
+      {
+        "from": null,
+        "to": "active",
+        "at": "2026-09-01T12:00:00.000Z",
+        "event": "created",
+        "title": "Created",
+        "reason": "Record created"
+      }
+    ],
+    "allowed_transitions": [],
+    "created_at": "2026-09-01T12:00:00.000Z",
+    "updated_at": "2026-09-01T12:00:00.000Z",
+    "last_event": "created",
+    "last_event_at": "2026-09-01T12:00:00.000Z",
+    "owner_id": "owner-002",
+    "owner_type": "team",
+    "ownership_role": "",
+    "ownership_transferred_at": "2026-09-01T12:00:00.000Z",
+    "tags": [],
+    "tag_count": 0,
+    "tag_metadata": [],
+    "neighborhood": [
+      {
+        "source_id": "example-team",
+        "target_id": "example-project",
+        "is_bidirectional": false
+      },
+      {
+        "source_id": "example-project",
+        "target_id": "example-document",
+        "is_bidirectional": true
+      }
+    ],
+    "relationship_id": "relationship-002",
+    "source_id": "00000000-0000-4000-8000-000000000002",
+    "target_id": "00000000-0000-4000-8000-000000000002",
+    "relationship_type": "ownership",
+    "direction": "bidirectional",
+    "strength": "medium",
+    "origin_source": "ingestion",
+    "is_bidirectional": true
+  },
+  {
+    "label": "Cedar Workspace",
+    "description": "Cedar Workspace",
+    "placeholder": "",
+    "status": "paused",
+    "state_history": [
+      {
+        "from": null,
+        "to": "paused",
+        "at": "2026-09-01T12:00:00.000Z",
+        "event": "created",
+        "title": "Created",
+        "reason": "Record created"
+      }
+    ],
+    "allowed_transitions": [],
+    "created_at": "2026-09-01T12:00:00.000Z",
+    "updated_at": "2026-09-01T12:00:00.000Z",
+    "last_event": "created",
+    "last_event_at": "2026-09-01T12:00:00.000Z",
+    "owner_id": "owner-003",
+    "owner_type": "platform",
+    "ownership_role": "",
+    "ownership_transferred_at": "2026-09-01T12:00:00.000Z",
+    "tags": [],
+    "tag_count": 0,
+    "tag_metadata": [],
+    "neighborhood": [
+      {
+        "source_id": "example-team",
+        "target_id": "example-project",
+        "is_bidirectional": false
+      },
+      {
+        "source_id": "example-project",
+        "target_id": "example-document",
+        "is_bidirectional": true
+      }
+    ],
+    "relationship_id": "relationship-003",
+    "source_id": "00000000-0000-4000-8000-000000000003",
+    "target_id": "00000000-0000-4000-8000-000000000003",
+    "relationship_type": "follows",
+    "direction": "unidirectional",
+    "strength": "high",
+    "origin_source": "analytics",
+    "is_bidirectional": true
+  },
+  {
+    "label": "Summit Workspace",
+    "description": "Summit Workspace",
+    "placeholder": "",
+    "status": "completed",
+    "state_history": [
+      {
+        "from": null,
+        "to": "completed",
+        "at": "2026-09-01T12:00:00.000Z",
+        "event": "created",
+        "title": "Created",
+        "reason": "Record created"
+      }
+    ],
+    "allowed_transitions": [],
+    "created_at": "2026-09-01T12:00:00.000Z",
+    "updated_at": "2026-09-01T12:00:00.000Z",
+    "last_event": "created",
+    "last_event_at": "2026-09-01T12:00:00.000Z",
+    "owner_id": "owner-004",
+    "owner_type": "organization",
+    "ownership_role": "",
+    "ownership_transferred_at": "2026-09-01T12:00:00.000Z",
+    "tags": [],
+    "tag_count": 0,
+    "tag_metadata": [],
+    "neighborhood": [
+      {
+        "source_id": "example-team",
+        "target_id": "example-project",
+        "is_bidirectional": false
+      },
+      {
+        "source_id": "example-project",
+        "target_id": "example-document",
+        "is_bidirectional": true
+      }
+    ],
+    "relationship_id": "relationship-004",
+    "source_id": "00000000-0000-4000-8000-000000000004",
+    "target_id": "00000000-0000-4000-8000-000000000004",
+    "relationship_type": "depends_on",
+    "direction": "bidirectional",
+    "strength": "low",
+    "origin_source": "integration",
+    "is_bidirectional": true
+  },
+  {
+    "label": "Orchard Workspace",
+    "description": "Orchard Workspace",
+    "placeholder": "",
+    "status": "terminated",
+    "state_history": [
+      {
+        "from": null,
+        "to": "terminated",
+        "at": "2026-08-01T12:00:00.000Z",
+        "event": "created",
+        "title": "Created",
+        "reason": "Record created"
+      }
+    ],
+    "allowed_transitions": [],
+    "created_at": "2026-08-01T12:00:00.000Z",
+    "updated_at": "2026-08-01T12:00:00.000Z",
+    "last_event": "created",
+    "last_event_at": "2026-08-01T12:00:00.000Z",
+    "owner_id": "owner-005",
+    "owner_type": "team",
+    "ownership_role": "",
+    "ownership_transferred_at": "2026-09-01T12:00:00.000Z",
+    "tags": [],
+    "tag_count": 0,
+    "tag_metadata": [],
+    "neighborhood": [
+      {
+        "source_id": "example-team",
+        "target_id": "example-project",
+        "is_bidirectional": false
+      },
+      {
+        "source_id": "example-project",
+        "target_id": "example-document",
+        "is_bidirectional": true
+      }
+    ],
+    "relationship_id": "relationship-005",
+    "source_id": "00000000-0000-4000-8000-000000000005",
+    "target_id": "00000000-0000-4000-8000-000000000005",
+    "relationship_type": "references",
+    "direction": "unidirectional",
+    "strength": "medium",
+    "origin_source": "manual",
+    "is_bidirectional": true
+  },
+  {
+    "label": "Willow Workspace",
+    "description": "Willow Workspace",
+    "placeholder": "",
+    "status": "proposed",
+    "state_history": [
+      {
+        "from": null,
+        "to": "proposed",
+        "at": "2026-09-01T12:00:00.000Z",
+        "event": "created",
+        "title": "Created",
+        "reason": "Record created"
+      }
+    ],
+    "allowed_transitions": [],
+    "created_at": "2026-09-01T12:00:00.000Z",
+    "updated_at": "2026-09-01T12:00:00.000Z",
+    "last_event": "created",
+    "last_event_at": "2026-09-01T12:00:00.000Z",
+    "owner_id": "owner-006",
+    "owner_type": "platform",
+    "ownership_role": "",
+    "ownership_transferred_at": "2026-09-01T12:00:00.000Z",
+    "tags": [],
+    "tag_count": 0,
+    "tag_metadata": [],
+    "neighborhood": [
+      {
+        "source_id": "example-team",
+        "target_id": "example-project",
+        "is_bidirectional": false
+      },
+      {
+        "source_id": "example-project",
+        "target_id": "example-document",
+        "is_bidirectional": true
+      }
+    ],
+    "relationship_id": "relationship-006",
+    "source_id": "00000000-0000-4000-8000-000000000006",
+    "target_id": "00000000-0000-4000-8000-000000000006",
+    "relationship_type": "membership",
+    "direction": "bidirectional",
+    "strength": "high",
+    "origin_source": "ingestion",
+    "is_bidirectional": true
+  },
+  {
+    "label": "Atlas Workspace",
+    "description": "Atlas Workspace",
+    "placeholder": "",
+    "status": "active",
+    "state_history": [
+      {
+        "from": null,
+        "to": "active",
+        "at": "2026-09-01T12:00:00.000Z",
+        "event": "created",
+        "title": "Created",
+        "reason": "Record created"
+      }
+    ],
+    "allowed_transitions": [],
+    "created_at": "2026-09-01T12:00:00.000Z",
+    "updated_at": "2026-09-01T12:00:00.000Z",
+    "last_event": "created",
+    "last_event_at": "2026-09-01T12:00:00.000Z",
+    "owner_id": "owner-007",
+    "owner_type": "organization",
+    "ownership_role": "",
+    "ownership_transferred_at": "2026-09-01T12:00:00.000Z",
+    "tags": [],
+    "tag_count": 0,
+    "tag_metadata": [],
+    "neighborhood": [
+      {
+        "source_id": "example-team",
+        "target_id": "example-project",
+        "is_bidirectional": false
+      },
+      {
+        "source_id": "example-project",
+        "target_id": "example-document",
+        "is_bidirectional": true
+      }
+    ],
+    "relationship_id": "relationship-007",
+    "source_id": "00000000-0000-4000-8000-000000000007",
+    "target_id": "00000000-0000-4000-8000-000000000007",
+    "relationship_type": "ownership",
+    "direction": "unidirectional",
+    "strength": "low",
+    "origin_source": "analytics",
+    "is_bidirectional": true
+  },
+  {
+    "label": "Meadow Workspace",
+    "description": "Meadow Workspace",
+    "placeholder": "",
+    "status": "paused",
+    "state_history": [
+      {
+        "from": null,
+        "to": "paused",
+        "at": "2026-09-01T12:00:00.000Z",
+        "event": "created",
+        "title": "Created",
+        "reason": "Record created"
+      }
+    ],
+    "allowed_transitions": [],
+    "created_at": "2026-09-01T12:00:00.000Z",
+    "updated_at": "2026-09-01T12:00:00.000Z",
+    "last_event": "created",
+    "last_event_at": "2026-09-01T12:00:00.000Z",
+    "owner_id": "owner-008",
+    "owner_type": "team",
+    "ownership_role": "",
+    "ownership_transferred_at": "2026-09-01T12:00:00.000Z",
+    "tags": [],
+    "tag_count": 0,
+    "tag_metadata": [],
+    "neighborhood": [
+      {
+        "source_id": "example-team",
+        "target_id": "example-project",
+        "is_bidirectional": false
+      },
+      {
+        "source_id": "example-project",
+        "target_id": "example-document",
+        "is_bidirectional": true
+      }
+    ],
+    "relationship_id": "relationship-008",
+    "source_id": "00000000-0000-4000-8000-000000000008",
+    "target_id": "00000000-0000-4000-8000-000000000008",
+    "relationship_type": "follows",
+    "direction": "bidirectional",
+    "strength": "medium",
+    "origin_source": "integration",
+    "is_bidirectional": true
+  },
+  {
+    "label": "Juniper Workspace",
+    "description": "Juniper Workspace",
+    "placeholder": "",
+    "status": "completed",
+    "state_history": [
+      {
+        "from": null,
+        "to": "completed",
+        "at": "2026-09-01T12:00:00.000Z",
+        "event": "created",
+        "title": "Created",
+        "reason": "Record created"
+      }
+    ],
+    "allowed_transitions": [],
+    "created_at": "2026-09-01T12:00:00.000Z",
+    "updated_at": "2026-09-01T12:00:00.000Z",
+    "last_event": "created",
+    "last_event_at": "2026-09-01T12:00:00.000Z",
+    "owner_id": "owner-009",
+    "owner_type": "platform",
+    "ownership_role": "",
+    "ownership_transferred_at": "2026-09-01T12:00:00.000Z",
+    "tags": [],
+    "tag_count": 0,
+    "tag_metadata": [],
+    "neighborhood": [
+      {
+        "source_id": "example-team",
+        "target_id": "example-project",
+        "is_bidirectional": false
+      },
+      {
+        "source_id": "example-project",
+        "target_id": "example-document",
+        "is_bidirectional": true
+      }
+    ],
+    "relationship_id": "relationship-009",
+    "source_id": "00000000-0000-4000-8000-000000000009",
+    "target_id": "00000000-0000-4000-8000-000000000009",
+    "relationship_type": "depends_on",
+    "direction": "unidirectional",
+    "strength": "high",
+    "origin_source": "manual",
+    "is_bidirectional": true
+  },
+  {
+    "label": "Brook Workspace",
+    "description": "Brook Workspace",
+    "placeholder": "",
+    "status": "terminated",
+    "state_history": [
+      {
+        "from": null,
+        "to": "terminated",
+        "at": "2026-08-01T12:00:00.000Z",
+        "event": "created",
+        "title": "Created",
+        "reason": "Record created"
+      }
+    ],
+    "allowed_transitions": [],
+    "created_at": "2026-08-01T12:00:00.000Z",
+    "updated_at": "2026-08-01T12:00:00.000Z",
+    "last_event": "created",
+    "last_event_at": "2026-08-01T12:00:00.000Z",
+    "owner_id": "owner-010",
+    "owner_type": "organization",
+    "ownership_role": "",
+    "ownership_transferred_at": "2026-09-01T12:00:00.000Z",
+    "tags": [],
+    "tag_count": 0,
+    "tag_metadata": [],
+    "neighborhood": [
+      {
+        "source_id": "example-team",
+        "target_id": "example-project",
+        "is_bidirectional": false
+      },
+      {
+        "source_id": "example-project",
+        "target_id": "example-document",
+        "is_bidirectional": true
+      }
+    ],
+    "relationship_id": "relationship-010",
+    "source_id": "00000000-0000-4000-8000-000000000010",
+    "target_id": "00000000-0000-4000-8000-000000000010",
+    "relationship_type": "references",
+    "direction": "bidirectional",
+    "strength": "low",
+    "origin_source": "ingestion",
+    "is_bidirectional": true
+  }
+];
