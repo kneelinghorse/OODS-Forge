@@ -20,7 +20,7 @@ import { handle as preview } from '../../packages/mcp-server/src/tools/design.pr
 import { ReferenceHost, ROOT } from './s202-reference-host.js';
 
 // fastify is the bridge's dependency, not the root's: resolve it the way the bridge does.
-const Fastify = createRequire(path.join(ROOT, 'packages/mcp-bridge/package.json'))('fastify') as typeof import('fastify').default;
+const Fastify = createRequire(path.join(ROOT, 'packages/mcp-bridge/package.json'))('fastify') as () => { listen(options: { port: number; host: string }): Promise<unknown>; close(): Promise<unknown>; server: { address(): { port: number } | string | null } } & Parameters<typeof registerPreviewHost>[0];
 const out = path.resolve(ROOT, process.argv[2] ?? 'artifacts/product-reality/sprint-205/m04');
 // Stage1 sits beside the repository; walk up from it the way the specs do (a worktree is deeper than the checkout).
 let stage1 = ROOT;

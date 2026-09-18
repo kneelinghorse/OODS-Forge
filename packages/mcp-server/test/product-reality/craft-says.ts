@@ -42,7 +42,6 @@ function nodes(schema: UiSchema | undefined): UiElement[] {
 /** Every field a node binds: `field`, and the `titleField`/`supportingField`/`statusField`… props components take. */
 const boundAll = (node: UiElement): string[] => Object.entries(node.props ?? {})
   .filter(([prop, value]) => (prop === 'field' || /Field$/.test(prop)) && typeof value === 'string').map(([, value]) => value as string);
-const bound = (node: UiElement) => boundAll(node)[0];
 const TRUNCATING = ['maxLines', 'lines', 'truncate', 'clamp', 'lineClamp', 'excerpt', 'maxLength'];
 
 export async function craftSays(): Promise<{ screens: number; refusedByDesign: string[]; failures: string[] }> {
@@ -66,8 +65,8 @@ export async function craftSays(): Promise<{ screens: number; refusedByDesign: s
         if (!facts.length) failures.push(`${object}/card: states no fact beside the name`);
       } else if (context === 'list') {
         const rows = all.filter(node => /-row$/.test(node.id ?? ''));
-        const named = rows.length > 0 && rows.every(row => nodes({ screens: [row] } as UiSchema).some(node => node !== row && boundAll(node).includes(name)));
-        if (!named) failures.push(`${object}/list: rows do not name the record (${name}); rows bind ${[...new Set(rows.flatMap(row => nodes({ screens: [row] } as UiSchema).filter(node => node !== row).flatMap(boundAll)))].join(', ') || 'nothing'}`);
+        const named = rows.length > 0 && rows.every(row => nodes({ screens: [row] } as unknown as UiSchema).some(node => node !== row && boundAll(node).includes(name)));
+        if (!named) failures.push(`${object}/list: rows do not name the record (${name}); rows bind ${[...new Set(rows.flatMap(row => nodes({ screens: [row] } as unknown as UiSchema).filter(node => node !== row).flatMap(boundAll)))].join(', ') || 'nothing'}`);
       } else {
         const carriers = all.filter(node => boundAll(node).includes(primaryText!));
         if (!carriers.length) failures.push(`${object}/detail: does not carry the primary text (${primaryText})`);
