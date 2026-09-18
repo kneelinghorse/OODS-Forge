@@ -1,0 +1,112 @@
+{
+  "schemaVersion": "1.0.0",
+  "kind": "capture-tripwire",
+  "startedAt": "2026-09-18T03:14:18.966Z",
+  "endedAt": "2026-09-18T03:15:25.487Z",
+  "durationMs": 66519.4,
+  "workspace": "/Users/systemsystems/portfolio/Design-Tools/OODS-Forge/.worktrees/s204",
+  "host": {
+    "hostname": "Mac",
+    "cpuCount": 8,
+    "loadAverageBefore": [
+      6.37646484375,
+      8.271484375,
+      7.4013671875
+    ],
+    "loadAverageAfter": [
+      4.71533203125,
+      7.37890625,
+      7.12646484375
+    ],
+    "loadThreshold": 8
+  },
+  "warnings": [],
+  "checks": [
+    {
+      "id": "readiness-check",
+      "executedCommand": "pnpm exec tsx scripts/product-reality/s196-release-readiness.ts --check",
+      "exitCode": 0,
+      "durationMs": 480.1
+    },
+    {
+      "id": "docs-check",
+      "executedCommand": "pnpm docs:check",
+      "exitCode": 0,
+      "durationMs": 3817.1
+    },
+    {
+      "id": "generate-check",
+      "executedCommand": "pnpm --filter @oods/schemas-tools generate:check",
+      "exitCode": 0,
+      "durationMs": 1200.3
+    },
+    {
+      "id": "tool-truth-check",
+      "executedCommand": "node scripts/product-reality/s193-tool-truth.mjs --check",
+      "exitCode": 0,
+      "durationMs": 1443.4
+    },
+    {
+      "id": "docs-api-check",
+      "executedCommand": "pnpm docs:api -- --check",
+      "exitCode": 0,
+      "durationMs": 415.6
+    },
+    {
+      "id": "docs-tools-check",
+      "executedCommand": "pnpm docs:tools -- --check",
+      "exitCode": 0,
+      "durationMs": 807.7
+    },
+    {
+      "id": "docs-claims-check",
+      "executedCommand": "pnpm docs:claims -- --check",
+      "exitCode": 0,
+      "durationMs": 787.7
+    },
+    {
+      "id": "render-license-check",
+      "executedCommand": "node scripts/license/render-license.mjs --check",
+      "exitCode": 0,
+      "durationMs": 69.6
+    },
+    {
+      "id": "third-party-notices-check",
+      "executedCommand": "node scripts/runtime/third-party-notices.mjs --check",
+      "exitCode": 0,
+      "durationMs": 274.6
+    },
+    {
+      "id": "client-configs-check",
+      "executedCommand": "node scripts/runtime/client-configs.mjs --check",
+      "exitCode": 0,
+      "durationMs": 37.5
+    },
+    {
+      "id": "golden-ledger-check",
+      "executedCommand": "pnpm exec tsx scripts/product-reality/s204-golden-ledger.ts check",
+      "exitCode": 0,
+      "durationMs": 696.1
+    },
+    {
+      "id": "viz-census-check",
+      "executedCommand": "pnpm exec tsx scripts/product-reality/s190-viz-census.ts --check",
+      "exitCode": 0,
+      "durationMs": 9562.8
+    },
+    {
+      "id": "schema-types-check",
+      "executedCommand": "pnpm run generate:schema-types -- --check",
+      "exitCode": 0,
+      "durationMs": 815.7
+    },
+    {
+      "id": "near-md-readers",
+      "executedCommand": "npx vitest run --project core --no-file-parallelism tests/verification tests/contracts",
+      "exitCode": 0,
+      "durationMs": 46110
+    }
+  ],
+  "status": "passed",
+  "failedChecks": []
+}
