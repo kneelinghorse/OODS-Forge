@@ -1,0 +1,92 @@
+{
+  "status": "ok",
+  "framework": "vue",
+  "artifact": {
+    "schemaVersion": "1.0.0",
+    "framework": "vue",
+    "files": [
+      {
+        "path": "src/GeneratedUI.vue",
+        "contents": "<template>\n  <main data-oods-shell=\"screen-list-9\">\n    <h1 data-oods-shell-heading=\"true\">Article</h1>\n    <Stack id=\"screen-list-9\" data-oods-component=\"Stack\" data-layout=\"stack\" style=\"display: flex; flex-direction: column; gap: var(--ref-space-cluster-default)\">\n        <Stack id=\"list-toolbar-4\" data-oods-component=\"Stack\" data-layout=\"inline\" style=\"display: flex; flex-direction: row; justify-content: space-between; padding: var(--ref-space-inset-default)\">\n              <SearchInput id=\"slot-search-1\" data-oods-component=\"SearchInput\" />\n              <Select id=\"slot-filters-2\" data-oods-component=\"Select\" label=\"Body markdown\" placeholder=\"Enter body markdown\" required v-model=\"bodyMarkdown\" />\n            </Stack>\n        <Stack id=\"list-items-5\" data-oods-component=\"Stack\" data-layout=\"stack\" style=\"display: flex; flex-direction: column; gap: var(--ref-space-cluster-tight)\">\n              <InlineLabel id=\"slot-items-6\" data-oods-component=\"InlineLabel\" :maxLength=\"40\" :label=\"label\" />\n            </Stack>\n        <Stack id=\"list-pagination-7\" data-oods-component=\"Stack\" data-layout=\"inline\" style=\"display: flex; flex-direction: row; justify-content: center; padding: var(--ref-space-inset-default)\">\n              <PaginationBar id=\"slot-pagination-8\" data-oods-component=\"PaginationBar\" />\n            </Stack>\n      </Stack>\n  </main>\n</template>\n\n<script setup lang=\"ts\">\nimport { ref } from 'vue';\nimport { InlineLabel, PaginationBar, SearchInput, Select, Stack } from '@oods/components-vue';\nimport '@oods/component-styles/css';\n\ninterface Props {\n  allowedTransitions?: string[];\n  articleId?: string;\n  authorId?: string;\n  bodyMarkdown?: string;\n  categories?: unknown[];\n  classificationMetadata?: unknown;\n  contentType?: 'knowledge_base' | 'announcement' | 'release_notes' | 'how_to';\n  createdAt?: string;\n  description?: string;\n  excerpt?: string;\n  heroMediaId?: string;\n  label?: string;\n  lastEvent?: 'created' | 'scheduled' | 'published' | 'updated' | 'archived';\n  lastEventAt?: string;\n  locale?: string;\n  placeholder?: string;\n  primaryCategoryId?: string;\n  primaryCategoryPath?: string;\n  publishedAt?: string;\n  readingTimeMinutes?: number;\n  slug?: string;\n  stateHistory?: unknown[];\n  status?: 'draft' | 'in_review' | 'scheduled' | 'published' | 'archived';\n  tagCount?: number;\n  tagPreview?: string;\n  tags?: unknown[];\n  updatedAt?: string;\n}\nconst generatedProps = defineProps<Props>();\n/** Materialized list of valid next states from the current status, computed from the\ntransitionRules parameter. When transitionRules is null (open model), this contains\nall states except the current one. Used by StatusSelector to disable invalid options\nand by StatusBadge to indicate available paths.\n */\nconst allowedTransitions = ref<string[]>(generatedProps.allowedTransitions ?? []);\n/** Primary identifier for the article document. */\nconst articleId = ref<string>(generatedProps.articleId ?? '');\n/** Reference to the authoring user. */\nconst authorId = ref<string>(generatedProps.authorId ?? '');\n/** Markdown content rendered in CMS detail views. */\nconst bodyMarkdown = ref<string>(generatedProps.bodyMarkdown ?? '');\n/** Ordered taxonomy nodes scoped to the object. */\nconst categories = ref<unknown[]>(generatedProps.categories ?? []);\n/** Operational metadata describing mode, storage model, governance rules, and audit timestamps.\n */\nconst classificationMetadata = ref<unknown>(generatedProps.classificationMetadata ?? '');\n/** Editorial template driving layout and governance workflows. */\nconst contentType = ref<'knowledge_base' | 'announcement' | 'release_notes' | 'how_to'>(generatedProps.contentType ?? 'knowledge_base');\n/** Timestamp recording when the entity was first created. */\nconst createdAt = ref<string>(generatedProps.createdAt ?? '');\n/** Supporting description used in detail and card contexts. */\nconst description = ref<string>(generatedProps.description ?? '');\n/** Summary text used in list + SEO contexts. */\nconst excerpt = ref<string>(generatedProps.excerpt ?? '');\n/** Optional Media object identifier referenced in hero slots. */\nconst heroMediaId = ref<string>(generatedProps.heroMediaId ?? '');\n/** Human-readable display name rendered in primary surfaces. */\nconst label = ref<string>(generatedProps.label ?? '');\n/** Lifecycle event associated with the most recent timestamp mutation. */\nconst lastEvent = ref<'created' | 'scheduled' | 'published' | 'updated' | 'archived'>(generatedProps.lastEvent ?? 'created');\n/** Timestamp for the lifecycle event captured in last_event. */\nconst lastEventAt = ref<string>(generatedProps.lastEventAt ?? '');\n/** Locale tag determining headline, copy, and SEO metadata. */\nconst locale = ref<string>(generatedProps.locale ?? '');\n/** Hint copy surfaced in form fields when the label is empty. */\nconst placeholder = ref<string>(generatedProps.placeholder ?? '');\n/** Identifier of the canonical taxonomy node. */\nconst primaryCategoryId = ref<string>(generatedProps.primaryCategoryId ?? '');\n/** Human-readable breadcrumb path (Electronics > Mobile > Android). */\nconst primaryCategoryPath = ref<string>(generatedProps.primaryCategoryPath ?? '');\n/** Timestamp when the article was published live. */\nconst publishedAt = ref<string>(generatedProps.publishedAt ?? '');\n/** Estimated reading time derived from body length. */\nconst readingTimeMinutes = ref<number>(generatedProps.readingTimeMinutes ?? 0);\n/** Canonical slug rendered in URLs and breadcrumb links. */\nconst slug = ref<string>(generatedProps.slug ?? '');\n/** Chronological log of state transitions. Each entry records the before/after states,\ntimestamp, and (when governance is enabled) the actor, reason, and transition metadata.\nRendered by StatusTimeline in the detail and timeline views.\n\nEntry structure:\n  - from: string (previous state)\n  - to: string (new state)\n  - timestamp: ISO 8601 datetime\n  - actor_id: string (user/system who triggered the transition, optional)\n  - reason: string (human-readable justification, required when requireTransitionReason is true)\n  - transition_metadata: Record<string, unknown> (arbitrary context, optional)\n */\nconst stateHistory = ref<unknown[]>(generatedProps.stateHistory ?? []);\n/** Canonical lifecycle state derived from the states parameter. This is the single source\nof truth for the entity's current lifecycle position. Consumed by Colorized to resolve\nvisual tokens, and by view extensions to render StatusBadge and StatusTimeline.\n */\nconst status = ref<'draft' | 'in_review' | 'scheduled' | 'published' | 'archived'>(generatedProps.status ?? 'draft');\n/** Number of canonical tags assigned to the object. */\nconst tagCount = ref<number>(generatedProps.tagCount ?? 0);\n/** Denormalized comma-delimited preview for list renders. */\nconst tagPreview = ref<string>(generatedProps.tagPreview ?? '');\n/** Canonical tag collection after synonym collapse. */\nconst tags = ref<unknown[]>(generatedProps.tags ?? []);\n/** Timestamp for the most recent modification, when available. */\nconst updatedAt = ref<string>(generatedProps.updatedAt ?? '');\n</script>\n\n<style scoped>\n/* Token CSS variables are consumed via inline styles. */\n/* Add component-scoped overrides here as needed. */\n</style>\n",
+        "contentHash": "sha256:5ecf49e96aa673c7e0da64b8968da7981a4e405bc14dca118c181c77a2b5adf5"
+      }
+    ],
+    "dependencies": [
+      {
+        "name": "@oods/component-styles",
+        "version": "0.1.0",
+        "kind": "dependency"
+      },
+      {
+        "name": "@oods/components-vue",
+        "version": "0.1.0",
+        "kind": "dependency"
+      },
+      {
+        "name": "vue",
+        "version": "3.5.42",
+        "kind": "peerDependency"
+      }
+    ],
+    "actions": [],
+    "contentHash": "sha256:9faac54f6944694eec10083a78dc652799b5c104ec2d03d19da47d960915d333"
+  },
+  "code": "<template>\n  <main data-oods-shell=\"screen-list-9\">\n    <h1 data-oods-shell-heading=\"true\">Article</h1>\n    <Stack id=\"screen-list-9\" data-oods-component=\"Stack\" data-layout=\"stack\" style=\"display: flex; flex-direction: column; gap: var(--ref-space-cluster-default)\">\n        <Stack id=\"list-toolbar-4\" data-oods-component=\"Stack\" data-layout=\"inline\" style=\"display: flex; flex-direction: row; justify-content: space-between; padding: var(--ref-space-inset-default)\">\n              <SearchInput id=\"slot-search-1\" data-oods-component=\"SearchInput\" />\n              <Select id=\"slot-filters-2\" data-oods-component=\"Select\" label=\"Body markdown\" placeholder=\"Enter body markdown\" required v-model=\"bodyMarkdown\" />\n            </Stack>\n        <Stack id=\"list-items-5\" data-oods-component=\"Stack\" data-layout=\"stack\" style=\"display: flex; flex-direction: column; gap: var(--ref-space-cluster-tight)\">\n              <InlineLabel id=\"slot-items-6\" data-oods-component=\"InlineLabel\" :maxLength=\"40\" :label=\"label\" />\n            </Stack>\n        <Stack id=\"list-pagination-7\" data-oods-component=\"Stack\" data-layout=\"inline\" style=\"display: flex; flex-direction: row; justify-content: center; padding: var(--ref-space-inset-default)\">\n              <PaginationBar id=\"slot-pagination-8\" data-oods-component=\"PaginationBar\" />\n            </Stack>\n      </Stack>\n  </main>\n</template>\n\n<script setup lang=\"ts\">\nimport { ref } from 'vue';\nimport { InlineLabel, PaginationBar, SearchInput, Select, Stack } from '@oods/components-vue';\nimport '@oods/component-styles/css';\n\ninterface Props {\n  allowedTransitions?: string[];\n  articleId?: string;\n  authorId?: string;\n  bodyMarkdown?: string;\n  categories?: unknown[];\n  classificationMetadata?: unknown;\n  contentType?: 'knowledge_base' | 'announcement' | 'release_notes' | 'how_to';\n  createdAt?: string;\n  description?: string;\n  excerpt?: string;\n  heroMediaId?: string;\n  label?: string;\n  lastEvent?: 'created' | 'scheduled' | 'published' | 'updated' | 'archived';\n  lastEventAt?: string;\n  locale?: string;\n  placeholder?: string;\n  primaryCategoryId?: string;\n  primaryCategoryPath?: string;\n  publishedAt?: string;\n  readingTimeMinutes?: number;\n  slug?: string;\n  stateHistory?: unknown[];\n  status?: 'draft' | 'in_review' | 'scheduled' | 'published' | 'archived';\n  tagCount?: number;\n  tagPreview?: string;\n  tags?: unknown[];\n  updatedAt?: string;\n}\nconst generatedProps = defineProps<Props>();\n/** Materialized list of valid next states from the current status, computed from the\ntransitionRules parameter. When transitionRules is null (open model), this contains\nall states except the current one. Used by StatusSelector to disable invalid options\nand by StatusBadge to indicate available paths.\n */\nconst allowedTransitions = ref<string[]>(generatedProps.allowedTransitions ?? []);\n/** Primary identifier for the article document. */\nconst articleId = ref<string>(generatedProps.articleId ?? '');\n/** Reference to the authoring user. */\nconst authorId = ref<string>(generatedProps.authorId ?? '');\n/** Markdown content rendered in CMS detail views. */\nconst bodyMarkdown = ref<string>(generatedProps.bodyMarkdown ?? '');\n/** Ordered taxonomy nodes scoped to the object. */\nconst categories = ref<unknown[]>(generatedProps.categories ?? []);\n/** Operational metadata describing mode, storage model, governance rules, and audit timestamps.\n */\nconst classificationMetadata = ref<unknown>(generatedProps.classificationMetadata ?? '');\n/** Editorial template driving layout and governance workflows. */\nconst contentType = ref<'knowledge_base' | 'announcement' | 'release_notes' | 'how_to'>(generatedProps.contentType ?? 'knowledge_base');\n/** Timestamp recording when the entity was first created. */\nconst createdAt = ref<string>(generatedProps.createdAt ?? '');\n/** Supporting description used in detail and card contexts. */\nconst description = ref<string>(generatedProps.description ?? '');\n/** Summary text used in list + SEO contexts. */\nconst excerpt = ref<string>(generatedProps.excerpt ?? '');\n/** Optional Media object identifier referenced in hero slots. */\nconst heroMediaId = ref<string>(generatedProps.heroMediaId ?? '');\n/** Human-readable display name rendered in primary surfaces. */\nconst label = ref<string>(generatedProps.label ?? '');\n/** Lifecycle event associated with the most recent timestamp mutation. */\nconst lastEvent = ref<'created' | 'scheduled' | 'published' | 'updated' | 'archived'>(generatedProps.lastEvent ?? 'created');\n/** Timestamp for the lifecycle event captured in last_event. */\nconst lastEventAt = ref<string>(generatedProps.lastEventAt ?? '');\n/** Locale tag determining headline, copy, and SEO metadata. */\nconst locale = ref<string>(generatedProps.locale ?? '');\n/** Hint copy surfaced in form fields when the label is empty. */\nconst placeholder = ref<string>(generatedProps.placeholder ?? '');\n/** Identifier of the canonical taxonomy node. */\nconst primaryCategoryId = ref<string>(generatedProps.primaryCategoryId ?? '');\n/** Human-readable breadcrumb path (Electronics > Mobile > Android). */\nconst primaryCategoryPath = ref<string>(generatedProps.primaryCategoryPath ?? '');\n/** Timestamp when the article was published live. */\nconst publishedAt = ref<string>(generatedProps.publishedAt ?? '');\n/** Estimated reading time derived from body length. */\nconst readingTimeMinutes = ref<number>(generatedProps.readingTimeMinutes ?? 0);\n/** Canonical slug rendered in URLs and breadcrumb links. */\nconst slug = ref<string>(generatedProps.slug ?? '');\n/** Chronological log of state transitions. Each entry records the before/after states,\ntimestamp, and (when governance is enabled) the actor, reason, and transition metadata.\nRendered by StatusTimeline in the detail and timeline views.\n\nEntry structure:\n  - from: string (previous state)\n  - to: string (new state)\n  - timestamp: ISO 8601 datetime\n  - actor_id: string (user/system who triggered the transition, optional)\n  - reason: string (human-readable justification, required when requireTransitionReason is true)\n  - transition_metadata: Record<string, unknown> (arbitrary context, optional)\n */\nconst stateHistory = ref<unknown[]>(generatedProps.stateHistory ?? []);\n/** Canonical lifecycle state derived from the states parameter. This is the single source\nof truth for the entity's current lifecycle position. Consumed by Colorized to resolve\nvisual tokens, and by view extensions to render StatusBadge and StatusTimeline.\n */\nconst status = ref<'draft' | 'in_review' | 'scheduled' | 'published' | 'archived'>(generatedProps.status ?? 'draft');\n/** Number of canonical tags assigned to the object. */\nconst tagCount = ref<number>(generatedProps.tagCount ?? 0);\n/** Denormalized comma-delimited preview for list renders. */\nconst tagPreview = ref<string>(generatedProps.tagPreview ?? '');\n/** Canonical tag collection after synonym collapse. */\nconst tags = ref<unknown[]>(generatedProps.tags ?? []);\n/** Timestamp for the most recent modification, when available. */\nconst updatedAt = ref<string>(generatedProps.updatedAt ?? '');\n</script>\n\n<style scoped>\n/* Token CSS variables are consumed via inline styles. */\n/* Add component-scoped overrides here as needed. */\n</style>\n",
+  "fileExtension": ".vue",
+  "imports": [
+    "vue",
+    "@oods/components-vue",
+    "@oods/component-styles/css"
+  ],
+  "warnings": [],
+  "validationReceipt": {
+    "profile": "build",
+    "defaulted": false,
+    "rationale": "Build is the default minimum gate for a runnable artifact: target, bindings, dependencies, and fallbacks must resolve.",
+    "axes": {
+      "scope": "generated-artifact",
+      "enforcement": "blocking",
+      "fallback": "forbidden",
+      "target": {
+        "requested": "vue",
+        "resolved": "vue",
+        "source": "explicit"
+      }
+    },
+    "checks": [
+      "schema-structure",
+      "component-registry",
+      "state-contract",
+      "target-readiness",
+      "normalization-fidelity",
+      "binding-contract",
+      "props-contract",
+      "slots-contract",
+      "events-contract",
+      "dependency-closure",
+      "fallback-policy"
+    ],
+    "notChecked": [
+      "rendered-evidence",
+      "interaction-evidence",
+      "accessibility-evidence",
+      "theme-evidence",
+      "determinism-evidence",
+      "performance-evidence",
+      "certification-evidence"
+    ],
+    "evidence": {
+      "required": [],
+      "provided": [],
+      "missing": [],
+      "mismatched": [],
+      "accepted": [],
+      "notApplicable": [],
+      "artifactContentHash": "sha256:9faac54f6944694eec10083a78dc652799b5c104ec2d03d19da47d960915d333"
+    }
+  },
+  "meta": {
+    "nodeCount": 8,
+    "componentCount": 5
+  }
+}

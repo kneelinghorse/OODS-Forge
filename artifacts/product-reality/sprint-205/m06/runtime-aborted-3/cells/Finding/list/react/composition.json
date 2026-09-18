@@ -1,0 +1,872 @@
+{
+  "status": "ok",
+  "layout": "list",
+  "schema": {
+    "version": "2026.02",
+    "screens": [
+      {
+        "id": "screen-list-9",
+        "component": "Stack",
+        "layout": {
+          "type": "stack",
+          "gapToken": "cluster-default"
+        },
+        "children": [
+          {
+            "id": "screen-list-9-loading",
+            "component": "Banner",
+            "state": "loading",
+            "props": {
+              "title": "Loading",
+              "message": "Loading your records."
+            }
+          },
+          {
+            "id": "screen-list-9-error",
+            "component": "Banner",
+            "state": "error",
+            "props": {
+              "title": "Unable to load records",
+              "message": "Try again or choose another record."
+            }
+          },
+          {
+            "id": "screen-list-9-success",
+            "component": "Stack",
+            "state": "success",
+            "layout": {
+              "type": "stack",
+              "gapToken": "cluster-default"
+            },
+            "children": [
+              {
+                "id": "list-toolbar-4",
+                "component": "Stack",
+                "layout": {
+                  "type": "inline",
+                  "align": "space-between"
+                },
+                "style": {
+                  "spacingToken": "inset-default"
+                },
+                "children": [
+                  {
+                    "id": "slot-search-1",
+                    "component": "SearchInput",
+                    "meta": {
+                      "intent": "slot:search",
+                      "label": "search"
+                    },
+                    "props": {
+                      "label": "Search",
+                      "placeholder": "Search records",
+                      "clearable": true
+                    },
+                    "collectionControl": "search"
+                  },
+                  {
+                    "id": "slot-filters-2",
+                    "component": "Select",
+                    "meta": {
+                      "intent": "slot:filters",
+                      "label": "filters"
+                    },
+                    "props": {
+                      "field": "impact",
+                      "label": "Impact",
+                      "options": [
+                        {
+                          "value": "",
+                          "label": "All states"
+                        },
+                        {
+                          "value": "critical",
+                          "label": "Critical"
+                        },
+                        {
+                          "value": "serious",
+                          "label": "Serious"
+                        },
+                        {
+                          "value": "moderate",
+                          "label": "Moderate"
+                        },
+                        {
+                          "value": "minor",
+                          "label": "Minor"
+                        },
+                        {
+                          "value": "unknown",
+                          "label": "Unknown"
+                        }
+                      ]
+                    },
+                    "collectionControl": "filter"
+                  },
+                  {
+                    "id": "list-toolbar-4-sort",
+                    "component": "Select",
+                    "collectionControl": "sort",
+                    "props": {
+                      "field": "title",
+                      "label": "Sort",
+                      "options": [
+                        {
+                          "value": "asc",
+                          "label": "Name A–Z"
+                        },
+                        {
+                          "value": "desc",
+                          "label": "Name Z–A"
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              {
+                "id": "list-items-5",
+                "component": "Stack",
+                "layout": {
+                  "type": "stack",
+                  "gapToken": "cluster-tight"
+                },
+                "children": [
+                  {
+                    "id": "list-items-5-row",
+                    "component": "Button",
+                    "collectionControl": "open",
+                    "props": {
+                      "field": "finding_id"
+                    },
+                    "layout": {
+                      "type": "inline",
+                      "gapToken": "cluster-default"
+                    },
+                    "children": [
+                      {
+                        "id": "list-items-5-title",
+                        "component": "Text",
+                        "props": {
+                          "field": "title"
+                        }
+                      },
+                      {
+                        "id": "ve-toolbar-actions-13",
+                        "component": "StatusBadge",
+                        "props": {
+                          "statusField": "result_state",
+                          "domain": "result",
+                          "emphasis": "subtle",
+                          "showIcon": false,
+                          "tone": "neutral"
+                        }
+                      },
+                      {
+                        "id": "ve-toolbar-actions-14",
+                        "component": "RelativeTimestamp",
+                        "props": {
+                          "field": "provenance_at"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "id": "list-items-5-empty",
+                    "component": "Banner",
+                    "state": "empty",
+                    "props": {
+                      "message": "No records found."
+                    },
+                    "collectionControl": "empty"
+                  }
+                ],
+                "collection": {
+                  "source": "rows",
+                  "keyField": "finding_id",
+                  "labelField": "title"
+                }
+              },
+              {
+                "id": "list-pagination-7",
+                "component": "Stack",
+                "layout": {
+                  "type": "inline",
+                  "align": "center"
+                },
+                "style": {
+                  "spacingToken": "inset-default"
+                },
+                "children": [
+                  {
+                    "id": "slot-pagination-8",
+                    "component": "PaginationBar",
+                    "meta": {
+                      "intent": "slot:pagination",
+                      "label": "pagination",
+                      "confidence": 0.77,
+                      "confidenceLevel": "low"
+                    },
+                    "collectionControl": "page",
+                    "props": {
+                      "showItemRange": true
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "bindings": {
+          "onRowClick": "handleRowClick",
+          "onSort": "handleSort",
+          "onFilter": "handleFilter",
+          "onPageChange": "handlePageChange"
+        },
+        "meta": {
+          "label": "Findings"
+        }
+      }
+    ],
+    "objectSchema": {
+      "searchQuery": {
+        "type": "string",
+        "required": false,
+        "default": "",
+        "description": "The current search query string entered by the user.",
+        "semanticType": "input.search.query"
+      },
+      "searchActive": {
+        "type": "boolean",
+        "required": false,
+        "default": false,
+        "description": "Whether the search input is currently focused or has a non-empty query.",
+        "semanticType": "state.search.active"
+      },
+      "filters": {
+        "type": "object[]",
+        "required": false,
+        "default": [],
+        "description": "Array of available filter descriptors. Each entry defines a filterable dimension:\n  - field: string (the schema field to filter on)\n  - label: string (display label)\n  - type: \"select\" | \"multi-select\" | \"range\" | \"boolean\" | \"date-range\"\n  - options: array of { value, label } for select/multi-select types\n",
+        "semanticType": "input.filter.descriptors"
+      },
+      "activeFilters": {
+        "type": "object[]",
+        "required": false,
+        "default": [],
+        "description": "Array of currently applied filter values:\n  - field: string (matches a filter descriptor field)\n  - operator: \"eq\" | \"in\" | \"range\" | \"gt\" | \"lt\" | \"between\"\n  - value: unknown (the selected filter value or values)\n",
+        "semanticType": "state.filter.active"
+      },
+      "filterCount": {
+        "type": "number",
+        "required": true,
+        "default": 0,
+        "description": "Computed count of currently active filters.",
+        "semanticType": "metric.filter.count"
+      },
+      "page": {
+        "type": "number",
+        "required": true,
+        "default": 1,
+        "description": "Current page number (1-based).",
+        "semanticType": "state.pagination.page"
+      },
+      "pageSize": {
+        "type": "number",
+        "required": true,
+        "default": 25,
+        "description": "Number of items displayed per page.",
+        "semanticType": "state.pagination.pageSize"
+      },
+      "totalItems": {
+        "type": "number",
+        "required": false,
+        "default": 0,
+        "description": "Total number of items across all pages. Used to compute total page count.",
+        "semanticType": "metric.pagination.totalItems"
+      },
+      "totalPages": {
+        "type": "number",
+        "required": false,
+        "default": 0,
+        "description": "Computed total number of pages (ceil(totalItems / pageSize)).",
+        "semanticType": "metric.pagination.totalPages"
+      },
+      "result_state": {
+        "type": "string",
+        "required": true,
+        "examples": [
+          "violation",
+          "violation",
+          "violation",
+          "violation",
+          "violation",
+          "violation"
+        ],
+        "description": "What the engine concluded: violation on every finding of this run, because Stage1 writes needs-review, passed and not-applicable only as page counts.",
+        "enum": [
+          "violation",
+          "passed",
+          "needs_review",
+          "not_applicable",
+          "not_measured"
+        ],
+        "semanticType": "assessment.result.state"
+      },
+      "provenance_source": {
+        "type": "string",
+        "required": true,
+        "examples": [
+          "Stage1",
+          "Stage1",
+          "Stage1",
+          "Stage1",
+          "Stage1",
+          "Stage1"
+        ],
+        "description": "The system that produced the record.",
+        "semanticType": "provenance.source"
+      },
+      "provenance_record": {
+        "type": "string",
+        "required": true,
+        "examples": [
+          "6e435ce7-eaab-46b4-be6b-cea9b80defa6",
+          "6e435ce7-eaab-46b4-be6b-cea9b80defa6",
+          "6e435ce7-eaab-46b4-be6b-cea9b80defa6",
+          "6e435ce7-eaab-46b4-be6b-cea9b80defa6",
+          "6e435ce7-eaab-46b4-be6b-cea9b80defa6",
+          "6e435ce7-eaab-46b4-be6b-cea9b80defa6"
+        ],
+        "description": "Which record there.",
+        "semanticType": "provenance.record"
+      },
+      "provenance_locator": {
+        "type": "string",
+        "required": false,
+        "examples": [
+          "evidence/a11y/about_monthly-calls--5f548cfd.json",
+          "evidence/a11y/about_monthly-calls--5f548cfd.json",
+          "evidence/a11y/about_monthly-calls--5f548cfd.json",
+          "evidence/a11y/components--e49bf947.json",
+          "evidence/a11y/components_banner--60c71ed2.json",
+          "evidence/a11y/components_data-visualizations--df1931f8.json"
+        ],
+        "description": "Where in that record the values were read.",
+        "semanticType": "provenance.locator"
+      },
+      "provenance_method": {
+        "type": "string",
+        "required": true,
+        "examples": [
+          "axe-core 4.11.0",
+          "axe-core 4.11.0",
+          "axe-core 4.11.0",
+          "axe-core 4.11.0",
+          "axe-core 4.11.0",
+          "axe-core 4.11.0"
+        ],
+        "description": "How the values were obtained.",
+        "semanticType": "provenance.method"
+      },
+      "provenance_at": {
+        "type": "datetime",
+        "required": true,
+        "examples": [
+          "2026-09-17T00:46:39.300Z",
+          "2026-09-17T00:46:39.300Z",
+          "2026-09-17T00:46:39.300Z",
+          "2026-09-17T00:48:19.238Z",
+          "2026-09-17T00:49:30.540Z",
+          "2026-09-17T00:51:01.072Z"
+        ],
+        "description": "When they were obtained.",
+        "semanticType": "provenance.at"
+      },
+      "finding_id": {
+        "type": "string",
+        "required": true,
+        "examples": [
+          "/about/monthly-calls#aria-allowed-attr",
+          "/about/monthly-calls#aria-prohibited-attr",
+          "/about/monthly-calls#button-name",
+          "/components#aria-allowed-role",
+          "/components/banner#landmark-unique",
+          "/components/data-visualizations#empty-table-header"
+        ],
+        "description": "The page route and the rule, \"<route>#<rule_id>\": one rule failing on one page is one finding.",
+        "semanticType": "capture.finding.finding_id"
+      },
+      "title": {
+        "type": "string",
+        "required": true,
+        "examples": [
+          "Elements must only use supported ARIA attributes",
+          "Elements must only use permitted ARIA attributes",
+          "Buttons must have discernible text",
+          "ARIA role should be appropriate for the element",
+          "Landmarks should have a unique role or role/label/title (i.e. accessible name) combination",
+          "Table header text should not be empty"
+        ],
+        "description": "The rule's one-line statement of what must hold (axe `help`), which names the finding.",
+        "semanticType": "text.label"
+      },
+      "description": {
+        "type": "string",
+        "required": true,
+        "examples": [
+          "Ensure an element's role supports its ARIA attributes",
+          "Ensure ARIA attributes are not prohibited for an element's role",
+          "Ensure buttons have discernible text",
+          "Ensure role attribute has an appropriate value for the element",
+          "Ensure landmarks are unique",
+          "Ensure table headers have discernible text"
+        ],
+        "description": "What the rule checks, in the engine's words.",
+        "semanticType": "capture.finding.description"
+      },
+      "impact": {
+        "type": "string",
+        "required": true,
+        "examples": [
+          "critical",
+          "serious",
+          "critical",
+          "minor",
+          "moderate",
+          "minor"
+        ],
+        "description": "The engine's impact for the rule. Stage1 keeps an unknown bucket beside axe's four.",
+        "enum": [
+          "critical",
+          "serious",
+          "moderate",
+          "minor",
+          "unknown"
+        ],
+        "semanticType": "capture.finding.impact"
+      },
+      "rule_id": {
+        "type": "string",
+        "required": true,
+        "examples": [
+          "aria-allowed-attr",
+          "aria-prohibited-attr",
+          "button-name",
+          "aria-allowed-role",
+          "landmark-unique",
+          "empty-table-header"
+        ],
+        "description": "The engine's rule id.",
+        "semanticType": "capture.finding.rule_id"
+      },
+      "route": {
+        "type": "string",
+        "required": true,
+        "examples": [
+          "/about/monthly-calls",
+          "/about/monthly-calls",
+          "/about/monthly-calls",
+          "/components",
+          "/components/banner",
+          "/components/data-visualizations"
+        ],
+        "description": "The page the finding is on, as a route.",
+        "semanticType": "capture.finding.route"
+      },
+      "page_url": {
+        "type": "string",
+        "required": true,
+        "examples": [
+          "https://designsystem.digital.gov/about/monthly-calls",
+          "https://designsystem.digital.gov/about/monthly-calls",
+          "https://designsystem.digital.gov/about/monthly-calls",
+          "https://designsystem.digital.gov/components",
+          "https://designsystem.digital.gov/components/banner",
+          "https://designsystem.digital.gov/components/data-visualizations"
+        ],
+        "description": "The page's full URL.",
+        "semanticType": "capture.finding.page_url"
+      },
+      "node_count": {
+        "type": "integer",
+        "required": true,
+        "examples": [
+          21,
+          21,
+          21,
+          47,
+          2,
+          1
+        ],
+        "description": "How many elements on the page fail the rule.",
+        "semanticType": "capture.finding.node_count"
+      },
+      "selectors": {
+        "type": "string[]",
+        "required": true,
+        "examples": [
+          [
+            ".usa-embed-container.margin-top-4:nth-child(9) > iframe",
+            ".ytmVideoInfoVideoTitle",
+            ".usa-embed-container.margin-top-4:nth-child(14) > iframe",
+            "iframe[title=\"Engineering values\"]",
+            ".usa-embed-container.margin-top-4:nth-child(24) > iframe",
+            "iframe[title=\"A look at beta Web Components\"]",
+            ".usa-embed-container.margin-top-4:nth-child(34) > iframe",
+            ".usa-embed-container.margin-top-4:nth-child(39) > iframe",
+            "iframe[title=\"Introduction to Web Components\"]",
+            "iframe[title=\"Building with USWDS tools\"]",
+            "iframe[title=\"USWDS component lifecycle\"]",
+            ".usa-embed-container.margin-top-4:nth-child(59) > iframe",
+            ".usa-embed-container.margin-top-4:nth-child(64) > iframe",
+            ".usa-embed-container.margin-top-4:nth-child(69) > iframe",
+            "iframe[title=\"Mission, vision, and polestar\"]",
+            "iframe[title=\"Product roadmap\"]",
+            ".usa-embed-container.margin-top-4:nth-child(84) > iframe",
+            "iframe[title=\"Real-world accessibility\"]",
+            "iframe[title=\"Top tasks\"]",
+            ".usa-embed-container.margin-top-4:nth-child(99) > iframe"
+          ],
+          [
+            ".usa-embed-container.margin-top-4:nth-child(9) > iframe",
+            "#movie_player",
+            ".usa-embed-container.margin-top-4:nth-child(14) > iframe",
+            "iframe[title=\"Engineering values\"]",
+            ".usa-embed-container.margin-top-4:nth-child(24) > iframe",
+            "iframe[title=\"A look at beta Web Components\"]",
+            ".usa-embed-container.margin-top-4:nth-child(34) > iframe",
+            ".usa-embed-container.margin-top-4:nth-child(39) > iframe",
+            "iframe[title=\"Introduction to Web Components\"]",
+            "iframe[title=\"Building with USWDS tools\"]",
+            "iframe[title=\"USWDS component lifecycle\"]",
+            ".usa-embed-container.margin-top-4:nth-child(59) > iframe",
+            ".usa-embed-container.margin-top-4:nth-child(64) > iframe",
+            ".usa-embed-container.margin-top-4:nth-child(69) > iframe",
+            "iframe[title=\"Mission, vision, and polestar\"]",
+            "iframe[title=\"Product roadmap\"]",
+            ".usa-embed-container.margin-top-4:nth-child(84) > iframe",
+            "iframe[title=\"Real-world accessibility\"]",
+            "iframe[title=\"Top tasks\"]",
+            ".usa-embed-container.margin-top-4:nth-child(99) > iframe"
+          ],
+          [
+            ".usa-embed-container.margin-top-4:nth-child(9) > iframe",
+            ".ytmVideoInfoChannelAvatar",
+            ".usa-embed-container.margin-top-4:nth-child(14) > iframe",
+            "iframe[title=\"Engineering values\"]",
+            ".usa-embed-container.margin-top-4:nth-child(24) > iframe",
+            "iframe[title=\"A look at beta Web Components\"]",
+            ".usa-embed-container.margin-top-4:nth-child(34) > iframe",
+            ".usa-embed-container.margin-top-4:nth-child(39) > iframe",
+            "iframe[title=\"Introduction to Web Components\"]",
+            "iframe[title=\"Building with USWDS tools\"]",
+            "iframe[title=\"USWDS component lifecycle\"]",
+            ".usa-embed-container.margin-top-4:nth-child(59) > iframe",
+            ".usa-embed-container.margin-top-4:nth-child(64) > iframe",
+            ".usa-embed-container.margin-top-4:nth-child(69) > iframe",
+            "iframe[title=\"Mission, vision, and polestar\"]",
+            "iframe[title=\"Product roadmap\"]",
+            ".usa-embed-container.margin-top-4:nth-child(84) > iframe",
+            "iframe[title=\"Real-world accessibility\"]",
+            "iframe[title=\"Top tasks\"]",
+            ".usa-embed-container.margin-top-4:nth-child(99) > iframe"
+          ],
+          [
+            "li[aria-label=\"Accordion\"]",
+            "li[aria-label=\"Alert\"]",
+            "li[aria-label=\"Banner\"]",
+            "li[aria-label=\"Breadcrumb\"]",
+            "li[aria-label=\"Button\"]",
+            "li[aria-label=\"Button group\"]",
+            "li[aria-label=\"Card\"]",
+            "li[aria-label=\"Character count\"]",
+            "li[aria-label=\"Checkbox\"]",
+            "li[aria-label=\"Collection\"]",
+            "li[aria-label=\"Combo box\"]",
+            "li[aria-label=\"Data visualizations\"]",
+            "li[aria-label=\"Date picker\"]",
+            "li[aria-label=\"Date range picker\"]",
+            "li[aria-label=\"File input\"]",
+            "li[aria-label=\"Footer\"]",
+            "li[aria-label=\"Form\"]",
+            "li[aria-label=\"Header\"]",
+            "li[aria-label=\"Icon\"]",
+            "li[aria-label=\"Icon list\"]"
+          ],
+          [
+            "#banner--default-preview-content > .usa-banner:nth-child(2)",
+            ".usa-banner:nth-child(6)"
+          ],
+          [
+            "table[aria-describedby=\"source_line\"] > thead > tr > th[scope=\"col\"]:nth-child(1)"
+          ]
+        ],
+        "description": "The failing elements, as the engine's selectors.",
+        "semanticType": "capture.finding.selectors"
+      },
+      "criteria": {
+        "type": "string[]",
+        "required": false,
+        "examples": [
+          [
+            "cat.aria",
+            "wcag2a",
+            "wcag412",
+            "EN-301-549",
+            "EN-9.4.1.2",
+            "RGAAv4",
+            "RGAA-7.1.1"
+          ],
+          [
+            "cat.aria",
+            "wcag2a",
+            "wcag412",
+            "EN-301-549",
+            "EN-9.4.1.2",
+            "RGAAv4",
+            "RGAA-7.1.1"
+          ],
+          [
+            "cat.name-role-value",
+            "wcag2a",
+            "wcag412",
+            "section508",
+            "section508.22.a",
+            "TTv5",
+            "TT6.a",
+            "EN-301-549",
+            "EN-9.4.1.2",
+            "ACT",
+            "RGAAv4",
+            "RGAA-11.9.1"
+          ],
+          [
+            "cat.aria",
+            "best-practice"
+          ],
+          [
+            "cat.semantics",
+            "best-practice"
+          ],
+          [
+            "cat.name-role-value",
+            "best-practice"
+          ]
+        ],
+        "description": "The rule's tags: WCAG criteria, best-practice and the standards it maps to.",
+        "semanticType": "capture.finding.criteria"
+      },
+      "help_url": {
+        "type": "string",
+        "required": false,
+        "examples": [
+          "https://dequeuniversity.com/rules/axe/4.11/aria-allowed-attr?application=playwright",
+          "https://dequeuniversity.com/rules/axe/4.11/aria-prohibited-attr?application=playwright",
+          "https://dequeuniversity.com/rules/axe/4.11/button-name?application=playwright",
+          "https://dequeuniversity.com/rules/axe/4.11/aria-allowed-role?application=playwright",
+          "https://dequeuniversity.com/rules/axe/4.11/landmark-unique?application=playwright",
+          "https://dequeuniversity.com/rules/axe/4.11/empty-table-header?application=playwright"
+        ],
+        "description": "The engine's page for the rule.",
+        "semanticType": "capture.finding.help_url"
+      }
+    }
+  },
+  "schemaRef": "compose-de0eea69",
+  "schemaRefCreatedAt": "2026-09-18T09:52:08.894Z",
+  "schemaRefExpiresAt": "2026-09-18T10:22:08.894Z",
+  "compositionId": "cmp-9ccf59e0e5e2",
+  "version": 1,
+  "parentVersion": null,
+  "operation": "compose",
+  "head": null,
+  "selections": [
+    {
+      "slotName": "search",
+      "intent": "search-input",
+      "selectedComponent": "SearchInput",
+      "confidence": 0.95,
+      "confidenceLevel": "high",
+      "explanation": "SearchInput leads slot \"search\" because view_extension placement. Confidence is high (0.95).",
+      "candidates": [
+        {
+          "name": "SearchInput",
+          "score": 0.95,
+          "reason": "view_extension placement"
+        }
+      ],
+      "placedComponents": [
+        "SearchInput"
+      ]
+    },
+    {
+      "slotName": "toolbar-actions",
+      "intent": "action-button",
+      "selectedComponent": "PaginationBar",
+      "confidence": 0.95,
+      "confidenceLevel": "high",
+      "explanation": "PaginationBar leads slot \"toolbar-actions\" because view_extension placement. The slot also renders StatusBadge, RelativeTimestamp after it, in that order. Confidence is high (0.95).",
+      "candidates": [
+        {
+          "name": "PaginationBar",
+          "score": 0.95,
+          "reason": "view_extension placement"
+        }
+      ],
+      "placedComponents": [
+        "PaginationBar",
+        "StatusBadge",
+        "RelativeTimestamp"
+      ]
+    },
+    {
+      "slotName": "filters",
+      "intent": "filter-control",
+      "selectedComponent": "FilterPanel",
+      "confidence": 0.95,
+      "confidenceLevel": "high",
+      "explanation": "FilterPanel leads slot \"filters\" because view_extension placement. Confidence is high (0.95).",
+      "candidates": [
+        {
+          "name": "FilterPanel",
+          "score": 0.95,
+          "reason": "view_extension placement"
+        }
+      ],
+      "placedComponents": [
+        "FilterPanel"
+      ]
+    },
+    {
+      "slotName": "items",
+      "intent": "data-list",
+      "selectedComponent": "Table",
+      "confidence": 0.5,
+      "confidenceLevel": "medium",
+      "explanation": "Table leads slot \"items\" because fallback placement. Confidence is medium (0.50).",
+      "candidates": [
+        {
+          "name": "Table",
+          "score": 0.5,
+          "reason": "fallback placement"
+        }
+      ],
+      "placedComponents": [
+        "Table"
+      ]
+    },
+    {
+      "slotName": "pagination",
+      "intent": "pagination-control",
+      "selectedComponent": "PaginationBar",
+      "confidence": 0.77,
+      "confidenceLevel": "medium",
+      "explanation": "PaginationBar was selected for slot \"pagination\" because 2 tag match(es); tag match (pagination, navigation); 1 context match(es); 1 trait(s); name contains \"pagination\"; position affinity: PaginationBar fits well in footer. Confidence is medium (0.77).",
+      "candidates": [
+        {
+          "name": "PaginationBar",
+          "reason": "2 tag match(es); tag match (pagination, navigation); 1 context match(es); 1 trait(s); name contains \"pagination\"; position affinity: PaginationBar fits well in footer",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 1,
+          "contextTraitMatches": 0,
+          "score": 1
+        },
+        {
+          "name": "Button",
+          "reason": "preferred for \"pagination-control\" (rank 2); 1 context match(es); 1 region match(es); position affinity: Button fits well in footer",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.75
+        },
+        {
+          "name": "Text",
+          "reason": "preferred for \"pagination-control\" (rank 1); 1 context match(es)",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "score": 0.65
+        }
+      ]
+    }
+  ],
+  "validation": {
+    "status": "ok",
+    "errors": [],
+    "warnings": []
+  },
+  "warnings": [
+    {
+      "code": "OODS-V121",
+      "message": "Object 'Finding' has maturity 'alpha' — composed output may change.",
+      "hint": "Consider using stable objects for production compositions."
+    },
+    {
+      "code": "OODS-V117",
+      "message": "Field collision: \"provenance_source\" in object schema overrides trait definition"
+    },
+    {
+      "code": "OODS-V117",
+      "message": "Field collision: \"provenance_record\" in object schema overrides trait definition"
+    },
+    {
+      "code": "OODS-V117",
+      "message": "Field collision: \"provenance_locator\" in object schema overrides trait definition"
+    },
+    {
+      "code": "OODS-V117",
+      "message": "Field collision: \"provenance_method\" in object schema overrides trait definition"
+    },
+    {
+      "code": "OODS-V117",
+      "message": "Field collision: \"provenance_at\" in object schema overrides trait definition"
+    },
+    {
+      "code": "OODS-V117",
+      "message": "Field collision: \"result_state\" in object schema overrides trait definition"
+    }
+  ],
+  "objectUsed": {
+    "name": "Finding",
+    "version": "0.1.0",
+    "traits": [
+      "behavioral/Searchable",
+      "behavioral/Filterable",
+      "behavioral/Pageable",
+      "core/Assessable",
+      "core/Provenanced"
+    ],
+    "fieldsComposed": 26,
+    "viewExtensionsApplied": {
+      "list": 5,
+      "detail": 7,
+      "card": 3
+    }
+  },
+  "meta": {
+    "intentParsed": "Finding list view",
+    "layoutDetected": "context-inferred: list (from context=\"list\")",
+    "slotCount": 5,
+    "nodeCount": 16,
+    "intentSynthetic": true,
+    "warnings": [
+      "Object 'Finding' has maturity 'alpha' — composed output may change.",
+      "Field collision: \"provenance_source\" in object schema overrides trait definition",
+      "Field collision: \"provenance_record\" in object schema overrides trait definition",
+      "Field collision: \"provenance_locator\" in object schema overrides trait definition",
+      "Field collision: \"provenance_method\" in object schema overrides trait definition",
+      "Field collision: \"provenance_at\" in object schema overrides trait definition",
+      "Field collision: \"result_state\" in object schema overrides trait definition"
+    ],
+    "intelligence": {
+      "fieldsExpanded": false,
+      "positionAffinityUsed": true,
+      "fieldAffinityUsed": true,
+      "compositionConfidence": 0.82
+    }
+  }
+}
