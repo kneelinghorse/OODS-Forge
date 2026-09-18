@@ -48,7 +48,7 @@ const CHECKS = [
   ["render-license-check", "node", ["scripts/license/render-license.mjs", "--check"]],
   ["third-party-notices-check", "node", ["scripts/runtime/third-party-notices.mjs", "--check"]],
   ["client-configs-check", "node", ["scripts/runtime/client-configs.mjs", "--check"]],
-  ["golden-ledger-check", "pnpm", ["exec", "tsx", "scripts/product-reality/s203-golden-ledger.ts", "check"]],
+  ["golden-ledger-check", "pnpm", ["exec", "tsx", "scripts/product-reality/s204-golden-ledger.ts", "check"]],
   ["viz-census-check", "pnpm", ["exec", "tsx", "scripts/product-reality/s190-viz-census.ts", "--check"]],
   ["schema-types-check", "pnpm", ["run", "generate:schema-types", "--", "--check"]],
   // The near.md and prose-carrier readers: the specs that notice a sprint's own record went stale.
