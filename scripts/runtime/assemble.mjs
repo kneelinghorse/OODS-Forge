@@ -57,12 +57,13 @@ const TRACKED_BOUNDARY_COUNTS = Object.freeze({
   domains: 15,
   // UX-1 adds seven research definitions and their authoring README; Sprint 203 adds three delivery
   // objects born from CMOS's record and two intelligence objects born from Hive's cohort, with a README
-  // for each new domain.
-  objects: 23,
+  // for each new domain. Sprint 205 adds three capture objects born from real Stage1 runs, with the domain's README.
+  objects: 27,
   // Sprint 199 adds the mark-graph parameter schema beside its trait pair; Sprint 203 adds
-  // supersedable's, beside the lifecycle/Supersedable trait the delivery objects compose.
-  schemas: 58,
-  traits: 79,
+  // supersedable's, beside the lifecycle/Supersedable trait the delivery objects compose. Sprint 205 adds the
+  // parameter schemas and definitions of core/Assessable and core/Provenanced.
+  schemas: 60,
+  traits: 81,
   // Sprint 187 retains the existing 19 files plus the approved component/token refresh pair.
   // Sprint 188 retains three named component/token snapshot pairs (six files).
   // Sprint 193 retains the dated public/runtime-projected component/token refresh pairs.

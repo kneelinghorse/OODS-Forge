@@ -12,6 +12,7 @@
  */
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
+import { execFileSync } from 'node:child_process';
 import path from 'node:path';
 import { listObjects } from '../../packages/mcp-server/src/objects/object-loader.js';
 import { listTraits } from '../../packages/mcp-server/src/objects/trait-loader.js';
@@ -26,4 +27,11 @@ const rows = (JSON.parse(fs.readFileSync(path.join(root, 'packages/mcp-server/re
 const expected = { traits: Number(registry[2]), objects: Number(registry[3]), cells: Number(runtime[1]), pass: Number(runtime[2]) };
 const actual = { traits: listTraits().length, objects: listObjects().length, cells: rows, pass: rows };
 assert.deepEqual(expected, actual, 'scripts/runtime/e2e.mjs expects registry counts the tree no longer has — move the literal with the mission that moved the count');
-console.log(JSON.stringify({ ...actual, status: 'verified' }));
+
+// s205-m06: the archive assembler pins tracked-file counts for the registry's directories the same way, and the first
+// bundle of Sprint 205 failed on `objects 26 !== 23` at closeout part B. Checked here with the E2E's literals.
+const assemble = fs.readFileSync(path.join(root, 'scripts/runtime/assemble.mjs'), 'utf8');
+const tracked = (prefix: string) => execFileSync('git', ['ls-files', '--', prefix], { cwd: root, encoding: 'utf8' }).split('\n').filter(Boolean).length;
+const pinned = Object.fromEntries(['objects', 'schemas', 'traits'].map(prefix => [prefix, Number(assemble.match(new RegExp(`\\n\\s*${prefix}: (\\d+),`))?.[1])]));
+assert.deepEqual(pinned, { objects: tracked('objects'), schemas: tracked('schemas'), traits: tracked('traits') }, 'scripts/runtime/assemble.mjs pins tracked-file counts the tree no longer has — move them with the mission that added the files');
+console.log(JSON.stringify({ ...actual, tracked: pinned, status: 'verified' }));
