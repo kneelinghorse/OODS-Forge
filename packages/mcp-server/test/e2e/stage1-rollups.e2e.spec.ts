@@ -61,11 +61,15 @@ function findStage1(): string | null {
 const STAGE1_ROOT = findStage1();
 const STAGE1_RUNS = STAGE1_ROOT ? path.join(STAGE1_ROOT, 'out/stage1') : null;
 
-/** What structuredData.fetch declares it accepts. Restated here so a silent widening is visible in the diff. */
+/**
+ * What structuredData.fetch declares it accepts. Restated here so a silent widening is visible in the
+ * diff — which is how the s204-m03 widening of object_rollup to 1.2.0 had to be made deliberately,
+ * in this file, rather than only in the tool.
+ */
 const ACCEPTED: Record<string, string[]> = {
   identity_graph: ['1.1.0', '1.2.0'],
   capability_rollup: ['1.1.0', '1.2.0'],
-  object_rollup: ['1.0.0', '1.1.0'],
+  object_rollup: ['1.0.0', '1.1.0', '1.2.0'],
 };
 const ROLLUP_KINDS = Object.keys(ACCEPTED) as Array<keyof typeof ACCEPTED>;
 
@@ -146,20 +150,40 @@ describe('Stage1 rollups real-data gate (discovered runs, s204-m03)', () => {
   }, 120_000);
 
   /**
-   * The drift the silent skip hid, pinned so it cannot be forgotten a second time.
+   * The drift the silent skip hid — now CLOSED, and asserted from the other side.
    *
-   * This asserts the CURRENT, BROKEN state on purpose: Stage1 emits object_rollup at a version Forge
-   * does not accept, so Forge reads three of the four kinds it advertises. Widening the allow-list is
-   * explicitly out of scope for Sprint 204 (the mission says to record what a later one would need),
-   * so the honest thing is a test that fails the day someone widens it — at which point this
-   * expectation is deleted, deliberately, by the mission that widened the contract.
+   * This previously asserted that every object_rollup on disk was OUTSIDE the accepted contract, as
+   * a pin that would fail the day someone widened the allow-list. s204-m03 widened it, on measured
+   * evidence: every object_rollup on disk is 1.2.0 (there is no 1.1.0 anywhere), and a real 1.2.0
+   * payload byte-identical except for its version string already parsed under the same validator
+   * with all 84 objects intact. The list was the only thing refusing it.
+   *
+   * So the assertion inverts rather than disappears: object_rollup must now be READABLE, and the
+   * `requires_human_adjudication` flag that 1.2.0 adds must survive the read, because that flag is
+   * the reason the widening was safe to make.
    */
-  it.runIf(stage1Present && targets.length > 0)('records that object_rollup on disk is outside the accepted contract (s204-m03 finding)', () => {
+  it.runIf(stage1Present && targets.length > 0)('reads object_rollup at the version Stage1 actually emits, flag intact (s204-m03)', async () => {
     const versions = [...new Set(targets.map(target => schemaVersionOf(target.runPath, 'object_rollup')).filter(Boolean))];
-    expect(versions.length, 'every discovered run should agree on one object_rollup version').toBeGreaterThan(0);
-    const outside = versions.filter(version => !ACCEPTED.object_rollup.includes(version!));
-    expect(outside, `object_rollup versions on disk: ${versions.join(', ')}; accepted: ${ACCEPTED.object_rollup.join(', ')}`).toEqual(versions);
-  });
+    expect(versions.length, 'every discovered run should carry an object_rollup version').toBeGreaterThan(0);
+    for (const version of versions) expect(ACCEPTED.object_rollup, `object_rollup ${version} is on disk but not accepted`).toContain(version);
+
+    let read = 0;
+    let flagged = 0;
+    for (const target of targets) {
+      const result = await fetchHandle({ kind: 'object_rollup', runPath: target.runPath });
+      expect(result.schemaValidated).toBe(true);
+      const payload = result.payload as Stage1ObjectRollup;
+      expect(Array.isArray(payload.objects)).toBe(true);
+      read += 1;
+      // Optional by design (absent on 1.0.0/1.1.0), but where Stage1 sets it, Forge must see it.
+      if (payload.requires_human_adjudication !== undefined) {
+        expect(typeof payload.requires_human_adjudication).toBe('boolean');
+        flagged += 1;
+      }
+    }
+    expect(read, 'no object_rollup was readable').toBeGreaterThan(0);
+    expect(flagged, 'Stage1 emits requires_human_adjudication at 1.2.0; none survived the read').toBeGreaterThan(0);
+  }, 120_000);
 
   it.runIf(stage1Present && targets.length > 0)('returns byte-identical payloads for repeated reads of the same artifact', async () => {
     const target = targets[0]!;
@@ -174,10 +198,10 @@ describe('Stage1 rollups real-data gate (discovered runs, s204-m03)', () => {
   it.runIf(stage1Present && targets.length > 0)('drives the capability normalizer through the tool contract, and shows what the object_rollup refusal costs', async () => {
     /**
      * `normalizeCapabilities` takes { capabilityRollup, objectRollup?, identityGraph? } and builds its
-     * evidence index from objectRollup. Because Forge refuses object_rollup at 1.2.0, that input
-     * cannot be supplied THROUGH THE TOOL CONTRACT at all — so the normalizer still runs, but with an
-     * empty evidence index. Reading the file directly to paper over that would be measuring something
-     * Forge cannot actually do, so this measures the degraded path honestly instead.
+     * evidence index from objectRollup. Until s204-m03 that input could not be supplied THROUGH THE
+     * TOOL CONTRACT at all, because Forge refused object_rollup at 1.2.0, so the normalizer ran with
+     * an empty evidence index and capability evidence never reached Forge. Widening the allow-list
+     * closed that: every input now arrives through structuredData.fetch, which is what this asserts.
      */
     let normalizedAny = false;
     let objectRollupAvailable = false;
@@ -200,8 +224,8 @@ describe('Stage1 rollups real-data gate (discovered runs, s204-m03)', () => {
       normalizedAny = true;
     }
     expect(normalizedAny, 'no capability_rollup was readable to normalize').toBe(true);
-    // The finding, asserted rather than described: evidence cannot reach the normalizer today.
-    expect(objectRollupAvailable, 'object_rollup became readable — the s204-m03 finding is closed and this expectation should be updated').toBe(false);
+    // The whole point of the widening: evidence reaches the normalizer through the tool contract.
+    expect(objectRollupAvailable, 'object_rollup is no longer readable — the s204-m03 widening regressed').toBe(true);
   }, 120_000);
 
   it.runIf(stage1Present && targets.length > 0)('reads identity graphs whose nodes carry the fields the composer relies on', async () => {

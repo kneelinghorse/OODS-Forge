@@ -253,8 +253,23 @@ describe('structuredData.fetch rollup mode', () => {
     } catch (err) {
       expect(err).toBeInstanceOf(ToolError);
       expect((err as ToolError).message).toMatch(/Unsupported schema_version "2\.0\.0"/);
-      expect((err as any).details?.accepted).toEqual(['1.0.0', '1.1.0']);
+      // s204-m03 added 1.2.0 — the version every object_rollup on disk actually carries. The refusal
+      // itself is unchanged: an unknown version is still a fast-fail, never a silent parse.
+      expect((err as any).details?.accepted).toEqual(['1.0.0', '1.1.0', '1.2.0']);
     }
+  });
+
+  it('accepts object_rollup schema_version 1.2.0, and surfaces requires_human_adjudication (s204-m03)', async () => {
+    // 1.2.0 adds one optional boolean to the same shape; Stage1 validates all three versions with a
+    // single zod schema. The flag marks the rolled-up semantic mappings as PROPOSALS needing human
+    // adjudication, which is the distinction Phase E turns on, so it must survive the read.
+    const payload = { ...makeObjectRollup('1.2.0'), requires_human_adjudication: true };
+    fs.writeFileSync(path.join(artifactsDir, 'object_rollup.json'), JSON.stringify(payload));
+    const result = await handle({ kind: 'object_rollup', runPath: artifactsDir });
+    expect(result.kind).toBe('object_rollup');
+    expect(result.schemaValidated).toBe(true);
+    expect((result.payload as { schema_version: string }).schema_version).toBe('1.2.0');
+    expect((result.payload as { requires_human_adjudication?: boolean }).requires_human_adjudication).toBe(true);
   });
 
   it('rejects an unknown drift_report schema_version with the read-side allow-list', async () => {
