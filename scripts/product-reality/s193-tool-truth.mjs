@@ -12,9 +12,9 @@ export const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '
 export const LEDGER_PATH = 'packages/mcp-server/registry/tool-capability-ledger.v1.json';
 export const PORTABLE_RECEIPT_PATH = 'artifacts/product-reality/sprint-196/m02/e2e-host.json';
 /** One retained extracted-runtime receipt per mode; s200 ships the brand source, so only design.preview stays typed. */
-export const PORTABLE_RECEIPT_PATHS = { s196: PORTABLE_RECEIPT_PATH, s200: 'artifacts/product-reality/sprint-200/m04/e2e-host.json', s201: 'artifacts/product-reality/sprint-201/m07/pre-freeze/e2e-host.json', s202: 'artifacts/product-reality/sprint-202/m06/pre-freeze/e2e-host.json', s203: 'artifacts/product-reality/sprint-203/m06/pre-freeze/e2e-host.json', s204: 'artifacts/product-reality/sprint-204/m06/pre-freeze/e2e-host.json' };
-/** s201 ships the preview host, so no advertised tool stays typed from the bundle; s202 keeps that and adds the MCP Apps resources to the same E2E; s203 keeps both and the archive now carries 23 objects; s204 keeps all of it and health's trait count is live (47). */
-export const PORTABLE_TYPED_CODES = { s196: { 'brand.apply': 'OODS-N020', 'design.preview': 'OODS-N019' }, s200: { 'design.preview': 'OODS-N019' }, s201: {}, s202: {}, s203: {}, s204: {} };
+export const PORTABLE_RECEIPT_PATHS = { s196: PORTABLE_RECEIPT_PATH, s200: 'artifacts/product-reality/sprint-200/m04/e2e-host.json', s201: 'artifacts/product-reality/sprint-201/m07/pre-freeze/e2e-host.json', s202: 'artifacts/product-reality/sprint-202/m06/pre-freeze/e2e-host.json', s203: 'artifacts/product-reality/sprint-203/m06/pre-freeze/e2e-host.json', s204: 'artifacts/product-reality/sprint-204/m06/pre-freeze/e2e-host.json', s205: 'artifacts/product-reality/sprint-205/m06/pre-freeze/e2e-host.json' };
+/** s201 ships the preview host, so no advertised tool stays typed from the bundle; s202 keeps that and adds the MCP Apps resources to the same E2E; s203 keeps both and the archive now carries 23 objects; s204 keeps all of it and health's trait count is live (47); s205 keeps all of it with 26 objects and 49 traits. */
+export const PORTABLE_TYPED_CODES = { s196: { 'brand.apply': 'OODS-N020', 'design.preview': 'OODS-N019' }, s200: { 'design.preview': 'OODS-N019' }, s201: {}, s202: {}, s203: {}, s204: {}, s205: {} };
 export const TIERS = ['product-reality', 'contract', 'unit', 'none'];
 const families = new Set(['map', 'schema', 'object', 'repl']);
 const hash = bytes => `sha256:${createHash('sha256').update(bytes).digest('hex')}`;
@@ -90,10 +90,10 @@ export function deriveToolTruth({ root = ROOT, head, mode } = {}) {
   mode ??= JSON.parse(read(LEDGER_PATH)).mode ?? 's193';
   const registry = JSON.parse(read('packages/mcp-server/src/tools/registry.json'));
   const names = [...registry.auto, ...registry.onDemand];
-  assert(['s193', 's194', 's196', 's200', 's201', 's202', 's203', 's204'].includes(mode), 'Unknown tool-truth mode');
-  const bound = mode === 's196' || mode === 's200' || mode === 's201' || mode === 's202' || mode === 's203' || mode === 's204';
+  assert(['s193', 's194', 's196', 's200', 's201', 's202', 's203', 's204', 's205'].includes(mode), 'Unknown tool-truth mode');
+  const bound = mode === 's196' || mode === 's200' || mode === 's201' || mode === 's202' || mode === 's203' || mode === 's204' || mode === 's205';
   // The active census never gains discovery references to its own changing closeout reports (Sprint 203 closes out in m06, as Sprint 202 did).
-  const closeoutReports = { s196: /\/sprint-196\/m07\//, s200: /\/sprint-(?:196|200)\/m07\//, s201: /\/sprint-(?:196|200|201)\/m07\//, s202: /\/sprint-(?:196|200|201)\/m07\/|\/sprint-202\/m06\//, s203: /\/sprint-(?:196|200|201)\/m07\/|\/sprint-(?:202|203)\/m06\//, s204: /\/sprint-(?:196|200|201)\/m07\/|\/sprint-(?:202|203|204)\/m06\// }[mode];
+  const closeoutReports = { s196: /\/sprint-196\/m07\//, s200: /\/sprint-(?:196|200)\/m07\//, s201: /\/sprint-(?:196|200|201)\/m07\//, s202: /\/sprint-(?:196|200|201)\/m07\/|\/sprint-202\/m06\//, s203: /\/sprint-(?:196|200|201)\/m07\/|\/sprint-(?:202|203)\/m06\//, s204: /\/sprint-(?:196|200|201)\/m07\/|\/sprint-(?:202|203|204)\/m06\//, s205: /\/sprint-(?:196|200|201)\/m07\/|\/sprint-(?:202|203|204|205)\/m06\// }[mode];
   const retired = mode !== 's193' ? JSON.parse(read('artifacts/product-reality/sprint-194/m04/retired-tools.json')).retired : [];
   assert.equal(names.length + retired.length, 27);
   assert.equal(new Set([...names, ...retired.map(row => row.name)]).size, 27);
