@@ -1,6 +1,6 @@
 # structuredData.fetch
 
-> Fetch structured data exports (components, tokens, or manifest) or Stage1 v1.5.0 rollup artifacts (identity_graph, capability_rollup, object_rollup) via kind+runPath. Supports ETag caching, version pinning, and version listing in dataset mode; schema_version validation in rollup mode. listVersions and version are dataset-only; supplying them in kind mode returns structuredData.fetch-specific OODS-V202.
+> Fetch structured data exports (components, tokens, or manifest) or a Stage1 run's artifacts via kind+runPath: the rollups (identity_graph, capability_rollup, object_rollup, drift_report) and the run-view kinds at their pinned versions — a11y_report 2.2.0, report_index 1.0.0, a11y_evidence 1.1.0 (every per-page axe file read only when its sha256 matches the run manifest's attestation) and run_manifest (unversioned by Stage1, so pinned by its shape). Any other version is refused rather than parsed. Supports ETag caching, version pinning, and version listing in dataset mode; listVersions and version are dataset-only; supplying them in kind mode returns structuredData.fetch-specific OODS-V202.
 
 **Registration:** auto
 
@@ -9,7 +9,7 @@
 | Parameter | Type | Required | Default | Description |
 |-----------|------|----------|---------|-------------|
 | `dataset` | `components` \| `tokens` \| `manifest` | No |  | Local structured dataset to return (components/tokens/manifest). Mutually exclusive with kind+runPath. |
-| `kind` | `identity_graph` \| `capability_rollup` \| `object_rollup` \| `drift_report` | No |  | Stage1 structured artifact kind to read from runPath. Requires runPath; mutually exclusive with dataset. |
+| `kind` | `identity_graph` \| `capability_rollup` \| `object_rollup` \| `drift_report` \| `a11y_report` \| `report_index` \| `a11y_evidence` \| `run_manifest` | No |  | Stage1 structured artifact kind to read from runPath. Requires runPath; mutually exclusive with dataset. The rollups (identity_graph, capability_rollup, object_rollup, drift_report) and the run-view kinds at their pinned versions: a11y_report 2.2.0, report_index 1.0.0, a11y_evidence (evidence manifest 1.1.0, every per-page axe file read only when its sha256 matches the run manifest's attestation) and run_manifest (Stage1 stamps no version on it, so it is pinned by shape). Any other version is refused. |
 | `runPath` | string | No |  | Filesystem path to a Stage1 run directory or its artifacts/ subdirectory. Required when kind is set. |
 | `ifNoneMatch` | string | No |  | Return matched=true without payload when the ETag matches. |
 | `includePayload` | boolean | No | `true` | When false, omit payload even if no ETag match occurs. |
@@ -21,7 +21,7 @@
 | Field | Type | Always Present | Description |
 |-------|------|----------------|-------------|
 | `dataset` | `components` \| `tokens` \| `manifest` | No | Dataset that was requested (dataset mode only). |
-| `kind` | `identity_graph` \| `capability_rollup` \| `object_rollup` \| `drift_report` | No | Stage1 structured artifact kind that was requested (kind mode only). |
+| `kind` | `identity_graph` \| `capability_rollup` \| `object_rollup` \| `drift_report` \| `a11y_report` \| `report_index` \| `a11y_evidence` \| `run_manifest` | No | Stage1 structured artifact kind that was requested (kind mode only). |
 | `schemaVersion` | string | No | Stage1 artifact schema_version (kind mode only). |
 | `runId` | string | No | Stage1 run_id extracted from the artifact (kind mode only). |
 | `version` | string \| null | No | Version tag (usually the YYYY-MM-DD stamp from the manifest). |

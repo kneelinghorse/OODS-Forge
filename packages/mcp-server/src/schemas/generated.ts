@@ -3969,6 +3969,10 @@ export namespace DesignPreviewInputSchema {
       found: number;
     }[];
     /**
+     * A Stage1 run directory on this machine (out/stage1/<suite>/<run-uuid>) whose REAL records this version shows: the run itself for Run, its findings for Finding, its attested artifacts for CapturedArtifact. Forge reads the run only through structuredData.fetch's admitted run-view kinds (run_manifest, a11y_report 2.2.0, report_index 1.0.0, a11y_evidence 1.1.0), every file under the run manifest's sha256 attestation, and never calls Stage1 or writes into the run. A path that is not one Stage1 run is refused with OODS-V212, an artifact outside the admitted contract with OODS-V213, and a composition that is not Run, Finding or CapturedArtifact, or a version already showing a run of a different target, with OODS-V214; each refusal writes nothing. Nothing is proposed, applied or queued: a person reads the run view.
+     */
+    runPath?: string;
+    /**
      * A Stage1 run directory on this machine (out/stage1/<suite>/<run-uuid>). Forge reads its identity_graph and object_rollup through structuredData.fetch, compares them with this version's own schema for the object on screen, and stores the rows beside the running app on both surfaces: observed-only, composed-only, agreeing and disagreeing, each disagreement naming its axis (entity, input, data-bound), and every row naming the Stage1 run, target, artifact and capture time beside the Forge object, context and URN. The rows are evidence a person judges; nothing is proposed, applied or queued. Forge opens no other product's store and writes nothing into the run. A path that is not one Stage1 run is refused with OODS-V208, an artifact outside the accepted schema_version with OODS-V209, and a composition whose object the registry does not hold with OODS-V210; each refusal writes nothing. An edit carries the rows onto the new version and marks every one, because they compared the design as it was.
      */
     observationRunPath?: string;
@@ -9437,9 +9441,17 @@ export namespace StructuredDataFetchInputSchema {
      */
     dataset?: 'components' | 'tokens' | 'manifest';
     /**
-     * Stage1 structured artifact kind to read from runPath. Requires runPath; mutually exclusive with dataset.
+     * Stage1 structured artifact kind to read from runPath. Requires runPath; mutually exclusive with dataset. The rollups (identity_graph, capability_rollup, object_rollup, drift_report) and the run-view kinds at their pinned versions: a11y_report 2.2.0, report_index 1.0.0, a11y_evidence (evidence manifest 1.1.0, every per-page axe file read only when its sha256 matches the run manifest's attestation) and run_manifest (Stage1 stamps no version on it, so it is pinned by shape). Any other version is refused.
      */
-    kind?: 'identity_graph' | 'capability_rollup' | 'object_rollup' | 'drift_report';
+    kind?:
+      | 'identity_graph'
+      | 'capability_rollup'
+      | 'object_rollup'
+      | 'drift_report'
+      | 'a11y_report'
+      | 'report_index'
+      | 'a11y_evidence'
+      | 'run_manifest';
     /**
      * Filesystem path to a Stage1 run directory or its artifacts/ subdirectory. Required when kind is set.
      */
@@ -9474,7 +9486,15 @@ export namespace StructuredDataFetchOutputSchema {
     /**
      * Stage1 structured artifact kind that was requested (kind mode only).
      */
-    kind?: 'identity_graph' | 'capability_rollup' | 'object_rollup' | 'drift_report';
+    kind?:
+      | 'identity_graph'
+      | 'capability_rollup'
+      | 'object_rollup'
+      | 'drift_report'
+      | 'a11y_report'
+      | 'report_index'
+      | 'a11y_evidence'
+      | 'run_manifest';
     /**
      * Stage1 artifact schema_version (kind mode only).
      */

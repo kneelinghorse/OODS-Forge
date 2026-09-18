@@ -95,6 +95,12 @@ if (command === 'plan') {
     const before = previous?.after ?? pin.baseSha256, after = treeHash(pin.file);
     if (before === after || previous?.mission === mission) continue;
     if (pin.file === runtimeFile) {
+      // s205-m04: the runtime file's entries are per ROW plus a 'ledger head' entry, so no entry's `after` is the
+      // file's own hash and the comparison above can never say "unchanged". The registry is unchanged since its last
+      // recorded move when its head is the head that move recorded; without this every later append re-recorded the
+      // whole re-sweep under the next mission.
+      const lastHead = ledger.entries.filter(entry => entry.file === runtimeFile && entry.pin === 'ledger head').at(-1)?.after;
+      if (lastHead !== undefined && JSON.parse(fs.readFileSync(path.join(root, runtimeFile), 'utf8')).head === lastHead) continue;
       // Runtime cells move per row: every changed artifact hash is its own attributed pin, and rows born this sprint are their own entries.
       const base = JSON.parse(execFileSync('git', ['show', `${BASE_HEAD}:${runtimeFile}`], { cwd: root, maxBuffer: 64 * 1024 * 1024 }).toString());
       const current = JSON.parse(fs.readFileSync(path.join(root, runtimeFile), 'utf8'));

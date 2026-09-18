@@ -49,7 +49,7 @@ describe('Tool-Specs generated from dispatched contracts (s196 m04)', () => {
     for (const family of ['map', 'schema', 'object', 'repl']) expect(links).toContain(`../api/${family}.md`);
   });
 
-  it('includes every adapter description verbatim and every one of the 128 actual root input properties', () => {
+  it('includes every adapter description verbatim and every one of the 129 actual root input properties', () => {
     let inputs = 0;
     for (const name of names) {
       const body = section(name);
@@ -67,8 +67,9 @@ describe('Tool-Specs generated from dispatched contracts (s196 m04)', () => {
     }
     // 125 through Sprint 202; s203-m05 adds contextItems and contextSearched to design.preview, the
     // caller-supplied context the preview shows beside the design; s204-m05 adds observationRunPath.
-    expect(inputs).toBe(128);
-    expect(document).toContain('128 root input parameters');
+    // s205-m04: +1, design.preview's runPath (the run view).
+    expect(inputs).toBe(129);
+    expect(document).toContain('129 root input parameters');
     expect(sources.dispatch['diag.snapshot'].input).toBe('packages/mcp-server/src/schemas/generic.input.json');
     expect(sources.dispatch['tokens.build'].output).toBe('packages/mcp-server/src/schemas/generic.output.json');
   });

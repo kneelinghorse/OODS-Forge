@@ -13,8 +13,8 @@
     },
     "kind": {
       "type": "string",
-      "enum": ["identity_graph", "capability_rollup", "object_rollup", "drift_report"],
-      "description": "Stage1 structured artifact kind to read from runPath. Requires runPath; mutually exclusive with dataset."
+      "enum": ["identity_graph", "capability_rollup", "object_rollup", "drift_report", "a11y_report", "report_index", "a11y_evidence", "run_manifest"],
+      "description": "Stage1 structured artifact kind to read from runPath. Requires runPath; mutually exclusive with dataset. The rollups (identity_graph, capability_rollup, object_rollup, drift_report) and the run-view kinds at their pinned versions: a11y_report 2.2.0, report_index 1.0.0, a11y_evidence (evidence manifest 1.1.0, every per-page axe file read only when its sha256 matches the run manifest's attestation) and run_manifest (Stage1 stamps no version on it, so it is pinned by shape). Any other version is refused."
     },
     "runPath": {
       "type": "string",

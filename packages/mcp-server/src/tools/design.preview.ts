@@ -2,6 +2,8 @@ import { createHash } from 'node:crypto';
 import path from 'node:path';
 import { validateGeneratedArtifact } from '../codegen/artifact-envelope.js';
 import { seedPreviewModel } from '../codegen/preview-model.js';
+import { snakeToCamel } from '../codegen/binding-utils.js';
+import { assertRunMatches, readRunView, type RunView, type RunViewObject } from '../lib/run-view.js';
 import { certifyPlacedCharts } from '../lib/measurements.js';
 import { ToolError } from '../errors/tool-error.js';
 import { ContextRefusal, carryContextForward, objectUrn, validateContext, type StoredContext } from '../lib/preview-context.js';
@@ -75,6 +77,15 @@ export async function handle(input: DesignPreviewInputSchema.DesignPreviewInput,
   if (input.action === 'versions') return versions(input, hostUrl, compositionsDir, started);
   if (input.action === 'accept') return accept(input, hostUrl, compositionsDir, started);
 
+  // s205-m04: a run view is read FIRST, so a path that is not a run (OODS-V212), an artifact outside the admitted
+  // contract (OODS-V213) or a non-capture object (OODS-V214) is refused before any version is composed or touched.
+  const runPath = (input as { runPath?: string }).runPath;
+  let runView: RunView | undefined;
+  if (runPath) {
+    runView = await readRunView(runPath);
+    if (!input.compositionId) assertRunMatches(String(input.object ?? ''), runView, undefined);
+  }
+
   // The version to open: an existing one, the first version of a fresh composition, or the version an edit records.
   let record: CompositionVersion;
   let edit: RenderOutput['edit'] = undefined;
@@ -103,8 +114,12 @@ export async function handle(input: DesignPreviewInputSchema.DesignPreviewInput,
   const generatedScope = `${record.brand}/${record.theme}`;
   const chartScoped = chartNodes(record.schema.screens).length > 0;
 
+  if (runView) assertRunMatches(object, runView, record.runView);
+  // A version that already shows a run keeps showing it: an edit's new version re-reads the run it carried.
+  if (!runView && !record.model && record.runView) runView = await readRunView(record.runView.runPath);
+
   // The deterministic field model, seeded once per version with the same policy as the design loop.
-  let model = record.model;
+  let model = runView ? undefined : record.model;
   if (!model) {
     let workflowSchema: CompositionVersion['schema'] | undefined;
     if (viewContext !== 'workflow' && object && object !== 'Chunk') {
@@ -113,7 +128,10 @@ export async function handle(input: DesignPreviewInputSchema.DesignPreviewInput,
       if (workflow.status !== 'ok' || !workflow.schema) throw new Error(`Seed composition failed: ${JSON.stringify(workflow.errors ?? workflow)}`);
       workflowSchema = workflow.schema;
     }
-    model = seedPreviewModel({ schema: record.schema, context: viewContext, object: object || undefined, workflowSchema });
+    // The run's real records replace the seed: every row on a list, the first record on a card or detail.
+    const records = runView ? runView.records[object as RunViewObject].map(row => Object.fromEntries(Object.entries(row).map(([key, value]) => [snakeToCamel(key), value]))) : undefined;
+    const established = records ? (viewContext === 'list' ? { rows: records } : { ...(records[0] ?? {}) }) : {};
+    model = seedPreviewModel({ schema: record.schema, context: viewContext, object: object || undefined, workflowSchema, established });
   }
 
   // Generate what the version does not carry yet; a version's artifacts are keyed by its schema hash.
@@ -157,7 +175,8 @@ export async function handle(input: DesignPreviewInputSchema.DesignPreviewInput,
     const urn = definition ? objectUrn(definition.object.name, definition.object.version) : objectUrn(object || 'composition', '0.0.0');
     storedObservation = await observeForVersion(input.observationRunPath, { object, urn, context: viewContext, version: record.version, schema: record.schema });
   }
-  if (Object.keys(artifacts).length || !record.model || Object.keys(measurements).length || storedContext || storedObservation) record = await attachToVersion(compositionsDir, record.compositionId, record.version, { artifacts, model, measurements, ...(storedContext ? { context: storedContext } : {}), ...(storedObservation ? { observation: storedObservation } : {}) });
+  const storedRunView = runView ? { runId: runView.runId, target: runView.target, runPath: runView.runPath, coverage: runView.coverage, kinds: runView.kinds, readAt: new Date().toISOString() } : undefined;
+  if (Object.keys(artifacts).length || !record.model || runView || Object.keys(measurements).length || storedContext || storedObservation) record = await attachToVersion(compositionsDir, record.compositionId, record.version, { artifacts, model, measurements, ...(storedContext ? { context: storedContext } : {}), ...(storedObservation ? { observation: storedObservation } : {}), ...(storedRunView ? { runView: storedRunView } : {}) });
   if (chartScoped && scope !== generatedScope) {
     const scoped = record.scopes?.[scope];
     const scopedArtifacts: CompositionVersion['artifacts'] = {};
@@ -279,6 +298,8 @@ async function applyEdit(compositionsDir: string, parent: CompositionVersion, ed
   if (parent.context) await attachToVersion(compositionsDir, composed.compositionId, composed.version, { context: carryContextForward(parent.context, composed.version) });
   // The observation compared the parent's design; the edit moved it, so every row is marked, not re-dated.
   if (parent.observation) await attachToVersion(compositionsDir, composed.compositionId, composed.version, { observation: carryObservationForward(parent.observation, composed.version) });
+  // The run the parent showed stays the subject: the new version re-reads the same run (see handle).
+  if (parent.runView) await attachToVersion(compositionsDir, composed.compositionId, composed.version, { runView: parent.runView });
   return readVersion(compositionsDir, composed.compositionId, composed.version);
 }
 

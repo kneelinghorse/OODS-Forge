@@ -148,7 +148,12 @@ export type Stage1RollupKind =
   | "identity_graph"
   | "capability_rollup"
   | "object_rollup"
-  | "drift_report";
+  | "drift_report"
+  // s205-m04: the run-view kinds, admitted at their pinned versions (structuredData.fetch.ts RUN_VIEW_KINDS).
+  | "a11y_report"
+  | "report_index"
+  | "a11y_evidence"
+  | "run_manifest";
 
 export type StructuredDataFetchInput = {
   dataset?: StructuredDataset;
