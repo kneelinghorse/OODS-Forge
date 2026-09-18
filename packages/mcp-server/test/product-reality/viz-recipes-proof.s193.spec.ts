@@ -13,7 +13,7 @@ describe('retained visualization recipe proof', () => {
     expect(ledger.summary).toEqual({ cells: 72, pass: 72, typedGap: 0, fail: 0 });
     expect(ledger.head).toBe(read('movement.json').comparedHead);
     expect(validateRuntimeLedger(ledger, true, expected)).toEqual([]);
-    expect(validateRuntimeLedger(ledger, true)).toContain('population must contain exactly 310 distinct current cells');
+    expect(validateRuntimeLedger(ledger, true)).toContain('population must contain exactly 352 distinct current cells');
     for (const row of ledger.rows) expect(read(`packed/${row.report}`)).toEqual(row);
     const missing = structuredClone(ledger); missing.rows.pop();
     expect(validateRuntimeLedger(missing, true, expected).length).toBeGreaterThan(0);

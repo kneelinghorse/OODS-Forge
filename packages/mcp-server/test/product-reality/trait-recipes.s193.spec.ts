@@ -33,7 +33,7 @@ describe('nine declared non-visualization recipes', () => {
     ledger.rows = ledger.rows.slice(0, 2); ledger.summary = summarize(ledger.rows);
     const expected = ledger.rows.map(row => `${row.object}/${row.context}/${row.framework}`);
     expect(validateRuntimeLedger(ledger, true, expected)).toEqual([]);
-    expect(validateRuntimeLedger(ledger, true)).toContain('population must contain exactly 310 distinct current cells');
+    expect(validateRuntimeLedger(ledger, true)).toContain('population must contain exactly 352 distinct current cells');
     expect(validateRuntimeLedger(ledger, true, [...expected, expected[0]!])).toContain('a scoped population must declare nonempty distinct identities');
     ledger.rows.pop(); ledger.summary = summarize(ledger.rows);
     expect(validateRuntimeLedger(ledger, true, expected)).toContain('population must contain exactly 2 distinct current cells');

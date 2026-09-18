@@ -4544,9 +4544,9 @@ export namespace HealthOutputSchema {
        */
       runtime: {
         /**
-         * The runtime roster's population. 240 through Sprint 202; Sprint 203 adds five objects born from Derek's own stores — Decision, Sprint and Session from CMOS, Person and Cluster from Hive — and the sweep proves 310.
+         * The runtime roster's population. 240 through Sprint 202; Sprint 203 adds five objects born from Derek's own stores — Decision, Sprint and Session from CMOS, Person and Cluster from Hive — and the sweep proves 310. Sprint 205 adds three objects born from real Stage1 runs — Run, Finding and CapturedArtifact — and the sweep proves 352.
          */
-        cells: 310;
+        cells: 352;
         pass: number;
         typedGap: number;
         fail: number;
