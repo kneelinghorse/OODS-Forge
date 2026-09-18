@@ -104,12 +104,21 @@ async function compile(artifact: PreviewArtifact, format: CompileFormat): Promis
           const { descriptor, errors } = sfc.parse(contents, { filename: args.path });
           if (errors.length) return { errors: errors.map(error => ({ text: `${args.path}: ${(error as Error).message ?? String(error)}` })) };
           const id = `oods-${createHash('sha256').update(args.path).digest('hex').slice(0, 8)}`;
-          const script = sfc.compileScript(descriptor, { id, inlineTemplate: true, templateOptions: { compilerOptions: { mode: 'module' } } });
+          // A workflow component imports types from the artifact's own modules (s205-m02); the SFC compiler resolves them
+          // through `fs`, answered from the artifact's files rather than the disk.
+          const artifactPath = (file: string) => path.posix.normalize(file.replace(/^\/+/, ''));
+          const script = sfc.compileScript(descriptor, { id, inlineTemplate: true, templateOptions: { compilerOptions: { mode: 'module' } },
+            fs: { fileExists: file => files.has(artifactPath(file)), readFile: file => files.get(artifactPath(file)) } });
           let code = script.content;
           const css = descriptor.styles.map(style => sfc.compileStyle({ source: style.content, filename: args.path, id, scoped: style.scoped }).code).join('\n');
           if (css.trim()) code += `\n;(() => { const style = document.createElement('style'); style.dataset.oodsSfc = ${JSON.stringify(args.path)}; style.textContent = ${JSON.stringify(css)}; document.head.appendChild(style); })();\n`;
           return { contents: code, loader: script.lang === 'ts' ? 'ts' : 'js', resolveDir };
         }
+        // s205-m02: a workflow app imports its own stylesheet (src/app.css). Bundled with no output file esbuild cannot
+        // emit it, and the browser page links only the runtime's styles, so the sheet is applied the way a Vue SFC's
+        // styles are above. Until s205-m01 a workflow preview recorded and showed its LIST screen, which is why no
+        // workflow ever reached this line.
+        if (extension === '.css') return { contents: `const style = document.createElement('style'); style.dataset.oodsArtifactCss = ${JSON.stringify(args.path)}; style.textContent = ${JSON.stringify(contents)}; document.head.appendChild(style);\nexport {};\n`, loader: 'js', resolveDir };
         const loader = LOADERS[extension];
         if (!loader) return { errors: [{ text: `No loader for ${args.path}` }] };
         return { contents, loader, resolveDir };

@@ -1,0 +1,320 @@
+object:
+  name: Run
+  version: 0.1.0
+  domain: capture.run
+  description: >-
+    One Stage1 capture of one product: when it ran, what it read, and what it found. Born from the manifest,
+    a11y report and artifact index of real runs (fit read: 6 app-mode runs on disk with an a11y report at
+    2.2.0); every field this object does not model is stated in the m02 fit read.
+  tags:
+    - capture
+    - stage1
+    - run
+traits:
+  - name: behavioral/Searchable
+    parameters:
+      placeholder: Search runs
+  - name: behavioral/Filterable
+  - name: behavioral/Pageable
+    parameters:
+      defaultPageSize: 20
+      pageSizeOptions:
+        - 10
+        - 20
+        - 50
+schema:
+  run_id:
+    type: string
+    required: true
+    description: The capture's own id, a uuid Stage1 assigns; the directory name under out/stage1/<suite>/.
+    examples:
+      - d0a43821-5730-4bf3-8b40-20f6fcb6b69c
+      - edb8954d-44a6-4e48-b9d9-aad676f2bf18
+      - 924005a5-e31e-4430-80ca-84c5b974fd86
+      - 2af80ee6-d74f-4922-8c9e-1763b4f7c2d2
+      - 6e435ce7-eaab-46b4-be6b-cea9b80defa6
+      - b78461bc-2138-49ae-a82a-188d9d01ff78
+  target_name:
+    type: string
+    required: true
+    description: >-
+      What was captured, as the run names it (targets[0].name). Every run read carries exactly one target, so
+      the subject is two fields here rather than an object of its own.
+    examples:
+      - tracelab-production-infer
+      - tracelab-production
+      - tracelab-production
+      - tracelab-production
+      - uswds-designsystem
+      - uswds-designsystem
+  target_url:
+    type: string
+    required: true
+    description: Where the capture started (targets[0].url).
+    examples:
+      - https://tracelab.aquex.ai/
+      - https://tracelab.aquex.ai/
+      - https://tracelab.aquex.ai/
+      - https://frontend-production-43c3.up.railway.app/
+      - https://designsystem.digital.gov/
+      - https://designsystem.digital.gov/
+  captured_at:
+    type: datetime
+    required: true
+    description: When the capture ran (environment.timestamp).
+    validation:
+      format: date-time
+    examples:
+      - '2026-09-18T00:34:54.671Z'
+      - '2026-09-17T21:55:36.491Z'
+      - '2026-09-17T21:53:41.439Z'
+      - '2026-09-17T21:52:21.293Z'
+      - '2026-09-17T00:44:54.052Z'
+      - '2026-09-16T03:40:54.031Z'
+  project_id:
+    type: string
+    required: true
+    description: Stage1's project slug for the capture.
+    examples:
+      - stage1-tracelab.aquex.ai-2026-09-18
+      - stage1-tracelab.aquex.ai-2026-09-17
+      - stage1-tracelab.aquex.ai-2026-09-17
+      - stage1-frontend-production-43c3.up.railway.app-2026-09-17
+      - stage1-designsystem.digital.gov-2026-09-17
+      - stage1-designsystem.digital.gov-2026-09-16
+  mode:
+    type: string
+    required: true
+    description: >-
+      The capture mode. Every run a run view reads is app; suite runs aggregate targets and carry no a11y
+      report of their own.
+    validation:
+      enum:
+        - app
+        - suite
+    examples:
+      - app
+      - app
+      - app
+      - app
+      - app
+      - app
+  auth_type:
+    type: string
+    required: true
+    description: >-
+      The authentication the manifest RECORDS. Shown as recorded, never inferred: Sprint 204 measured "none"
+      on a capture that was authenticated, which is Stage1's to correct.
+    examples:
+      - none
+      - none
+      - none
+      - none
+      - none
+      - none
+  page_count:
+    type: integer
+    required: true
+    description: How many pages the accessibility pass read.
+    validation:
+      minimum: 0
+    examples:
+      - 25
+      - 25
+      - 25
+      - 10
+      - 40
+      - 40
+  finding_count:
+    type: integer
+    required: true
+    description: How many rule failures the run found across its pages (a11y rollup.violation_count).
+    validation:
+      minimum: 0
+    examples:
+      - 0
+      - 0
+      - 0
+      - 0
+      - 6
+      - 6
+  critical_count:
+    type: integer
+    required: true
+    description: Findings of critical impact.
+    validation:
+      minimum: 0
+    examples:
+      - 0
+      - 0
+      - 0
+      - 0
+      - 2
+      - 2
+  serious_count:
+    type: integer
+    required: true
+    description: Findings of serious impact.
+    validation:
+      minimum: 0
+    examples:
+      - 0
+      - 0
+      - 0
+      - 0
+      - 1
+      - 1
+  moderate_count:
+    type: integer
+    required: true
+    description: Findings of moderate impact.
+    validation:
+      minimum: 0
+    examples:
+      - 0
+      - 0
+      - 0
+      - 0
+      - 1
+      - 1
+  minor_count:
+    type: integer
+    required: true
+    description: Findings of minor impact.
+    validation:
+      minimum: 0
+    examples:
+      - 0
+      - 0
+      - 0
+      - 0
+      - 2
+      - 2
+  unknown_count:
+    type: integer
+    required: true
+    description: 'Findings whose impact the engine did not state. Its own bucket: never folded into minor.'
+    validation:
+      minimum: 0
+    examples:
+      - 0
+      - 0
+      - 0
+      - 0
+      - 0
+      - 0
+  pass_count:
+    type: integer
+    required: true
+    description: How many capture passes ran.
+    validation:
+      minimum: 0
+    examples:
+      - 28
+      - 18
+      - 20
+      - 16
+      - 30
+      - 20
+  passes_failed:
+    type: integer
+    required: true
+    description: How many of those passes did not finish ok.
+    validation:
+      minimum: 0
+    examples:
+      - 0
+      - 0
+      - 0
+      - 0
+      - 0
+      - 0
+  artifact_count:
+    type: integer
+    required: true
+    description: How many artifacts the run's index lists.
+    validation:
+      minimum: 0
+    examples:
+      - 25
+      - 18
+      - 20
+      - 16
+      - 27
+      - 20
+  evidence_retained:
+    type: boolean
+    required: false
+    description: Whether the run kept its evidence directory (evidence_retention.retained).
+    examples:
+      - true
+      - true
+      - null
+      - null
+      - true
+      - null
+semantics:
+  run_id:
+    semantic_type: capture.run.run_id
+    token_mapping: tokenMap(text.body.*)
+  target_name:
+    semantic_type: text.label
+    token_mapping: tokenMap(text.label.*)
+  target_url:
+    semantic_type: capture.run.target_url
+    token_mapping: tokenMap(text.body.*)
+  captured_at:
+    semantic_type: capture.run.captured_at
+    token_mapping: tokenMap(text.body.*)
+  project_id:
+    semantic_type: capture.run.project_id
+    token_mapping: tokenMap(text.body.*)
+  mode:
+    semantic_type: capture.run.mode
+    token_mapping: tokenMap(text.body.*)
+  auth_type:
+    semantic_type: capture.run.auth_type
+    token_mapping: tokenMap(text.body.*)
+  page_count:
+    semantic_type: capture.run.page_count
+    token_mapping: tokenMap(text.body.*)
+  finding_count:
+    semantic_type: capture.run.finding_count
+    token_mapping: tokenMap(text.body.*)
+  critical_count:
+    semantic_type: capture.run.critical_count
+    token_mapping: tokenMap(text.body.*)
+  serious_count:
+    semantic_type: capture.run.serious_count
+    token_mapping: tokenMap(text.body.*)
+  moderate_count:
+    semantic_type: capture.run.moderate_count
+    token_mapping: tokenMap(text.body.*)
+  minor_count:
+    semantic_type: capture.run.minor_count
+    token_mapping: tokenMap(text.body.*)
+  unknown_count:
+    semantic_type: capture.run.unknown_count
+    token_mapping: tokenMap(text.body.*)
+  pass_count:
+    semantic_type: capture.run.pass_count
+    token_mapping: tokenMap(text.body.*)
+  passes_failed:
+    semantic_type: capture.run.passes_failed
+    token_mapping: tokenMap(text.body.*)
+  artifact_count:
+    semantic_type: capture.run.artifact_count
+    token_mapping: tokenMap(text.body.*)
+  evidence_retained:
+    semantic_type: capture.run.evidence_retained
+    token_mapping: tokenMap(text.body.*)
+metadata:
+  maturity: alpha
+  owners:
+    - Forge
+  references:
+    - artifacts/product-reality/sprint-205/m02/fit-read.json
+  changelog:
+    - version: 0.1.0
+      date: '2026-09-18'
+      description: Born from 6 real Stage1 runs; sample records are those runs.

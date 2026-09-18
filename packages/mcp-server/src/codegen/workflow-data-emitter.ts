@@ -2,6 +2,7 @@ import { chartNodes } from './chart-declaration.js';
 import type { UiSchema, UiElement, FieldSchemaEntry } from '../schemas/generated.js';
 import { mapFieldType, snakeToCamel } from './binding-utils.js';
 import { fieldLabel } from '../compose/label-generator.js';
+import { authoredLabelField } from '../compose/record-label.js';
 
 /** One deterministic preview policy. Authored examples/defaults and enums own domain values. */
 /** A stable rotation for a seed string: the same seed always rotates the sample lists the same way; no seed leaves them as authored. */
@@ -21,7 +22,7 @@ export function workflowSampleData(schema: UiSchema): { records: Array<Record<st
   const { idField, lifecycleStates, billingIntervals, currency, sampleCount } = workflow.data;
   const seedAt = '2026-09-08T12:00:00.000Z';
   const charts = chartNodes(schema.screens).map(node => node.chart!);
-  const titleField = ['plan_name', 'name', 'title', 'display_name', 'label'].find(name => fields[name]) ?? idField;
+  const titleField = ['plan_name', 'name', 'title', 'display_name', 'label'].find(name => fields[name]) ?? authoredLabelField(fields) ?? idField;
   const humanize = (value: string) => value.split(/[_-]/).filter(Boolean).map(part => part.charAt(0).toUpperCase() + part.slice(1)).join(' ');
   // The schema's seed rotates the deterministic lists, so a seed change alters the sample data and nothing else.
   const rotation = sampleSeedRotation(schema.seed);
@@ -161,7 +162,7 @@ export function workflowDataFiles(schema: UiSchema): Array<{ path: string; conte
   const workflow = schema.workflow!;
   const fields = schema.objectSchema!;
   const { idField } = workflow.data;
-  const titleField = ['plan_name', 'name', 'title', 'display_name', 'label'].find((name) => fields[name]) ?? idField;
+  const titleField = ['plan_name', 'name', 'title', 'display_name', 'label'].find((name) => fields[name]) ?? authoredLabelField(fields) ?? idField;
   const records = workflowSampleRecords(schema);
   const nodes = (elements: UiElement[]): UiElement[] => elements.flatMap(node => [node, ...nodes(node.children ?? [])]);
   const declaredFilter = nodes(schema.screens).find(node => node.collectionControl === 'filter')?.props?.field;
